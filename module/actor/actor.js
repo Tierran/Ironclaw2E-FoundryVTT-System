@@ -290,7 +290,7 @@ export class Ironclaw2EActor extends Actor {
         this._updateTokenLighting(updatedlightdata);
     }
 
-    applyDamage(damage, knockout, allowdeath = true) {
+    applyDamage(damage, knockout, nonlethal = false) {
         let adding = ["Reeling"];
         if (damage >= 1) {
             adding.push("Hurt");
@@ -302,8 +302,8 @@ export class Ironclaw2EActor extends Actor {
         }
         if (damage >= 3) adding.push("Injured");
         if (damage >= 4) adding.push("Dying");
-        if (damage >= 5 && !(knockout && allowdeath == false && damage >= 6)) adding.push("Dead");
-        if (damage >= 6 && !(knockout && allowdeath == false)) adding.push("Overkilled");
+        if (damage >= 5 && !nonlethal) adding.push("Dead");
+        if (damage >= 6 && !nonlethal) adding.push("Overkilled");
         addConditionIronclaw(adding, this);
     }
 
@@ -524,8 +524,8 @@ export class Ironclaw2EActor extends Actor {
        <input type="checkbox" id="knockout" name="knockout" value="1"></input>
       </div>
       <div class="form-group">
-       <label>Allow death on knockout?</label>
-       <input type="checkbox" id="allowdeath" name="allowdeath" value="1"></input>
+       <label>Non-lethal attack?</label>
+       <input type="checkbox" id="nonlethal" name="nonlethal" value="1"></input>
       </div>
      </form>
      `,
@@ -549,7 +549,7 @@ export class Ironclaw2EActor extends Actor {
                     let damage = 0; if (DAMAGE.length != 0) damage = parseInt(DAMAGE.value);
                     let KNOCKOUT = html.find('[name=knockout]')[0];
                     let knockout = KNOCKOUT.checked;
-                    let ALLOW = html.find('[name=allowdeath]')[0];
+                    let ALLOW = html.find('[name=nonlethal]')[0];
                     let allow = ALLOW.checked;
 
                     this.applyDamage(damage + addeddamage, knockout, allow);

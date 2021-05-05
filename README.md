@@ -7,11 +7,13 @@ This system was built from the Boilerplate system found here: https://gitlab.com
 
 ## Usage
 
-NOTE: This system requires the Combat Utility Belt module and it's Enhanced Conditions to be installed and activated to fully function, as the Ironclaw combat system is based completely on status effects. Please remember to activate it.
+NOTE: This system requires the Combat Utility Belt (https://github.com/death-save/combat-utility-belt) module and it's Enhanced Conditions to be installed and activated to fully function, as the Ironclaw combat system is based completely on status effects. Please remember to activate it.
 
 For rolling actor dice pools, actor sheets have a button to open a dice poll popup, which allows you to select what pools to use for the roll. The system has some support for specific rolls to automatically pre-select relevant dice pools and add modifiers through hard-coded logic. This does require any added gifts to have the same name as they do in the core book to function, but allows easy rolling of dice.
 Weapons and gifts can be set up to automatically select certain dice pools, as well as giving extra dice for the roll automatically. The system also has internal logic to add relevant modifiers to the rolls. Armor and shields also work, but any added dice from gifts need to be added manually.
 Ironclaw's initiative system is supported by using 'marker' actor tokens to represent each side in combat and setting up the markers so that their initiatives are in the correct order to follow the order GM has set for the encounter. Sadly, this precludes adding the character tokens themselves to the combat encounter.
+
+The system has support for the Drag Ruler module (https://github.com/manuelVo/foundryvtt-drag-ruler). The distance colors represent Stride (blue), Stride+Dash (green), Run (yellow) and over max distance (red).
 
 Still lots of WIP in this project: Initiatives are a bit of a mess, there's no support for the alternate, more traditional initiative, I'm certain I've forgotten to include one feature or another... 
 
@@ -22,6 +24,11 @@ The 'One Line' macros allow the dice pools to be inputted in standard dice notat
 
 Setting up dice pools for items follows this format: "<trait or skill name>, <another name>;<any bonus dice in one line format>", eg. "Body, Melee Combat, dodge,weathersense;d12". The order of skills and traits are arbitrary and can include spaces in the name, but every name must be separated with a comma. The semicolon (;) separates the stat names from bonus dice, which are formatted the same way as one line rolls. If there is no bonus dice, the semicolon can be omitted.
 Currently, the system does not allow dice pools to include items. Instead, the system tries to track common gifts and items that should be included in dice pools, eg. including worn armor in Soak rolls. This is completely hard-coded though, so I'm afraid it won't be perfect.
+
+### Conditions
+
+With Combat Utility Belt's Enhanced Conditions, the system should disable the standard conditions and use the provided conditions file in condition-maps. With it, the token setup screen shows all of the standard Ironclaw conditions, as well as a few extras. Information on them is provided in the status effects compendium pack.
+Damage calculations have a separate pop-up function for simpler calculation. Just input the raw damage from the attack after soak, even if the value goes negative, NOT including any added by standard conditions. The system will automatically add the damage from Hurt and Injured if they apply.
 
 ## License
 
