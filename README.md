@@ -1,6 +1,7 @@
 # Ironclaw Second Edition system for Foundry VTT
 
-This is a system for running the second edition version of Ironclaw (the corebook named Ironclaw Omnibus: Squaring the Circle) in Foundry VTT. The system has (almost) complete sheets for both full characters and 'mooks', ie. relatively unimportant / minor NPC's to be mass-copied onto the field, with a slightly simpler sheet. The system also has multiple item types to represent the different gear characters can acquire, plus a general one with no mechanical systems to it.  
+This is a system for running the second edition version of Ironclaw (the corebook named Ironclaw Omnibus: Squaring the Circle) in Foundry VTT.  
+The system has (almost) complete sheets for both full characters and 'mooks', ie. relatively unimportant / minor NPC's to be mass-copied onto the field, with a slightly simpler sheet. The system also has multiple item types to represent the different gear characters can acquire, plus a general one with no mechanical systems to it.  
 For arbitrary rolls and for people that prefer external sheets, there are two sets of ready-made macros included that can be used to roll arbitrary dice pools without creating an actor for them.
 
 This system was built from the Boilerplate system found here: https://gitlab.com/asacolips-projects/foundry-mods/boilerplate
