@@ -1,0 +1,309 @@
+class CommonSystemInfo {
+    static burdenedList = Object.freeze(["speed", "climbing", "dodge", "endurance", "jumping", "stealth", "swimming"]);
+}
+
+/**
+ * Helper function to split a string of dice into component forms, separated by commas, then parsed into an array, to allow easy rolling
+ * @param {string} dicestring String containing standard dice notation, separated by commas
+ * @returns {number[]} Array of dice in the string, in this order: d12, d10, d8, d6, d4
+ */
+export function findTotalDice(dicestring) {
+    let totaldice = [0, 0, 0, 0, 0];
+    if (typeof (dicestring) != "string") {
+        console.warn("Something that was not a string inputted to dice parser: " + dicestring);
+        return totaldice;
+    }
+
+    let foos = dicestring.split(",");
+    for (let i = 0; i < foos.length; ++i) {
+        let bar = foos[i].trim();
+        let index = bar.search(/d/i);
+        if (index == -1)
+            continue;
+        let total = 0, sides = 0;
+        if (index == 0)
+            total = 1;
+        else
+            total = parseInt(bar.slice(0, index));
+        sides = parseInt(bar.slice(index + 1));
+
+        if (sides == 0 || isNaN(total))
+            continue;
+        else if (sides == 12)
+            totaldice[0] += total;
+        else if (sides == 10)
+            totaldice[1] += total;
+        else if (sides == 8)
+            totaldice[2] += total;
+        else if (sides == 6)
+            totaldice[3] += total;
+        else if (sides == 4)
+            totaldice[4] += total;
+        else
+            console.log("Non-standard dice found while totaling up dice: " + dicestring);
+    }
+    //if (totaldice[0] + totaldice[1] + totaldice[2] + totaldice[3] + totaldice[4] == 0)
+    //    console.log("No dice found at all! Was this intentional?: " + dicestring);
+    return totaldice;
+}
+
+/**
+ * Helper function to add two arrays of numbers together
+ * @param {number[]} foo First array
+ * @param {number[]} bar Second array
+ * @param {number} outputLength Set the length of the output array, leave empty or non-positive to auto-calculate from input array lengths
+ * @returns {number[]} New array
+ */
+export function addArrays(foo, bar, outputLength = -1) {
+    let total = [];
+    if (!Array.isArray(foo) || !Array.isArray(bar)) {
+        if (Array.isArray(foo) && !Array.isArray(bar))
+            return foo;
+        else if (!Array.isArray(foo) && Array.isArray(bar))
+            return bar;
+        else
+            return total;
+    }
+
+    let totallength = foo.length;
+    if (totallength < bar.length)
+        totallength = bar.length;
+    if (outputLength > 0)
+        totallength = outputLength;
+
+    for (let i = 0; i < totallength; ++i) {
+        if (i < foo.length && i < bar.length)
+            total.push(foo[i] + bar[i]);
+        else if (i < foo.length)
+            total.push(foo[i]);
+        else if (i < bar.length)
+            total.push(bar[i]);
+        else
+            total.push(0);
+    }
+    return total;
+}
+
+/**
+ * Helper function to limit a dice array to some maximum die size, by adding all larger dice into the max die and changing them to zero
+ * @param {number[]} dicearray The dice array to limit
+ * @param {number} maxdie The maximum allowed die, corresponding to dice array index: 0 = d12, 1 = d10, 2 = d8, 3 = d6, 4 = d4
+ * @returns {number[]} A new, limited dice array
+ */
+export function enforceLimit(dicearray, maxdie) {
+    if (!Array.isArray(dicearray) || dicearray.length != 5)
+        return console.warn("Something other than a proper dice array inputted into limit enforcer: " + dicearray);
+    if (isNaN(maxdie))
+        return console.warn("Something other than a number inputted into limit enforcer as the limit: " + maxdie);
+
+    let limit = maxdie;
+    if (!Number.isInteger(limit)) limit = Math.round(limit);
+    if (limit < 0) limit = 0;
+    if (limit > 4) limit = 4;
+    let newarray = [dicearray[0], dicearray[1], dicearray[2], dicearray[3], dicearray[4]];
+    for (let i = 0; i < limit; ++i) {
+        newarray[limit] += newarray[i];
+        newarray[i] = 0;
+    }
+
+    return newarray;
+}
+
+/**
+ * A simple helper to ensure every stat string gets treated equally everywhere, rather than risking typos or other weirdness
+ * @param {string} stat Stat name to reduce to comparable state
+ * @returns {string} The stat name in all lowercase with whitespace trimmed away
+ */
+export function makeStatCompareReady(stat) {
+    return stat.trim().replace(/\s/g, '').toLowerCase();
+}
+
+/**
+ * A simple helper to convert camelCase strings into nicer, more human-readable form
+ * @param {string} camelCase The camelCase string to parse
+ * @returns {string} Human-readable version of camelCase
+ */
+export function convertCamelCase(camelCase) {
+    return camelCase.replace(/([A-Z])/g, ' $1').replace(/^./, function (str) { return str.toUpperCase(); });
+}
+
+/**
+ * Helper function to split a string of stat names, separated by commas, into an array containing comparison-ready versions of the component strings, to allow for easy checks
+ * @param {any} stats String containing stat names, separated by commas and containing no spaces inside the names
+ * @returns {string[]} An array of strings containing the stat names
+ */
+export function splitStatString(stats) {
+    let statarray = [];
+    if (typeof (stats) != "string") {
+        console.warn("Something that was not a string inputted to skill splitter: " + stats);
+        return statarray;
+    }
+
+    let foos = stats.split(",");
+    for (let i = 0; i < foos.length; ++i) {
+        statarray.push(makeStatCompareReady(foos[i]));
+    }
+    return statarray;
+}
+
+/**
+ * Helper function to split a string containing stat names, separated by commas, as well as extra non-stat dice in dice notation, which are separated from the stats by a semicolon and from each other by commas
+ * @param {any} fullset String containing stat names, separated by commas, and a separate section containing extra dice in dice notation, separated from each other by commas an from the stat names by a semicolon
+ * @returns {[string[], string]} Returns an array first containing the array of split-up stat names, and second the string of the extra dice
+ */
+export function splitStatsAndBonus(fullset) {
+    let statarray = [];
+    let dicestring = "";
+
+    if (typeof (fullset) != "string") {
+        console.warn("Something that was not a string inputted to stat and bonus splitter: " + fullset);
+        return [statarray, dicestring];
+    }
+
+    let firstsplit = fullset.split(";");
+
+    if (firstsplit[0].length > 0) {
+        statarray = splitStatString(firstsplit[0]);
+    }
+    if (firstsplit.length > 1) {
+        dicestring = firstsplit[1];
+    }
+
+    return [statarray, dicestring];
+}
+
+/**
+ * Helper function to reform a standard notation dice string from a dice array
+ * Intended to be used for showing already-parsed dice in the UI
+ * @param {number[]} dicearray The array of dice to be parsed, in the same format as findTotalDice returns
+ * @param {boolean} humanreadable Whether to put spaces between the dice components
+ * @returns {string} The completed string in dice notation
+ */
+export function reformDiceString(dicearray, humanreadable = false) {
+    if (!Array.isArray(dicearray)) {
+        console.warn("Something that was not an array inputted to dice string reformer: " + dicearray);
+        return "";
+    }
+    if (dicearray.length != 5) {
+        console.warn("Something that was not a dice array (based on length) inputted to dice string reformer: " + dicearray);
+        return "";
+    }
+
+    let reformedString = "";
+    for (let i = 0; i < dicearray.length; ++i) {
+        if (dicearray[i] != 0) {
+            let amount = dicearray[i];
+            let dicetype = 0;
+            switch (i) {
+                case 0:
+                    dicetype = 12;
+                    break;
+                case 1:
+                    dicetype = 10;
+                    break;
+                case 2:
+                    dicetype = 8;
+                    break;
+                case 3:
+                    dicetype = 6;
+                    break;
+                case 4:
+                    dicetype = 4;
+                    break;
+            }
+            reformedString += (amount == 1 ? "" : amount.toString()) + "d" + dicetype.toString() + "," + (humanreadable ? " " : "");
+        }
+    }
+
+    if (reformedString.length > 1) {
+        reformedString = reformedString.slice(0, (humanreadable ? -2 : -1));
+    }
+
+    return reformedString;
+}
+
+/**
+ * Helper function to get what speaker to use in the dice roller output, dependent on the system settings
+ * @param {Actor} rollingactor The actor to find a speaker for
+ * @returns {Object} Returns the speaker data
+ */
+export function getMacroSpeaker(rollingactor) {
+    if (!rollingactor)
+        return ChatMessage.getSpeaker(); // In case the function ever receives an actor that does not exist
+
+    const prefertokens = game.settings.get("ironclaw2e", "preferTokenName");
+    if (prefertokens) {
+        let chattoken = findActorToken(rollingactor);
+        if (chattoken) {
+            return ChatMessage.getSpeaker({ token: chattoken });
+        }
+    }
+
+    return (rollingactor ? ChatMessage.getSpeaker({ actor: rollingactor }) : ChatMessage.getSpeaker());
+}
+
+/**
+ * Helper function to find the token for a given actor, or return undefined if no token is found
+ * On non-synthetic actors, requires the token's actorLink to be TRUE in order to pick them
+ * @param {Actor} actor The actor to find a token for
+ * @returns {Token} Returns the found token, or undefined
+ */
+export function findActorToken(actor) {
+    if (!actor)
+        return;
+
+    let foundtoken;
+    if (actor.token) {
+        foundtoken = actor.token;
+    }
+    else {
+        let tokenarray = actor.getActiveTokens(true);
+        if (tokenarray.length > 0 && tokenarray[0].data.actorLink == true)
+            foundtoken = tokenarray[0];
+    }
+    return foundtoken;
+}
+
+/**
+ * Small helper to check whether a given skill is subject to the burdened limit
+ * @param {string} name Name of the skill
+ * @returns {boolean} Returns true if the limit applies
+ */
+export function burdenedLimitedStat(name) {
+    return CommonSystemInfo.burdenedList.includes(makeStatCompareReady(name));
+}
+
+/**
+ * Helper function to search through a given item list for any items matching the name given
+ * @param {Array} itemlist The actor's item list to be checked
+ * @param {string} itemname The item in question to search for
+ * @param {string} itemtype Optionally, also limit the search based on item type, in cases where that might matter
+ * @returns {Object} Returns the item in question
+ */
+export function findInItems(itemlist, itemname, itemtype = null) {
+    if (!itemlist || typeof itemlist[Symbol.iterator] !== 'function') {
+        console.warn("Find in items failed, received something not iterable: " + itemlist);
+        return null;
+    }
+
+    const useitemtype = itemtype ? true : false;
+
+    return itemlist.find(element => (useitemtype ? element.data.type == itemtype : true) && makeStatCompareReady(element.data.name) == itemname);
+}
+
+/**
+ * Helper function to see if any of a list of trait and skill names is included in the given names
+ * @param {string[]} prechecked List of trait and skill names
+ * @param {string | string[]} givennames A name or a list of names to check the prechecked list against, remember to make these comparison ready before using here
+ * @returns {boolean} Whether any match was found
+ */
+export function checkForPrechecked(prechecked, givennames) {
+    if (!Array.isArray(prechecked)) {
+        console.warn("Prechecked check failed, not given an array: " + prechecked);
+        return false;
+    }
+
+    const usednames = typeof givennames == "string" ? [givennames] : givennames;
+
+    return prechecked.some(element => usednames.includes(element));
+}

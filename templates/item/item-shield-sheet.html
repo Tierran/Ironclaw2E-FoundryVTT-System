@@ -1,0 +1,46 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <header class="sheet-header">
+        <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
+        <div class="header-fields">
+            <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
+            <div class="grid grid-3col">
+                <div class="resource">
+                    <label class="resource-label">Quantity</label>
+                    <input type="text" name="data.quantity" value="{{data.quantity}}" data-dtype="Number" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Weight</label>
+                    <input type="text" name="data.weight" value="{{data.weight}}" data-dtype="Number" />
+                </div>
+                <div class="resource flexcol">
+                    <label class="resource-label">Total Weight:</label>
+                    <span class="normal-text" name="data.totalWeight">{{data.totalWeight}} stones</span>
+                </div>
+            </div>
+            <div class="resource flexrow flex-group-center">
+                <label class="header-label">Shield Cover Die:</label>
+                <input type="text" name="data.coverDie" value="{{data.coverDie}}" data-dtype="String" />
+                <label class="header-label">Held:</label>
+                <input type="checkbox" name="data.held" {{checked data.held}} data-dtype="Boolean" />
+            </div>
+            <div class="resource flexrow flex-group-center flex-tight">
+                <label class="resource-label">Show in Battle Stats:</label>
+                <input type="checkbox" name="data.showInBattleStats" {{checked data.showInBattleStats}} data-dtype="Boolean" />
+            </div>
+        </div>
+    </header>
+
+    {{!-- Sheet Tab Navigation --}}
+    <nav class="sheet-tabs tabs" data-group="primary">
+        <a class="item" data-tab="description">Description</a>
+    </nav>
+
+    {{!-- Sheet Body --}}
+    <section class="sheet-body sheet-body-small">
+
+        {{!-- Description Tab --}}
+        <div class="tab" data-group="primary" data-tab="description">
+            {{editor content=data.description target="data.description" button=true owner=owner editable=editable}}
+        </div>
+    </section>
+</form>

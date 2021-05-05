@@ -1,0 +1,42 @@
+<form class="{{cssClass}} flexcol" autocomplete="off">
+
+    {{!-- Sheet Header --}}
+    <header class="sheet-header">
+        <div class="flexcol">
+            <div class="flexrow">
+                <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100" />
+                <div class="header-fields">
+                    <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
+                    {{!-- The grid classes are defined in scss/global/_grid.scss. To use, use both the "grid" and "grid-Ncol" class where "N" can be any number from 1 to 12 and will create that number of columns.  --}}
+                    {{!-- "flex-group-center" is also defined in the _grid.scss file and it will add a small amount of padding, a border, and will center all of its child elements content and text. --}}
+                    {{!-- The grid classes are defined in scss/global/_grid.scss. To use, use both the "grid" and "grid-Ncol" class where "N" can be any number from 1 to 12 and will create that number of columns.  --}}
+                    <div class="trait flexrow flex-group-center">
+                        <label for="data.initiative" class="resource-label">Initiative</label>
+                        <input type="text" name="data.initiative" value="{{data.initiative}}" data-dtype="Number" onfocus="this.select();" />
+                    </div>
+                </div>
+            </div>
+            <div class="flexrow flex-center">
+                <div class="rollable flex-group-center">
+                    <span class="normal-label">This does absolutely nothing</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    {{!-- Sheet Tab Navigation --}}
+    <nav class="sheet-tabs tabs" data-group="primary">
+        <a class="item" data-tab="description">Description</a>
+    </nav>
+
+    {{!-- Sheet Body --}}
+    <section class="sheet-body">
+
+        {{!-- Description Tab --}}
+        <div class="tab description" data-group="primary">
+            {{editor content=data.description target="data.description" button=true owner=owner editable=editable}}
+        </div>
+
+    </section>
+</form>
+

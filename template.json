@@ -1,0 +1,254 @@
+{
+  "Actor": {
+    "types": [ "character", "mook", "beast", "marker" ],
+    "templates": {
+      "baseTraits": {
+        "traits": {
+          "body": {
+            "dice": "d4"
+          },
+          "speed": {
+            "dice": "d4"
+          },
+          "mind": {
+            "dice": "d4"
+          },
+          "will": {
+            "dice": "d4"
+          },
+          "species": {
+            "dice": "d4",
+            "name": "",
+            "speciesSkill1": "",
+            "speciesSkill2": "",
+            "speciesSkill3": ""
+          },
+          "career": {
+            "dice": "d4",
+            "name": "",
+            "careerSkill1": "",
+            "careerSkill2": "",
+            "careerSkill3": ""
+          }
+        }
+      },
+      "baseSkills": {
+        "skills": {
+          "academics": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "brawling": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "climbing": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "craft": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "deceit": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "digging": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "dodge": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "endurance": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "gossip": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "inquiry": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "jumping": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "leadership": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "meleeCombat": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "negotiation": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "observation": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "presence": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "rangedCombat": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "riding": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "searching": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "stealth": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "supernatural": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "swimming": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "tactics": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "throwing": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "vehicles": {
+            "marks": 0,
+            "favoredUse": ""
+          },
+          "weatherSense": {
+            "marks": 0,
+            "favoredUse": ""
+          }
+        }
+      },
+      "baseAttributes": {
+        "attributes": {
+          "habitat": "",
+          "diet": "",
+          "cycle": "",
+          "senses": ""
+        }
+      },
+      "baseMoney": {
+        "coinage": {
+          "orichalk": {
+            "plural": "orichalks",
+            "amount": 0,
+            "weight": 3.5,
+            "value": ";12",
+            "sign": 415
+          },
+          "denar": {
+            "plural": "denarii",
+            "amount": 0,
+            "weight": 4.5,
+            "value": "1",
+            "sign": 208
+          },
+          "aureal": {
+            "plural": "aureals",
+            "amount": 0,
+            "weight": 6.3,
+            "value": "24",
+            "sign": 8371
+          }
+        }
+      }
+    },
+    "character": {
+      "templates": [ "baseTraits", "baseSkills", "baseAttributes", "baseMoney" ],
+      "biography": "",
+      "experience": 0
+    },
+    "mook": {
+      "templates": [ "baseTraits", "baseSkills", "baseAttributes", "baseMoney" ],
+      "description": ""
+    },
+    "beast": {
+      "templates": [ "baseTraits", "baseAttributes" ],
+      "description": ""
+    },
+    "marker": {
+      "description": "",
+      "initiative": 2
+    }
+  },
+  "Item": {
+    "types": [ "gift", "weapon", "armor", "shield", "illumination", "item" ],
+    "templates": {
+      "base": {
+        "description": "",
+        "showInBattleStats": false
+      },
+      "physical": {
+        "quantity": 1,
+        "weight": 0.0
+      }
+    },
+    "gift": {
+      "templates": [ "base" ],
+      "giftTags": "",
+      "refresh": "",
+      "exhausted": false,
+      "exhaustWhenUsed": true,
+      "useDice": "",
+      "defaultTN": 3
+    },
+    "weapon": {
+      "templates": [ "base", "physical" ],
+      "effect": "",
+      "descriptors": "",
+      "equip": "Good hand",
+      "range": "Close",
+      "attackDice": "",
+      "defenseDice": "",
+      "counterDice": "",
+      "useSpark": false,
+      "sparkDie": ""
+    },
+    "armor": {
+      "templates": [ "base", "physical" ],
+      "armorDice": "",
+      "worn": true
+    },
+    "shield": {
+      "templates": [ "base", "physical" ],
+      "coverDie": "d4",
+      "held": true
+    },
+    "illumination": {
+      "templates": [ "base", "physical" ],
+      "lighted": false,
+      "dimLight": 0,
+      "brightLight": 0,
+      "lightAngle": 360,
+      "lightColor": "#ffffff",
+      "lightAlpha": 0.3,
+      "lightAnimationType": "",
+      "lightAnimationSpeed": 5,
+      "lightAnimationIntensity": 5
+    },
+    "item": {
+      "templates": [ "base", "physical" ]
+    }
+  }
+}

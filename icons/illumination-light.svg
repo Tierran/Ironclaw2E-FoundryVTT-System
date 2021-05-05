@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 1000 1000"
+   enable-background="new 0 0 1000 1000"
+   xml:space="preserve"
+   id="svg12"
+   sodipodi:docname="candle.svg"
+   inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)"><defs
+   id="defs16" /><sodipodi:namedview
+   pagecolor="#bebebe"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="640"
+   inkscape:window-height="480"
+   id="namedview14"
+   showgrid="false"
+   inkscape:snap-bbox="true"
+   inkscape:zoom="0.35638182"
+   inkscape:cx="268.16874"
+   inkscape:cy="425.67561"
+   inkscape:current-layer="svg12"
+   inkscape:document-rotation="0" />
+<metadata
+   id="metadata2"> Svg Vector Icons : http://www.onlinewebfonts.com/icon <rdf:RDF><cc:Work
+     rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+       rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata>
+<g
+   id="g849"><path
+     style="opacity:1;fill:#f3db0c;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:10;stroke-linejoin:round"
+     d="M 418.40278,252.23214 432.4,253.95 l 17.50079,-26.27143 17.36112,-82.34127 -30.25794,-36.21032 -41.66667,47.61905 7.93651,78.86905 z"
+     id="path846"
+     sodipodi:nodetypes="cccccccc" /><path
+     d="m 430.28,22.85 c -2.11,7.29 -13.04,31.26 -24.16,53.7 -25.51,50.25 -29.53,63.48 -29.53,95.51 0,13.04 1.15,26.85 2.49,31.64 6.14,21.1 18.79,38.74 33.56,46.41 7.1,3.64 7.29,3.64 5.95,0.19 -9.21,-22.44 -9.01,-43.15 0.77,-74.98 4.03,-13.42 8.44,-29.15 9.78,-34.9 3.84,-16.69 4.79,-17.26 10.16,-6.52 13.42,26.46 14,43.53 3.07,77.09 -4.22,13.23 -8.25,28.19 -8.82,33.56 l -1.15,9.4 7.67,-4.03 c 10.55,-5.37 27.81,-21.29 34.9,-32.41 23.4,-36.44 19.94,-94.74 -9.21,-156.68 -9.01,-18.99 -28.19,-50.82 -30.68,-50.82 -0.58,-0.01 -2.88,5.74 -4.8,12.84 z"
+     id="path4"
+     style="stroke-width:0.1;fill:#f3550c;fill-opacity:1" /></g><path
+   style="stroke-width:0.1;fill:#fffffd;fill-opacity:1"
+   d="m 493.18,246.27 c -29.34,23.2 -44.49,33.37 -62.52,42.77 -11.51,5.95 -21.67,12.66 -23.01,14.96 -4.79,9.01 -5.37,17.45 -2.11,32.41 4.03,18.79 2.11,24.55 -7.67,24.55 -7.1,0 -12.85,-4.79 -12.85,-10.74 0,-1.92 1.73,-8.25 4.03,-14 5.37,-14.58 1.73,-25.12 -8.63,-25.12 -6.33,0 -23.97,9.4 -26.47,14 -1.34,2.3 -2.88,15.92 -3.64,30.11 -0.77,14.19 -3.26,33.56 -5.37,43.15 -4.6,19.75 -4.79,26.66 -1.92,35.29 2.49,6.9 9.01,9.4 16.3,6.14 l 4.6,-2.11 V 614.1 790.54 H 329.6 c -45.07,0 -46.22,1.53 -11.89,15.34 24.55,9.78 29.34,13.04 34.52,23.59 3.45,6.91 4.03,11.89 4.03,30.69 v 22.44 l 153.42,0 v -21.67 c 0.19,-34.9 5.18,-41.81 40.85,-56 12.85,-5.18 22.25,-9.97 21.86,-11.32 -0.39,-1.35 -11.7,-2.3 -35.48,-2.68 l -34.9,-0.38 V 654.77 519.17 h 8.25 c 15.92,0 17.83,-6.52 10.93,-40.85 -7.29,-37.78 -8.25,-52.16 -6.52,-106.82 2.5,-82.66 2.3,-117.94 -1.15,-124.66 -4.04,-8.05 -10.56,-8.24 -20.34,-0.57 z"
+   id="path6"
+   sodipodi:nodetypes="ccccsscsccccccccsccsccccsccccscccc" />
+<path
+   style="stroke-width:0.1"
+   d="m 356.26,882.6 -135.4,0.38 -135.4,0.58 -3.64,4.6 c -1.92,2.49 -3.64,6.33 -3.64,8.82 0,2.3 5.56,13.62 12.47,25.12 16.11,26.85 33.18,43.53 55.23,54.46 29.34,14.38 10.36,13.42 287.48,13.42 175.28001,0 251.80001,-0.57 258.90001,-2.11 12.08,-2.5 34.33,-12.47 46.22,-20.52 14,-9.78 25.12,-22.63 37.97,-43.53 l 12.28,-19.75 26.85,-9.97 c 45.26,-16.68 61.18,-25.12 77.86,-42 21.48,-21.67 30.49,-44.6801 28,-71.9201 -4.03,-43.73 -37.21,-73.07 -81.89,-72.68 -27.04,0.38 -47.37,9.59 -60.6,27.62 -12.66,17.26 -18.6,47.18 -10.74,54.08 8.82,8.05 19.56,1.15 19.56,-12.27 0,-9.01 4.6,-21.86 10.54999,-29.72 16.3,-21.29 59.26,-22.63 82.08001,-2.69 12.46,11.12 17.64,23.78 17.64,44.11 0,21.09 -5.56,33.37 -22.24001,48.9001 -14.19,12.85 -28,20.14 -66.54999,34.33 l -29.34,10.74 H 644.88001 509.68 Z"
+   id="path6-3"
+   sodipodi:nodetypes="ccccsccsccccccccccsccscccccc" /></svg>

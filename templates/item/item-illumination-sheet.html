@@ -1,0 +1,72 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <header class="sheet-header">
+        <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
+        <div class="header-fields">
+            <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
+            <div class="grid grid-3col">
+                <div class="resource">
+                    <label class="resource-label">Quantity</label>
+                    <input type="text" name="data.quantity" value="{{data.quantity}}" data-dtype="Number" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Weight</label>
+                    <input type="text" name="data.weight" value="{{data.weight}}" data-dtype="Number" />
+                </div>
+                <div class="resource flexcol">
+                    <label class="resource-label">Total Weight:</label>
+                    <span class="normal-text" name="data.totalWeight">{{data.totalWeight}} stones</span>
+                </div>
+            </div>
+            <div class="resource flexrow flex-group-center">
+                <span class="normal-label">{{#if data.lighted}}Lighted{{else}}Doused{{/if}}</span>
+            </div>
+            <div class="resource flexrow flex-group-center flex-tight">
+                <label class="resource-label">Show in Battle Stats:</label>
+                <input type="checkbox" name="data.showInBattleStats" {{checked data.showInBattleStats}} data-dtype="Boolean" />
+            </div>
+        </div>
+    </header>
+
+    {{!-- Sheet Tab Navigation --}}
+    <nav class="sheet-tabs tabs" data-group="primary">
+        <a class="item" data-tab="description">Description</a>
+        <a class="item" data-tab="attributes">Attributes</a>
+    </nav>
+
+    {{!-- Sheet Body --}}
+    <section class="sheet-body sheet-body-small">
+
+        {{!-- Description Tab --}}
+        <div class="tab" data-group="primary" data-tab="description">
+            {{editor content=data.description target="data.description" button=true owner=owner editable=editable}}
+        </div>
+
+        {{!-- Attributes Tab --}}
+        <div class="tab attributes" data-group="primary" data-tab="attributes">
+            <div class="flexcol">
+                <div class="resource flexrow flex-group-center">
+                    <label class="normal-label">Dim light:</label>
+                    <input type="text" name="data.dimLight" value="{{data.dimLight}}" data-dtype="Number" />
+                    <label class="normal-label">Bright light:</label>
+                    <input type="text" name="data.brightLight" value="{{data.brightLight}}" data-dtype="Number" />
+                    <label class="normal-label">Light angle:</label>
+                    <input type="text" name="data.lightAngle" value="{{data.lightAngle}}" data-dtype="Number" />
+                </div>
+                <div class="resource flexrow flex-group-center">
+                    <label class="normal-label">Light color:</label>
+                    <input type="text" is="colorpicker-input" name="data.lightColor" value="{{data.lightColor}}" data-dtype="String" />
+                    <label class="normal-label">Color intensity:</label>
+                    <input type="text" name="data.lightAlpha" value="{{data.lightAlpha}}" data-dtype="Number" />
+                </div>
+                <div class="resource flexrow flex-group-center">
+                    <label class="normal-label">Light type:</label>
+                    <input type="text" name="data.lightAnimationType" value="{{data.lightAnimationType}}" data-dtype="String" />
+                    <label class="normal-label">Light speed:</label>
+                    <input type="text" name="data.lightAnimationSpeed" value="{{data.lightAnimationSpeed}}" data-dtype="Number" />
+                    <label class="normal-label">Light intensity:</label>
+                    <input type="text" name="data.lightAnimationIntensity" value="{{data.lightAnimationIntensity}}" data-dtype="Number" />
+                </div>
+            </div>
+        </div>
+    </section>
+</form>

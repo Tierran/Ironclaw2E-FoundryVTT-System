@@ -1,0 +1,51 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <header class="sheet-header">
+        <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
+        <div class="header-fields">
+            <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
+            <div class="flexrow flex-group-center flex-tight">
+                <label class="header-label">Exhausted:</label>
+                <input type="checkbox" name="data.exhausted" {{checked data.exhausted}} data-dtype="Boolean" />
+                <label class="header-label">Show In Battle Stats:</label>
+                <input type="checkbox" name="data.showInBattleStats" {{checked data.showInBattleStats}} data-dtype="Boolean" />
+            </div>
+        </div>
+    </header>
+
+    {{!-- Sheet Tab Navigation --}}
+    <nav class="sheet-tabs tabs" data-group="primary">
+        <a class="item" data-tab="description">Description</a>
+        <a class="item" data-tab="attributes">Attributes</a>
+    </nav>
+
+    {{!-- Sheet Body --}}
+    <section class="sheet-body">
+
+        {{!-- Description Tab --}}
+        <div class="tab" data-group="primary" data-tab="description">
+            {{editor content=data.description target="data.description" button=true owner=owner editable=editable}}
+        </div>
+
+        {{!-- Attributes Tab --}}
+        <div class="tab attributes" data-group="primary" data-tab="attributes">
+            <div class="flexcol">
+                <div class="resource flex-group-center">
+                    <label class="resource-label">Tags:</label>
+                    <input type="text" name="data.giftTags" value="{{data.giftTags}}" data-dtype="String" />
+                </div>
+                <div class="resource flexrow flex-group-center">
+                    <label class="resource-label">Refresh:</label>
+                    <input type="text" name="data.refresh" value="{{data.refresh}}" data-dtype="String" />
+                    <label class="normal-label">Exhaust when used:</label>
+                    <input type="checkbox" name="data.exhaustWhenUsed" {{checked data.exhaustWhenUsed}} data-dtype="Boolean" />
+                </div>
+                <div class="resource flexrow flex-group-center">
+                    <label class="resource-label">Gift dice:</label>
+                    <input type="text" name="data.useDice" value="{{data.useDice}}" data-dtype="String" />
+                    <label class="normal-label">Default TN:</label>
+                    <input type="text" name="data.defaultTN" value="{{data.defaultTN}}" data-dtype="Number" />
+                </div>
+            </div>
+        </div>
+    </section>
+</form>

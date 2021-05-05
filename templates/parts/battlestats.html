@@ -1,0 +1,91 @@
+<div class="flexcol">
+    <h3 class="header-label flexrow flex-center">Battle Statistics</h3>
+    <div class="flexrow flex-group-center flex-tight">
+        <div></div>
+        <span class="rollable roll-click normal-label" data-roll="speed,mind" data-tnyes="true" data-tn="2">Initiative: {{data.traits.speed.dice}}, {{data.traits.mind.dice}}</span>
+        <div></div>
+    </div>
+    <div class="flexrow flex-group-center flex-tight">
+        <span class="normal-label">Stride: {{data.stride}}</span>
+        <span class="normal-label">Dash: {{data.dash}}</span>
+        <span class="rollable roll-click normal-label" data-roll="speed">Sprint: {{data.traits.speed.dice}}</span>
+        <span class="normal-label">Run: {{data.run}}</span>
+    </div>
+    <div class="grid grid-2col">
+        <div class="rollable roll-soak flex-group-center flex-tight" data-roll="body">
+            <span class="normal-label">Soak Roll</span>
+        </div>
+        <div class="rollable roll-defense flex-group-center flex-tight" data-roll="speed,dodge">
+            <span class="normal-label">Dodge Roll</span>
+        </div>
+    </div>
+    <div>
+        <ol class="items-list">
+            {{#each actor.weapons as |item id|}}
+            {{#if item.data.showInBattleStats}}
+            <li class="item flexrow" data-item-id="{{item._id}}">
+                <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+                <h4 title="Effects: {{item.data.effect}}&#013;Descriptors: {{item.data.descriptors}}" class="item-name">{{item.name}}</h4>
+                <div class="item-controls flexrow">
+                    {{#if item.data.attackDice}}<a class="rollable roll-item" title="Attack with {{item.name}}" data-roll="1" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-attack.svg" width="24" height="24" /></a>{{/if}}
+                    {{#if item.data.useSpark}}<a class="rollable roll-item" title="Spark Die: {{item.data.sparkDie}}" data-roll="4" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-spark.svg" width="24" height="24" /></a>{{/if}}
+                    <div></div>
+                    {{#if item.data.defenseDice}}<a class="rollable roll-item" title="Parry with {{item.name}}" data-roll="2" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-parry.svg" width="24" height="24" /></a>{{/if}}
+                    <div></div>
+                    {{#if item.data.counterDice}}<a class="rollable roll-item" title="Counter with {{item.name}}" data-roll="3" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-counter.svg" width="24" height="24" /></a>{{/if}}
+                </div>
+            </li>
+            {{/if}}
+            {{/each}}
+            {{#each actor.armors as |item id|}}
+            {{#if item.data.showInBattleStats}}
+            <li class="item flexrow" data-item-id="{{item._id}}">
+                <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+                <h4 class="item-name">{{item.name}}</h4>
+                <div class="item-controls">
+                    <a class="rollable roll-item-change" title="{{#if item.data.worn}}Take Off{{else}}Wear{{/if}}" data-roll="2" data-item="{{item._id}}"><span>{{#if item.data.worn}}Worn{{else}}Off{{/if}}</span></a>
+                </div>
+            </li>
+            {{/if}}
+            {{/each}}
+            {{#each actor.shields as |item id|}}
+            {{#if item.data.showInBattleStats}}
+            <li class="item flexrow" data-item-id="{{item._id}}">
+                <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+                <h4 class="item-name">{{item.name}}</h4>
+                <div class="item-controls">
+                    <a class="rollable roll-item-change" title="{{#if item.data.held}}Unequip{{else}}Equip{{/if}}" data-roll="3" data-item="{{item._id}}"><span>{{#if item.data.held}}Held{{else}}Off{{/if}}</span></a>
+                </div>
+            </li>
+            {{/if}}
+            {{/each}}
+            {{#each actor.gifts as |item id|}}
+            {{#if item.data.showInBattleStats}}
+            <li class="item flexrow" data-item-id="{{item._id}}">
+                <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+                <h4 class="item-name">{{item.name}}</h4>
+                <div class="item-controls">
+                    {{#if item.data.useDice}}<a class="rollable roll-item" title="Use Gift in a roll" data-roll="0" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/gift-use.svg" width="24" height="24" /></a>{{/if}}
+                </div>
+                <div class="item-controls">
+                    {{#if item.data.exhaustWhenUsed}}<a class="rollable roll-item-change" title="{{#if item.data.exhausted}}Un-exhaust{{else}}Exhaust{{/if}}" data-roll="1" data-item="{{item._id}}"><span>{{#if item.data.exhausted}}Exhausted{{else}}Refreshed{{/if}}</span></a>{{/if}}
+                </div>
+            </li>
+            {{/if}}
+            {{/each}}
+            {{#each actor.gear as |item id|}}
+            {{#if item.data.showInBattleStats}}
+            <li class="item flexrow" data-item-id="{{item._id}}">
+                <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+                <h4 class="item-name">{{item.name}}</h4>
+                {{#if (eq item.type "illumination")}}
+                <div class="item-controls flexrow">
+                    <a class="rollable roll-item" title="{{#if item.data.lighted}}Douse{{else}}Light{{/if}} {{item.name}}" data-roll="5" data-item="{{item._id}}"><img src="{{#if item.data.lighted}}systems/ironclaw2e/icons/illumination-light.svg{{else}}systems/ironclaw2e/icons/illumination-douse.svg{{/if}}" width="24" height="24" /></a>
+                </div>
+                {{/if}}
+            </li>
+            {{/if}}
+            {{/each}}
+        </ol>
+    </div>
+</div>
