@@ -383,7 +383,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const element = event.currentTarget;
         const dataset = element.dataset;
 
-        this.actor.deleteEffect(dataset.id);
+        this.actor.deleteEffect(dataset.id, true);
     }
 
     /**

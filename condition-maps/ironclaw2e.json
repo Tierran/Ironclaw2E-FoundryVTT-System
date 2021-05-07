@@ -223,6 +223,23 @@
       }
     },
     {
+      "id": "cannot-move",
+      "name": "Cannot Move",
+      "icon": "systems/ironclaw2e/icons/status/cantmove.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.8X3gh1U1g5NQxwbA]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
       "id": "fatigued",
       "name": "Fatigued",
       "icon": "icons/svg/degen.svg",
@@ -412,7 +429,7 @@
     {
       "id": "immobilized",
       "name": "Immobilized",
-      "icon": "icons/svg/net.svg",
+      "icon": "icons/svg/mountain.svg",
       "referenceType": "compendium.journalEntry",
       "compendium": "ironclaw2e.statuseffects",
       "referenceId": "@Compendium[ironclaw2e.statuseffects.lveZKbwsOHC8wg25]",
@@ -512,6 +529,23 @@
       }
     },
     {
+      "id": "all-fours",
+      "name": "All Fours",
+      "icon": "icons/svg/pawprint.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.MItXHxvNgfSCFenc]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
       "id": "flying",
       "name": "Flying",
       "icon": "icons/svg/wing.svg",
@@ -529,12 +563,12 @@
       }
     },
     {
-      "id": "all-fours",
-      "name": "All Fours",
-      "icon": "icons/svg/pawprint.svg",
+      "id": "grappled",
+      "name": "Grappled",
+      "icon": "icons/svg/net.svg",
       "referenceType": "compendium.journalEntry",
       "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.MItXHxvNgfSCFenc]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.lQRKvbZYOo7izSdT]",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,

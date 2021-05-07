@@ -52,6 +52,24 @@ Hooks.once('init', async function () {
         config: true
     });
 
+    game.settings.register("ironclaw2e", "manageEncumbranceAuto", {
+        name: "Manage encumbrance automatically:",
+        hint: "If checked, the system will automatically manage Burdened and Over-Burdened statuses for actors, based on their carried weight and worn armors.",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: true
+    });
+
+    game.settings.register("ironclaw2e", "coinsHaveWeight", {
+        name: "Make coins have weight:",
+        hint: "If checked, the weight of coins will be added to the encumbrance of the actor.",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: true
+    });
+
     // If you need to add Handlebars helpers, here are a few useful examples:
     Handlebars.registerHelper('concat', function () {
         var outStr = '';

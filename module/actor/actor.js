@@ -48,8 +48,9 @@ export class Ironclaw2EActor extends Actor {
 
         this._processTraits(actorData);
         this._processSkills(actorData);
-        this._processBattleData(actorData);
         this._processCoinageData(actorData);
+        this._processItemData(actorData);
+        this._processBattleData(actorData);
     }
 
     /**
@@ -60,8 +61,9 @@ export class Ironclaw2EActor extends Actor {
 
         this._processTraits(actorData);
         this._processSkills(actorData);
-        this._processBattleData(actorData);
         this._processCoinageData(actorData);
+        this._processItemData(actorData);
+        this._processBattleData(actorData);
     }
 
     /**
@@ -71,6 +73,7 @@ export class Ironclaw2EActor extends Actor {
         const data = actorData.data;
 
         this._processTraits(actorData);
+        this._processItemData(actorData);
         this._processBattleData(actorData);
     }
 
@@ -164,7 +167,7 @@ export class Ironclaw2EActor extends Actor {
 
         // Stride setup
         data.stride = 1 + stridebonus;
-        if (hasConditionIronclaw(["Slowed", "Immobilized", "Half-Buried"], this)) {
+        if (hasConditionIronclaw(["Slowed", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
             data.stride = 0;
         }
 
@@ -176,13 +179,13 @@ export class Ironclaw2EActor extends Actor {
         else {
             // Dash setup
             data.dash = Math.round(speedint / 2) + (bodyint > speedint ? 1 : 0) + dashbonus;
-            if (hasConditionIronclaw(["Burdened", "Blinded", "Slowed", "Immobilized", "Half-Buried"], this)) {
+            if (hasConditionIronclaw(["Burdened", "Blinded", "Slowed", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
                 data.dash = 0;
             }
 
             // Run setup
             data.run = bodyint + speedint + data.dash + runbonus;
-            if (hasConditionIronclaw(["Over-Burdened", "Immobilized", "Half-Buried"], this)) {
+            if (hasConditionIronclaw(["Over-Burdened", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
                 data.run = 0;
             }
         }
@@ -203,14 +206,80 @@ export class Ironclaw2EActor extends Actor {
             }
 
             currency.totalValue = (currency.value.includes(";") ? currency.amount / parseInt(currency.value.slice(1)) : currency.amount * parseInt(currency.value));
-            currency.totalWeight = currency.weight * currency.amount;
+            currency.totalWeight = (currency.weight * currency.amount) / 6350;
             currency.parsedSign = Number.isInteger(currency.sign) ? String.fromCodePoint([currency.sign]) : "";
 
             allvalue += currency.totalValue;
             allweight += currency.totalWeight;
         }
-        data.coinageValue = Math.floor(allvalue).toString() + String.fromCodePoint([208]);
+        data.coinageValue = Math.floor(allvalue).toString() + String.fromCodePoint([data.coinage.denar.sign]);
         data.coinageWeight = allweight;
+    }
+
+    /**
+     * Process derived data from items 
+     */
+    _processItemData(actorData) {
+        const data = actorData.data;
+        const gear = this.items;
+
+        let totalweight = 0;
+        let totalarmors = 0;
+        let strengthlevel = 0;
+        let hasgiant = 0;
+        for (let item of gear) {
+
+            if (item.data.data.totalWeight && !isNaN(item.data.data.totalWeight)) {
+                totalweight += item.data.data.totalWeight; // Check that the value exists and is not a NaN, then add it to totaled weight
+            }
+            
+            if (item.data.type === 'armor' && item.data.data.worn === true) {
+                totalarmors++;
+            }
+
+            // Encumbrance limit gift checks
+            if (item.data.type === 'gift' && makeStatCompareReady(item.data.name) == "strength") {
+                strengthlevel = strengthlevel > 1 ? strengthlevel : 1; // Check if improvedstrength has already been processed, in which case, keep it where it is
+            }
+            if (item.data.type === 'gift' && makeStatCompareReady(item.data.name) == "improvedstrength") {
+                strengthlevel = 2;
+            }
+            if (item.data.type === 'gift' && makeStatCompareReady(item.data.name) == "giant") {
+                hasgiant = 1;
+            }
+        }
+
+        const bodystr = data.traits.body.dice.split("d");
+        const bodyint = parseInt(bodystr[bodystr.length - 1].trim());
+
+        data.encumbranceNone = (bodyint / 2) - 1 + strengthlevel + hasgiant;
+        data.encumbranceBurdened = bodyint - 1 + strengthlevel * 2 + hasgiant * 2;
+        data.encumbranceOverBurdened = (bodyint / 2) * 3 - 1 + strengthlevel * 3 + hasgiant * 3;
+
+        const coinshaveweight = game.settings.get("ironclaw2e", "coinsHaveWeight");
+        if (coinshaveweight === true && data.coinageWeight) {
+            totalweight += data.coinageWeight;
+        }
+        data.totalWeight = totalweight;
+        data.totalArmors = totalarmors;
+
+        const manageburdened = game.settings.get("ironclaw2e", "manageEncumbranceAuto");
+        if (manageburdened) {
+            if (totalweight > data.encumbranceOverBurdened || totalarmors > 3) {
+                this.addEffect(["Burdened", "Over-Burdened", "Cannot Move"]);
+            }
+            else if (totalweight > data.encumbranceBurdened || totalarmors == 3) {
+                this.deleteEffect(["Cannot Move"], false);
+                this.addEffect(["Burdened", "Over-Burdened"]);
+            }
+            else if (totalweight > data.encumbranceNone || totalarmors == 2) {
+                this.deleteEffect(["Over-Burdened", "Cannot Move"], false);
+                this.addEffect(["Burdened"]);
+            }
+            else {
+                this.deleteEffect(["Burdened", "Over-Burdened", "Cannot Move"], false);
+            }
+        }
     }
 
     /**
@@ -311,7 +380,7 @@ export class Ironclaw2EActor extends Actor {
         addConditionIronclaw(condition, this);
     }
 
-    async deleteEffect(condition, isid = true) {
+    async deleteEffect(condition, isid = false) {
         if (isid) {
             await this.deleteEmbeddedEntity("ActiveEffect", condition);
         }

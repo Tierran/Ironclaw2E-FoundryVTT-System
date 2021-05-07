@@ -142,6 +142,10 @@
       },
       "baseAttributes": {
         "attributes": {
+          "height": "",
+          "weight": "",
+          "age": "",
+          "gender": "",
           "habitat": "",
           "diet": "",
           "cycle": "",
