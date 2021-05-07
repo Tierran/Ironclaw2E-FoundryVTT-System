@@ -54,7 +54,7 @@ Hooks.once('init', async function () {
 
     game.settings.register("ironclaw2e", "manageEncumbranceAuto", {
         name: "Manage encumbrance automatically:",
-        hint: "If checked, the system will automatically manage Burdened and Over-Burdened statuses for actors, based on their carried weight and worn armors.",
+        hint: "If checked, the system will automatically manage Burdened, Over-Burdened and Cannot Move statuses for actors, based on their carried weight and worn armors. Do not try to change them manually when active, doing so is likely to cause errors.",
         scope: "world",
         type: Boolean,
         default: false,
