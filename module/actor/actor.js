@@ -675,7 +675,7 @@ export class Ironclaw2EActor extends Actor {
      * @param {number} tnnum TN to use
      * @param {string} extradice Default extra dice to use for the bottom one-line slot
      * @param {string} otherinputs HTML string to add to the dialog
-     * @param {[string, number[]]} otherdice An array of keys and dice arrays, keys to be used with the added HTML for checkboxes in case the other dice can be switched off
+     * @param {[string | number[]]} otherdice An array of keys (even indices) and dice arrays (odd indices), keys to be used for UI information and with the added HTML for checkboxes in case the other dice can be switched off
      * @param successfunc Callback to execute after going through with the macro, will not execute if cancelled out
      */
     popupSelectRolled(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherdice = [], successfunc = null) {
