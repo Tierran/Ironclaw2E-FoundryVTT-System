@@ -15,7 +15,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         return mergeObject(super.defaultOptions, {
             classes: ["ironclaw2e", "sheet", "actor"],
             width: 800,
-            height: 640,
+            height: 720,
             tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }]
         });
     }

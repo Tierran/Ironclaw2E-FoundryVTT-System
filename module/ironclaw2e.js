@@ -70,7 +70,7 @@ Hooks.once('init', async function () {
         config: true
     });
 
-    // If you need to add Handlebars helpers, here are a few useful examples:
+    // Handlebars helper registration:
     Handlebars.registerHelper('concat', function () {
         var outStr = '';
         for (var arg in arguments) {
@@ -87,6 +87,10 @@ Hooks.once('init', async function () {
 
     Handlebars.registerHelper('equalOrNothing', function (str, compare) {
         return str.length == 0 || makeStatCompareReady(str) == compare;
+    });
+
+    Handlebars.registerHelper('valueRoundTo', function (val, roundto) {
+        return val.toFixed(roundto);
     });
 });
 

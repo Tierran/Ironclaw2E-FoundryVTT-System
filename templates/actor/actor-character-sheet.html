@@ -181,7 +181,9 @@
         <div class="tab items" data-group="primary" data-tab="items">
             <div>
                 <h3 class="header-label">Coinage:</h3>
-                <span class="normal-label allow-selection">Total value in denarii: {{data.coinageValue}}</span>
+                <span class="bold-text allow-selection">Total value in Denarii: {{data.coinageValue}}</span>
+                <div></div>
+                <span class="bold-text allow-selection">Total weight of coins: {{valueRoundTo data.coinageWeight 2}} stones</span>
                 <div class="grid grid-4col">
                     {{#each data.coinage as |currency id|}}
                     <div class="flexcol flex-group-center flex-tight">
@@ -192,6 +194,7 @@
                 </div>
             </div>
             <h3 class="header-label">Items:</h3>
+            <span class="bold-text allow-selection">Total carried weight: {{valueRoundTo data.totalWeight 2}} stones</span>
             <ol class="items-list">
                 <li class="item flexrow item-header">
                     <div class="item-image"></div>
@@ -222,8 +225,12 @@
             </ol>
         </div>
 
-        {{!-- Owned Weapons Tab --}}
+        {{!-- Owned Combat Gear Tab --}}
         <div class="tab weapons" data-group="primary" data-tab="weapons">
+            <div class="flexcol">
+                <span class="bold-text allow-selection">Total carried weight: {{valueRoundTo data.totalWeight 2}} stones</span>
+                <span class="bold-text allow-selection">Number of armors worn: {{data.totalArmors}}</span>
+            </div>
             <ol class="items-list">
                 <li class="item flexrow item-header">
                     <div class="item-image"></div>
