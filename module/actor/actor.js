@@ -8,6 +8,7 @@ import { findActorToken } from "../helpers.js";
 import { findInItems } from "../helpers.js";
 import { checkForPrechecked } from "../helpers.js";
 import { nullCheckConcat } from "../helpers.js";
+import { splitSingleDiceString } from "../helpers.js";
 // From the combat-utility-belt
 import { hasConditionIronclaw } from "../unified.js";
 import { addConditionIronclaw } from "../unified.js";
@@ -160,35 +161,35 @@ export class Ironclaw2EActor extends Actor {
             }
         }
 
-        let speedstr = data.traits.speed.dice.split("d");
-        let speedint = parseInt(speedstr[speedstr.length - 1].trim());
+        let speedarr = splitSingleDiceString(data.traits.speed.dice);
+        let bodyarr = splitSingleDiceString(data.traits.body.dice);
+
+        if (!Array.isArray(speedarr) || !Array.isArray(bodyarr)) {
+            console.error("Battle data process failed, unable to parse dice for " + actorData.name);
+            data.stride = 0;
+            data.dash = 0;
+            data.run = 0;
+        }
+
+        let speedint = speedarr[1];
+        let bodyint = bodyarr[1];
         if (speedint > 8 && hasConditionIronclaw("Burdened", this)) speedint = 8;
-        let bodystr = data.traits.body.dice.split("d");
-        let bodyint = parseInt(bodystr[bodystr.length - 1].trim());
 
         // Stride setup
         data.stride = 1 + stridebonus;
         if (hasConditionIronclaw(["Slowed", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
             data.stride = 0;
         }
-
-        if (isNaN(speedint) || isNaN(bodyint)) {
-            console.error("Battle data process failed, unable to parse dice for " + actorData.name);
+        // Dash setup
+        data.dash = Math.round(speedint / 2) + (bodyint > speedint ? 1 : 0) + dashbonus;
+        if (hasConditionIronclaw(["Burdened", "Blinded", "Slowed", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
             data.dash = 0;
-            data.run = 0;
         }
-        else {
-            // Dash setup
-            data.dash = Math.round(speedint / 2) + (bodyint > speedint ? 1 : 0) + dashbonus;
-            if (hasConditionIronclaw(["Burdened", "Blinded", "Slowed", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
-                data.dash = 0;
-            }
 
-            // Run setup
-            data.run = bodyint + speedint + data.dash + runbonus;
-            if (hasConditionIronclaw(["Over-Burdened", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
-                data.run = 0;
-            }
+        // Run setup
+        data.run = bodyint + speedint + data.dash + runbonus;
+        if (hasConditionIronclaw(["Over-Burdened", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
+            data.run = 0;
         }
     }
 
@@ -250,12 +251,15 @@ export class Ironclaw2EActor extends Actor {
             }
         }
 
-        const bodystr = data.traits.body.dice.split("d");
-        const bodyint = parseInt(bodystr[bodystr.length - 1].trim());
+        const bodyarr = splitSingleDiceString(data.traits.body.dice);
+        if (!Array.isArray(bodyarr)) {
+            console.error("Unable to parse body die for " + actorData.name);
+            return;
+        }
 
-        data.encumbranceNone = (bodyint / 2) - 1 + strengthlevel + hasgiant;
-        data.encumbranceBurdened = bodyint - 1 + strengthlevel * 2 + hasgiant * 2;
-        data.encumbranceOverBurdened = (bodyint / 2) * 3 - 1 + strengthlevel * 3 + hasgiant * 3;
+        data.encumbranceNone = Math.round(((bodyarr[1] / 2) - 1) * bodyarr[0] + strengthlevel + hasgiant);
+        data.encumbranceBurdened = Math.round((bodyarr[1] - 1) * bodyarr[0] + strengthlevel * 2 + hasgiant * 2);
+        data.encumbranceOverBurdened = Math.round(((bodyarr[1] / 2) * 3 - 1) * bodyarr[0] + strengthlevel * 3 + hasgiant * 3);
 
         const coinshaveweight = game.settings.get("ironclaw2e", "coinsHaveWeight");
         if (coinshaveweight === true && data.coinageWeight) {

@@ -228,6 +228,12 @@
         {{!-- Owned Combat Gear Tab --}}
         <div class="tab weapons" data-group="primary" data-tab="weapons">
             <div class="flexcol">
+                <div class="flexrow flex-group-left flex-tight">
+                    <span class="resource-label">Encumbrance:</span>
+                    <span class="normal-label">None: {{data.encumbranceNone}}</span>
+                    <span class="normal-label">Burdened: {{data.encumbranceBurdened}}</span>
+                    <span class="normal-label">Over-Burdened: {{data.encumbranceOverBurdened}}</span>
+                </div>
                 <span class="bold-text allow-selection">Total carried weight: {{valueRoundTo data.totalWeight 2}} stones</span>
                 <span class="bold-text allow-selection">Number of armors worn: {{data.totalArmors}}</span>
             </div>

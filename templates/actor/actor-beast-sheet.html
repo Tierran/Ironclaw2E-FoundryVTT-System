@@ -146,6 +146,12 @@
         {{!-- Owned Items Tab --}}
         <div class="tab items" data-group="primary" data-tab="items">
             <h3 class="header-label">Items:</h3>
+            <div class="flexrow flex-group-left flex-tight">
+                <span class="resource-label">Encumbrance:</span>
+                <span class="normal-label">None: {{data.encumbranceNone}}</span>
+                <span class="normal-label">Burdened: {{data.encumbranceBurdened}}</span>
+                <span class="normal-label">Over-Burdened: {{data.encumbranceOverBurdened}}</span>
+            </div>
             <span class="bold-text allow-selection">Total carried weight: {{valueRoundTo data.totalWeight 2}} stones</span>
             <ol class="items-list">
                 <li class="item flexrow item-header">

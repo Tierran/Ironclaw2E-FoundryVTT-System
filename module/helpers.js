@@ -16,18 +16,13 @@ export function findTotalDice(dicestring) {
 
     let foos = dicestring.split(",");
     for (let i = 0; i < foos.length; ++i) {
-        let bar = foos[i].trim();
-        let index = bar.search(/d/i);
-        if (index == -1)
+        let bar = splitSingleDiceString(foos[i]);
+        if (!Array.isArray(bar))
             continue;
-        let total = 0, sides = 0;
-        if (index == 0)
-            total = 1;
-        else
-            total = parseInt(bar.slice(0, index));
-        sides = parseInt(bar.slice(index + 1));
 
-        if (sides == 0 || isNaN(total))
+        let total = bar[0], sides = bar[1];
+
+        if (total == 0 || sides == 0)
             continue;
         else if (sides == 12)
             totaldice[0] += total;
@@ -42,9 +37,30 @@ export function findTotalDice(dicestring) {
         else
             console.log("Non-standard dice found while totaling up dice: " + dicestring);
     }
-    //if (totaldice[0] + totaldice[1] + totaldice[2] + totaldice[3] + totaldice[4] == 0)
-    //    console.log("No dice found at all! Was this intentional?: " + dicestring);
     return totaldice;
+}
+
+/**
+ * Helper function to split a single part of a dice string, eg. "3d12"
+ * @param {string} dicestring The single dice to be separated into two
+ * @returns {number[] | null} Returns a two-part array, first containing the number of dice, second the sides of the die used; returns null if the input cannot be parsed
+ */
+export function splitSingleDiceString(dicestring) {
+    let bar = dicestring.trim();
+    let index = bar.search(/d/i); // Search for the letter d in the string
+    if (index == -1)
+        return null; // If none found, just return null
+    let total = 0, sides = 0;
+    if (index == 0) // If d is the first character, take it to mean a single die
+        total = 1;
+    else
+        total = parseInt(bar.slice(0, index)); // Otherwise slice the string at d and parse the first part for the number of dice
+    sides = parseInt(bar.slice(index + 1)); // Slice the string at d and parse the second part for the sides of the die
+
+    if (isNaN(total) || isNaN(sides))
+        return null; // If either of the variables end up as NaN, return null
+
+    return [total, sides]; // Return total and sides as an array
 }
 
 /**

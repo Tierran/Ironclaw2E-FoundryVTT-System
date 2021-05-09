@@ -16,7 +16,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             classes: ["ironclaw2e", "sheet", "actor"],
             width: 800,
             height: 720,
-            tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }]
+            tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "battlestats" }]
         });
     }
 
