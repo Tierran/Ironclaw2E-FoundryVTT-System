@@ -71,6 +71,15 @@ Hooks.once('init', async function () {
         config: true
     });
 
+    game.settings.register("ironclaw2e", "autoPrototypeSetup", {
+        name: "Auto-setup prototype tokens:",
+        hint: "If checked, newly created actors will have their prototype token's attributes use type-specific defaults.",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: true
+    });
+
     // Handlebars helper registration:
     Handlebars.registerHelper('concat', function () {
         var outStr = '';
@@ -143,6 +152,20 @@ async function loadHandleBarTemplates() {
 
 Hooks.once("init", function () {
     loadHandleBarTemplates();
+});
+
+Hooks.on("preCreateActor", function (createData) {
+    const autoPrototypeSetup = game.settings.get("ironclaw2e", "autoPrototypeSetup");
+    if (!autoPrototypeSetup) // If not enabled, immediately return out of the hook
+        return true;
+
+    createData.token = {};
+    createData.token.displayName = 20;
+
+    if (createData.type === 'character') {
+        createData.token.actorLink = true;
+        createData.token.vision = true;
+    }
 });
 
 /* -------------------------------------------- */
