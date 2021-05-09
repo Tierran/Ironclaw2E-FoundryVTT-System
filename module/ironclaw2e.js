@@ -17,6 +17,7 @@ Hooks.once('init', async function () {
         Ironclaw2EItem,
         rollItemMacro,
         popupMacro,
+        popupSelect,
         rollTargetNumberDialog,
         rollHighestDialog,
         rollTargetNumberOneLine,
@@ -222,4 +223,21 @@ function popupMacro(popup) {
             return actor.popupSelectRolled();
             break;
     }
+}
+
+/**
+ * Popup the standard dice pool selection dialog with some readied data
+ * @param {string[]} prechecked Array of skills to autocheck on the dialog, must be in lowercase and without spaces
+ * @param {boolean} tnyes Whether to use a TN, true for yes
+ * @param {number} tnnum TN to use, ignored if highest roll
+ * @param {string} extradice Default extra dice to use for the bottom one-line slot
+ */
+function popupSelect(prechecked = [], tnyes = false, tnnum = 3, extradice = "") {
+    const speaker = ChatMessage.getSpeaker();
+    let actor;
+    if (speaker.token) actor = game.actors.tokens[speaker.token];
+    if (!actor) actor = game.actors.get(speaker.actor);
+    if (!actor) return ui.notifications.warn("No actor found to popup macro for: " + speaker);
+
+    return actor.popupSelectRolled(prechecked, tnyes, tnnum, extradice);
 }

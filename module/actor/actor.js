@@ -612,7 +612,7 @@ export class Ironclaw2EActor extends Actor {
     /* -------------------------------------------- */
 
     /** Damage calculation popup */
-    popupDamage() {
+    popupDamage(readydamage = "") {
         let confirmed = false;
         let speaker = getMacroSpeaker(this);
         let addeddamage = 0;
@@ -628,7 +628,7 @@ export class Ironclaw2EActor extends Actor {
       </div>
       <div class="form-group">
        <label>Damage received:</label>
-	   <input id="damage" name="damage" value="" onfocus="this.select();"></input>
+	   <input id="damage" name="damage" value="${readydamage}" onfocus="this.select();"></input>
       </div>
       <div class="form-group">
        <label>Knockout Strike?</label>
@@ -671,7 +671,7 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /** Special condition adding popup */
-    popupAddCondition() {
+    popupAddCondition(readyname = "") {
         let confirmed = false;
         let speaker = getMacroSpeaker(this);
         let dlog = new Dialog({
@@ -683,7 +683,7 @@ export class Ironclaw2EActor extends Actor {
        <label>Condition to add:</label>
       </div>
 	  <div class="form-group">
-	   <input id="cond" name="cond" onfocus="this.select();"></input>
+	   <input id="cond" name="cond" value="${readyname}" onfocus="this.select();"></input>
       </div>
      </form>
      `,
