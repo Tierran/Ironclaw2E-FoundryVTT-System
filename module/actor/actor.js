@@ -233,7 +233,7 @@ export class Ironclaw2EActor extends Actor {
             if (item.data.data.totalWeight && !isNaN(item.data.data.totalWeight)) {
                 totalweight += item.data.data.totalWeight; // Check that the value exists and is not a NaN, then add it to totaled weight
             }
-            
+
             if (item.data.type === 'armor' && item.data.data.worn === true) {
                 totalarmors++;
             }
@@ -422,6 +422,39 @@ export class Ironclaw2EActor extends Actor {
                  <label class="normal-label">${armors[i].data.name}: ${reformDiceString(armors[i].data.data.armorArray, true)}</label>
 	             <input type="checkbox" id="${makeStatCompareReady(armors[i].data.name)}" name="${makeStatCompareReady(armors[i].data.name)}" checked></input>
                 </div>`+ "\n";
+        }
+
+        // Shield Soak
+        if (findInItems(this.items, "shieldsoak", "gift")) {
+            let shield = this.items.find(element => element.data.data.held === true);
+            if (shield) {
+                constructionkeys.push(shield.data.name);
+                constructionarray.push(shield.data.data.coverArray);
+                formconstruction += `<div class="form-group flexrow">
+                 <label class="normal-label">${shield.data.name}: ${reformDiceString(shield.data.data.coverArray, true)}</label>
+	             <input type="checkbox" id="${makeStatCompareReady(shield.data.name)}" name="${makeStatCompareReady(shield.data.name)}" checked></input>
+                </div>`+ "\n";
+            }
+        }
+
+        // Guard Soak
+        if (findInItems(this.items, "guardsoak", "gift")) {
+            if (hasConditionIronclaw("Guarding", this)) {
+                let veteran = findInItems(this.items, "veteran", "gift");
+                let guardbonus = [0, 0, 1, 0, 0];
+                let guardlabel = "Guard soak";
+                if (veteran) {
+                    guardbonus = veteran.data.data.giftArray;
+                    guardlabel = "Veteran guard soak";
+                }
+
+                constructionkeys.push(guardlabel);
+                constructionarray.push(guardbonus);
+                formconstruction += `<div class="form-group flexrow">
+                 <label class="normal-label">${guardlabel}: ${reformDiceString(guardbonus, true)}</label>
+	             <input type="checkbox" id="${makeStatCompareReady(guardlabel)}" name="${makeStatCompareReady(guardlabel)}" checked></input>
+                </div>`+ "\n";
+            }
         }
 
         this.popupSelectRolled(prechecked, tnyes, tnnum, extradice, formconstruction + otherinputs, nullCheckConcat(constructionkeys, otherkeys), nullCheckConcat(constructionarray, otherdice), otherlabel, successfunc);
