@@ -4,8 +4,8 @@ import { reformDiceString } from "../helpers.js";
 import { splitStatsAndBonus } from "../helpers.js";
 import { getMacroSpeaker } from "../helpers.js";
 
-import { rollNormalOneLine } from "../dicerollers.js";
-import { rollOpposedOneLine } from "../dicerollers.js";
+import { rollTargetNumberOneLine } from "../dicerollers.js";
+import { rollHighestOneLine } from "../dicerollers.js";
 
 /**
  * Extend the basic Item for Ironclaw's systems.
@@ -319,13 +319,13 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        rollOpposedOneLine(data.sparkDie, "Rolling Spark die...", this.actor);
+        rollHighestOneLine(data.sparkDie, "Rolling Spark die...", this.actor);
     }
 
     /**
      * Common function to process roll data and send it to the actor's popup roll function
      * @param {string[]} stats Skills to autocheck on the dialog
-     * @param {number} tn Target number of the roll, -1 if opposed
+     * @param {number} tn Target number of the roll, -1 if highest
      * @param {string} diceid What to name the item dice
      * @param {number[]} dicearray The dice array of the item being rolled
      * @param {number} rolltype What type of popup function to use for the roll, mostly to allow automatic use gifts through special case hacks
@@ -353,10 +353,10 @@ export class Ironclaw2EItem extends Item {
                     this.actor.popupDefenseRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), "", true, callback);
                     break;
                 case 2: // Attack roll
-                    this.actor.popupAttackRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), "Effect:" + this.data.data.effect, callback);
+                    this.actor.popupAttackRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), (this.data.data.effect ? "Effect: " + this.data.data.effect : ""), callback);
                     break;
                 case 3: // Counter roll
-                    this.actor.popupCounterRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), "Effect:" + this.data.data.effect, callback);
+                    this.actor.popupCounterRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), (this.data.data.effect ? "Effect: " + this.data.data.effect : ""), callback);
                     break;
                 default:
                     console.warn("genericItemRoll defaulted when selecting a roll: " + rolltype);
@@ -368,9 +368,9 @@ export class Ironclaw2EItem extends Item {
         else {
             // For GM tests on items without actors
             if (tnyes)
-                rollNormalOneLine(usedtn, reformDiceString(dicearray));
+                rollTargetNumberOneLine(usedtn, reformDiceString(dicearray));
             else
-                rollOpposedOneLine(reformDiceString(dicearray));
+                rollHighestOneLine(reformDiceString(dicearray));
         }
     }
 

@@ -13,8 +13,8 @@ import { hasConditionIronclaw } from "../unified.js";
 import { addConditionIronclaw } from "../unified.js";
 import { removeConditionIronclaw } from "../unified.js";
 // The rest are for the supermassive function
-import { rollNormal } from "../dicerollers.js";
-import { rollOpposed } from "../dicerollers.js";
+import { rollTargetNumber } from "../dicerollers.js";
+import { rollHighest } from "../dicerollers.js";
 import { enforceLimit } from "../helpers.js";
 import { burdenedLimitedStat } from "../helpers.js";
 
@@ -843,8 +843,10 @@ export class Ironclaw2EActor extends Actor {
 
                     let labelgiven = false;
                     let label = "Rolling ";
-                    if (!IFTN)
-                        label += "opposed "
+                    if (IFTN)
+                        label += "against TN: ";
+                    else
+                        label += "highest: ";
 
                     if (hastraits) {
                         for (let [key, trait] of Object.entries(data.traits)) {
@@ -894,9 +896,9 @@ export class Ironclaw2EActor extends Actor {
                     }
 
                     if (IFTN)
-                        rollNormal(TN, totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
+                        rollTargetNumber(TN, totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
                     else
-                        rollOpposed(totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
+                        rollHighest(totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
 
                     if (successfunc && typeof (successfunc) == "function") {
                         successfunc();

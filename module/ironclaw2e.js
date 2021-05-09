@@ -4,10 +4,10 @@ import { Ironclaw2EActorSheet } from "./actor/actor-sheet.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { Ironclaw2EItemSheet } from "./item/item-sheet.js";
 
-import { rollNormalDialog } from "./dicerollers.js";
-import { rollOpposedDialog } from "./dicerollers.js";
-import { rollNormalOneLine } from "./dicerollers.js";
-import { rollOpposedOneLine } from "./dicerollers.js";
+import { rollTargetNumberDialog } from "./dicerollers.js";
+import { rollHighestDialog } from "./dicerollers.js";
+import { rollTargetNumberOneLine } from "./dicerollers.js";
+import { rollHighestOneLine } from "./dicerollers.js";
 import { makeStatCompareReady } from "./helpers.js";
 
 Hooks.once('init', async function () {
@@ -17,10 +17,10 @@ Hooks.once('init', async function () {
         Ironclaw2EItem,
         rollItemMacro,
         popupMacro,
-        rollNormalDialog,
-        rollOpposedDialog,
-        rollNormalOneLine,
-        rollOpposedOneLine
+        rollTargetNumberDialog,
+        rollHighestDialog,
+        rollTargetNumberOneLine,
+        rollHighestOneLine
     };
 
     /**

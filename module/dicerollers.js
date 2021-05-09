@@ -13,7 +13,7 @@ import { getMacroSpeaker } from "./helpers.js";
  * @param {Actor} rollingactor Optional value to display the roll as from a specific actor
  * @returns {Promise} The roll
  */
-export function rollNormal(tni, d12, d10, d8, d6, d4, label = "", rollingactor = null) {
+export function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", rollingactor = null) {
     let rollstring = formRoll(d12, d10, d8, d6, d4);
     if (rollstring.length == 0)
         return null;
@@ -63,7 +63,7 @@ export function rollNormal(tni, d12, d10, d8, d6, d4, label = "", rollingactor =
  * @param {Actor} rollingactor Optional value to display the roll as from a specific actor
  * @returns {Promise} The roll
  */
-export function rollOpposed(d12, d10, d8, d6, d4, label = "", rollingactor = null) {
+export function rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor = null) {
     let rollstring = formRoll(d12, d10, d8, d6, d4);
     if (rollstring.length == 0)
         return null;
@@ -85,11 +85,11 @@ export function rollOpposed(d12, d10, d8, d6, d4, label = "", rollingactor = nul
 /*  Dialog Macros                               */
 /* -------------------------------------------- */
 
-export function rollNormalDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0, label = "", rollingactor = null) {
+export function rollTargetNumberDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0, label = "", rollingactor = null) {
     let confirmed = false;
     let speaker = getMacroSpeaker(rollingactor);
     let dlog = new Dialog({
-        title: "Normal Roll for " + speaker.alias,
+        title: "Target Number Roll for " + speaker.alias,
         content: `
      <form>
       <div class="form-group">
@@ -146,18 +146,18 @@ export function rollNormalDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0, d6s = 0, d
                 let D6S = 0; if (D6SS.length != 0) D6S = parseInt(D6SS);
                 let D4SS = html.find('[name=d4s]')[0].value;
                 let D4S = 0; if (D4SS.length != 0) D4S = parseInt(D4SS);
-                rollNormal(TN, D12S, D10S, D8S, D6S, D4S, label, rollingactor);
+                rollTargetNumber(TN, D12S, D10S, D8S, D6S, D4S, label, rollingactor);
             }
         }
     });
     dlog.render(true);
 }
 
-export function rollOpposedDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0, label = "", rollingactor = null) {
+export function rollHighestDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0, label = "", rollingactor = null) {
     let confirmed = false;
     let speaker = getMacroSpeaker(rollingactor);
     let dlog = new Dialog({
-        title: "Opposed Roll for " + speaker.alias,
+        title: "Highest Roll for " + speaker.alias,
         content: `
      <form>
       <div class="form-group">
@@ -208,18 +208,18 @@ export function rollOpposedDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0,
                 let D6S = 0; if (D6SS.length != 0) D6S = parseInt(D6SS);
                 let D4SS = html.find('[name=d4s]')[0].value;
                 let D4S = 0; if (D4SS.length != 0) D4S = parseInt(D4SS);
-                rollOpposed(D12S, D10S, D8S, D6S, D4S, label, rollingactor);
+                rollHighest(D12S, D10S, D8S, D6S, D4S, label, rollingactor);
             }
         }
     });
     dlog.render(true);
 }
 
-export function rollNormalOneLine(tnnum = 3, readydice = "", label = "", rollingactor = null) {
+export function rollTargetNumberOneLine(tnnum = 3, readydice = "", label = "", rollingactor = null) {
     let confirmed = false;
     let speaker = getMacroSpeaker(rollingactor);
     let dlog = new Dialog({
-        title: "Normal Roll for " + speaker.alias,
+        title: "Target Number Roll for " + speaker.alias,
         content: `
      <form>
       <div class="form-group">
@@ -254,18 +254,18 @@ export function rollNormalOneLine(tnnum = 3, readydice = "", label = "", rolling
                 let TN = 0; if (TNSS.length != 0) TN = parseInt(TNSS);
                 let DICES = html.find('[name=dices]')[0].value;
                 let DICE = findTotalDice(DICES);
-                rollNormal(TN, DICE[0], DICE[1], DICE[2], DICE[3], DICE[4], label, rollingactor);
+                rollTargetNumber(TN, DICE[0], DICE[1], DICE[2], DICE[3], DICE[4], label, rollingactor);
             }
         }
     });
     dlog.render(true);
 }
 
-export function rollOpposedOneLine(readydice = "", label = "", rollingactor = null) {
+export function rollHighestOneLine(readydice = "", label = "", rollingactor = null) {
     let confirmed = false;
     let speaker = getMacroSpeaker(rollingactor);
     let dlog = new Dialog({
-        title: "Opposed Roll for " + speaker.alias,
+        title: "Highest Roll for " + speaker.alias,
         content: `
      <form>
       <div class="form-group">
@@ -294,7 +294,7 @@ export function rollOpposedOneLine(readydice = "", label = "", rollingactor = nu
             if (confirmed) {
                 let DICES = html.find('[name=dices]')[0].value;
                 let DICE = findTotalDice(DICES);
-                rollOpposed(DICE[0], DICE[1], DICE[2], DICE[3], DICE[4], label, rollingactor);
+                rollHighest(DICE[0], DICE[1], DICE[2], DICE[3], DICE[4], label, rollingactor);
             }
         }
     });

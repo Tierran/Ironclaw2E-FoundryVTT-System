@@ -1,7 +1,7 @@
-import { rollNormal } from "../dicerollers.js";
-import { rollOpposed } from "../dicerollers.js";
-import { rollNormalDialog } from "../dicerollers.js";
-import { rollOpposedDialog } from "../dicerollers.js";
+import { rollTargetNumber } from "../dicerollers.js";
+import { rollHighest } from "../dicerollers.js";
+import { rollTargetNumberDialog } from "../dicerollers.js";
+import { rollHighestDialog } from "../dicerollers.js";
 import { splitStatString } from "../helpers.js";
 
 /**
