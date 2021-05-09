@@ -307,3 +307,21 @@ export function checkForPrechecked(prechecked, givennames) {
 
     return prechecked.some(element => usednames.includes(element));
 }
+
+/**
+ * Helper function to check against nulls and other non-arrays when concating two arrays
+ * @param {any} foo First array to concat
+ * @param {any} bar Second array to concat
+ */
+export function nullCheckConcat(foo, bar) {
+    if (!Array.isArray(foo) || !Array.isArray(bar)) {
+        if (Array.isArray(foo) && !Array.isArray(bar))
+            return foo; // Only foo is an array, so just return it
+        else if (!Array.isArray(foo) && Array.isArray(bar))
+            return bar; // Only bar is an array, so just return it
+        else
+            return null; // Neither is an array, so abort completely and return null
+    }
+
+    return foo.concat(bar);
+}

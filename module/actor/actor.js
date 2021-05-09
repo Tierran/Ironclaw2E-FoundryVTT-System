@@ -7,6 +7,7 @@ import { getMacroSpeaker } from "../helpers.js";
 import { findActorToken } from "../helpers.js";
 import { findInItems } from "../helpers.js";
 import { checkForPrechecked } from "../helpers.js";
+import { nullCheckConcat } from "../helpers.js";
 // From the combat-utility-belt
 import { hasConditionIronclaw } from "../unified.js";
 import { addConditionIronclaw } from "../unified.js";
@@ -399,9 +400,10 @@ export class Ironclaw2EActor extends Actor {
     /*  Special Popup Macro Puukko Functions        */
     /* -------------------------------------------- */
 
-    popupSoakRoll(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherdice = [], successfunc = null) {
+    popupSoakRoll(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", successfunc = null) {
         const data = this.data.data;
         let formconstruction = ``;
+        let constructionkeys = [];
         let constructionarray = [];
 
         // Resolve
@@ -414,7 +416,7 @@ export class Ironclaw2EActor extends Actor {
         // Armor
         let armors = this.items.filter(element => element.data.data.worn === true);
         for (let i = 0; i < armors.length && i < 3; ++i) {
-            constructionarray.push(armors[i].data.name);
+            constructionkeys.push(armors[i].data.name);
             constructionarray.push(armors[i].data.data.armorArray);
             formconstruction += `<div class="form-group flexrow">
                  <label class="normal-label">${armors[i].data.name}: ${reformDiceString(armors[i].data.data.armorArray, true)}</label>
@@ -422,18 +424,19 @@ export class Ironclaw2EActor extends Actor {
                 </div>`+ "\n";
         }
 
-        this.popupSelectRolled(prechecked, tnyes, tnnum, extradice, formconstruction + otherinputs, constructionarray.concat(otherdice), successfunc);
+        this.popupSelectRolled(prechecked, tnyes, tnnum, extradice, formconstruction + otherinputs, nullCheckConcat(constructionkeys, otherkeys), nullCheckConcat(constructionarray, otherdice), otherlabel, successfunc);
     }
 
-    popupDefenseRoll(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherdice = [], isparry = false, successfunc = null) {
+    popupDefenseRoll(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", isparry = false, successfunc = null) {
         const data = this.data.data;
         let formconstruction = ``;
+        let constructionkeys = [];
         let constructionarray = [];
 
         // Shield cover die
         let shield = this.items.find(element => element.data.data.held === true);
         if (shield) {
-            constructionarray.push(shield.data.name);
+            constructionkeys.push(shield.data.name);
             constructionarray.push(shield.data.data.coverArray);
             formconstruction += `<div class="form-group flexrow">
                  <label class="normal-label">${shield.data.name}: ${reformDiceString(shield.data.data.coverArray, true)}</label>
@@ -446,7 +449,7 @@ export class Ironclaw2EActor extends Actor {
             let coward = findInItems(this.items, "coward", "gift");
             let flightofprey = findInItems(this.items, "flightoftheprey", "gift");
             if (flightofprey && coward && hasConditionIronclaw("Afraid", this)) {
-                constructionarray.push(flightofprey.data.name);
+                constructionkeys.push(flightofprey.data.name);
                 constructionarray.push(flightofprey.data.data.giftArray);
                 formconstruction += `<div class="form-group flexrow">
                  <label class="normal-label">${flightofprey.data.name}: ${reformDiceString(flightofprey.data.data.coverArray, true)}</label>
@@ -454,7 +457,7 @@ export class Ironclaw2EActor extends Actor {
                 </div>`+ "\n";
             }
             else if (coward && isparry == false && checkForPrechecked(prechecked, "dodge")) {
-                constructionarray.push(coward.data.name);
+                constructionkeys.push(coward.data.name);
                 constructionarray.push(coward.data.data.giftArray);
                 formconstruction += `<div class="form-group flexrow">
                  <label class="normal-label">${coward.data.name}: ${reformDiceString(coward.data.data.coverArray, true)}</label>
@@ -473,7 +476,7 @@ export class Ironclaw2EActor extends Actor {
                 guardlabel = "Veteran guarding";
             }
 
-            constructionarray.push(guardlabel);
+            constructionkeys.push(guardlabel);
             constructionarray.push(guardbonus);
             formconstruction += `<div class="form-group flexrow">
                  <label class="normal-label">${guardlabel}: ${reformDiceString(guardbonus, true)}</label>
@@ -492,20 +495,23 @@ export class Ironclaw2EActor extends Actor {
         // Focused Fighter bonus
         if (hasConditionIronclaw("Focused", this)) {
             let focused = findInItems(this.items, "focusedfighter", "gift");
-            constructionarray.push(focused.data.name);
-            constructionarray.push(focused.data.data.giftArray);
-            formconstruction += `<div class="form-group flexrow">
+            if (focused) {
+                constructionkeys.push(focused.data.name);
+                constructionarray.push(focused.data.data.giftArray);
+                formconstruction += `<div class="form-group flexrow">
                  <label class="normal-label">${focused.data.name}: ${reformDiceString(focused.data.data.coverArray, true)}</label>
 	             <input type="checkbox" id="${makeStatCompareReady(focused.data.name)}" name="${makeStatCompareReady(focused.data.name)}" checked></input>
                 </div>`+ "\n";
+            }
         }
 
-        this.popupSelectRolled(prechecked, tnyes, tnnum, extradice, formconstruction + otherinputs, constructionarray.concat(otherdice), successfunc);
+        this.popupSelectRolled(prechecked, tnyes, tnnum, extradice, formconstruction + otherinputs, nullCheckConcat(constructionkeys, otherkeys), nullCheckConcat(constructionarray, otherdice), otherlabel, successfunc);
     }
 
-    popupAttackRoll(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherdice = [], successfunc = null) {
+    popupAttackRoll(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", successfunc = null) {
         const data = this.data.data;
         let formconstruction = ``;
+        let constructionkeys = [];
         let constructionarray = [];
 
         // Strength die
@@ -516,7 +522,7 @@ export class Ironclaw2EActor extends Actor {
                 strength = superstrength ? superstrength : strength;
             }
             if (strength) {
-                constructionarray.push(strength.data.name);
+                constructionkeys.push(strength.data.name);
                 constructionarray.push(strength.data.data.giftArray);
                 formconstruction += `<div class="form-group flexrow">
                  <label class="normal-label">${strength.data.name}: ${reformDiceString(strength.data.data.giftArray, true)}</label>
@@ -525,12 +531,13 @@ export class Ironclaw2EActor extends Actor {
             }
         }
 
-        this.popupSelectRolled(prechecked, tnyes, tnnum, extradice, formconstruction + otherinputs, constructionarray.concat(otherdice), successfunc);
+        this.popupSelectRolled(prechecked, tnyes, tnnum, extradice, formconstruction + otherinputs, nullCheckConcat(constructionkeys, otherkeys), nullCheckConcat(constructionarray, otherdice), otherlabel, successfunc);
     }
 
-    popupCounterRoll(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherdice = [], successfunc = null) {
+    popupCounterRoll(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", successfunc = null) {
         const data = this.data.data;
         let formconstruction = ``;
+        let constructionkeys = [];
         let constructionarray = [];
 
         // Guarding bonus
@@ -543,7 +550,7 @@ export class Ironclaw2EActor extends Actor {
                 guardlabel = "Veteran guarding";
             }
 
-            constructionarray.push(guardlabel);
+            constructionkeys.push(guardlabel);
             constructionarray.push(guardbonus);
             formconstruction += `<div class="form-group flexrow">
                  <label class="normal-label">${guardlabel}: ${reformDiceString(guardbonus, true)}</label>
@@ -554,15 +561,17 @@ export class Ironclaw2EActor extends Actor {
         // Focused Fighter bonus
         if (hasConditionIronclaw("Focused", this)) {
             let focused = findInItems(this.items, "focusedfighter", "gift");
-            constructionarray.push(focused.data.name);
-            constructionarray.push(focused.data.data.giftArray);
-            formconstruction += `<div class="form-group flexrow">
+            if (focused) {
+                constructionkeys.push(focused.data.name);
+                constructionarray.push(focused.data.data.giftArray);
+                formconstruction += `<div class="form-group flexrow">
                  <label class="normal-label">${focused.data.name}: ${reformDiceString(focused.data.data.coverArray, true)}</label>
 	             <input type="checkbox" id="${makeStatCompareReady(focused.data.name)}" name="${makeStatCompareReady(focused.data.name)}" checked></input>
                 </div>`+ "\n";
+            }
         }
 
-        this.popupSelectRolled(prechecked, tnyes, tnnum, extradice, formconstruction + otherinputs, constructionarray.concat(otherdice), successfunc);
+        this.popupSelectRolled(prechecked, tnyes, tnnum, extradice, formconstruction + otherinputs, nullCheckConcat(constructionkeys, otherkeys), nullCheckConcat(constructionarray, otherdice), otherlabel, successfunc);
     }
 
     /* -------------------------------------------- */
@@ -675,10 +684,12 @@ export class Ironclaw2EActor extends Actor {
      * @param {number} tnnum TN to use
      * @param {string} extradice Default extra dice to use for the bottom one-line slot
      * @param {string} otherinputs HTML string to add to the dialog
-     * @param {[string | number[]]} otherdice An array of keys (even indices) and dice arrays (odd indices), keys to be used for UI information and with the added HTML for checkboxes in case the other dice can be switched off
+     * @param {[string]} otherkeys An array of keys, to be used for UI information and with the added HTML for checkboxes in case the other dice can be switched off
+     * @param {[number[]]} otherdice An array of dice arrays, the items should match exactly with their counterparts at otherkeys
+     * @param {string} otherlabel Text to postpend to the label
      * @param successfunc Callback to execute after going through with the macro, will not execute if cancelled out
      */
-    popupSelectRolled(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherdice = [], successfunc = null) {
+    popupSelectRolled(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", successfunc = null) {
         const data = this.data.data;
         let formconstruction = ``;
         let firstelement = "";
@@ -824,15 +835,15 @@ export class Ironclaw2EActor extends Actor {
                             }
                         }
                     }
-                    if (Array.isArray(otherdice) && otherdice.length > 0 && otherdice.length % 2 == 0) {
-                        for (let i = 0; i < otherdice.length; i += 2) {
-                            let OTHER = html.find(`[name=${makeStatCompareReady(otherdice[i])}]`);
+                    if (Array.isArray(otherdice) && Array.isArray(otherkeys) && otherdice.length > 0 && otherdice.length == otherkeys.length) {
+                        for (let i = 0; i < otherdice.length; i++) {
+                            let OTHER = html.find(`[name=${makeStatCompareReady(otherkeys[i])}]`);
                             let otherchecked = (hashtml && OTHER.length > 0 ? OTHER[0].checked : true);
                             if (otherchecked) {
                                 if (labelgiven)
                                     label += " + ";
-                                totaldice = addArrays(totaldice, otherdice[i + 1]);
-                                label += otherdice[i];
+                                totaldice = addArrays(totaldice, otherdice[i]);
+                                label += otherkeys[i];
                                 labelgiven = true;
                             }
                         }
@@ -842,6 +853,8 @@ export class Ironclaw2EActor extends Actor {
                         totaldice = addArrays(totaldice, DICE);
                     }
                     label += ".";
+                    if (typeof (otherlabel) === 'string' && otherlabel.length > 0)
+                        label += "<br>" + otherlabel;
 
                     if (uselimit) {
                         totaldice = enforceLimit(totaldice, limit);
