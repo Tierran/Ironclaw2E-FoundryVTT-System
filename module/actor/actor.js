@@ -899,13 +899,14 @@ export class Ironclaw2EActor extends Actor {
                         totaldice = enforceLimit(totaldice, limit);
                     }
 
+                    let roll;
                     if (IFTN)
-                        rollTargetNumber(TN, totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
+                        roll = rollTargetNumber(TN, totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
                     else
-                        rollHighest(totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
+                        roll = rollHighest(totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
 
                     if (successfunc && typeof (successfunc) == "function") {
-                        successfunc();
+                        successfunc(roll);
                     }
                 }
             }

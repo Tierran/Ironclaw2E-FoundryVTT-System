@@ -145,15 +145,15 @@ export function convertCamelCase(camelCase) {
 
 /**
  * Helper function to split a string of stat names, separated by commas, into an array containing comparison-ready versions of the component strings, to allow for easy checks
- * @param {any} stats String containing stat names, separated by commas and containing no spaces inside the names
+ * @param {string} stats String containing stat names, separated by commas and containing no spaces inside the names
  * @returns {string[]} An array of strings containing the stat names
  */
 export function splitStatString(stats) {
-    let statarray = [];
     if (typeof (stats) != "string") {
         console.warn("Something that was not a string inputted to skill splitter: " + stats);
         return statarray;
     }
+    let statarray = [];
 
     let foos = stats.split(",");
     for (let i = 0; i < foos.length; ++i) {
@@ -164,17 +164,16 @@ export function splitStatString(stats) {
 
 /**
  * Helper function to split a string containing stat names, separated by commas, as well as extra non-stat dice in dice notation, which are separated from the stats by a semicolon and from each other by commas
- * @param {any} fullset String containing stat names, separated by commas, and a separate section containing extra dice in dice notation, separated from each other by commas an from the stat names by a semicolon
+ * @param {string} fullset String containing stat names, separated by commas, and a separate section containing extra dice in dice notation, separated from each other by commas an from the stat names by a semicolon
  * @returns {[string[], string]} Returns an array first containing the array of split-up stat names, and second the string of the extra dice
  */
 export function splitStatsAndBonus(fullset) {
-    let statarray = [];
-    let dicestring = "";
-
     if (typeof (fullset) != "string") {
         console.warn("Something that was not a string inputted to stat and bonus splitter: " + fullset);
         return [statarray, dicestring];
     }
+    let statarray = [];
+    let dicestring = "";
 
     let firstsplit = fullset.split(";");
 
