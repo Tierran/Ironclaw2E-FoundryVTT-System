@@ -8,6 +8,8 @@ import { rollTargetNumberDialog } from "./dicerollers.js";
 import { rollHighestDialog } from "./dicerollers.js";
 import { rollTargetNumberOneLine } from "./dicerollers.js";
 import { rollHighestOneLine } from "./dicerollers.js";
+import { copyToRollTNDialog } from "./dicerollers.js";
+import { copyToRollHighest } from "./dicerollers.js";
 import { makeStatCompareReady } from "./helpers.js";
 
 Hooks.once('init', async function () {
@@ -167,6 +169,52 @@ Hooks.on("preCreateActor", function (createData) {
         createData.token.vision = true;
     }
 });
+
+function addIronclawChatLogContext(html, entryOptions) {
+    entryOptions.push({
+        name: "Copy To TN",
+        icon: '<i class="fas fa-bullseye"></i>',
+        condition: li => {
+            const message = game.messages.get(li.data("messageId"));
+            const type = message.getFlag("ironclaw2e", "rollType");
+            const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type != "TN";
+            return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+        },
+        callback: li => {
+            const message = game.messages.get(li.data("messageId"));
+            copyToRollTNDialog(message);
+        }
+    }, {
+        name: "Change TN",
+        icon: '<i class="fas fa-bullseye"></i>',
+        condition: li => {
+            const message = game.messages.get(li.data("messageId"));
+            const type = message.getFlag("ironclaw2e", "rollType");
+            const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type == "TN";
+            return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+        },
+        callback: li => {
+            const message = game.messages.get(li.data("messageId"));
+            copyToRollTNDialog(message);
+        }
+    },
+        {
+            name: "Copy To Highest",
+            icon: '<i class="fas fa-dice-d6"></i>',
+            condition: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const type = message.getFlag("ironclaw2e", "rollType");
+                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type != "HIGH";
+                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+            },
+            callback: li => {
+                const message = game.messages.get(li.data("messageId"));
+                copyToRollHighest(message);
+            }
+        });
+}
+
+Hooks.on("getChatLogEntryContext", addIronclawChatLogContext);
 
 /* -------------------------------------------- */
 /*  Hotbar Macros                               */

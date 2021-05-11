@@ -2,14 +2,14 @@ import { findTotalDice } from "./helpers.js";
 import { getMacroSpeaker } from "./helpers.js";
 
 /**
- * A common function to roll a set of dice against a target number
- * @param {Number} tni Target number
- * @param {Number} d12 d12's to roll
- * @param {Number} d10 d10's to roll
- * @param {Number} d8 d8's to roll
- * @param {Number} d6 d6's to roll
- * @param {Number} d4 d4's to roll
- * @param {String} label Optional value to display some text before the result text
+ * A common dice roller function to roll a set of dice against a target number
+ * @param {number} tni Target number
+ * @param {number} d12 d12's to roll
+ * @param {number} d10 d10's to roll
+ * @param {number} d8 d8's to roll
+ * @param {number} d6 d6's to roll
+ * @param {number} d4 d4's to roll
+ * @param {string} label Optional value to display some text before the result text
  * @param {Actor} rollingactor Optional value to display the roll as from a specific actor
  * @returns {Promise} The roll
  */
@@ -19,47 +19,55 @@ export function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", rollinga
         return null;
 
     let roll = new Roll("{" + rollstring + "}cs>" + tni).evaluate();
-    let flavorstring = "";
-    if (label.length > 0)
-        flavorstring = label + "<br>";
+    const flavorstring = flavorStringTN(roll, label);
 
-    if (roll.result > 0) {
-        flavorstring += "<p style=\"font-size:20px;color:green\">Success, with " + roll.total + " successes.</p>";
-    }
-    else {
-        let alldice = roll.dice;
-        let rawtotal = 0;
-        let ties = 0;
-        alldice.forEach(x => {
-            rawtotal += x.total;
-            if (x.total == tni) ties++;
-        });
-        if (rawtotal == d12 + d10 + d8 + d6 + d4) {
-            flavorstring += "<p style=\"font-size:20px;color:red\">Botch! All ones!</p>";
-        }
-        else if (ties > 0) {
-            flavorstring += "<p style=\"font-size:20px;color:darkgoldenrod\">Tie, with " + ties + " tied dice.</p>";
-        }
-        else {
-            flavorstring += "<p style=\"font-size:20px;color:black\">Failure. TN not exceeded or met.</p>";
-        }
-    }
     roll.toMessage({
         speaker: getMacroSpeaker(rollingactor),
-        flavor: flavorstring
+        flavor: flavorstring,
+        flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.label": label }
     });
 
     return roll;
 };
 
 /**
- * A common function to roll a set of dice and take the highest one
- * @param {Number} d12 d12's to roll
- * @param {Number} d10 d10's to roll
- * @param {Number} d8 d8's to roll
- * @param {Number} d6 d6's to roll
- * @param {Number} d4 d4's to roll
- * @param {String} label Optional value to display some text before the result text
+ * Copies the results of an older roll into a new one while allowing a change in the evaluation method
+ * @param {number} tni Target number
+ * @param {any} message Message containing the roll to copy
+ */
+export function copyToRollTN(tni, message, sendinchat = true) {
+    if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
+        console.log("Somehow, a message that isn't a roll got into 'copyToRollTN'.");
+        console.log(message);
+        return;
+    }
+    let rollstring = copyDicePoolResult(message.roll.dice);
+    if (rollstring.length == 0)
+        return;
+    let label = message.getFlag("ironclaw2e", "label");
+    if (typeof label != "string")
+        return;
+
+    let roll = new Roll("{" + rollstring + "}cs>" + tni).evaluate();
+    const flavorstring = "Copy-" + flavorStringTN(roll, label);
+
+    roll.toMessage({
+        speaker: message.data.speaker,
+        flavor: flavorstring,
+        flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.label": label }
+    }, { create: sendinchat });
+
+    return roll;
+}
+
+/**
+ * A common dice roller function to roll a set of dice and take the highest one
+ * @param {number} d12 d12's to roll
+ * @param {number} d10 d10's to roll
+ * @param {number} d8 d8's to roll
+ * @param {number} d6 d6's to roll
+ * @param {number} d4 d4's to roll
+ * @param {string} label Optional value to display some text before the result text
  * @param {Actor} rollingactor Optional value to display the roll as from a specific actor
  * @returns {Promise} The roll
  */
@@ -68,17 +76,42 @@ export function rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor = nul
     if (rollstring.length == 0)
         return null;
 
-    let flavorstring = "";
-    if (label.length > 0)
-        flavorstring = label + "<br>";
-
     let roll = new Roll("{" + rollstring + "}kh1").evaluate();
+    const flavorstring = flavorStringHighest(roll, label);
+
     roll.toMessage({
         speaker: getMacroSpeaker(rollingactor),
-        flavor: flavorstring + "<p style=\"font-size:20px;color:" + (roll.total > 1 ? "black" : "red") + "\">Highest die was " + roll.total + "</p>"
+        flavor: flavorstring,
+        flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.label": label }
     });
+
     return roll;
 };
+
+export function copyToRollHighest(message, sendinchat = true) {
+    if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
+        console.log("Somehow, a message that isn't a roll got into 'copyToRollHighest'.");
+        console.log(message);
+        return;
+    }
+    let rollstring = copyDicePoolResult(message.roll.dice);
+    if (rollstring.length == 0)
+        return;
+    let label = message.getFlag("ironclaw2e", "label");
+    if (typeof label != "string")
+        return;
+
+    let roll = new Roll("{" + rollstring + "}kh1").evaluate();
+    const flavorstring = "Copy-" + flavorStringHighest(roll, label);
+
+    roll.toMessage({
+        speaker: message.data.speaker,
+        flavor: flavorstring,
+        flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.label": label }
+    }, { create: sendinchat });
+
+    return roll;
+}
 
 
 /* -------------------------------------------- */
@@ -301,18 +334,57 @@ export function rollHighestOneLine(readydice = "", label = "", rollingactor = nu
     dlog.render(true);
 }
 
+export function copyToRollTNDialog(message) {
+    let confirmed = false;
+    let dlog = new Dialog({
+        title: "Change Roll to TN",
+        content: `
+     <form>
+      <div class="form-group">
+       <label>Target Number:</label>
+      </div>
+	  <div class="form-group">
+	   <input id="tn" name="tn" onfocus="this.select();"></input>
+      </div>
+     </form>
+     `,
+        buttons: {
+            one: {
+                icon: '<i class="fas fa-check"></i>',
+                label: "Copy",
+                callback: () => confirmed = true
+            },
+            two: {
+                icon: '<i class="fas fa-times"></i>',
+                label: "Cancel",
+                callback: () => confirmed = false
+            }
+        },
+        default: "one",
+        render: html => { document.getElementById("tn").focus(); },
+        close: html => {
+            if (confirmed) {
+                let DICES = html.find('[name=tn]')[0].value;
+                let TN = 0; if (DICES.length > 0) TN = parseInt(DICES);
+                copyToRollTN(TN, message);
+            }
+        }
+    });
+    dlog.render(true);
+}
+
 /* -------------------------------------------- */
 /*  Helpers                             */
 /* -------------------------------------------- */
 
 /**
  * Helper function for the dice rollers to form the roll command properly
- * @param {Number} d12 d12's to roll
- * @param {Number} d10 d10's to roll
- * @param {Number} d8 d8's to roll
- * @param {Number} d6 d6's to roll
- * @param {Number} d4 d4's to roll
- * @returns {String} Properly set-up string to give to a Roll
+ * @param {number} d12 d12's to roll
+ * @param {number} d10 d10's to roll
+ * @param {number} d8 d8's to roll
+ * @param {number} d6 d6's to roll
+ * @param {number} d4 d4's to roll
+ * @returns {string} Properly set-up string to give to a Roll
  */
 function formRoll(d12, d10, d8, d6, d4) {
     let rollstring = "";
@@ -336,3 +408,60 @@ function formRoll(d12, d10, d8, d6, d4) {
     }
     return rollstring;
 };
+
+/**
+ * Helper function for the target number dice rollers to form the chat message flavor text properly
+ * @param {Roll} roll The roll object for which to form a flavor string
+ * @param {string} label Label to put in front of the dice results
+ * @returns {string} The formed flavor string
+ */
+function flavorStringTN(roll, label) {
+    if (roll.result > 0) {
+        return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:green\">Success, with " + roll.total + " successes.</p>";
+    }
+    else {
+        let alldice = roll.dice;
+        let rawtotal = 0;
+        let ties = 0;
+        alldice.forEach(x => {
+            rawtotal += x.total;
+            if (x.total == tni) ties++;
+        });
+        if (rawtotal == d12 + d10 + d8 + d6 + d4) {
+            return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:red\">Botch! All ones!</p>";
+        }
+        else if (ties > 0) {
+            return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:darkgoldenrod\">Tie, with " + ties + " tied dice.</p>";
+        }
+        else {
+            return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:black\">Failure. TN not exceeded or met.</p>";
+        }
+    }
+}
+
+/**
+ * Helper function for the highest dice rollers to form the chat message flavor text properly
+ * @param {Roll} roll The roll object for which to form a flavor string
+ * @param {string} label Label to put in front of the dice results
+ * @returns {string} The formed flavor string
+ */
+function flavorStringHighest(roll, label) {
+    return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:" + (roll.total > 1 ? "black" : "red") + "\">Highest die was " + roll.total + "</p>";
+}
+
+/**
+ * Helper function for the dice roller copy functions to turn the dice results of the copied roll into numbers
+ * @param {DiceTerm[]} dice The dice of the roll to be copied
+ * @returns {string} A new formula to use for the new copy roll
+ */
+function copyDicePoolResult(dice) {
+    let formula = "";
+    dice.forEach(x => {
+        formula += x.total.toString() + ",";
+    });
+    if (formula.length > 0) {
+        formula = formula.slice(0, -1);
+    }
+
+    return formula;
+}
