@@ -5,5 +5,7 @@
 	
 	"ironclaw2e.copyToTN": "Copy To TN Roll",
 	"ironclaw2e.changeTN": "Change TN",
-	"ironclaw2e.copyToHighest": "Copy To Highest Roll"
+	"ironclaw2e.copyToHighest": "Copy To Highest Roll",
+	
+	"ironclaw2e.ui.encumbranceAutoActive": "Auto-Encumbrance management active, condition modification cancelled."
 }

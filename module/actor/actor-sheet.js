@@ -177,6 +177,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         html.find('.roll-item-change').click(this._onItemChangeStat.bind(this));
         html.find('.roll-soak').click(this._onSoakRoll.bind(this));
         html.find('.roll-defense').click(this._onDefenseRoll.bind(this));
+        html.find('.roll-enc-effect').click(this._onEncumbranceChange.bind(this));
         html.find('.roll-damage').click(this._onDamageRoll.bind(this));
         html.find('.roll-effects-reset').click(this._onEffectsReset.bind(this));
         html.find('.roll-effects-add').click(this._onEffectsAdd.bind(this));
@@ -313,6 +314,31 @@ export class Ironclaw2EActorSheet extends ActorSheet {
     }
 
     /**
+     * Handle applying encumbrance conditions
+     * @param {Event} event   The originating click event
+     * @private
+     */
+    _onEncumbranceChange(event) {
+        event.preventDefault();
+        const element = event.currentTarget;
+        const dataset = element.dataset;
+        const manageburdened = game.settings.get("ironclaw2e", "manageEncumbranceAuto");
+        
+        if (manageburdened) {
+            ui.notifications.info(game.i18n.localize("ironclaw2e.ui.encumbranceAutoActive"));
+            return;
+        }
+
+        let removal = dataset.removals.split(",");
+        let addition = dataset.additions.split(",");
+
+        if (dataset.removals.length > 0)
+            this.actor.deleteEffect(removal);
+        if (dataset.additions.length > 0)
+            this.actor.addEffect(addition);
+    }
+
+    /**
      * Handle the damage applying command
      * @param {Event} event   The originating click event
      * @private
@@ -324,7 +350,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
     }
 
     /**
-     * Handle the damage applying command
+     * Handle the condition reset
      * @param {Event} event   The originating click event
      * @private
      */
@@ -363,7 +389,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
     }
 
     /**
-     * Handle the damage applying command
+     * Handle the condition applying command
      * @param {Event} event   The originating click event
      * @private
      */
@@ -374,7 +400,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
     }
 
     /**
-     * Handle the damage applying command
+     * Handle the condition deletion
      * @param {Event} event   The originating click event
      * @private
      */

@@ -148,9 +148,9 @@
             <h3 class="header-label">Items:</h3>
             <div class="flexrow flex-group-left flex-tight">
                 <span class="resource-label">Encumbrance:</span>
-                <span class="normal-label">None: {{data.encumbranceNone}}</span>
-                <span class="normal-label">Burdened: {{data.encumbranceBurdened}}</span>
-                <span class="normal-label">Over-Burdened: {{data.encumbranceOverBurdened}}</span>
+                <span class="normal-label rollable roll-enc-effect" data-removals="Cannot Move,Over-Burdened,Burdened" data-additions="">None: {{data.encumbranceNone}}</span>
+                <span class="normal-label rollable roll-enc-effect" data-removals="Cannot Move,Over-Burdened" data-additions="Burdened">Burdened: {{data.encumbranceBurdened}}</span>
+                <span class="normal-label rollable roll-enc-effect" data-removals="Cannot Move" data-additions="Burdened,Over-Burdened">Over-Burdened: {{data.encumbranceOverBurdened}}</span>
             </div>
             <span class="bold-text allow-selection">Total carried weight: {{valueRoundTo data.totalWeight 2}} stones</span>
             <ol class="items-list">
