@@ -1,1 +1,9 @@
-{}
+{
+	"ironclaw2e.speeds.stride": "Stride",
+	"ironclaw2e.speeds.dash": "Dash + Stride",
+	"ironclaw2e.speeds.run": "Run",
+	
+	"ironclaw2e.copyToTN": "Copy To TN Roll",
+	"ironclaw2e.changeTN": "Change TN",
+	"ironclaw2e.copyToHighest": "Copy To Highest Roll"
+}

@@ -172,7 +172,7 @@ Hooks.on("preCreateActor", function (createData) {
 
 function addIronclawChatLogContext(html, entryOptions) {
     entryOptions.push({
-        name: "Copy To TN",
+        name: "ironclaw2e.copyToTN",
         icon: '<i class="fas fa-bullseye"></i>',
         condition: li => {
             const message = game.messages.get(li.data("messageId"));
@@ -185,7 +185,7 @@ function addIronclawChatLogContext(html, entryOptions) {
             copyToRollTNDialog(message);
         }
     }, {
-        name: "Change TN",
+        name: "ironclaw2e.changeTN",
         icon: '<i class="fas fa-bullseye"></i>',
         condition: li => {
             const message = game.messages.get(li.data("messageId"));
@@ -199,7 +199,7 @@ function addIronclawChatLogContext(html, entryOptions) {
         }
     },
         {
-            name: "Copy To Highest",
+            name: "ironclaw2e.copyToHighest",
             icon: '<i class="fas fa-dice-d6"></i>',
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
