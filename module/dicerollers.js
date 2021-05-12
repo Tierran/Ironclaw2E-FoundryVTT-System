@@ -19,7 +19,7 @@ export function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", rollinga
         return null;
 
     let roll = new Roll("{" + rollstring + "}cs>" + tni).evaluate();
-    const flavorstring = flavorStringTN(roll, label);
+    const flavorstring = flavorStringTN(tni, roll, label);
 
     roll.toMessage({
         speaker: getMacroSpeaker(rollingactor),
@@ -41,7 +41,7 @@ export function copyToRollTN(tni, message, sendinchat = true) {
         console.log(message);
         return;
     }
-    let rollstring = copyDicePoolResult(message.roll.dice);
+    let rollstring = copyDicePoolResult(message.roll);
     if (rollstring.length == 0)
         return;
     let label = message.getFlag("ironclaw2e", "label");
@@ -49,7 +49,7 @@ export function copyToRollTN(tni, message, sendinchat = true) {
         return;
 
     let roll = new Roll("{" + rollstring + "}cs>" + tni).evaluate();
-    const flavorstring = "Copy-" + flavorStringTN(roll, label);
+    const flavorstring = "Copy TN: " + flavorStringTN(tni, roll, label);
 
     roll.toMessage({
         speaker: message.data.speaker,
@@ -94,7 +94,7 @@ export function copyToRollHighest(message, sendinchat = true) {
         console.log(message);
         return;
     }
-    let rollstring = copyDicePoolResult(message.roll.dice);
+    let rollstring = copyDicePoolResult(message.roll);
     if (rollstring.length == 0)
         return;
     let label = message.getFlag("ironclaw2e", "label");
@@ -102,7 +102,7 @@ export function copyToRollHighest(message, sendinchat = true) {
         return;
 
     let roll = new Roll("{" + rollstring + "}kh1").evaluate();
-    const flavorstring = "Copy-" + flavorStringHighest(roll, label);
+    const flavorstring = "Copy High: " + flavorStringHighest(roll, label);
 
     roll.toMessage({
         speaker: message.data.speaker,
@@ -415,19 +415,29 @@ function formRoll(d12, d10, d8, d6, d4) {
  * @param {string} label Label to put in front of the dice results
  * @returns {string} The formed flavor string
  */
-function flavorStringTN(roll, label) {
+function flavorStringTN(tni, roll, label) {
     if (roll.result > 0) {
         return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:green\">Success, with " + roll.total + " successes.</p>";
     }
     else {
-        let alldice = roll.dice;
         let rawtotal = 0;
+        let dicenumber = 0;
         let ties = 0;
-        alldice.forEach(x => {
-            rawtotal += x.total;
-            if (x.total == tni) ties++;
-        });
-        if (rawtotal == d12 + d10 + d8 + d6 + d4) {
+        if (roll.dice.length > 0) {
+            roll.dice.forEach(x => {
+                dicenumber++;
+                rawtotal += x.total;
+                if (x.total == tni) ties++;
+            });
+        }
+        else if (roll.terms.length > 0) {
+            roll.terms[0].results.forEach(x => {
+                dicenumber++;
+                rawtotal += x.result;
+                if (x.result == tni) ties++;
+            });
+        }
+        if (rawtotal == dicenumber) {
             return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:red\">Botch! All ones!</p>";
         }
         else if (ties > 0) {
@@ -451,16 +461,27 @@ function flavorStringHighest(roll, label) {
 
 /**
  * Helper function for the dice roller copy functions to turn the dice results of the copied roll into numbers
- * @param {DiceTerm[]} dice The dice of the roll to be copied
+ * @param {Roll} roll The roll to be copied
  * @returns {string} A new formula to use for the new copy roll
  */
-function copyDicePoolResult(dice) {
+function copyDicePoolResult(roll) {
     let formula = "";
-    dice.forEach(x => {
-        formula += x.total.toString() + ",";
-    });
-    if (formula.length > 0) {
-        formula = formula.slice(0, -1);
+
+    if (roll.dice.length > 0) {
+        roll.dice.forEach(x => {
+            formula += x.total.toString() + ",";
+        });
+        if (formula.length > 0) {
+            formula = formula.slice(0, -1);
+        }
+    }
+    else if (roll.terms.length > 0) {
+        roll.terms[0].results.forEach(x => {
+            formula += x.result.toString() + ",";
+        });
+        if (formula.length > 0) {
+            formula = formula.slice(0, -1);
+        }
     }
 
     return formula;
