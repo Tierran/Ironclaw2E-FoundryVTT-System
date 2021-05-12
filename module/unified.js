@@ -1,11 +1,11 @@
 /**
- * Unified function to get whether the target has any of the select conditions for Ironclaw2e, right now here in case CUB is not installed
+ * Unified function to get whether the target(s) has any of the select conditions for Ironclaw2e, right now here in case CUB is not installed
  * @param {String[] | String} conditions Conditions to check for
  * @param {(Actor[] | Token[] | Actor | Token)} target The actor(s) or token(s) in question
  * @param {boolean} warn Whether to use CUB's warnings
  * @returns {boolean} Whether the target has any of the conditions
  */
-export function hasConditionIronclaw(conditions, target, warn = false) {
+export function hasConditionsIronclaw(conditions, target, warn = false) {
     if (!game.cub) {
         ui.notifications.info("Combat Utility Belt not installed, condition check failed.");
         return false;
@@ -15,12 +15,39 @@ export function hasConditionIronclaw(conditions, target, warn = false) {
 }
 
 /**
+ * Unified function to get all conditions the target has for Ironclaw2e, right now here in case CUB is not installed
+ * @param {Actor | Token)} target The actor or token in question
+ * @param {boolean} warn Whether to use CUB's warnings
+ * @returns {string[]} Array of conditions the target have
+ */
+export function getConditionsIronclaw(target, warn = false) {
+    if (!game.cub) {
+        ui.notifications.info("Combat Utility Belt not installed, condition check failed.");
+        return false;
+    }
+
+    let raw = game.cub.getConditions(target, { "warn": warn });
+    let names = [];
+
+    if (raw?.conditions) {
+        if (Array.isArray(raw.conditions)) {
+            raw.conditions.forEach(x => names.push(x.name));
+        }
+        else {
+            names.push(raw.conditions.name);
+        }
+    }
+
+    return names;
+}
+
+/**
  * Unified function to add conditions for Ironclaw2e, right now here in case CUB is not installed
  * @param {String[] | String} conditions Conditions to add
  * @param {(Actor[] | Token[] | Actor | Token)} target The actor(s) or token(s) in question
  * @param {boolean} warn Whether to use CUB's warnings
  */
-export async function addConditionIronclaw(conditions, target, warn = false) {
+export async function addConditionsIronclaw(conditions, target, warn = false) {
     if (!game.cub) {
         ui.notifications.info("Combat Utility Belt not installed, adding condition failed.");
         return;
@@ -36,12 +63,12 @@ export async function addConditionIronclaw(conditions, target, warn = false) {
  * @param {boolean} checkfirst First check if the target has any of the conditions
  * @param {boolean} warn Whether to use CUB's warnings
  */
-export async function removeConditionIronclaw(conditions, target, checkfirst = true, warn = false) {
+export async function removeConditionsIronclaw(conditions, target, checkfirst = true, warn = false) {
     if (!game.cub) {
         ui.notifications.info("Combat Utility Belt not installed, removing condition failed.");
         return;
     }
 
-    if (checkfirst == false || (hasConditionIronclaw(conditions, target)))
+    if (checkfirst == false || (hasConditionsIronclaw(conditions, target)))
         return game.cub.removeCondition(conditions, target, { "warn": warn });
 }

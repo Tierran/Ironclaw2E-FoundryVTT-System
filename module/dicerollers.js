@@ -168,17 +168,17 @@ export function rollTargetNumberDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0, d6s 
         close: html => {
             if (confirmed) {
                 let TNSS = html.find('[name=tn]')[0].value;
-                let TN = 0; if (TNSS.length != 0) TN = parseInt(TNSS);
+                let TN = 0; if (TNSS.length > 0) TN = parseInt(TNSS);
                 let D12SS = html.find('[name=d12s]')[0].value;
-                let D12S = 0; if (D12SS.length != 0) D12S = parseInt(D12SS);
+                let D12S = 0; if (D12SS.length > 0) D12S = parseInt(D12SS);
                 let D10SS = html.find('[name=d10s]')[0].value;
-                let D10S = 0; if (D10SS.length != 0) D10S = parseInt(D10SS);
+                let D10S = 0; if (D10SS.length > 0) D10S = parseInt(D10SS);
                 let D8SS = html.find('[name=d8s]')[0].value;
-                let D8S = 0; if (D8SS.length != 0) D8S = parseInt(D8SS);
+                let D8S = 0; if (D8SS.length > 0) D8S = parseInt(D8SS);
                 let D6SS = html.find('[name=d6s]')[0].value;
-                let D6S = 0; if (D6SS.length != 0) D6S = parseInt(D6SS);
+                let D6S = 0; if (D6SS.length > 0) D6S = parseInt(D6SS);
                 let D4SS = html.find('[name=d4s]')[0].value;
-                let D4S = 0; if (D4SS.length != 0) D4S = parseInt(D4SS);
+                let D4S = 0; if (D4SS.length > 0) D4S = parseInt(D4SS);
                 rollTargetNumber(TN, D12S, D10S, D8S, D6S, D4S, label, rollingactor);
             }
         }
@@ -232,15 +232,15 @@ export function rollHighestDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0,
         close: html => {
             if (confirmed) {
                 let D12SS = html.find('[name=d12s]')[0].value;
-                let D12S = 0; if (D12SS.length != 0) D12S = parseInt(D12SS);
+                let D12S = 0; if (D12SS.length > 0) D12S = parseInt(D12SS);
                 let D10SS = html.find('[name=d10s]')[0].value;
-                let D10S = 0; if (D10SS.length != 0) D10S = parseInt(D10SS);
+                let D10S = 0; if (D10SS.length > 0) D10S = parseInt(D10SS);
                 let D8SS = html.find('[name=d8s]')[0].value;
-                let D8S = 0; if (D8SS.length != 0) D8S = parseInt(D8SS);
+                let D8S = 0; if (D8SS.length > 0) D8S = parseInt(D8SS);
                 let D6SS = html.find('[name=d6s]')[0].value;
-                let D6S = 0; if (D6SS.length != 0) D6S = parseInt(D6SS);
+                let D6S = 0; if (D6SS.length > 0) D6S = parseInt(D6SS);
                 let D4SS = html.find('[name=d4s]')[0].value;
-                let D4S = 0; if (D4SS.length != 0) D4S = parseInt(D4SS);
+                let D4S = 0; if (D4SS.length > 0) D4S = parseInt(D4SS);
                 rollHighest(D12S, D10S, D8S, D6S, D4S, label, rollingactor);
             }
         }
@@ -284,7 +284,7 @@ export function rollTargetNumberOneLine(tnnum = 3, readydice = "", label = "", r
         close: html => {
             if (confirmed) {
                 let TNSS = html.find('[name=tn]')[0].value;
-                let TN = 0; if (TNSS.length != 0) TN = parseInt(TNSS);
+                let TN = 0; if (TNSS.length > 0) TN = parseInt(TNSS);
                 let DICES = html.find('[name=dices]')[0].value;
                 let DICE = findTotalDice(DICES);
                 rollTargetNumber(TN, DICE[0], DICE[1], DICE[2], DICE[3], DICE[4], label, rollingactor);

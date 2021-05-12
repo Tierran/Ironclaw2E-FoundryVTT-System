@@ -10,9 +10,10 @@ import { checkForPrechecked } from "../helpers.js";
 import { nullCheckConcat } from "../helpers.js";
 import { splitSingleDiceString } from "../helpers.js";
 // From the combat-utility-belt
-import { hasConditionIronclaw } from "../unified.js";
-import { addConditionIronclaw } from "../unified.js";
-import { removeConditionIronclaw } from "../unified.js";
+import { hasConditionsIronclaw } from "../unified.js";
+import { getConditionsIronclaw } from "../unified.js";
+import { addConditionsIronclaw } from "../unified.js";
+import { removeConditionsIronclaw } from "../unified.js";
 // The rest are for the supermassive function
 import { rollTargetNumber } from "../dicerollers.js";
 import { rollHighest } from "../dicerollers.js";
@@ -133,7 +134,7 @@ export class Ironclaw2EActor extends Actor {
             stridebonus += 1;
             dashbonus += 2;
             runbonus += 6;
-            if (hasConditionIronclaw("All Fours", this)) {
+            if (hasConditionsIronclaw("All Fours", this)) {
                 let allfours = findInItems(this.items, "allfours", "gift");
                 if (allfours) {
                     stridebonus += 1;
@@ -144,11 +145,11 @@ export class Ironclaw2EActor extends Actor {
         }
 
         // Coward and Flight of the Prey bonuses
-        if (hasConditionIronclaw(["Afraid", "Terrified"], this)) {
+        if (hasConditionsIronclaw(["Afraid", "Terrified"], this)) {
             let coward = findInItems(this.items, "coward", "gift");
             if (coward) {
                 let flightofprey = findInItems(this.items, "flightoftheprey", "gift");
-                if (flightofprey && hasConditionIronclaw("Afraid", this)) {
+                if (flightofprey && hasConditionsIronclaw("Afraid", this)) {
                     stridebonus += 1;
                     dashbonus += 4;
                     runbonus += 16;
@@ -173,22 +174,22 @@ export class Ironclaw2EActor extends Actor {
 
         let speedint = speedarr[1];
         let bodyint = bodyarr[1];
-        if (speedint > 8 && hasConditionIronclaw("Burdened", this)) speedint = 8;
+        if (speedint > 8 && hasConditionsIronclaw("Burdened", this)) speedint = 8;
 
         // Stride setup
         data.stride = 1 + stridebonus;
-        if (hasConditionIronclaw(["Slowed", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
+        if (hasConditionsIronclaw(["Slowed", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
             data.stride = 0;
         }
         // Dash setup
         data.dash = Math.round(speedint / 2) + (bodyint > speedint ? 1 : 0) + dashbonus;
-        if (hasConditionIronclaw(["Burdened", "Blinded", "Slowed", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
+        if (hasConditionsIronclaw(["Burdened", "Blinded", "Slowed", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
             data.dash = 0;
         }
 
         // Run setup
         data.run = bodyint + speedint + data.dash + runbonus;
-        if (hasConditionIronclaw(["Over-Burdened", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
+        if (hasConditionsIronclaw(["Over-Burdened", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
             data.run = 0;
         }
     }
@@ -378,19 +379,19 @@ export class Ironclaw2EActor extends Actor {
         if (damage >= 4) adding.push("Dying");
         if (damage >= 5 && !nonlethal) adding.push("Dead");
         if (damage >= 6 && !nonlethal) adding.push("Overkilled");
-        addConditionIronclaw(adding, this);
+        this.addEffect(adding);
     }
 
     async addEffect(condition) {
-        addConditionIronclaw(condition, this);
+        addConditionsIronclaw(condition, this);
     }
 
     async deleteEffect(condition, isid = false) {
         if (isid) {
-            await this.deleteEmbeddedEntity("ActiveEffect", condition);
+            this.deleteEmbeddedEntity("ActiveEffect", condition);
         }
         else {
-            removeConditionIronclaw(condition, this);
+            removeConditionsIronclaw(condition, this);
         }
     }
 
@@ -443,7 +444,7 @@ export class Ironclaw2EActor extends Actor {
 
         // Guard Soak
         if (findInItems(this.items, "guardsoak", "gift")) {
-            if (hasConditionIronclaw("Guarding", this)) {
+            if (hasConditionsIronclaw("Guarding", this)) {
                 let veteran = findInItems(this.items, "veteran", "gift");
                 let guardbonus = [0, 0, 1, 0, 0];
                 let guardlabel = "Guard soak";
@@ -482,10 +483,10 @@ export class Ironclaw2EActor extends Actor {
         }
 
         // Coward bonus when Afraid or Terrified
-        if (hasConditionIronclaw(["Afraid", "Terrified"], this)) {
+        if (hasConditionsIronclaw(["Afraid", "Terrified"], this)) {
             let coward = findInItems(this.items, "coward", "gift");
             let flightofprey = findInItems(this.items, "flightoftheprey", "gift");
-            if (flightofprey && coward && hasConditionIronclaw("Afraid", this)) {
+            if (flightofprey && coward && hasConditionsIronclaw("Afraid", this)) {
                 constructionkeys.push(flightofprey.data.name);
                 constructionarray.push(flightofprey.data.data.giftArray);
                 formconstruction += `<div class="form-group flexrow">
@@ -504,7 +505,7 @@ export class Ironclaw2EActor extends Actor {
         }
 
         // Guarding bonus
-        if (hasConditionIronclaw("Guarding", this)) {
+        if (hasConditionsIronclaw("Guarding", this)) {
             let veteran = findInItems(this.items, "veteran", "gift");
             let guardbonus = [0, 0, 1, 0, 0];
             let guardlabel = "Guarding";
@@ -530,7 +531,7 @@ export class Ironclaw2EActor extends Actor {
         }
 
         // Focused Fighter bonus
-        if (hasConditionIronclaw("Focused", this)) {
+        if (hasConditionsIronclaw("Focused", this)) {
             let focused = findInItems(this.items, "focusedfighter", "gift");
             if (focused) {
                 constructionkeys.push(focused.data.name);
@@ -578,7 +579,7 @@ export class Ironclaw2EActor extends Actor {
         let constructionarray = [];
 
         // Guarding bonus
-        if (hasConditionIronclaw("Guarding", this)) {
+        if (hasConditionsIronclaw("Guarding", this)) {
             let veteran = findInItems(this.items, "veteran", "gift");
             let guardbonus = [0, 0, 1, 0, 0];
             let guardlabel = "Guarding";
@@ -596,7 +597,7 @@ export class Ironclaw2EActor extends Actor {
         }
 
         // Focused Fighter bonus
-        if (hasConditionIronclaw("Focused", this)) {
+        if (hasConditionsIronclaw("Focused", this)) {
             let focused = findInItems(this.items, "focusedfighter", "gift");
             if (focused) {
                 constructionkeys.push(focused.data.name);
@@ -620,19 +621,20 @@ export class Ironclaw2EActor extends Actor {
         let confirmed = false;
         let speaker = getMacroSpeaker(this);
         let addeddamage = 0;
-        if (hasConditionIronclaw("Hurt", this)) addeddamage++;
-        if (hasConditionIronclaw("Injured", this)) addeddamage++;
+        if (hasConditionsIronclaw("Hurt", this)) addeddamage++;
+        if (hasConditionsIronclaw("Injured", this)) addeddamage++;
         let dlog = new Dialog({
             title: "Damage Calculation for " + speaker.alias,
             content: `
      <form class="ironclaw2e">
       <h1>Set damage for ${this.data.name}</h1>
       <div class="form-group">
-       <span class="normal-label">Additional Damage: ${addeddamage}</span>
+       <label class="normal-label">Damage received:</label>
+	   <input id="damage" name="damage" value="${readydamage}" onfocus="this.select();"></input>
       </div>
       <div class="form-group">
-       <label>Damage received:</label>
-	   <input id="damage" name="damage" value="${readydamage}" onfocus="this.select();"></input>
+       <span class="normal-label">Additional Damage: ${addeddamage}</span>
+       <input type="checkbox" id="added" name="added" value="1" checked></input>
       </div>
       <div class="form-group">
        <label>Knockout Strike?</label>
@@ -660,14 +662,16 @@ export class Ironclaw2EActor extends Actor {
             render: html => { document.getElementById("damage").focus(); },
             close: html => {
                 if (confirmed) {
-                    let DAMAGE = html.find('[name=damage]')[0];
-                    let damage = 0; if (DAMAGE.length != 0) damage = parseInt(DAMAGE.value);
+                    let DAMAGE = html.find('[name=damage]')[0].value;
+                    let damage = 0; if (DAMAGE.length > 0) damage = parseInt(DAMAGE);
+                    let ADDED = html.find('[name=added]')[0];
+                    let added = ADDED.checked;
                     let KNOCKOUT = html.find('[name=knockout]')[0];
                     let knockout = KNOCKOUT.checked;
                     let ALLOW = html.find('[name=nonlethal]')[0];
                     let allow = ALLOW.checked;
 
-                    this.applyDamage(damage + addeddamage, knockout, allow);
+                    this.applyDamage(damage + (added ? addeddamage : 0), knockout, allow);
                 }
             }
         });
@@ -735,7 +739,7 @@ export class Ironclaw2EActor extends Actor {
         let hashtml = otherinputs.length > 0;
 
         let burdened = "";
-        if (hasConditionIronclaw("Burdened", this)) {
+        if (hasConditionsIronclaw("Burdened", this)) {
             burdened = `
      <div class="form-group">
        <label class="normal-label">Apply Burdened Limit automatically:</label>
@@ -836,12 +840,12 @@ export class Ironclaw2EActor extends Actor {
                     let IFLIMIT = html.find('[name=iflimit]')[0];
                     let uselimit = IFLIMIT.checked;
                     let LIMIT = html.find('[name=limit]')[0].value;
-                    let limit = 0; if (LIMIT.length != 0) limit = parseInt(LIMIT);
+                    let limit = 0; if (LIMIT.length > 0) limit = parseInt(LIMIT);
 
                     let IFTNSS = html.find('[name=iftn]')[0];
                     let IFTN = IFTNSS.checked;
                     let TNSS = html.find('[name=tn]')[0].value;
-                    let TN = 0; if (TNSS.length != 0) TN = parseInt(TNSS);
+                    let TN = 0; if (TNSS.length > 0) TN = parseInt(TNSS);
                     let DICES = html.find('[name=dices]')[0].value;
                     let DICE = findTotalDice(DICES);
 
