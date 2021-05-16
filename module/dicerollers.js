@@ -11,9 +11,10 @@ import { getMacroSpeaker } from "./helpers.js";
  * @param {number} d4 d4's to roll
  * @param {string} label Optional value to display some text before the result text
  * @param {Actor} rollingactor Optional value to display the roll as from a specific actor
- * @returns {Promise} The roll
+ * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
+ * @returns The roll and the message promise or data (depending on sendinchat, true | false) in an object
  */
-export function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", rollingactor = null) {
+export function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", rollingactor = null, sendinchat = true) {
     let rollstring = formRoll(d12, d10, d8, d6, d4);
     if (rollstring.length == 0)
         return null;
@@ -21,19 +22,21 @@ export function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", rollinga
     let roll = new Roll("{" + rollstring + "}cs>" + tni).evaluate();
     const flavorstring = flavorStringTN(tni, roll, label);
 
-    roll.toMessage({
+    let msg = roll.toMessage({
         speaker: getMacroSpeaker(rollingactor),
         flavor: flavorstring,
         flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.label": label }
-    });
+    }, { create: sendinchat });
 
-    return roll;
+    return { "roll": roll, "message": msg };
 };
 
 /**
  * Copies the results of an older roll into a new one while allowing a change in the evaluation method
  * @param {number} tni Target number
- * @param {any} message Message containing the roll to copy
+ * @param {Object} message Message containing the roll to copy
+ * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
+ * @returns The roll and the message promise or data (depending on sendinchat, true | false) in an object
  */
 export function copyToRollTN(tni, message, sendinchat = true) {
     if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
@@ -51,13 +54,13 @@ export function copyToRollTN(tni, message, sendinchat = true) {
     let roll = new Roll("{" + rollstring + "}cs>" + tni).evaluate();
     const flavorstring = "Copy TN: " + flavorStringTN(tni, roll, label);
 
-    roll.toMessage({
+    let msg = roll.toMessage({
         speaker: message.data.speaker,
         flavor: flavorstring,
         flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.label": label }
     }, { create: sendinchat });
 
-    return roll;
+    return { "roll": roll, "message": msg };
 }
 
 /**
@@ -69,9 +72,10 @@ export function copyToRollTN(tni, message, sendinchat = true) {
  * @param {number} d4 d4's to roll
  * @param {string} label Optional value to display some text before the result text
  * @param {Actor} rollingactor Optional value to display the roll as from a specific actor
- * @returns {Promise} The roll
+ * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
+ * @returns The roll and the message promise or data (depending on sendinchat, true | false) in an object
  */
-export function rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor = null) {
+export function rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor = null, sendinchat = true) {
     let rollstring = formRoll(d12, d10, d8, d6, d4);
     if (rollstring.length == 0)
         return null;
@@ -79,16 +83,23 @@ export function rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor = nul
     let roll = new Roll("{" + rollstring + "}kh1").evaluate();
     const flavorstring = flavorStringHighest(roll, label);
 
-    roll.toMessage({
+    let msg = roll.toMessage({
         speaker: getMacroSpeaker(rollingactor),
         flavor: flavorstring,
         flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.label": label }
-    });
+    }, { create: sendinchat });
 
-    return roll;
+    return { "roll": roll, "message": msg };
 };
 
-export function copyToRollHighest(message, sendinchat = true) {
+/**
+ * Copies the results of an older roll into a new one while allowing a change in the evaluation method
+ * @param {number} tni Target number
+ * @param {Object} message Message containing the roll to copy
+ * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
+ * @returns The roll and the message promise or data (depending on sendinchat, true | false) in an object
+ */
+export function copyToRollHighest(message, sendinchat = true, sendinchat = true) {
     if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
         console.log("Somehow, a message that isn't a roll got into 'copyToRollHighest'.");
         console.log(message);
@@ -104,13 +115,13 @@ export function copyToRollHighest(message, sendinchat = true) {
     let roll = new Roll("{" + rollstring + "}kh1").evaluate();
     const flavorstring = "Copy High: " + flavorStringHighest(roll, label);
 
-    roll.toMessage({
+    let msg = roll.toMessage({
         speaker: message.data.speaker,
         flavor: flavorstring,
         flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.label": label }
     }, { create: sendinchat });
 
-    return roll;
+    return { "roll": roll, "message": msg };
 }
 
 

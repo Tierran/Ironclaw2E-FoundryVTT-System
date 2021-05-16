@@ -4,6 +4,17 @@
  */
 export class Ironclaw2ECombat extends Combat {
 
+    /** @override */
+    _getInitiativeFormula(combatant) {
+        return "2";
+    }
+
+    /** @override */
+    _getInitiativeRoll(combatant, formula) {
+        //TODO: Actually make the logic for side-based initiatives and make some system to auto-roll the initiative checks
+        let foo = combatant.actor ? combatant.actor.initiativeRoll(1).roll : Roll.create(formula).evaluate();
+        return foo;
+    }
 }
 
 export class Ironclaw2ECombatTrackerConfig extends CombatTrackerConfig {

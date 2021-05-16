@@ -482,12 +482,12 @@ export class Ironclaw2EActor extends Actor {
             case 1:
                 let foo = this._getDicePools(prechecked, null, false);
                 let bar = dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice;
-                return "{" + formRoll(bar[0], bar[1], bar[2], bar[3], bar[4]) + "}kh1";
+                return rollHighest(bar[0], bar[1], bar[2], bar[3], bar[4], "Rolling initiative: " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this, false);
                 break;
             case 2:
                 let foo = this._getDicePools(prechecked, null, false);
                 let bar = dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice;
-                roll = rollTargetNumber(tn, bar[0], bar[1], bar[2], bar[3], bar[4], "Rolling the initiative check: " + foo.label, this);
+                roll = rollTargetNumber(tn, bar[0], bar[1], bar[2], bar[3], bar[4], "Rolling the initiative check: " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this).roll;
                 return roll;
                 break;
             case 3:
@@ -987,14 +987,14 @@ export class Ironclaw2EActor extends Actor {
                         totaldice = enforceLimit(totaldice, limit);
                     }
 
-                    let roll;
+                    let rollmessage;
                     if (IFTN)
-                        roll = rollTargetNumber(TN, totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
+                        rollmessage = rollTargetNumber(TN, totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
                     else
-                        roll = rollHighest(totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
+                        rollmessage = rollHighest(totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
 
                     if (successfunc && typeof (successfunc) == "function") {
-                        successfunc(roll);
+                        successfunc(rollmessage);
                     }
                 }
             }
