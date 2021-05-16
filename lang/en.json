@@ -2,10 +2,21 @@
 	"ironclaw2e.speeds.stride": "Stride",
 	"ironclaw2e.speeds.dash": "Dash + Stride",
 	"ironclaw2e.speeds.run": "Run",
-	
+
 	"ironclaw2e.copyToTN": "Copy To TN Roll",
 	"ironclaw2e.changeTN": "Change TN",
 	"ironclaw2e.copyToHighest": "Copy To Highest Roll",
-	
-	"ironclaw2e.ui.encumbranceAutoActive": "Auto-Encumbrance management active, condition modification cancelled."
+
+	"ironclaw2e.ui.encumbranceAutoActive": "Auto-Encumbrance management active, condition modification cancelled.",
+
+	"ironclaw2e.combat.traditionalInitiative": "Use traditional initiative",
+	"ironclaw2e.combat.traditionalInitiativeHint": "Use the more traditional initiative system outlined in the alternate rules. This will be based on each actor's initiative dice, with tie-breaking based on the Speed die (then PC advantage, then names).",
+	"ironclaw2e.combat.sidesUsed": "Combat sides used",
+	"ironclaw2e.combat.sidesUsedHint": "Pick the method of grouping initiatives. The initiatives will play in the order from left to right. The system to determine allies and enemies is based on token settings, neutrals grouped with enemies.",
+	"ironclaw2e.combat.PCvsNPC": "Players versus NPC's",
+	"ironclaw2e.combat.NPCvsPC": "NPC's versus players",
+	"ironclaw2e.combat.alliesVsEnemies": "Allies versus Enemies",
+	"ironclaw2e.combat.enemiesVsAllies": "Enemies versus Allies",
+	"ironclaw2e.combat.pcsAlliesEnemies": "Players, Allies and Enemies",
+	"ironclaw2e.combat.enemiesPcsAllies": "Enemies, Players and Allies"
 }

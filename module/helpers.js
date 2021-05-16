@@ -64,11 +64,11 @@ export function splitSingleDiceString(dicestring) {
 }
 
 /**
- * Helper function to add two arrays of numbers together
+ * Helper function to add two arrays of numbers together, primarily for adding dice pools together
  * @param {number[]} foo First array
  * @param {number[]} bar Second array
  * @param {number} outputLength Set the length of the output array, leave empty or non-positive to auto-calculate from input array lengths
- * @returns {number[]} New array
+ * @returns {number[]} New array composed of the added values
  */
 export function addArrays(foo, bar, outputLength = -1) {
     let total = [];
@@ -325,8 +325,8 @@ export function checkForPrechecked(prechecked, givennames) {
 
 /**
  * Helper function to check against nulls and other non-arrays when concating two arrays
- * @param {any} foo First array to concat
- * @param {any} bar Second array to concat
+ * @param {any[]} foo First array to concat
+ * @param {any[]} bar Second array to concat
  */
 export function nullCheckConcat(foo, bar) {
     if (!Array.isArray(foo) || !Array.isArray(bar)) {

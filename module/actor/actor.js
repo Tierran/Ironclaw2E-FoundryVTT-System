@@ -307,6 +307,46 @@ export class Ironclaw2EActor extends Actor {
         }
     }
 
+    /**
+     * Get the total dice pools of the actor for the given traits and skills
+     * @param {string[]} traitnames The array of trait names
+     * @param {string[]} skillnames The array of skill names, just give the same array as traitnames to use with mixed names
+     * @param {boolean} isburdened Whether to apply the burdened limit to relevant skills
+     * @param {boolean} addplus Whether to add the plus already on the first pool label
+     * @private
+     */
+    _getDicePools(traitnames, skillnames, isburdened, addplus = false) {
+        const data = this.data.data;
+        let label = "";
+        let labelgiven = addplus;
+        let totaldice = [];
+
+        if (data.traits && Array.isArray(traitnames) && traitnames.length > 0) {
+            for (let [key, trait] of Object.entries(data.traits)) {
+                if (traitnames.includes(makeStatCompareReady(key))) {
+                    if (labelgiven)
+                        label += " + ";
+                    totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(trait.diceArray, 2) : trait.diceArray));
+                    label += convertCamelCase(key);
+                    labelgiven = true;
+                }
+            }
+        }
+        if (data.skills && Array.isArray(skillnames) && skillnames.length > 0) {
+            for (let [key, skill] of Object.entries(data.skills)) {
+                if (skillnames.includes(makeStatCompareReady(key))) {
+                    if (labelgiven)
+                        label += " + ";
+                    totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(skill.diceArray, 2) : skill.diceArray));
+                    label += convertCamelCase(key);
+                    labelgiven = true;
+                }
+            }
+        }
+
+        return { "totalDice": totaldice, "label": label, "labelGiven": labelgiven };
+    }
+
     /* -------------------------------------------- */
     /*  Actor Token Change Functions                */
     /* -------------------------------------------- */
@@ -400,6 +440,29 @@ export class Ironclaw2EActor extends Actor {
             await effect.delete();
         }
     }
+    
+    /* -------------------------------------------- */
+    /*  Non-popup Roll Functions                    */
+    /* -------------------------------------------- */
+
+    initiativeRoll(roll) {
+        const data = this.data.data;
+        let formconstruction = ``;
+        let constructionkeys = [];
+        let constructionarray = [];
+        let prechecked = ["speed", "mind"];
+
+        // Danger Sense bonus
+        let dangersense = findInItems(this.items, "dangersense", "gift");
+        if (dangersense) {
+            constructionkeys.push(dangersense.data.name);
+            constructionarray.push(dangersense.data.data.giftArray);
+            formconstruction += `<div class="form-group flexrow">
+                 <label class="normal-label">${dangersense.data.name}: ${reformDiceString(dangersense.data.data.giftArray, true)}</label>
+	             <input type="checkbox" id="${makeStatCompareReady(dangersense.data.name)}" name="${makeStatCompareReady(dangersense.data.name)}" checked></input>
+                </div>`+ "\n";
+        }
+    }
 
     /* -------------------------------------------- */
     /*  Special Popup Macro Puukko Functions        */
@@ -490,7 +553,7 @@ export class Ironclaw2EActor extends Actor {
                 constructionkeys.push(flightofprey.data.name);
                 constructionarray.push(flightofprey.data.data.giftArray);
                 formconstruction += `<div class="form-group flexrow">
-                 <label class="normal-label">${flightofprey.data.name}: ${reformDiceString(flightofprey.data.data.coverArray, true)}</label>
+                 <label class="normal-label">${flightofprey.data.name}: ${reformDiceString(flightofprey.data.data.giftArray, true)}</label>
 	             <input type="checkbox" id="${makeStatCompareReady(flightofprey.data.name)}" name="${makeStatCompareReady(flightofprey.data.name)}" checked></input>
                 </div>`+ "\n";
             }
@@ -498,7 +561,7 @@ export class Ironclaw2EActor extends Actor {
                 constructionkeys.push(coward.data.name);
                 constructionarray.push(coward.data.data.giftArray);
                 formconstruction += `<div class="form-group flexrow">
-                 <label class="normal-label">${coward.data.name}: ${reformDiceString(coward.data.data.coverArray, true)}</label>
+                 <label class="normal-label">${coward.data.name}: ${reformDiceString(coward.data.data.giftArray, true)}</label>
 	             <input type="checkbox" id="${makeStatCompareReady(coward.data.name)}" name="${makeStatCompareReady(coward.data.name)}" checked></input>
                 </div>`+ "\n";
             }
@@ -537,7 +600,7 @@ export class Ironclaw2EActor extends Actor {
                 constructionkeys.push(focused.data.name);
                 constructionarray.push(focused.data.data.giftArray);
                 formconstruction += `<div class="form-group flexrow">
-                 <label class="normal-label">${focused.data.name}: ${reformDiceString(focused.data.data.coverArray, true)}</label>
+                 <label class="normal-label">${focused.data.name}: ${reformDiceString(focused.data.data.giftArray, true)}</label>
 	             <input type="checkbox" id="${makeStatCompareReady(focused.data.name)}" name="${makeStatCompareReady(focused.data.name)}" checked></input>
                 </div>`+ "\n";
             }
@@ -603,7 +666,7 @@ export class Ironclaw2EActor extends Actor {
                 constructionkeys.push(focused.data.name);
                 constructionarray.push(focused.data.data.giftArray);
                 formconstruction += `<div class="form-group flexrow">
-                 <label class="normal-label">${focused.data.name}: ${reformDiceString(focused.data.data.coverArray, true)}</label>
+                 <label class="normal-label">${focused.data.name}: ${reformDiceString(focused.data.data.giftArray, true)}</label>
 	             <input type="checkbox" id="${makeStatCompareReady(focused.data.name)}" name="${makeStatCompareReady(focused.data.name)}" checked></input>
                 </div>`+ "\n";
             }
@@ -828,6 +891,7 @@ export class Ironclaw2EActor extends Actor {
                     let traitvalues = [];
                     let skillvalues = [];
                     let totaldice = [0, 0, 0, 0, 0];
+
                     for (let i = 0; i < traitchecks.length; ++i) {
                         traitvalues.push(traitchecks[i].value);
                     }
@@ -856,27 +920,11 @@ export class Ironclaw2EActor extends Actor {
                     else
                         label += "highest: ";
 
-                    if (hastraits) {
-                        for (let [key, trait] of Object.entries(data.traits)) {
-                            if (traitvalues.includes(makeStatCompareReady(key))) {
-                                if (labelgiven)
-                                    label += " + ";
-                                totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(trait.diceArray, 2) : trait.diceArray));
-                                label += convertCamelCase(key);
-                                labelgiven = true;
-                            }
-                        }
-                    }
-                    if (hasskills) {
-                        for (let [key, skill] of Object.entries(data.skills)) {
-                            if (skillvalues.includes(makeStatCompareReady(key))) {
-                                if (labelgiven)
-                                    label += " + ";
-                                totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(skill.diceArray, 2) : skill.diceArray));
-                                label += convertCamelCase(key);
-                                labelgiven = true;
-                            }
-                        }
+                    if (hastraits || hasskills) {
+                        let statfoobar = this._getDicePools(traitvalues, skillvalues, isburdened, labelgiven);
+                        totaldice = statfoobar.totalDice;
+                        label += statfoobar.label;
+                        labelgiven = statfoobar.labelGiven;
                     }
                     if (Array.isArray(otherdice) && Array.isArray(otherkeys) && otherdice.length > 0 && otherdice.length == otherkeys.length) {
                         for (let i = 0; i < otherdice.length; i++) {

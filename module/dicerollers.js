@@ -386,7 +386,7 @@ export function copyToRollTNDialog(message) {
  * @param {number} d4 d4's to roll
  * @returns {string} Properly set-up string to give to a Roll
  */
-function formRoll(d12, d10, d8, d6, d4) {
+export function formRoll(d12, d10, d8, d6, d4) {
     let rollstring = "";
     for (var i = 0; i < d12; i++) {
         rollstring += "1d12,";
