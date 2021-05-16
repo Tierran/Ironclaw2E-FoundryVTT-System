@@ -9,6 +9,7 @@ import { findInItems } from "../helpers.js";
 import { checkForPrechecked } from "../helpers.js";
 import { nullCheckConcat } from "../helpers.js";
 import { splitSingleDiceString } from "../helpers.js";
+import { formRoll } from "../dicerollers.js";
 // From the combat-utility-belt
 import { hasConditionsIronclaw } from "../unified.js";
 import { getConditionsIronclaw } from "../unified.js";
@@ -192,6 +193,10 @@ export class Ironclaw2EActor extends Actor {
         if (hasConditionsIronclaw(["Over-Burdened", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
             data.run = 0;
         }
+
+
+        // Initiative visual for the sheet
+        data.initiativeString = reformDiceString(this.initiativeRoll(3), true);
     }
 
     /**
@@ -445,7 +450,13 @@ export class Ironclaw2EActor extends Actor {
     /*  Non-popup Roll Functions                    */
     /* -------------------------------------------- */
 
-    initiativeRoll(roll) {
+    /**
+     * Function to call initiative for an actor for the traditional initiative
+     * @param {number} returntype The type of return to use: 0 for nothing as it launches a popup, 1 for a traditional initiative roll, 2 for the initiative check on combat start for side-based initiative, 3 to simply return the total initiative dice array
+     * @param {number} tntouse The target number to use in case the mode uses target numbers
+     * @returns {any} Exact return type depends on the returntype parameter, null if no normal return path
+     */
+    initiativeRoll(returntype, tntouse = 2) {
         const data = this.data.data;
         let formconstruction = ``;
         let constructionkeys = [];
@@ -462,6 +473,31 @@ export class Ironclaw2EActor extends Actor {
 	             <input type="checkbox" id="${makeStatCompareReady(dangersense.data.name)}" name="${makeStatCompareReady(dangersense.data.name)}" checked></input>
                 </div>`+ "\n";
         }
+
+        switch (returntype) { // Yes, yes, the breaks are unnecessary
+            case 0:
+                popupSelectRolled(prechecked, true, tntouse, "", formconstruction, constructionkeys, constructionarray);
+                return;
+                break;
+            case 1:
+                let foo = this._getDicePools(prechecked, null, false);
+                let bar = dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice;
+                return "{" + formRoll(bar[0], bar[1], bar[2], bar[3], bar[4]) + "}kh1";
+                break;
+            case 2:
+                let foo = this._getDicePools(prechecked, null, false);
+                let bar = dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice;
+                roll = rollTargetNumber(tn, bar[0], bar[1], bar[2], bar[3], bar[4], "Rolling the initiative check: " + foo.label, this);
+                return roll;
+                break;
+            case 3:
+                let foo = this._getDicePools(prechecked, null, false);
+                return (dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice);
+                break;
+        }
+
+        console.warn("Initiative roll return type defaulted for actor: " + this.data.name);
+        return null;
     }
 
     /* -------------------------------------------- */
