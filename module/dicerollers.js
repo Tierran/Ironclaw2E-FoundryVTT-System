@@ -99,7 +99,7 @@ export function rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor = nul
  * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
  * @returns The roll and the message promise or data (depending on sendinchat, true | false) in an object
  */
-export function copyToRollHighest(message, sendinchat = true, sendinchat = true) {
+export function copyToRollHighest(message, sendinchat = true) {
     if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
         console.log("Somehow, a message that isn't a roll got into 'copyToRollHighest'.");
         console.log(message);

@@ -473,25 +473,25 @@ export class Ironclaw2EActor extends Actor {
 	             <input type="checkbox" id="${makeStatCompareReady(dangersense.data.name)}" name="${makeStatCompareReady(dangersense.data.name)}" checked></input>
                 </div>`+ "\n";
         }
-
+        let foo, bar;
         switch (returntype) { // Yes, yes, the breaks are unnecessary
             case 0:
                 popupSelectRolled(prechecked, true, tntouse, "", formconstruction, constructionkeys, constructionarray);
                 return;
                 break;
             case 1:
-                let foo = this._getDicePools(prechecked, null, false);
-                let bar = dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice;
+                foo = this._getDicePools(prechecked, null, false);
+                bar = dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice;
                 return rollHighest(bar[0], bar[1], bar[2], bar[3], bar[4], "Rolling initiative: " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this, false);
                 break;
             case 2:
-                let foo = this._getDicePools(prechecked, null, false);
-                let bar = dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice;
+                foo = this._getDicePools(prechecked, null, false);
+                bar = dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice;
                 roll = rollTargetNumber(tn, bar[0], bar[1], bar[2], bar[3], bar[4], "Rolling the initiative check: " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this).roll;
                 return roll;
                 break;
             case 3:
-                let foo = this._getDicePools(prechecked, null, false);
+                foo = this._getDicePools(prechecked, null, false);
                 return (dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice);
                 break;
         }

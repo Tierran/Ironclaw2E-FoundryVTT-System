@@ -4,12 +4,16 @@ import { Ironclaw2EActorSheet } from "./actor/actor-sheet.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { Ironclaw2EItemSheet } from "./item/item-sheet.js";
 
+import { Ironclaw2ECombat } from "./combat.js";
+import { Ironclaw2ECombatTracker } from "./combat.js";
+
 import { rollTargetNumberDialog } from "./dicerollers.js";
 import { rollHighestDialog } from "./dicerollers.js";
 import { rollTargetNumberOneLine } from "./dicerollers.js";
 import { rollHighestOneLine } from "./dicerollers.js";
 import { copyToRollTNDialog } from "./dicerollers.js";
 import { copyToRollHighest } from "./dicerollers.js";
+
 import { makeStatCompareReady } from "./helpers.js";
 
 Hooks.once('init', async function () {
@@ -26,12 +30,15 @@ Hooks.once('init', async function () {
         rollHighestOneLine
     };
 
+    CONFIG.Combat.entityClass = Ironclaw2ECombat;
+    CONFIG.ui.combat = Ironclaw2ECombatTracker;
+
     /**
      * Set an initiative formula for the system
      * @type {String}
      */
     CONFIG.Combat.initiative = {
-        formula: "@initiative",
+        formula: "2",
         decimals: 2
     };
 
