@@ -24,6 +24,7 @@ export class Ironclaw2ECombat extends Combat {
 
         // Get settings to know what type of initiative we are using
         const settings = game.settings.get("core", Combat.CONFIG_SETTING);
+        console.warn(settings);
 
         // Structure input data
         ids = typeof ids === "string" ? [ids] : ids;
@@ -118,36 +119,13 @@ export class Ironclaw2ECombatTracker extends CombatTracker {
         const tracker = html.find("#combat-tracker");
         const combatants = tracker.find(".combatant");
 
-        // Create new Combat encounter
-        html.find('.combat-create').click(ev => this._onCombatCreate(ev));
+        html.find('.combat-settings').off("click");
 
         // Display Combat settings
         html.find('.combat-settings').click(ev => {
             ev.preventDefault();
             new Ironclaw2ECombatTrackerConfig().render(true);
         });
-
-        // Cycle the current Combat encounter
-        html.find('.combat-cycle').click(ev => this._onCombatCycle(ev));
-
-        // Combat control
-        html.find('.combat-control').click(ev => this._onCombatControl(ev));
-
-        // Combatant control
-        html.find('.combatant-control').click(ev => this._onCombatantControl(ev));
-
-        // Hover on Combatant
-        combatants.hover(this._onCombatantHover.bind(this), this._onCombatantHoverOut.bind(this));
-
-        // Click on Combatant
-        combatants.click(this._onCombatantMouseDown.bind(this));
-
-        // Context on right-click
-        if (game.user.isGM) this._contextMenu(html);
-
-        // Intersection Observer for Combatant avatars
-        const observer = new IntersectionObserver(this._onLazyLoadImage.bind(this), { root: tracker[0] });
-        combatants.each((i, li) => observer.observe(li));
     }
 }
 
@@ -157,6 +135,7 @@ export class Ironclaw2ECombatTrackerConfig extends CombatTrackerConfig {
         return mergeObject(super.defaultOptions, {
             template: "systems/ironclaw2e/templates/popup/combat-config.html",
             width: 420
+
         });
     }
 
@@ -171,7 +150,7 @@ export class Ironclaw2ECombatTrackerConfig extends CombatTrackerConfig {
     /** @override */
     async _updateObject(event, formData) {
         return game.settings.set("core", Combat.CONFIG_SETTING, {
-            traditional: formData.traditional,
+            sideBased: formData.sideBased,
             initType: formData.initType,
             skipDefeated: formData.skipDefeated
         });

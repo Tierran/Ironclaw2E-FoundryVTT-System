@@ -30,6 +30,9 @@ Hooks.once('init', async function () {
         rollHighestOneLine
     };
 
+    // Define custom Entity classes
+    CONFIG.Actor.entityClass = Ironclaw2EActor;
+    CONFIG.Item.entityClass = Ironclaw2EItem;
     CONFIG.Combat.entityClass = Ironclaw2ECombat;
     CONFIG.ui.combat = Ironclaw2ECombatTracker;
 
@@ -41,10 +44,6 @@ Hooks.once('init', async function () {
         formula: "2",
         decimals: 2
     };
-
-    // Define custom Entity classes
-    CONFIG.Actor.entityClass = Ironclaw2EActor;
-    CONFIG.Item.entityClass = Ironclaw2EItem;
 
     // Register sheet application classes
     Actors.unregisterSheet("core", ActorSheet);
@@ -116,6 +115,18 @@ Hooks.once('init', async function () {
 Hooks.once("ready", async function () {
     // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
     Hooks.on("hotbarDrop", (bar, data, slot) => createIronclaw2EMacro(data, slot));
+
+    // Check and set default Combat Tracker options if they do not exist
+    let ctOptions = game.settings.get("core", Combat.CONFIG_SETTING);
+    console.log(ctOptions);
+    if (jQuery.isEmptyObject(ctOptions)) console.log("damn");
+    if (jQuery.isEmptyObject(ctOptions)) {
+        game.settings.set("core", Combat.CONFIG_SETTING, {
+            sideBased: true,
+            initType: 2,
+            skipDefeated: false
+        });
+    }
 
     // Combat Utility Belt warning
     if (!game.cub) {

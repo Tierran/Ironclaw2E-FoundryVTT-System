@@ -1,26 +1,21 @@
 <form autocomplete="off" onsubmit="event.preventDefault();">
     <div class="form-group">
-        <label>{{localize 'ironclaw2e.combat.traditionalInitiative'}}</label>
-        <input type="checkbox" name="traditional" {{checked settings.traditional}} data-dtype="Boolean" />
-        <p class="notes">{{localize 'ironclaw2e.combat.traditionalInitiativeHint'}}</p>
+        <label>{{localize 'ironclaw2e.combat.sideBasedInitiative'}}</label>
+        <input type="checkbox" name="sideBased" {{checked settings.sideBased}} data-dtype="Boolean" />
+        <p class="notes">{{localize 'ironclaw2e.combat.sideBasedInitiativeHint'}}</p>
     </div>
 
-    {{#if settings.traditional}}
     <div class="form-group">
         <label>{{localize 'ironclaw2e.combat.sidesUsed'}}</label>
         <select name="initType">
             {{#select settings.initType}}
-            {{#each initOptions as |value key|}}
-            <option value="{{value}}">{{localize key}}</option>
+            {{#each initOptions}}
+            <option value="{{this.value}}">{{localize this.key}}</option>
             {{/each}}
             {{/select}}
         </select>
         <p class="notes">{{localize 'ironclaw2e.combat.sidesUsedHint'}}</p>
     </div>
-    {{/if}}
-    {{#unless settings.traditional}}
-
-    {{/unless}}
 
     <div class="form-group">
         <label>{{localize 'COMBAT.SkipDefeated'}}</label>
