@@ -35,13 +35,14 @@ Hooks.once('init', async function () {
     CONFIG.Item.entityClass = Ironclaw2EItem;
     CONFIG.Combat.entityClass = Ironclaw2ECombat;
     CONFIG.ui.combat = Ironclaw2ECombatTracker;
+    CONFIG.time.roundTime = 6;
 
     /**
      * Set an initiative formula for the system
      * @type {String}
      */
     CONFIG.Combat.initiative = {
-        formula: "2",
+        formula: "-1",
         decimals: 2
     };
 
@@ -123,7 +124,8 @@ Hooks.once("ready", async function () {
         game.settings.set("core", Combat.CONFIG_SETTING, {
             sideBased: true,
             initType: 2,
-            skipDefeated: false
+            skipDefeated: false,
+            manualTN: -1
         });
     }
 

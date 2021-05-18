@@ -462,6 +462,7 @@ export class Ironclaw2EActor extends Actor {
         let constructionkeys = [];
         let constructionarray = [];
         let prechecked = ["speed", "mind"];
+        const burdened = hasConditionsIronclaw("Burdened", this);
 
         // Danger Sense bonus
         let dangersense = findInItems(this.items, "dangersense", "gift");
@@ -480,17 +481,17 @@ export class Ironclaw2EActor extends Actor {
                 return;
                 break;
             case 1:
-                foo = this._getDicePools(prechecked, null, false);
+                foo = this._getDicePools(prechecked, null, burdened);
                 bar = dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice;
                 return rollHighest(bar[0], bar[1], bar[2], bar[3], bar[4], "Rolling initiative: " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this, false);
                 break;
             case 2:
-                foo = this._getDicePools(prechecked, null, false);
+                foo = this._getDicePools(prechecked, null, burdened);
                 bar = dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice;
-                return rollTargetNumber(tn, bar[0], bar[1], bar[2], bar[3], bar[4], "Rolling the initiative check: " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this, false);
+                return rollTargetNumber(tntouse, bar[0], bar[1], bar[2], bar[3], bar[4], "Rolling the initiative check: " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this, false);
                 break;
             case 3:
-                foo = this._getDicePools(prechecked, null, false);
+                foo = this._getDicePools(prechecked, null, burdened);
                 return (dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice);
                 break;
         }

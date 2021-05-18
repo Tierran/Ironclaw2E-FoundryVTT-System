@@ -8,35 +8,64 @@ export class Ironclaw2ECombat extends Combat {
     }
 
     /** @override */
-    _getInitiativeFormula(combatant) {
-        return "2";
-    }
-
-    /** @override */
     _getInitiativeRoll(combatant, formula) {
         return combatant.actor ? combatant.actor.initiativeRoll(1).roll : Roll.create(formula).evaluate();
     }
 
     /**
-     * Get either the initiative check for a side-based init or a highest roll initiative for the traditional init
+     * Get the initiative check for the combatant, with a backup system in case the combatant is missing an actor, somehow
      * @param {Combatant} combatant
-     * @param {Object} settings
      * @param {number} tn
      * @param {string} formula
-     * @returns {Object}
+     * @returns {DiceReturn|null}
      * @private
      */
-    _getInitiativeRollIronclaw(combatant, settings, tn, formula) {
-        if (settings?.sideBased && combatant?.actor) {
-            if (settings.sideBased) {
-                return combatant.actor.initiativeRoll(2, tn);
-            }
-            else {
-                return combatant.actor.initiativeRoll(1);
+    _getInitiativeRollIronclaw(combatant, tn, formula) {
+        if (combatant?.actor) {
+            return combatant.actor.initiativeRoll(2, tn);
+        }
+        else {
+            const roll = this._getInitiativeRoll(combatant, formula);
+            return { "roll": roll, "highest": roll.total, "tnData": null, "message": {}, "isPromise": false };;
+        }
+    }
+
+    /**
+     * Determine the relevant group initiative for a combatant according to the initiative type in the settings
+     * @param {any} combatant
+     * @param {any} settings
+     * @returns {number}
+     * @private
+     */
+    _getInitiativeGroup(combatant, settings) {
+        if (combatant?.actor && combatant?.token && settings?.initType) {
+            let side = -1;
+            const initType = parseInt(settings.initType);
+            switch (initType) {
+                case 0:
+                case 1:
+                    side = combatant.actor.hasPlayerOwner ? 1 : 0; // If the combatant is a player, side 1, otherwise side 0
+                    if (initType === 0) return side == 1 ? 2 : 1;
+                    else return side == 0 ? 2 : 1;
+                    break;
+                case 2:
+                case 3:
+                    side = (combatant.actor.hasPlayerOwner || combatant.token.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY ? 1 : 0); // If the combatant is a player or allied, side 1, otherwise side 0
+                    if (initType === 2) return side == 1 ? 2 : 1;
+                    else return side == 0 ? 2 : 1;
+                    break;
+                case 4:
+                case 5:
+                    side = side = (combatant.actor.hasPlayerOwner ? 1 : (combatant.token.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY ? 2 : 0)); // If the combatant is a player, side 1, otherwise if the combatant is allied, side 2, otherwise side 0
+                    if (initType === 4) return side == 1 ? 3 : (side == 2 ? 2 : 1);
+                    else return side == side == 0 ? 3 : (side == 1 ? 2 : 1);
+                    break;
+                default:
+                    console.warn("Group initiative defaulted on init type");
+                    break;
             }
         }
-        else
-            return { "roll": this._getInitiativeRoll(combatant, formula) };
+        return -1;
     }
 
     /**
@@ -48,18 +77,18 @@ export class Ironclaw2ECombat extends Combat {
      * @private
      */
     _getInitiativeTN(combatant, allcombatants, settings) {
-        if (settings?.manualTN > 0) {
+        if (settings?.manualTN && settings.manualTN > 0) {
             return settings.manualTN;
         }
         else if (combatant?.actor && combatant?.token && settings?.initType && allcombatants) {
             let otherSide;
             if (settings.initType === 0 || settings.initType === 1) {
                 let playerOwnerComparison = combatant.actor.hasPlayerOwner;
-                otherSide = allcombatants.filter(x => x?.actor.hasPlayerOwner !== playerOwnerComparison);
+                otherSide = allcombatants.filter(x => x?.actor?.hasPlayerOwner !== playerOwnerComparison);
             }
             else {
                 let playerOwnerComparison = combatant.actor.hasPlayerOwner || combatant.token.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY;
-                otherSide = allcombatants.filter(x => (x?.actor.hasPlayerOwner || x?.token.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY) !== playerOwnerComparison);
+                otherSide = allcombatants.filter(x => (x?.actor?.hasPlayerOwner || x?.token?.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY) !== playerOwnerComparison);
             }
             return this._getDistanceTN(this._getDistanceToClosestOther(combatant, otherSide));
         }
@@ -78,7 +107,7 @@ export class Ironclaw2ECombat extends Combat {
         if (combatant?.token) {
             othercombatants.forEach(x => {
                 if (x?.token) {
-                    let dist = canvas.grid.measureDistance(combatant, x);
+                    let dist = canvas.grid.measureDistance(combatant.token, x.token);
                     if (distance > dist) distance = dist;
                 }
             });
@@ -121,10 +150,26 @@ export class Ironclaw2ECombat extends Combat {
             // Roll initiative
             const tn = this._getInitiativeTN(c, this.combatants, settings);
             const cf = formula || this._getInitiativeFormula(c);
-            const roll = this._getInitiativeRollIronclaw(c, settings, tn, cf).roll;
+            const initRoll = this._getInitiativeRollIronclaw(c, tn, cf);
 
+            let initiative = -2;
+            if (settings?.sideBased) {
+                initiative = this._getInitiativeGroup(c, settings);
+            } else {
+                let skipped = false;
+                let decimals = 0;
+                initRoll.roll.dice.forEach(x => { // Tie-breaker calculation
+                    if (!skipped && x.total == initRoll.highest) {
+                        skipped = true; // Skip the actual initiative die, set to bool to ensure that multiple dice of the highest value aren't skipped
+                        return;
+                    }
+                    if (decimals < x.total) decimals = x.total;
+                });
+                initiative = initRoll.highest + (decimals / 20);
+            }
+            let flavorString = c.token.name + ", " + (initRoll.message.flavor || "rolling for initiative:");
 
-            updates.push({ _id: id, initiative: roll.total });
+            updates.push({ _id: id, initiative: initiative });
 
             // Determine the roll mode
             let rollMode = messageOptions.rollMode || game.settings.get("core", "rollMode");
@@ -138,10 +183,11 @@ export class Ironclaw2ECombat extends Combat {
                     token: c.token._id,
                     alias: c.token.name
                 },
-                flavor: `${c.token.name} rolls for Initiative!`,
+                flavor: flavorString,
                 flags: { "core.initiativeRoll": true }
             }, messageOptions);
-            const chatData = roll.toMessage(messageData, { create: false, rollMode });
+            messageData = mergeObject(initRoll.message, messageData);
+            const chatData = initRoll.roll.toMessage(messageData, { create: false, rollMode });
 
             // Play 1 sound for the whole rolled set
             if (i > 0) chatData.sound = null;
@@ -235,7 +281,8 @@ export class Ironclaw2ECombatTrackerConfig extends CombatTrackerConfig {
         return game.settings.set("core", Combat.CONFIG_SETTING, {
             sideBased: formData.sideBased,
             initType: formData.initType,
-            skipDefeated: formData.skipDefeated
+            skipDefeated: formData.skipDefeated,
+            manualTN: formData.manualTN
         });
     }
 

@@ -18,6 +18,12 @@
     </div>
 
     <div class="form-group">
+        <label>{{localize 'ironclaw2e.combat.manualTN'}}</label>
+        <input type="text" name="manualTN" value="{{settings.manualTN}}" data-dtype="Number" />
+        <p class="notes">{{localize 'ironclaw2e.combat.manualTNHint'}}</p>
+    </div>
+
+    <div class="form-group">
         <label>{{localize 'COMBAT.SkipDefeated'}}</label>
         <input type="checkbox" name="skipDefeated" {{checked settings.skipDefeated}} data-dtype="Boolean" />
         <p class="notes">{{localize 'COMBAT.SkipDefeatedHint'}}</p>
