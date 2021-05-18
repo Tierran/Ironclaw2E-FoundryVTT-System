@@ -118,8 +118,7 @@ Hooks.once("ready", async function () {
 
     // Check and set default Combat Tracker options if they do not exist
     let ctOptions = game.settings.get("core", Combat.CONFIG_SETTING);
-    console.log(ctOptions);
-    if (jQuery.isEmptyObject(ctOptions)) console.log("damn");
+
     if (jQuery.isEmptyObject(ctOptions)) {
         game.settings.set("core", Combat.CONFIG_SETTING, {
             sideBased: true,

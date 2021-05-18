@@ -2,6 +2,23 @@ import { findTotalDice } from "./helpers.js";
 import { getMacroSpeaker } from "./helpers.js";
 
 /**
+ * @typedef {{
+ *   roll: Roll,
+ *   highest: number,
+ *   tnData: TNData|null,
+ *   message: Object|Promise,
+ *   isPromise: boolean
+ * }} DiceReturn
+ */
+
+/**
+ * @typedef {{
+ *   successes: number,
+ *   ties: number
+ * }} TNData
+ */
+
+/**
  * A common dice roller function to roll a set of dice against a target number
  * @param {number} tni Target number
  * @param {number} d12 d12's to roll
@@ -12,7 +29,7 @@ import { getMacroSpeaker } from "./helpers.js";
  * @param {string} label Optional value to display some text before the result text
  * @param {Actor} rollingactor Optional value to display the roll as from a specific actor
  * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
- * @returns The roll and the message promise or data (depending on sendinchat, true | false) in an object
+ * @returns {DiceReturn} The roll and the message promise or data (depending on sendinchat, true | false) in an object
  */
 export function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", rollingactor = null, sendinchat = true) {
     let rollstring = formRoll(d12, d10, d8, d6, d4);
@@ -20,7 +37,19 @@ export function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", rollinga
         return null;
 
     let roll = new Roll("{" + rollstring + "}cs>" + tni).evaluate();
-    const flavorstring = flavorStringTN(tni, roll, label);
+
+    const successes = roll.total;
+    let highest = 0;
+    let ties = 0;
+    roll.dice.forEach(x => {
+        if (x.total == tni) ties++;
+        if (x.total > highest) highest = x.total;
+    });
+
+    const flavorstring = flavorStringTN(successes, ties, highest == 1, label);
+
+    /** @type TNData */
+    let tnData = { "successes": successes, "ties": ties };
 
     let msg = roll.toMessage({
         speaker: getMacroSpeaker(rollingactor),
@@ -28,7 +57,7 @@ export function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", rollinga
         flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.label": label }
     }, { create: sendinchat });
 
-    return { "roll": roll, "message": msg };
+    return { "roll": roll, "highest": highest, "tnData": tnData, "message": msg, "isPromise": sendinchat };
 };
 
 /**
@@ -36,7 +65,7 @@ export function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", rollinga
  * @param {number} tni Target number
  * @param {Object} message Message containing the roll to copy
  * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
- * @returns The roll and the message promise or data (depending on sendinchat, true | false) in an object
+ * @returns {DiceReturn} The roll and the message promise or data (depending on sendinchat, true | false) in an object
  */
 export function copyToRollTN(tni, message, sendinchat = true) {
     if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
@@ -52,7 +81,19 @@ export function copyToRollTN(tni, message, sendinchat = true) {
         return;
 
     let roll = new Roll("{" + rollstring + "}cs>" + tni).evaluate();
-    const flavorstring = "Copy TN: " + flavorStringTN(tni, roll, label);
+
+    const successes = roll.total;
+    let highest = 0;
+    let ties = 0;
+    roll.terms[0].results.forEach(x => {
+        if (x.result == tni) ties++;
+        if (x.total > highest) highest = x.total;
+    });
+
+    const flavorstring = "Copy TN: " + flavorStringTN(successes, ties, highest == 1, label);
+
+    /** @type TNData */
+    let tnData = { "successes": successes, "ties": ties };
 
     let msg = roll.toMessage({
         speaker: message.data.speaker,
@@ -60,7 +101,7 @@ export function copyToRollTN(tni, message, sendinchat = true) {
         flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.label": label }
     }, { create: sendinchat });
 
-    return { "roll": roll, "message": msg };
+    return { "roll": roll, "highest": highest, "tnData": tnData, "message": msg, "isPromise": sendinchat };
 }
 
 /**
@@ -73,7 +114,7 @@ export function copyToRollTN(tni, message, sendinchat = true) {
  * @param {string} label Optional value to display some text before the result text
  * @param {Actor} rollingactor Optional value to display the roll as from a specific actor
  * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
- * @returns The roll and the message promise or data (depending on sendinchat, true | false) in an object
+ * @returns {DiceReturn} The roll and the message promise or data (depending on sendinchat, true | false) in an object
  */
 export function rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor = null, sendinchat = true) {
     let rollstring = formRoll(d12, d10, d8, d6, d4);
@@ -81,7 +122,7 @@ export function rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor = nul
         return null;
 
     let roll = new Roll("{" + rollstring + "}kh1").evaluate();
-    const flavorstring = flavorStringHighest(roll, label);
+    const flavorstring = flavorStringHighest(roll.total, label);
 
     let msg = roll.toMessage({
         speaker: getMacroSpeaker(rollingactor),
@@ -89,7 +130,7 @@ export function rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor = nul
         flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.label": label }
     }, { create: sendinchat });
 
-    return { "roll": roll, "message": msg };
+    return { "roll": roll, "highest": roll.total, "tnData": null, "message": msg, "isPromise": sendinchat };
 };
 
 /**
@@ -97,7 +138,7 @@ export function rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor = nul
  * @param {number} tni Target number
  * @param {Object} message Message containing the roll to copy
  * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
- * @returns The roll and the message promise or data (depending on sendinchat, true | false) in an object
+ * @returns {DiceReturn} The roll and the message promise or data (depending on sendinchat, true | false) in an object
  */
 export function copyToRollHighest(message, sendinchat = true) {
     if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
@@ -113,7 +154,7 @@ export function copyToRollHighest(message, sendinchat = true) {
         return;
 
     let roll = new Roll("{" + rollstring + "}kh1").evaluate();
-    const flavorstring = "Copy High: " + flavorStringHighest(roll, label);
+    const flavorstring = "Copy High: " + flavorStringHighest(roll.total, label);
 
     let msg = roll.toMessage({
         speaker: message.data.speaker,
@@ -121,7 +162,7 @@ export function copyToRollHighest(message, sendinchat = true) {
         flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.label": label }
     }, { create: sendinchat });
 
-    return { "roll": roll, "message": msg };
+    return { "roll": roll, "highest": roll.total, "tnData": null, "message": msg, "isPromise": sendinchat };
 }
 
 
@@ -422,33 +463,18 @@ export function formRoll(d12, d10, d8, d6, d4) {
 
 /**
  * Helper function for the target number dice rollers to form the chat message flavor text properly
- * @param {Roll} roll The roll object for which to form a flavor string
+ * @param {number} successes The number of successes for the roll
+ * @param {number} ties The number of ties for the roll
+ * @param {boolean} botched Whether the roll was botched
  * @param {string} label Label to put in front of the dice results
  * @returns {string} The formed flavor string
  */
-function flavorStringTN(tni, roll, label) {
-    if (roll.result > 0) {
-        return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:green\">Success, with " + roll.total + " successes.</p>";
+function flavorStringTN(successes, ties, botched, label) {
+    if (successes > 0) {
+        return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:green\">Success, with " + successes + " successes.</p>";
     }
     else {
-        let rawtotal = 0;
-        let dicenumber = 0;
-        let ties = 0;
-        if (roll.dice.length > 0) {
-            roll.dice.forEach(x => {
-                dicenumber++;
-                rawtotal += x.total;
-                if (x.total == tni) ties++;
-            });
-        }
-        else if (roll.terms.length > 0) {
-            roll.terms[0].results.forEach(x => {
-                dicenumber++;
-                rawtotal += x.result;
-                if (x.result == tni) ties++;
-            });
-        }
-        if (rawtotal == dicenumber) {
+        if (botched) {
             return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:red\">Botch! All ones!</p>";
         }
         else if (ties > 0) {
@@ -462,12 +488,12 @@ function flavorStringTN(tni, roll, label) {
 
 /**
  * Helper function for the highest dice rollers to form the chat message flavor text properly
- * @param {Roll} roll The roll object for which to form a flavor string
+ * @param {number} highest The highest die result for the roll
  * @param {string} label Label to put in front of the dice results
  * @returns {string} The formed flavor string
  */
-function flavorStringHighest(roll, label) {
-    return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:" + (roll.total > 1 ? "black" : "red") + "\">Highest die was " + roll.total + "</p>";
+function flavorStringHighest(highest, label) {
+    return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:" + (highest > 1 ? "black" : "red") + "\">Highest die was " + highest + "</p>";
 }
 
 /**

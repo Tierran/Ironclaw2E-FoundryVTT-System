@@ -487,8 +487,7 @@ export class Ironclaw2EActor extends Actor {
             case 2:
                 foo = this._getDicePools(prechecked, null, false);
                 bar = dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice;
-                roll = rollTargetNumber(tn, bar[0], bar[1], bar[2], bar[3], bar[4], "Rolling the initiative check: " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this).roll;
-                return roll;
+                return rollTargetNumber(tn, bar[0], bar[1], bar[2], bar[3], bar[4], "Rolling the initiative check: " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this, false);
                 break;
             case 3:
                 foo = this._getDicePools(prechecked, null, false);

@@ -14,9 +14,90 @@ export class Ironclaw2ECombat extends Combat {
 
     /** @override */
     _getInitiativeRoll(combatant, formula) {
-        //TODO: Actually make the logic for side-based initiatives and make some system to auto-roll the initiative checks
-        let foo = combatant.actor ? combatant.actor.initiativeRoll(1).roll : Roll.create(formula).evaluate();
-        return foo;
+        return combatant.actor ? combatant.actor.initiativeRoll(1).roll : Roll.create(formula).evaluate();
+    }
+
+    /**
+     * Get either the initiative check for a side-based init or a highest roll initiative for the traditional init
+     * @param {Combatant} combatant
+     * @param {Object} settings
+     * @param {number} tn
+     * @param {string} formula
+     * @returns {Object}
+     * @private
+     */
+    _getInitiativeRollIronclaw(combatant, settings, tn, formula) {
+        if (settings?.sideBased && combatant?.actor) {
+            if (settings.sideBased) {
+                return combatant.actor.initiativeRoll(2, tn);
+            }
+            else {
+                return combatant.actor.initiativeRoll(1);
+            }
+        }
+        else
+            return { "roll": this._getInitiativeRoll(combatant, formula) };
+    }
+
+    /**
+     * Determine the TN of the initiative check based on the distance to the nearest combatant
+     * @param {Combatant} combatant
+     * @param {Combatant[]} allcombatants
+     * @param {Object} settings
+     * @returns {number}
+     * @private
+     */
+    _getInitiativeTN(combatant, allcombatants, settings) {
+        if (settings?.manualTN > 0) {
+            return settings.manualTN;
+        }
+        else if (combatant?.actor && combatant?.token && settings?.initType && allcombatants) {
+            let otherSide;
+            if (settings.initType === 0 || settings.initType === 1) {
+                let playerOwnerComparison = combatant.actor.hasPlayerOwner;
+                otherSide = allcombatants.filter(x => x?.actor.hasPlayerOwner !== playerOwnerComparison);
+            }
+            else {
+                let playerOwnerComparison = combatant.actor.hasPlayerOwner || combatant.token.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY;
+                otherSide = allcombatants.filter(x => (x?.actor.hasPlayerOwner || x?.token.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY) !== playerOwnerComparison);
+            }
+            return this._getDistanceTN(this._getDistanceToClosestOther(combatant, otherSide));
+        }
+        else return 2;
+    }
+
+    /**
+     * Get distance between the combatant and closest of the other combatants
+     * @param {Combatant} combatant
+     * @param {Combatant[]} othercombatants
+     * @returns {number}
+     * @private
+     */
+    _getDistanceToClosestOther(combatant, othercombatants) {
+        let distance = 10000;
+        if (combatant?.token) {
+            othercombatants.forEach(x => {
+                if (x?.token) {
+                    let dist = canvas.grid.measureDistance(combatant, x);
+                    if (distance > dist) distance = dist;
+                }
+            });
+        }
+        return distance;
+    }
+
+    /**
+     * Get the initiative target number for a given distance to the nearest foe
+     * @param {number} distance
+     * @returns {number}
+     * @private
+     */
+    _getDistanceTN(distance) {
+        if (distance <= 4) return 2;
+        if (distance <= 12) return 3;
+        if (distance <= 36) return 4;
+        if (distance <= 100) return 5;
+        return 6;
     }
 
     /** @override */
@@ -24,7 +105,6 @@ export class Ironclaw2ECombat extends Combat {
 
         // Get settings to know what type of initiative we are using
         const settings = game.settings.get("core", Combat.CONFIG_SETTING);
-        console.warn(settings);
 
         // Structure input data
         ids = typeof ids === "string" ? [ids] : ids;
@@ -39,8 +119,11 @@ export class Ironclaw2ECombat extends Combat {
             if (!c || !c.owner) return results;
 
             // Roll initiative
+            const tn = this._getInitiativeTN(c, this.combatants, settings);
             const cf = formula || this._getInitiativeFormula(c);
-            const roll = this._getInitiativeRoll(c, cf);
+            const roll = this._getInitiativeRollIronclaw(c, settings, tn, cf).roll;
+
+
             updates.push({ _id: id, initiative: roll.total });
 
             // Determine the roll mode
@@ -158,10 +241,10 @@ export class Ironclaw2ECombatTrackerConfig extends CombatTrackerConfig {
 
     getInitiativeOptions() {
         return [{ key: "ironclaw2e.combat.PCvsNPC", value: 0 },
-            { key: "ironclaw2e.combat.NPCvsPC", value: 1 },
-            { key: "ironclaw2e.combat.alliesVsEnemies", value: 2 },
-            { key: "ironclaw2e.combat.enemiesVsAllies", value: 3 },
-            { key: "ironclaw2e.combat.pcsAlliesEnemies", value: 4 },
-            { key: "ironclaw2e.combat.enemiesPcsAllies", value: 5 }];
+        { key: "ironclaw2e.combat.NPCvsPC", value: 1 },
+        { key: "ironclaw2e.combat.alliesVsEnemies", value: 2 },
+        { key: "ironclaw2e.combat.enemiesVsAllies", value: 3 },
+        { key: "ironclaw2e.combat.pcsAlliesEnemies", value: 4 },
+        { key: "ironclaw2e.combat.enemiesPcsAllies", value: 5 }];
     }
 }
