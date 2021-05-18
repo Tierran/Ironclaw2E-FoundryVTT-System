@@ -13,11 +13,11 @@ NOTE: This system requires the Combat Utility Belt (https://github.com/death-sav
 
 For rolling actor dice pools, actor sheets have a button to open a dice poll popup, which allows you to select what pools to use for the roll. The system has some support for specific rolls to automatically pre-select relevant dice pools and add modifiers through hard-coded logic. This does require any added gifts to have the same name as they do in the books to function, but allows easier rolling of dice.  
 Weapons and gifts can be set up to automatically select certain dice pools, as well as giving extra dice for the roll automatically. The system also has internal logic to add relevant modifiers to the rolls. Armor and shields also work, but any added dice from gifts need to be added manually.  
-Ironclaw's initiative system is supported by using 'marker' actor tokens to represent each side in combat and setting up the markers so that their initiatives are in the correct order to follow the order GM has set for the encounter. Sadly, this precludes adding the character tokens themselves to the combat encounter.  
+Ironclaw's initiative system is supported, both the normal side-based and the alternate classic style. Configuring the specifics is done through the combat tracker settings as normal, the system supporting a few different ways to classify sides in a battle. The system also auto-rolls the initiative check for battle participants when 'rolling' initiative.  
 
 The system has support for the Drag Ruler module (https://github.com/manuelVo/foundryvtt-drag-ruler). The distance colors represent Stride (blue), Stride+Dash (green), Run (yellow) and over max distance (red).
 
-Still lots of WIP in this project: Initiatives are a bit of a mess, there's no support for the alternate, more traditional initiative, I'm certain I've forgotten to include one feature or another... 
+Still probably lots of WIP in the project...
 
 ### How to roll
 
