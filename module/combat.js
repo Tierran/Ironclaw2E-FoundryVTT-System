@@ -130,6 +130,27 @@ export class Ironclaw2ECombat extends Combat {
     }
 
     /** @override */
+    _prepareCombatant(c, scene, players, settings = {}) {
+        c = super._prepareCombatant(c, scene, players, settings);
+
+        c.resource = c.flags?.ironclaw2e?.initiativeResult; // Set the "resource" to track be the initiative result
+        return c;
+    }
+
+    /** @override */
+    async resetAll() {
+        const updates = this.data.combatants.map(c => {
+            return {
+                _id: c._id,
+                initiative: null,
+                flags: { "ironclaw2e.initiativeResult": null }
+            }
+        });
+        await this.updateEmbeddedEntity("Combatant", updates);
+        return this.update({ turn: 0 });
+    }
+
+    /** @override */
     async rollInitiative(ids, { formula = null, updateTurn = true, messageOptions = {} } = {}) {
 
         // Get settings to know what type of initiative we are using
@@ -167,9 +188,14 @@ export class Ironclaw2ECombat extends Combat {
                 });
                 initiative = initRoll.highest + (decimals / 20);
             }
-            let flavorString = c.token.name + ", " + (initRoll.message.flavor || "rolling for initiative:");
 
-            updates.push({ _id: id, initiative: initiative });
+            let flavorString = c.token.name + ", " + (initRoll.message.flavor || "rolling for initiative:");
+            let initResult = "";
+            if (initRoll.tnData) {
+                initResult = initRoll.tnData.successes > 0 ? initRoll.tnData.successes.toString() : (initRoll.tnData.ties ? "T" : (initRoll.highest === 1 ? "B" : "F")); // Set the result as either the number of successes, or Ties, Botch, or Fail
+            }
+
+            updates.push({ _id: id, initiative: initiative, flags: { "ironclaw2e.initiativeResult": initResult } });
 
             // Determine the roll mode
             let rollMode = messageOptions.rollMode || game.settings.get("core", "rollMode");
