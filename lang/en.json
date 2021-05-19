@@ -20,5 +20,16 @@
 	"ironclaw2e.combat.pcsAlliesEnemies": "Players, Allies and Enemies",
 	"ironclaw2e.combat.enemiesPcsAllies": "Enemies, Players and Allies",
 	"ironclaw2e.combat.manualTN": "Set TN manually",
-	"ironclaw2e.combat.manualTNHint": "Set the initiative check TN manually. If set to -1, the system will do its best to automatically determine the appropriate TN based on the distance to the nearest enemy token."
+	"ironclaw2e.combat.manualTNHint": "Set the initiative check TN manually. If set to -1, the system will do its best to automatically determine the appropriate TN based on the distance to the nearest enemy token.",
+
+	"ironclaw2e.config.preferTokenName": "WORLD: Use token names",
+	"ironclaw2e.config.preferTokenNameHint": "If checked, dice rollers will not use actor's own names and will instead use the name and presentation of their tokens, when available. Always works for synthetic actors, whereas linked actors require an active scene.",
+	"ironclaw2e.config.manageEncumbranceAuto": "WORLD: Auto-manage encumbrance",
+	"ironclaw2e.config.manageEncumbranceAutoHint": "If checked, the system will automatically manage Burdened, Over-Burdened and Cannot Move statuses for actors, based on their carried weight and worn armors. Do not try to change them manually when active, doing so is likely to cause errors.",
+	"ironclaw2e.config.coinsHaveWeight": "WORLD: Make coins have weight",
+	"ironclaw2e.config.coinsHaveWeightHint": "If checked, the weight of coins will be added to the encumbrance of the actor.",
+	"ironclaw2e.config.autoPrototypeSetup": "WORLD: Auto-setup prototype tokens",
+	"ironclaw2e.config.autoPrototypeSetupHint": "If checked, newly created actors will have their prototype token's attributes use type-specific defaults.",
+	"ironclaw2e.config.confirmItemInfo": "CLIENT: Confirm sending item info",
+	"ironclaw2e.config.confirmItemInfoHint": "If checked, the system will pop a confirmation dialog before actually sending information about items to the chat."
 }

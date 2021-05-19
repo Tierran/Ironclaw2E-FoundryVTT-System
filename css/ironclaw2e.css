@@ -10,6 +10,16 @@
   cursor: pointer;
 }
 
+.double-clickable:hover, .double-clickable:focus {
+    color: #000;
+    text-shadow: 0 0 10px blue;
+    cursor: pointer;
+}
+
+input.center-text {
+    text-align: center;
+}
+
 .grid,
 .grid-2col {
   display: grid;

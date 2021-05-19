@@ -54,8 +54,8 @@ Hooks.once('init', async function () {
 
     // Register system settings
     game.settings.register("ironclaw2e", "preferTokenName", {
-        name: "Use token names:",
-        hint: "If checked, dice rollers will not use actor's own names and will instead use the name and presentation of their tokens, when available. Always works for synthetic actors, whereas linked actors require an active scene.",
+        name: "ironclaw2e.config.preferTokenName",
+        hint: "ironclaw2e.config.preferTokenNameHint",
         scope: "world",
         type: Boolean,
         default: true,
@@ -63,8 +63,8 @@ Hooks.once('init', async function () {
     });
 
     game.settings.register("ironclaw2e", "manageEncumbranceAuto", {
-        name: "Manage encumbrance automatically:",
-        hint: "If checked, the system will automatically manage Burdened, Over-Burdened and Cannot Move statuses for actors, based on their carried weight and worn armors. Do not try to change them manually when active, doing so is likely to cause errors.",
+        name: "ironclaw2e.config.manageEncumbranceAuto",
+        hint: "ironclaw2e.config.manageEncumbranceAutoHint",
         scope: "world",
         type: Boolean,
         default: false,
@@ -72,8 +72,8 @@ Hooks.once('init', async function () {
     });
 
     game.settings.register("ironclaw2e", "coinsHaveWeight", {
-        name: "Make coins have weight:",
-        hint: "If checked, the weight of coins will be added to the encumbrance of the actor.",
+        name: "ironclaw2e.config.coinsHaveWeight",
+        hint: "ironclaw2e.config.coinsHaveWeightHint",
         scope: "world",
         type: Boolean,
         default: true,
@@ -81,11 +81,20 @@ Hooks.once('init', async function () {
     });
 
     game.settings.register("ironclaw2e", "autoPrototypeSetup", {
-        name: "Auto-setup prototype tokens:",
-        hint: "If checked, newly created actors will have their prototype token's attributes use type-specific defaults.",
+        name: "ironclaw2e.config.autoPrototypeSetup",
+        hint: "ironclaw2e.config.autoPrototypeSetupHint",
         scope: "world",
         type: Boolean,
         default: true,
+        config: true
+    });
+
+    game.settings.register("ironclaw2e", "confirmItemInfo", {
+        name: "ironclaw2e.config.confirmItemInfo",
+        hint: "ironclaw2e.config.confirmItemInfoHint",
+        scope: "client",
+        type: Boolean,
+        default: false,
         config: true
     });
 

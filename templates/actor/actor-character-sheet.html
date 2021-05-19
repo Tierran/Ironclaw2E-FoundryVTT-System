@@ -51,7 +51,27 @@
 
         {{!-- Biography Tab --}}
         <div class="tab biography" data-group="primary" data-tab="description">
-            {{editor content=data.biography target="data.biography" button=true owner=owner editable=editable}}
+            <div class="flex-group flex-tight flexcol">
+                <div class="flexrow">
+                    <label class="header-label" style="max-width:100px">Motto:</label>
+                    <input class="center-text" type="text" name="data.motto" value="{{data.motto}}" data-dtype="String" />
+                </div>
+            </div>
+            <div class="flex-group flex-tight flexcol">
+                <div class="flexrow">
+                    <label class="header-label" style="max-width:100px">Goal 1:</label>
+                    <input class="center-text" type="text" name="data.goal1" value="{{data.goal1}}" data-dtype="String" />
+                </div>
+                <div class="flexrow">
+                    <label class="header-label" style="max-width:100px">Goal 2:</label>
+                    <input class="center-text" type="text" name="data.goal2" value="{{data.goal2}}" data-dtype="String" />
+                </div>
+                <div class="flexrow">
+                    <label class="header-label" style="max-width:100px">Goal 3:</label>
+                    <input class="center-text" type="text" name="data.goal3" value="{{data.goal3}}" data-dtype="String" />
+                </div>
+            </div>
+            <div style="height:calc(100% - 120px)">{{editor content=data.biography target="data.biography" button=true owner=owner editable=editable}}</div>
         </div>
 
         {{!-- Battle Stats Tab --}}
@@ -81,7 +101,7 @@
                     {{#each actor.effects as |item id|}}
                     <li class="item flexrow" data-item-id="{{item._id}}">
                         <div class="item-image"><img src="{{item.icon}}" title="{{item.label}}" width="24" height="24" /></div>
-                        <h4 class="item-name">{{item.label}}</h4>
+                        <h4 class="item-name double-clickable roll-double-info-cond">{{item.label}}</h4>
                         <div class="item-controls">
                             <a class="rollable roll-effects-delete" title="Delete Effect" data-id="{{item._id}}"><i class="fas fa-trash"></i></a>
                         </div>
@@ -160,7 +180,7 @@
                 {{#each actor.gifts as |item id|}}
                 <li class="item flexrow" data-item-id="{{item._id}}">
                     <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
-                    <h4 class="item-name">{{item.name}}</h4>
+                    <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                     <div class="item-controls">
                         {{#if item.data.useDice}}<a class="rollable roll-item" title="Use Gift in a roll" data-roll="0" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/gift-use.svg" width="24" height="24" /></a>{{/if}}
                     </div>
@@ -207,7 +227,7 @@
                 {{#each actor.gear as |item id|}}
                 <li class="item flexrow" data-item-id="{{item._id}}">
                     <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
-                    <h4 class="item-name">{{item.name}}</h4>
+                    <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                     {{#if (eq item.type "illumination")}}
                     <div class="item-controls flexrow">
                         <a class="rollable roll-item" title="{{#if item.data.lighted}}Douse{{else}}Light{{/if}} {{item.name}}" data-roll="5" data-item="{{item._id}}"><img src="{{#if item.data.lighted}}systems/ironclaw2e/icons/illumination-light.svg{{else}}systems/ironclaw2e/icons/illumination-douse.svg{{/if}}" width="24" height="24" /></a>
@@ -248,7 +268,7 @@
                 {{#each actor.weapons as |item id|}}
                 <li class="item flexrow" data-item-id="{{item._id}}">
                     <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
-                    <h4 class="item-name">{{item.name}}</h4>
+                    <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                     <div class="item-controls flexrow">
                         {{#if item.data.attackDice}}<a class="rollable roll-item" title="Attack with {{item.name}}" data-roll="1" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-attack.svg" width="24" height="24" /></a>{{/if}}
                         {{#if item.data.useSpark}}<a class="rollable roll-item" title="Spark Die: {{item.data.sparkDie}}" data-roll="4" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-spark.svg" width="24" height="24" /></a>{{/if}}
@@ -276,7 +296,7 @@
                 {{#each actor.armors as |item id|}}
                 <li class="item flexrow" data-item-id="{{item._id}}">
                     <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
-                    <h4 class="item-name">{{item.name}}</h4>
+                    <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                     <div class="item-controls">
                         <a class="rollable roll-item-change" title="{{#if item.data.worn}}Take Off{{else}}Wear{{/if}}" data-roll="2" data-item="{{item._id}}"><span>{{#if item.data.worn}}Worn{{else}}Off{{/if}}</span></a>
                         <a class="rollable roll-item-change" title="{{#if item.data.showInBattleStats}}Hide in Battle Stats{{else}}Show in Battle Stats{{/if}}" data-roll="0" data-item="{{item._id}}"><span>{{#if item.data.showInBattleStats}}Shown{{else}}Hidden{{/if}}</span></a>
@@ -297,7 +317,7 @@
                 {{#each actor.shields as |item id|}}
                 <li class="item flexrow" data-item-id="{{item._id}}">
                     <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
-                    <h4 class="item-name">{{item.name}}</h4>
+                    <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                     <div class="item-controls">
                         <a class="rollable roll-item-change" title="{{#if item.data.held}}Unequip{{else}}Equip{{/if}}" data-roll="3" data-item="{{item._id}}"><span>{{#if item.data.held}}Held{{else}}Off{{/if}}</span></a>
                         <a class="rollable roll-item-change" title="{{#if item.data.showInBattleStats}}Hide in Battle Stats{{else}}Show in Battle Stats{{/if}}" data-roll="0" data-item="{{item._id}}"><span>{{#if item.data.showInBattleStats}}Shown{{else}}Hidden{{/if}}</span></a>

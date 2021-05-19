@@ -53,6 +53,7 @@ export class Ironclaw2EItem extends Item {
             data.canUse = false;
         }
 
+        // Extra Career support
         /*
         if (!data.refresh || data.refresh.length == 0 || makeStatCompareReady(data.refresh) == "none") {
             data.hasRefresh = false;
@@ -148,7 +149,6 @@ export class Ironclaw2EItem extends Item {
     /**
      * Handle clickable rolls.
      * @param {Event} event   The originating click event
-     * @private
      */
     async roll() {
         // Basic template rendering data
@@ -200,6 +200,90 @@ export class Ironclaw2EItem extends Item {
             flavor: label
         });
         */
+    }
+
+    async sendInfoToChat() {
+        const token = this.actor.token;
+        const item = this.data;
+        const actorData = this.actor ? this.actor.data.data : {};
+        const itemData = item.data;
+        const confirmSend = game.settings.get("ironclaw2e", "confirmItemInfo");
+
+        let chatData = {};
+        switch (item.type) {
+            case 'gift':
+                chatData = {
+                    content:
+                        `<div style="font-size:10px">Description: ${itemData.description}</div>
+                        <p>Tags: ${itemData.giftTags}</p>
+                        <p>Refresh: ${itemData.refresh}, Exhausted: ${itemData.exhausted ? "Yes" : "No"}
+                        <p>Gift dice: ${itemData.useDice}, Default TN: ${itemData.defaultTN}`
+                };
+                break;
+            case 'weapon':
+                chatData = {
+                    content:
+                        `<div style="font-size:10px">Description: ${itemData.description}</div>
+                        <p>Effect: ${itemData.effect}</p>
+                        <p>Descriptors: ${itemData.descriptors}</p>
+                        <p>Equip: ${itemData.equip}, Range: ${itemData.range}</p>`
+                };
+                break;
+            case 'illumination':
+                chatData = {
+                    content:
+                        `<div style="font-size:10px">Description: ${itemData.description}</div>
+                        <p>Dim Light: ${itemData.dimLight}, Bright Light: ${itemData.brightLight}, Angle: ${itemData.lightAngle}</p>`
+                };
+                break;
+            case 'armor':
+                chatData = { content: `<div style="font-size:10px">Description: ${itemData.description}</div><p>Armor Dice: ${itemData.armorDice}, Worn: ${itemData.worn ? "Yes" : "No"}</p>` };
+                break;
+            case 'shield':
+                chatData = { content: `<div style="font-size:10px">Description: ${itemData.description}</div><p>Cover Die: ${itemData.coverDie}, Held: ${itemData.held ? "Yes" : "No"}</p>` };
+                break;
+            default:
+                chatData = {
+                    content: `<div style="font-size:10px">Description: ${itemData.description}</div>`
+                };
+                break;
+        }
+
+        chatData = mergeObject(chatData, { speaker: getMacroSpeaker(this.actor) });
+
+        if (confirmSend) {
+            let confirmed = false;
+            let dlog = new Dialog({
+                title: "Send item info for " + this.data.name,
+                content: `
+     <form>
+      <h1>Send ${this.data.name} info to chat?</h1>
+     </form>
+     `,
+                buttons: {
+                    one: {
+                        icon: '<i class="fas fa-check"></i>',
+                        label: "Send",
+                        callback: () => confirmed = true
+                    },
+                    two: {
+                        icon: '<i class="fas fa-times"></i>',
+                        label: "Cancel",
+                        callback: () => confirmed = false
+                    }
+                },
+                default: "one",
+                render: html => { },
+                close: html => {
+                    if (confirmed) {
+                        CONFIG.ChatMessage.entityClass.create(chatData);
+                    }
+                }
+            });
+            dlog.render(true);
+        } else {
+            CONFIG.ChatMessage.entityClass.create(chatData);
+        }
     }
 
     /* -------------------------------------------- */
@@ -347,16 +431,16 @@ export class Ironclaw2EItem extends Item {
 
             switch (rolltype) {
                 case 0: // Generic gift roll
-                    this.actor.popupSelectRolled(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), "", callback);
+                    this.actor.popupSelectRolled(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " gift roll: ", callback);
                     break;
                 case 1: // Parry roll
-                    this.actor.popupDefenseRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), "", true, callback);
+                    this.actor.popupDefenseRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " parry roll: ", true, callback);
                     break;
                 case 2: // Attack roll
-                    this.actor.popupAttackRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), (this.data.data.effect ? "Effect: " + this.data.data.effect : ""), callback);
+                    this.actor.popupAttackRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " attack roll" + (this.data.data.effect ? ", Effect: " + this.data.data.effect : ": "), callback);
                     break;
                 case 3: // Counter roll
-                    this.actor.popupCounterRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), (this.data.data.effect ? "Effect: " + this.data.data.effect : ""), callback);
+                    this.actor.popupCounterRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " counter roll" + (this.data.data.effect ? ", Effect: " + this.data.data.effect : ": "), callback);
                     break;
                 default:
                     console.warn("genericItemRoll defaulted when selecting a roll: " + rolltype);

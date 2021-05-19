@@ -90,7 +90,7 @@ export function copyToRollTN(tni, message, sendinchat = true) {
         if (x.total > highest) highest = x.total;
     });
 
-    const flavorstring = "Copy TN: " + flavorStringTN(successes, ties, highest == 1, label);
+    const flavorstring = flavorStringTN(successes, ties, highest == 1, "Copy TN: " + label);
 
     /** @type TNData */
     let tnData = { "successes": successes, "ties": ties };
@@ -154,7 +154,7 @@ export function copyToRollHighest(message, sendinchat = true) {
         return;
 
     let roll = new Roll("{" + rollstring + "}kh1").evaluate();
-    const flavorstring = "Copy High: " + flavorStringHighest(roll.total, label);
+    const flavorstring = flavorStringHighest(roll.total, "Copy High: " + label);
 
     let msg = roll.toMessage({
         speaker: message.data.speaker,
@@ -471,17 +471,17 @@ export function formRoll(d12, d10, d8, d6, d4) {
  */
 function flavorStringTN(successes, ties, botched, label) {
     if (successes > 0) {
-        return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:green\">Success, with " + successes + " successes.</p>";
+        return (label.length > 0 ? "<p>" + label + "</p>" : "") + "<p style=\"font-size:20px;color:green\">Success, with " + successes + " successes.</p>";
     }
     else {
         if (botched) {
-            return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:red\">Botch! All ones!</p>";
+            return (label.length > 0 ? "<p>" + label + "</p>" : "") + "<p style=\"font-size:20px;color:red\">Botch! All ones!</p>";
         }
         else if (ties > 0) {
-            return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:darkgoldenrod\">Tie, with " + ties + " tied dice.</p>";
+            return (label.length > 0 ? "<p>" + label + "</p>" : "") + "<p style=\"font-size:20px;color:darkgoldenrod\">Tie, with " + ties + " tied dice.</p>";
         }
         else {
-            return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:black\">Failure. TN not exceeded or met.</p>";
+            return (label.length > 0 ? "<p>" + label + "</p>" : "") + "<p style=\"font-size:20px;color:black\">Failure. TN not exceeded or met.</p>";
         }
     }
 }
@@ -493,7 +493,7 @@ function flavorStringTN(successes, ties, botched, label) {
  * @returns {string} The formed flavor string
  */
 function flavorStringHighest(highest, label) {
-    return (label.length > 0 ? label + "<br>" : "") + "<p style=\"font-size:20px;color:" + (highest > 1 ? "black" : "red") + "\">Highest die was " + highest + "</p>";
+    return (label.length > 0 ? "<p>" + label + "</p>" : "") + "<p style=\"font-size:20px;color:" + (highest > 1 ? "black" : "red") + "\">Highest die was " + highest + "</p>";
 }
 
 /**

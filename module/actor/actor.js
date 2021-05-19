@@ -117,6 +117,8 @@ export class Ironclaw2EActor extends Actor {
             if (data.traits.career.skills.includes(makeStatCompareReady(key))) {
                 skill.diceArray = addArrays(skill.diceArray, data.traits.career.diceArray);
             }
+
+            // Extra Career stuff here
         }
     }
 
@@ -561,6 +563,13 @@ export class Ironclaw2EActor extends Actor {
             }
         }
 
+        // Natural Armor
+        if (findInItems(this.items, "naturalarmor", "gift")) {
+            if (!prechecked.includes("species")) {
+                prechecked.push("species");
+            }
+        }
+
         this.popupSelectRolled(prechecked, tnyes, tnnum, extradice, formconstruction + otherinputs, nullCheckConcat(constructionkeys, otherkeys), nullCheckConcat(constructionarray, otherdice), otherlabel, successfunc);
     }
 
@@ -858,6 +867,7 @@ export class Ironclaw2EActor extends Actor {
 	   <input type="checkbox" id="${lowerkey}" name="trait" value="${lowerkey}" ${prechecked.includes(lowerkey) ? "checked" : ""}></input>
       </div>`+ "\n";
             }
+            // Extra Career sutff here
             formconstruction += `</div>` + "\n";
         }
         if (hasskills) {
@@ -981,7 +991,7 @@ export class Ironclaw2EActor extends Actor {
                     }
                     label += ".";
                     if (typeof (otherlabel) === 'string' && otherlabel.length > 0)
-                        label += "<br>" + otherlabel;
+                        label += `<p style="color:black">${otherlabel}</p>`;
 
                     if (uselimit) {
                         totaldice = enforceLimit(totaldice, limit);

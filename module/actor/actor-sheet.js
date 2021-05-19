@@ -184,6 +184,9 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         html.find('.roll-effects-add').click(this._onEffectsAdd.bind(this));
         html.find('.roll-effects-delete').click(this._onEffectsDelete.bind(this));
 
+        html.find('.roll-double-info-item').dblclick(this._onItemInfo.bind(this));
+        html.find('.roll-double-info-cond').dblclick(this._onConditionInfo.bind(this));
+
         // Drag events for macros.
         if (this.actor.owner) {
             let handler = ev => this._onDragStart(ev);
@@ -510,5 +513,27 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                 this.actor.updateOwnedItem(foobar);
             }
         }
+    }
+
+    _onItemInfo(event) {
+        event.preventDefault();
+        const element = event.currentTarget;
+        const dataset = element.dataset;
+        const data = this.actor.data.data;
+
+        const li = $(event.currentTarget).parents(".item");
+        const item = this.actor.getOwnedItem(li.data("itemId"));
+        item?.sendInfoToChat();
+    }
+
+    _onConditionInfo(event) {
+        event.preventDefault();
+        const element = event.currentTarget;
+        const dataset = element.dataset;
+        const data = this.actor.data.data;
+
+        const li = $(event.currentTarget).parents(".item");
+        const cond = this.actor.getEmbeddedEntity("ActiveEffect", li.data("itemId"));
+        console.log(cond); //TODO: Get the condition info and output it into the chat
     }
 }

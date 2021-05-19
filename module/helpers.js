@@ -9,7 +9,7 @@ class CommonSystemInfo {
  */
 export function findTotalDice(dicestring) {
     let totaldice = [0, 0, 0, 0, 0];
-    if (typeof (dicestring) != "string") {
+    if (typeof (dicestring) !== "string") {
         console.warn("Something that was not a string inputted to dice parser: " + dicestring);
         return totaldice;
     }

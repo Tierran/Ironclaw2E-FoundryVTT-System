@@ -181,6 +181,12 @@
     "character": {
       "templates": [ "baseTraits", "baseSkills", "baseAttributes", "baseMoney" ],
       "biography": "",
+	  "motto": "",
+	  "goals": {
+		  "goal1": "",
+		  "goal2": "",
+		  "goal3": ""
+	  },
       "experience": 0
     },
     "mook": {
