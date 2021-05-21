@@ -21,6 +21,8 @@ Hooks.once('init', async function () {
     game.ironclaw2e = {
         Ironclaw2EActor,
         Ironclaw2EItem,
+        Ironclaw2ECombat,
+        Ironclaw2ECombatTracker,
         rollItemMacro,
         popupMacro,
         popupSelect,
@@ -52,7 +54,7 @@ Hooks.once('init', async function () {
     Items.unregisterSheet("core", ItemSheet);
     Items.registerSheet("ironclaw2e", Ironclaw2EItemSheet, { makeDefault: true });
 
-    // Register system settings
+    // Register system world settings
     game.settings.register("ironclaw2e", "preferTokenName", {
         name: "ironclaw2e.config.preferTokenName",
         hint: "ironclaw2e.config.preferTokenNameHint",
@@ -61,7 +63,6 @@ Hooks.once('init', async function () {
         default: true,
         config: true
     });
-
     game.settings.register("ironclaw2e", "manageEncumbranceAuto", {
         name: "ironclaw2e.config.manageEncumbranceAuto",
         hint: "ironclaw2e.config.manageEncumbranceAutoHint",
@@ -70,7 +71,6 @@ Hooks.once('init', async function () {
         default: false,
         config: true
     });
-
     game.settings.register("ironclaw2e", "coinsHaveWeight", {
         name: "ironclaw2e.config.coinsHaveWeight",
         hint: "ironclaw2e.config.coinsHaveWeightHint",
@@ -79,7 +79,6 @@ Hooks.once('init', async function () {
         default: true,
         config: true
     });
-
     game.settings.register("ironclaw2e", "autoPrototypeSetup", {
         name: "ironclaw2e.config.autoPrototypeSetup",
         hint: "ironclaw2e.config.autoPrototypeSetupHint",
@@ -89,6 +88,7 @@ Hooks.once('init', async function () {
         config: true
     });
 
+    // Register system client settings
     game.settings.register("ironclaw2e", "confirmItemInfo", {
         name: "ironclaw2e.config.confirmItemInfo",
         hint: "ironclaw2e.config.confirmItemInfoHint",
@@ -98,7 +98,7 @@ Hooks.once('init', async function () {
         config: true
     });
 
-    // Handlebars helper registration:
+    // Handlebars helper registration
     Handlebars.registerHelper('concat', function () {
         var outStr = '';
         for (var arg in arguments) {
@@ -128,7 +128,6 @@ Hooks.once("ready", async function () {
 
     // Check and set default Combat Tracker options if they do not exist
     let ctOptions = game.settings.get("core", Combat.CONFIG_SETTING);
-
     if (jQuery.isEmptyObject(ctOptions)) {
         game.settings.set("core", Combat.CONFIG_SETTING, {
             sideBased: true,
@@ -137,13 +136,14 @@ Hooks.once("ready", async function () {
             manualTN: -1
         });
     }
-
+    
     // Combat Utility Belt warning
-    if (!game.cub) {
+    if (!game.modules.get("combat-utility-belt")?.active) {
         ui.notifications.info("Combat Utility Belt not detected! Please install and activate CUB and its Enhanced Conditions for condition tracking.");
     }
 });
 
+// Drag Ruler integration
 Hooks.once("dragRuler.ready", (SpeedProvider) => {
     class Ironclaw2ESpeedProvider extends SpeedProvider {
         get colors() {
