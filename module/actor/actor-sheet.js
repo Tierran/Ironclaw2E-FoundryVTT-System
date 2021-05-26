@@ -3,6 +3,7 @@ import { rollHighest } from "../dicerollers.js";
 import { rollTargetNumberDialog } from "../dicerollers.js";
 import { rollHighestDialog } from "../dicerollers.js";
 import { splitStatString } from "../helpers.js";
+import { getConditionByNameIronclaw } from "../unified.js";
 
 /**
  * Extend the basic ActorSheet
@@ -534,6 +535,11 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         const li = $(event.currentTarget).parents(".item");
         const cond = this.actor.getEmbeddedEntity("ActiveEffect", li.data("itemId"));
-        console.log(cond); //TODO: Get the condition info and output it into the chat
+        if (!cond) return;
+        const foobar = getConditionByNameIronclaw(cond);
+        if (!foobar) return;
+        let chatdata = { content: `${foobar.referenceId}{${foobar.name}}` };
+
+        CONFIG.ChatMessage.entityClass.create(chatdata);
     }
 }

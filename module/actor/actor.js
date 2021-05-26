@@ -12,7 +12,7 @@ import { splitSingleDiceString } from "../helpers.js";
 import { formRoll } from "../dicerollers.js";
 // From the combat-utility-belt
 import { hasConditionsIronclaw } from "../unified.js";
-import { getConditionsIronclaw } from "../unified.js";
+import { getConditionNamesIronclaw } from "../unified.js";
 import { addConditionsIronclaw } from "../unified.js";
 import { removeConditionsIronclaw } from "../unified.js";
 // The rest are for the supermassive function
@@ -317,7 +317,7 @@ export class Ironclaw2EActor extends Actor {
     /**
      * Get the total dice pools of the actor for the given traits and skills
      * @param {string[]} traitnames The array of trait names
-     * @param {string[]} skillnames The array of skill names, just give the same array as traitnames to use with mixed names
+     * @param {string[]} skillnames The array of skill names, just give the same array as traitnames to use with mixed name arrays
      * @param {boolean} isburdened Whether to apply the burdened limit to relevant skills
      * @param {boolean} addplus Whether to add the plus already on the first pool label
      * @private
@@ -863,7 +863,7 @@ export class Ironclaw2EActor extends Actor {
                 if (firstelement == "")
                     firstelement = lowerkey;
                 formconstruction += `<div class="form-group flex-group-center flex-tight">
-       <label class="normal-label">${convertCamelCase(key)}:</label>
+       <label class="normal-label">${convertCamelCase(key)}: ${reformDiceString(trait.diceArray)}</label>
 	   <input type="checkbox" id="${lowerkey}" name="trait" value="${lowerkey}" ${prechecked.includes(lowerkey) ? "checked" : ""}></input>
       </div>`+ "\n";
             }
@@ -878,7 +878,7 @@ export class Ironclaw2EActor extends Actor {
                 if (firstelement == "")
                     firstelement = lowerkey;
                 formconstruction += `<div class="form-group flex-group-center flex-tight">
-       <label class="normal-label">${convertCamelCase(key)}:</label>
+       <label class="normal-label">${convertCamelCase(key)}: ${reformDiceString(skill.diceArray)}</label>
 	   <input type="checkbox" id="${lowerkey}" name="skill" value="${lowerkey}" ${prechecked.includes(lowerkey) ? "checked" : ""}></input>
       </div>`+ "\n";
             }

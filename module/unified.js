@@ -15,15 +15,15 @@ export function hasConditionsIronclaw(conditions, target, warn = false) {
 }
 
 /**
- * Unified function to get all conditions the target has for Ironclaw2e, right now here in case CUB is not installed
- * @param {Actor | Token)} target The actor or token in question
+ * Unified function to get all condition names the target has for Ironclaw2e, right now here in case CUB is not installed
+ * @param {Actor | Token} target The actor or token in question
  * @param {boolean} warn Whether to use CUB's warnings
- * @returns {string[]} Array of conditions the target have
+ * @returns {string[]} Array of conditions the target has
  */
-export function getConditionsIronclaw(target, warn = false) {
+export function getConditionNamesIronclaw(target, warn = false) {
     if (!game.cub) {
         ui.notifications.info("Combat Utility Belt not installed, condition check failed.");
-        return false;
+        return;
     }
 
     let raw = game.cub.getConditions(target, { "warn": warn });
@@ -39,6 +39,33 @@ export function getConditionsIronclaw(target, warn = false) {
     }
 
     return names;
+}
+
+/**
+ * Unified function to get all conditions the target has for Ironclaw2e, right now here in case CUB is not installed
+ * @param {Actor | Token} target The actor or token in question
+ * @param {boolean} warn Whether to use CUB's warnings
+ * @returns {Object[]} Array of conditions the target has
+ */
+export function getConditionsIronclaw(target, warn = false) {
+    if (!game.cub) {
+        ui.notifications.info("Combat Utility Belt not installed, condition check failed.");
+        return;
+    }
+
+    let raw = game.cub.getConditions(target, { "warn": warn });
+    let conds = [];
+
+    if (raw?.conditions) {
+        if (Array.isArray(raw.conditions)) {
+            raw.conditions.forEach(x => conds.push(x));
+        }
+        else {
+            conds.push(raw.conditions);
+        }
+    }
+
+    return conds;
 }
 
 /**
@@ -71,4 +98,22 @@ export async function removeConditionsIronclaw(conditions, target, checkfirst = 
 
     if (checkfirst == false || (hasConditionsIronclaw(conditions, target)))
         return game.cub.removeCondition(conditions, target, { "warn": warn });
+}
+
+/**
+ * Unified function to get a specific condition for Ironclaw2e, right now here in case CUB is not installed
+ * @param {string | ActiveEffect} condition The name or the ActiveEffect of the condition
+ * @param {boolean} warn Whether to use CUB's warnings
+ * @returns {Object} Array of conditions the target have
+ */
+export function getConditionByNameIronclaw(condition, warn = false) {
+    if (!game.cub) {
+        ui.notifications.info("Combat Utility Belt not installed, condition check failed.");
+        return;
+    }
+
+    let name = condition?.label || condition;
+    let raw = game.cub.getCondition(name, null, { "warn": warn });
+
+    return raw;
 }
