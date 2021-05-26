@@ -1,3 +1,9 @@
+### 0.2.5 Better information release
+ - Double-clicking an item or condition (blue highlight) in an actor sheet will output some information about it to the chat, with a safeguard setting to ask confirmation before the output
+ - Added mottos and goals to character actor sheets as new fields
+ - Show dice pools in the dice pool selection dialog
+
+
 ### 0.2.4: Sane initiative release
  - Properly done initiative system, working with the Foundry's assumptions and systems
  - Context menu options to copy the results of a dice roll (effectively 'change' it) into another type or TN
