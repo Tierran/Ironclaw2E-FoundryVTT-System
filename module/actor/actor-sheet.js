@@ -537,7 +537,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const cond = this.actor.getEmbeddedEntity("ActiveEffect", li.data("itemId"));
         if (!cond) return;
         const foobar = getConditionByNameIronclaw(cond);
-        if (!foobar) return;
+        if (!foobar?.referenceId) return;
         let chatdata = { content: `${foobar.referenceId}{${foobar.name}}` };
 
         CONFIG.ChatMessage.entityClass.create(chatdata);
