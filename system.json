@@ -55,7 +55,7 @@
   "primaryTokenAttribute": "null",
   "secondaryTokenAttribute": "null",
   "url": "https://gitlab.com/Hertzila/ironclaw2e-foundryvtt-system/",
-  "manifest": "https://gitlab.com/Hertzila/ironclaw2e-foundryvtt-system/-/raw/v0.2.5/system.json",
+  "manifest": "https://gitlab.com/Hertzila/ironclaw2e-foundryvtt-system/-/raw/master/system.json",
   "download": "https://gitlab.com/Hertzila/ironclaw2e-foundryvtt-system/-/archive/v0.2.5/ironclaw2e-foundryvtt-system-v0.2.5.zip",
   "license": "LICENSE.txt"
 }
