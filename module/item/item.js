@@ -209,47 +209,45 @@ export class Ironclaw2EItem extends Item {
         const itemData = item.data;
         const confirmSend = game.settings.get("ironclaw2e", "confirmItemInfo");
 
-        let chatData = {};
+        let contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
+        <img class="item-image" src="${item.img}" title="${item.name}" width="30" height="30"/>
+        <h3 class="chat-header">${item.name}</h3>
+        </header>
+        <div class="chat-content">`;
+        if (itemData.description)
+            contents += `<div class="chat-item">${itemData.description}</div>`;
+
+        contents += `<div class="chat-item">`;
         switch (item.type) {
             case 'gift':
-                chatData = {
-                    content:
-                        `<div style="font-size:10px">Description: ${itemData.description}</div>
-                        <p>Tags: ${itemData.giftTags}</p>
-                        <p>Refresh: ${itemData.refresh}, Exhausted: ${itemData.exhausted ? "Yes" : "No"}
-                        <p>Gift dice: ${itemData.useDice}, Default TN: ${itemData.defaultTN}`
-                };
+                contents += `<p><strong>Tags:</strong> ${itemData.giftTags}</p>
+                        <p><strong>Refresh:</strong> ${itemData.refresh}, <strong>Exhausted:</strong> ${itemData.exhaustWhenUsed ? (itemData.exhausted ? "Yes" : "No") : "Never"}</p>
+                        <p><strong>Gift dice:</strong> ${itemData.useDice}, <strong>Default TN:</strong> ${itemData.defaultTN}</p>`;
                 break;
             case 'weapon':
-                chatData = {
-                    content:
-                        `<div style="font-size:10px">Description: ${itemData.description}</div>
-                        <p>Effect: ${itemData.effect}</p>
-                        <p>Descriptors: ${itemData.descriptors}</p>
-                        <p>Equip: ${itemData.equip}, Range: ${itemData.range}</p>`
-                };
+                contents += `<p><strong>Effect:</strong> ${itemData.effect}</p>
+                        <p><strong>Descriptors:</strong> ${itemData.descriptors}</p>
+                        <p><strong>Equip:</strong> ${itemData.equip}, <strong>Range:</strong> ${itemData.range}</p>`;
                 break;
             case 'illumination':
-                chatData = {
-                    content:
-                        `<div style="font-size:10px">Description: ${itemData.description}</div>
-                        <p>Dim Light: ${itemData.dimLight}, Bright Light: ${itemData.brightLight}, Angle: ${itemData.lightAngle}</p>`
-                };
+                contents += `<p><strong>Dim Light:</strong> ${itemData.dimLight}, <strong>Bright Light:</strong> ${itemData.brightLight}, <strong>Angle:</strong> ${itemData.lightAngle}</p>`;
                 break;
             case 'armor':
-                chatData = { content: `<div style="font-size:10px">Description: ${itemData.description}</div><p>Armor Dice: ${itemData.armorDice}, Worn: ${itemData.worn ? "Yes" : "No"}</p>` };
+                contents += `<p><strong>Armor Dice:</strong> ${itemData.armorDice}, <strong>Worn:</strong> ${itemData.worn ? "Yes" : "No"}</p>`;
                 break;
             case 'shield':
-                chatData = { content: `<div style="font-size:10px">Description: ${itemData.description}</div><p>Cover Die: ${itemData.coverDie}, Held: ${itemData.held ? "Yes" : "No"}</p>` };
+                contents += `<p><strong>Cover Die:</strong> ${itemData.coverDie}, <strong>Held:</strong> ${itemData.held ? "Yes" : "No"}</p>`;
                 break;
             default:
-                chatData = {
-                    content: `<div style="font-size:10px">Description: ${itemData.description}</div>`
-                };
                 break;
         }
+        contents += `</div></div></div>`;
 
-        chatData = mergeObject(chatData, { speaker: getMacroSpeaker(this.actor) });
+        let chatData = {
+            content: contents,
+            speaker: getMacroSpeaker(this.actor)
+        };
+        ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
 
         if (confirmSend) {
             let confirmed = false;

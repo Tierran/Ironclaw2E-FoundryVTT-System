@@ -540,6 +540,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         if (!foobar?.referenceId) return;
         let chatdata = { content: `${foobar.referenceId}{${foobar.name}}` };
 
+        ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
         CONFIG.ChatMessage.entityClass.create(chatdata);
     }
 }

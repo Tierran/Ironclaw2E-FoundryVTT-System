@@ -479,7 +479,7 @@ export class Ironclaw2EActor extends Actor {
         let foo, bar;
         switch (returntype) { // Yes, yes, the breaks are unnecessary
             case 0:
-                popupSelectRolled(prechecked, true, tntouse, "", formconstruction, constructionkeys, constructionarray);
+                this.popupSelectRolled(prechecked, true, tntouse, "", formconstruction, constructionkeys, constructionarray);
                 return;
                 break;
             case 1:

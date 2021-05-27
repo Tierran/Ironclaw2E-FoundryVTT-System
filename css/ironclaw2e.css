@@ -300,6 +300,28 @@ input.center-text {
   border-bottom: 1px solid #AAA;
 }
 
+.ironclaw2e .chat-item {
+    border-top: 1px solid #AAA;
+}
+
+.ironclaw2e .chat-content p {
+    margin: 0.2em 0;
+}
+
+.ironclaw2e .chat-header {
+    font-weight: bold;
+    font-size: large;
+    text-transform: capitalize;
+    margin: 5px;
+}
+
+.ironclaw2e .item-image {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 30px;
+    flex: 0 0 30px;
+    margin-right: 5px;
+}
+
 .ironclaw2e .tabs .item {
   line-height: 40px;
   font-weight: bold;
