@@ -1,3 +1,6 @@
+### 0.2.6 Chat looks release
+ - Made chat information output look better and take into account roll mode
+
 ### 0.2.5 Better information release
  - Double-clicking an item or condition (blue highlight) in an actor sheet will output some information about it to the chat, with a safeguard setting to ask confirmation before the output
  - Added mottos and goals to character actor sheets as new fields
