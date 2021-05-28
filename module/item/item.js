@@ -164,11 +164,7 @@ export class Ironclaw2EItem extends Item {
 
         switch (item.type) {
             case 'gift':
-                if (itemData.exhaustWhenUsed && itemData.exhausted) {
-                    this.popupRefreshGift();
-                } else {
-                    this.giftRoll();
-                }
+                this.giftRoll();
                 break;
             case 'weapon':
                 let rolls = [];
@@ -195,6 +191,7 @@ export class Ironclaw2EItem extends Item {
                 this.update({ "data.held": !itemData.held });
                 break;
             default:
+                this.sendInfoToChat();
                 break;
         }
         /**
