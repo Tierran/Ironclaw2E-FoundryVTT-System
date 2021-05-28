@@ -150,7 +150,7 @@
                     <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
                     <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                     <div class="item-controls">
-                        {{#if item.data.useDice}}<a class="rollable roll-item" title="Use Gift in a roll" data-roll="0" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/gift-use.svg" width="24" height="24" /></a>{{/if}}
+                        {{#if (usableGift item)}}<a class="rollable roll-item" title="Use Gift" data-roll="0" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/gift-use.svg" width="24" height="24" /></a>{{/if}}
                     </div>
                     <div class="item-controls">
                         {{#if item.data.exhaustWhenUsed}}<a class="rollable roll-item-change" title="{{#if item.data.exhausted}}Un-exhaust{{else}}Exhaust{{/if}}" data-roll="1" data-item="{{item._id}}"><span>{{#if item.data.exhausted}}Exhausted{{else}}Refreshed{{/if}}</span></a>{{/if}}

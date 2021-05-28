@@ -120,6 +120,10 @@ Hooks.once('init', async function () {
     Handlebars.registerHelper('valueRoundTo', function (val, roundto) {
         return val.toFixed(roundto);
     });
+
+    Handlebars.registerHelper('usableGift', function (gift) {
+        return gift.data.exhaustWhenUsed || gift.data.useDice?.length > 0;
+    });
 });
 
 Hooks.once("ready", async function () {

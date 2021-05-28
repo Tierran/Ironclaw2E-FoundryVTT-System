@@ -312,13 +312,19 @@ input.center-text {
     font-weight: bold;
     font-size: large;
     text-transform: capitalize;
-    margin: 5px;
+    margin: 4px;
+}
+
+.ironclaw2e .chat-header-small {
+    font-weight: normal;
+    text-transform: none;
+    margin: 2px;
 }
 
 .ironclaw2e .item-image {
     -webkit-box-flex: 0;
-    -ms-flex: 0 0 30px;
-    flex: 0 0 30px;
+    -ms-flex: 0 0 20px;
+    flex: 0 0 20px;
     margin-right: 5px;
 }
 

@@ -47,6 +47,11 @@ export class Ironclaw2EItem extends Item {
             data.giftArray = (firstsplit[1].length > 0 ? findTotalDice(firstsplit[1]) : null);
             data.canUse = true;
         }
+        else if (data.exhaustWhenUsed) {
+            data.giftStats = null;
+            data.giftArray = null;
+            data.canUse = true;
+        }
         else {
             data.giftStats = null;
             data.giftArray = null;
@@ -303,10 +308,15 @@ export class Ironclaw2EItem extends Item {
         if (data.canUse == false) {
             return;
         }
-        if (data.exhaustWhenUsed == false || data.exhausted == false)
-            this.genericItemRoll(data.giftStats, data.defaultTN, itemData.name, data.giftArray, 0, (data.exhaustWhenUsed ? (x => theitem.update({ "data.exhausted": true })) : null));
-        else if (data.exhaustWhenUsed == true && data.exhausted == true)
-            ui.notifications.info("Gift " + itemData.name + " is exhausted and cannot be used.");
+        if (data.exhaustWhenUsed == false || data.exhausted == false) {
+            if (data.giftStats || data.giftArray)
+                this.genericItemRoll(data.giftStats, data.defaultTN, itemData.name, data.giftArray, 0, (data.exhaustWhenUsed ? (x => theitem.update({ "data.exhausted": true })) : null));
+            else if (data.exhaustWhenUsed) // Check just in case, even though there should never be a situation where canUse is set, but neither rollable stats / dice nor exhaustWhenUsed aren't
+                this.popupExhaustGift();
+        }
+        else if (data.exhaustWhenUsed == true && data.exhausted == true) {
+            this.popupRefreshGift();
+        }
     }
 
     // Weapon Rolls
@@ -429,7 +439,7 @@ export class Ironclaw2EItem extends Item {
 
             switch (rolltype) {
                 case 0: // Generic gift roll
-                    this.actor.popupSelectRolled(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " gift roll: ", callback);
+                    this.actor.popupSelectRolled(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " gift roll" + (this.data.data.exhaustWhenUsed ? ", gift <strong>Exhausted</strong>" : ": "), callback);
                     break;
                 case 1: // Parry roll
                     this.actor.popupDefenseRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " parry roll: ", true, callback);
@@ -474,6 +484,10 @@ export class Ironclaw2EItem extends Item {
             content: `
      <form>
       <h1>Refresh ${this.data.name} for ${this.actor?.data.name}?</h1>
+     <div class="form-group">
+       <label class="normal-label">Send to chat?</label>
+       <input type="checkbox" id="send" name="send" value="1" checked></input>
+     </div>
      </form>
      `,
             buttons: {
@@ -492,7 +506,82 @@ export class Ironclaw2EItem extends Item {
             render: html => { },
             close: html => {
                 if (confirmed) {
-                    this.update({ "data.exhausted": !itemData.exhausted });
+                    this.update({ "data.exhausted": false });
+                    let SEND = html.find('[name=send]');
+                    let sent = SEND.length > 0 ? SEND[0].checked : false;
+
+                    if (sent) {
+                        let contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
+        <img class="item-image" src="${item.img}" title="${item.name}" width="20" height="20"/>
+        <div class="chat-header-small"><strong>Refreshed</strong> ${item.name}!</div>
+        </header>
+        </div>`;
+                        let chatData = {
+                            "content": contents,
+                            "speaker": speaker
+                        };
+                        ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
+                        CONFIG.ChatMessage.entityClass.create(chatData);
+                    }
+                }
+            }
+        });
+        dlog.render(true);
+    }
+
+    popupExhaustGift() {
+        if (this.data.type != "gift")
+            return console.warn("Tried to exhaust a non-gift item: " + this);
+
+        const item = this.data;
+        const itemData = item.data;
+
+        let confirmed = false;
+        let speaker = getMacroSpeaker(this.actor);
+        let dlog = new Dialog({
+            title: "Exhaust Gift for " + speaker.alias,
+            content: `
+     <form>
+      <h1>Exhaust ${this.data.name} for ${this.actor?.data.name}?</h1>
+     <div class="form-group">
+       <label class="normal-label">Send to chat?</label>
+       <input type="checkbox" id="send" name="send" value="1" checked></input>
+     </div>
+     </form>
+     `,
+            buttons: {
+                one: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: "Exhaust",
+                    callback: () => confirmed = true
+                },
+                two: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: "Cancel",
+                    callback: () => confirmed = false
+                }
+            },
+            default: "one",
+            render: html => { },
+            close: html => {
+                if (confirmed) {
+                    this.update({ "data.exhausted": true });
+                    let SEND = html.find('[name=send]');
+                    let sent = SEND.length > 0 ? SEND[0].checked : false;
+
+                    if (sent) {
+                        let contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
+        <img class="item-image" src="${item.img}" title="${item.name}" width="20" height="20"/>
+        <div class="chat-header-small">${item.name} was <strong>Exhausted</strong>!</div>
+        </header>
+        </div>`;
+                        let chatData = {
+                            "content": contents,
+                            "speaker": speaker
+                        };
+                        ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
+                        CONFIG.ChatMessage.entityClass.create(chatData);
+                    }
                 }
             }
         });
