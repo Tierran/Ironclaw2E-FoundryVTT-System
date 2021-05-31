@@ -2,6 +2,11 @@ class CommonSystemInfo {
     static burdenedList = Object.freeze(["speed", "climbing", "dodge", "endurance", "jumping", "stealth", "swimming"]);
 }
 
+
+/* -------------------------------------------- */
+/*  Dice Helpers                                */
+/* -------------------------------------------- */
+
 /**
  * Helper function to split a string of dice into component forms, separated by commas, then parsed into an array, to allow easy rolling
  * @param {string} dicestring String containing standard dice notation, separated by commas
@@ -61,6 +66,24 @@ export function splitSingleDiceString(dicestring) {
         return null; // If either of the variables end up as NaN, return null
 
     return [total, sides]; // Return total and sides as an array
+}
+
+/**
+ * Simple helper function to quick check whether a dice array actually has any dice
+ * @param {number[]} dicearray
+ * @returns {boolean}
+ */
+export function checkDiceArrayEmpty(dicearray) {
+    if (!Array.isArray(dicearray)) {
+        console.warn("Something that was not an array inputted to dice string reformer: " + dicearray);
+        return null;
+    }
+    if (dicearray.length != 5) {
+        console.warn("Something that was not a dice array (based on length) inputted to dice string reformer: " + dicearray);
+        return null;
+    }
+
+    return dicearray[0] != 0 || dicearray[1] != 0 || dicearray[2] != 0 || dicearray[3] != 0 || dicearray[4] != 0;
 }
 
 /**
@@ -126,6 +149,61 @@ export function enforceLimit(dicearray, maxdie) {
 }
 
 /**
+ * Helper function to reform a standard notation dice string from a dice array
+ * Intended to be used for showing already-parsed dice in the UI
+ * @param {number[]} dicearray The array of dice to be parsed, in the same format as findTotalDice returns
+ * @param {boolean} humanreadable Whether to put spaces between the dice components
+ * @returns {string} The completed string in dice notation
+ */
+export function reformDiceString(dicearray, humanreadable = false) {
+    if (!Array.isArray(dicearray)) {
+        console.warn("Something that was not an array inputted to dice string reformer: " + dicearray);
+        return "";
+    }
+    if (dicearray.length != 5) {
+        console.warn("Something that was not a dice array (based on length) inputted to dice string reformer: " + dicearray);
+        return "";
+    }
+
+    let reformedString = "";
+    for (let i = 0; i < dicearray.length; ++i) {
+        if (dicearray[i] != 0) {
+            let amount = dicearray[i];
+            let dicetype = 0;
+            switch (i) {
+                case 0:
+                    dicetype = 12;
+                    break;
+                case 1:
+                    dicetype = 10;
+                    break;
+                case 2:
+                    dicetype = 8;
+                    break;
+                case 3:
+                    dicetype = 6;
+                    break;
+                case 4:
+                    dicetype = 4;
+                    break;
+            }
+            reformedString += (amount == 1 ? "" : amount.toString()) + "d" + dicetype.toString() + "," + (humanreadable ? " " : "");
+        }
+    }
+
+    if (reformedString.length > 1) {
+        reformedString = reformedString.slice(0, (humanreadable ? -2 : -1));
+    }
+
+    return reformedString;
+}
+
+
+/* -------------------------------------------- */
+/*  Stat Helpers                                */
+/* -------------------------------------------- */
+
+/**
  * A simple helper to ensure every stat string gets treated equally everywhere, rather than risking typos or other weirdness
  * @param {string} stat Stat name to reduce to comparable state
  * @returns {string} The stat name in all lowercase with whitespace trimmed away
@@ -188,54 +266,35 @@ export function splitStatsAndBonus(fullset) {
 }
 
 /**
- * Helper function to reform a standard notation dice string from a dice array
- * Intended to be used for showing already-parsed dice in the UI
- * @param {number[]} dicearray The array of dice to be parsed, in the same format as findTotalDice returns
- * @param {boolean} humanreadable Whether to put spaces between the dice components
- * @returns {string} The completed string in dice notation
+ * Helper function to see if any of a list of trait and skill names is included in the given names
+ * @param {string[]} prechecked List of trait and skill names
+ * @param {string | string[]} givennames A name or a list of names to check the prechecked list against, remember to make these comparison ready before using here
+ * @returns {boolean} Whether any match was found
  */
-export function reformDiceString(dicearray, humanreadable = false) {
-    if (!Array.isArray(dicearray)) {
-        console.warn("Something that was not an array inputted to dice string reformer: " + dicearray);
-        return "";
-    }
-    if (dicearray.length != 5) {
-        console.warn("Something that was not a dice array (based on length) inputted to dice string reformer: " + dicearray);
-        return "";
+export function checkForPrechecked(prechecked, givennames) {
+    if (!Array.isArray(prechecked)) {
+        console.warn("Prechecked check failed, not given an array: " + prechecked);
+        return false;
     }
 
-    let reformedString = "";
-    for (let i = 0; i < dicearray.length; ++i) {
-        if (dicearray[i] != 0) {
-            let amount = dicearray[i];
-            let dicetype = 0;
-            switch (i) {
-                case 0:
-                    dicetype = 12;
-                    break;
-                case 1:
-                    dicetype = 10;
-                    break;
-                case 2:
-                    dicetype = 8;
-                    break;
-                case 3:
-                    dicetype = 6;
-                    break;
-                case 4:
-                    dicetype = 4;
-                    break;
-            }
-            reformedString += (amount == 1 ? "" : amount.toString()) + "d" + dicetype.toString() + "," + (humanreadable ? " " : "");
-        }
-    }
+    const usednames = typeof givennames == "string" ? [givennames] : givennames;
 
-    if (reformedString.length > 1) {
-        reformedString = reformedString.slice(0, (humanreadable ? -2 : -1));
-    }
-
-    return reformedString;
+    return prechecked.some(element => usednames.includes(element));
 }
+
+/**
+ * Small helper to check whether a given skill is subject to the burdened limit
+ * @param {string} name Name of the skill
+ * @returns {boolean} Returns true if the limit applies
+ */
+export function burdenedLimitedStat(name) {
+    return CommonSystemInfo.burdenedList.includes(makeStatCompareReady(name));
+}
+
+
+/* -------------------------------------------- */
+/*  Misc Helpers                                */
+/* -------------------------------------------- */
 
 /**
  * Helper function to get what speaker to use in the dice roller output, dependent on the system settings
@@ -280,15 +339,6 @@ export function findActorToken(actor) {
 }
 
 /**
- * Small helper to check whether a given skill is subject to the burdened limit
- * @param {string} name Name of the skill
- * @returns {boolean} Returns true if the limit applies
- */
-export function burdenedLimitedStat(name) {
-    return CommonSystemInfo.burdenedList.includes(makeStatCompareReady(name));
-}
-
-/**
  * Helper function to search through a given item list for any items matching the name given
  * @param {Array} itemlist The actor's item list to be checked
  * @param {string} itemname The item in question to search for
@@ -304,23 +354,6 @@ export function findInItems(itemlist, itemname, itemtype = null) {
     const useitemtype = itemtype ? true : false;
 
     return itemlist.find(element => (useitemtype ? element.data.type == itemtype : true) && makeStatCompareReady(element.data.name) == itemname);
-}
-
-/**
- * Helper function to see if any of a list of trait and skill names is included in the given names
- * @param {string[]} prechecked List of trait and skill names
- * @param {string | string[]} givennames A name or a list of names to check the prechecked list against, remember to make these comparison ready before using here
- * @returns {boolean} Whether any match was found
- */
-export function checkForPrechecked(prechecked, givennames) {
-    if (!Array.isArray(prechecked)) {
-        console.warn("Prechecked check failed, not given an array: " + prechecked);
-        return false;
-    }
-
-    const usednames = typeof givennames == "string" ? [givennames] : givennames;
-
-    return prechecked.some(element => usednames.includes(element));
 }
 
 /**

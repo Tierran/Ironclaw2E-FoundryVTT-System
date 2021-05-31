@@ -16,6 +16,8 @@ import { copyToRollHighest } from "./dicerollers.js";
 
 import { makeStatCompareReady } from "./helpers.js";
 
+import { ironclawRollChat } from "./commands.js";
+
 Hooks.once('init', async function () {
 
     game.ironclaw2e = {
@@ -147,35 +149,6 @@ Hooks.once("ready", async function () {
     }
 });
 
-// Drag Ruler integration
-Hooks.once("dragRuler.ready", (SpeedProvider) => {
-    class Ironclaw2ESpeedProvider extends SpeedProvider {
-        get colors() {
-            return [
-                { id: "stride", default: 0x0000FF, name: "ironclaw2e.speeds.stride" },
-                { id: "dash", default: 0x00DE00, name: "ironclaw2e.speeds.dash" },
-                { id: "run", default: 0xFFFF00, name: "ironclaw2e.speeds.run" }
-            ];
-        }
-
-        getRanges(token) {
-            const stridespeed = token.actor.data.data.stride;
-            const dashspeed = token.actor.data.data.dash;
-            const runspeed = token.actor.data.data.run;
-
-            const ranges = [
-                { range: stridespeed, color: "stride" },
-                { range: dashspeed + stridespeed, color: "dash" },
-                { range: runspeed, color: "run" }
-            ];
-
-            return ranges;
-        }
-    }
-
-    dragRuler.registerSystem("ironclaw2e", Ironclaw2ESpeedProvider);
-});
-
 async function loadHandleBarTemplates() {
     // register templates parts
     const templatePaths = [
@@ -247,6 +220,56 @@ function addIronclawChatLogContext(html, entryOptions) {
 }
 
 Hooks.on("getChatLogEntryContext", addIronclawChatLogContext);
+
+/* -------------------------------------------- */
+/*  External Module Support                     */
+/* -------------------------------------------- */
+
+// Drag Ruler integration
+Hooks.once("dragRuler.ready", (SpeedProvider) => {
+    class Ironclaw2ESpeedProvider extends SpeedProvider {
+        get colors() {
+            return [
+                { id: "stride", default: 0x0000FF, name: "ironclaw2e.speeds.stride" },
+                { id: "dash", default: 0x00DE00, name: "ironclaw2e.speeds.dash" },
+                { id: "run", default: 0xFFFF00, name: "ironclaw2e.speeds.run" }
+            ];
+        }
+
+        getRanges(token) {
+            const stridespeed = token.actor.data.data.stride;
+            const dashspeed = token.actor.data.data.dash;
+            const runspeed = token.actor.data.data.run;
+
+            const ranges = [
+                { range: stridespeed, color: "stride" },
+                { range: dashspeed + stridespeed, color: "dash" },
+                { range: runspeed, color: "run" }
+            ];
+
+            return ranges;
+        }
+    }
+
+    dragRuler.registerSystem("ironclaw2e", Ironclaw2ESpeedProvider);
+});
+
+// ChatCommands integration
+Hooks.on("chatCommandsReady", function (chatCommands) {
+
+    // Basic command to trigger a one-line highest roll from the chat, with the dice included after the command
+    chatCommands.registerCommand(chatCommands.createCommandFromData({
+        commandKey: "/iroll",
+        invokeOnCommand: (chatlog, messageText, chatdata) => {
+            ironclawRollChat(messageText);
+        },
+        shouldDisplayToChat: false,
+        iconClass: "fa-dice-d6",
+        description: "Basic roll command"
+    }));
+
+
+});
 
 /* -------------------------------------------- */
 /*  Hotbar Macros                               */
