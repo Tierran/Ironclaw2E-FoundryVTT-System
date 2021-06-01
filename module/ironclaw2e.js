@@ -17,6 +17,7 @@ import { copyToRollHighest } from "./dicerollers.js";
 import { makeStatCompareReady } from "./helpers.js";
 
 import { ironclawRollChat } from "./commands.js";
+import { ironclawRollActorChat } from "./commands.js";
 
 Hooks.once('init', async function () {
 
@@ -254,10 +255,19 @@ Hooks.once("dragRuler.ready", (SpeedProvider) => {
     dragRuler.registerSystem("ironclaw2e", Ironclaw2ESpeedProvider);
 });
 
+/**
+ * Delay an async function for set milliseconds
+ * @param {number} ms
+ */
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // ChatCommands integration
+// Using async and delays to ensure the same press of enter does not also automatically close the dialog
 Hooks.on("chatCommandsReady", function (chatCommands) {
 
-    // Basic command to trigger a one-line highest roll from the chat, with the dice included after the command
+    // Basic command to trigger a one-line highest or TN roll from the chat, with the dice included after the command
     chatCommands.registerCommand(chatCommands.createCommandFromData({
         commandKey: "/iroll",
         invokeOnCommand: (chatlog, messageText, chatdata) => {
@@ -268,7 +278,29 @@ Hooks.on("chatCommandsReady", function (chatCommands) {
         description: "Basic roll command"
     }));
 
+    // Trigger an actor dice pool popup, with optional preselected stats and dice
+    chatCommands.registerCommand(chatCommands.createCommandFromData({
+        commandKey: "/actorroll",
+        invokeOnCommand: async (chatlog, messageText, chatdata) => {
+            await sleep(100);
+            ironclawRollActorChat(messageText, chatdata?.speaker);
+        },
+        shouldDisplayToChat: false,
+        iconClass: "fa-user",
+        description: "Actor dice pool popup"
+    }));
 
+    // Use an item as the currently selected actor
+    chatCommands.registerCommand(chatCommands.createCommandFromData({
+        commandKey: "/itemuse",
+        invokeOnCommand: async (chatlog, messageText, chatdata) => {
+            await sleep(100);
+            rollItemMacro(messageText.trim());
+        },
+        shouldDisplayToChat: false,
+        iconClass: "fa-fist-raised",
+        description: "Use an item"
+    }));
 });
 
 /* -------------------------------------------- */
@@ -304,8 +336,7 @@ async function createIronclaw2EMacro(data, slot) {
 }
 
 /**
- * Create a Macro from an Item drop.
- * Get an existing item macro if one exists, otherwise create a new one.
+ * Roll an item macro for the currently selected actor, if the actor has the given item
  * @param {string} itemName
  * @return {Promise}
  */

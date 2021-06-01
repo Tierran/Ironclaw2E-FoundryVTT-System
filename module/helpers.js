@@ -14,6 +14,7 @@ class CommonSystemInfo {
  */
 export function findTotalDice(dicestring) {
     let totaldice = [0, 0, 0, 0, 0];
+
     if (typeof (dicestring) !== "string") {
         console.warn("Something that was not a string inputted to dice parser: " + dicestring);
         return totaldice;
@@ -95,6 +96,7 @@ export function checkDiceArrayEmpty(dicearray) {
  */
 export function addArrays(foo, bar, outputLength = -1) {
     let total = [];
+
     if (!Array.isArray(foo) || !Array.isArray(bar)) {
         if (Array.isArray(foo) && !Array.isArray(bar))
             return foo;
@@ -227,11 +229,12 @@ export function convertCamelCase(camelCase) {
  * @returns {string[]} An array of strings containing the stat names
  */
 export function splitStatString(stats) {
+    let statarray = [];
+
     if (typeof (stats) != "string") {
         console.warn("Something that was not a string inputted to skill splitter: " + stats);
         return statarray;
     }
-    let statarray = [];
 
     let foos = stats.split(",");
     for (let i = 0; i < foos.length; ++i) {
@@ -246,12 +249,13 @@ export function splitStatString(stats) {
  * @returns {[string[], string]} Returns an array first containing the array of split-up stat names, and second the string of the extra dice
  */
 export function splitStatsAndBonus(fullset) {
+    let statarray = [];
+    let dicestring = "";
+
     if (typeof (fullset) != "string") {
         console.warn("Something that was not a string inputted to stat and bonus splitter: " + fullset);
         return [statarray, dicestring];
     }
-    let statarray = [];
-    let dicestring = "";
 
     let firstsplit = fullset.split(";");
 
