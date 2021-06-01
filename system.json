@@ -2,7 +2,7 @@
   "name": "ironclaw2e",
   "title": "Ironclaw Second Edition",
   "description": "Ironclaw Second Edition system for FoundryVTT.",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "minimumCoreVersion": "0.7.6",
   "compatibleCoreVersion": "0.7.10",
   "templateVersion": 17,
@@ -56,6 +56,6 @@
   "secondaryTokenAttribute": "null",
   "url": "https://gitlab.com/Hertzila/ironclaw2e-foundryvtt-system/",
   "manifest": "https://gitlab.com/Hertzila/ironclaw2e-foundryvtt-system/-/raw/master/system.json",
-  "download": "https://gitlab.com/Hertzila/ironclaw2e-foundryvtt-system/-/archive/v0.2.6/ironclaw2e-foundryvtt-system-v0.2.6.zip",
+  "download": "https://gitlab.com/Hertzila/ironclaw2e-foundryvtt-system/-/archive/v0.2.7/ironclaw2e-foundryvtt-system-v0.2.7.zip",
   "license": "LICENSE.txt"
 }

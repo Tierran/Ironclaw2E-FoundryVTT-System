@@ -1,3 +1,6 @@
+### 0.2.7 Roll from chat release
+ - Implemented support for the Chat Commands module
+
 ### 0.2.6 Chat looks release
  - Made chat information output look better and take into account roll mode
 
