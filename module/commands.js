@@ -3,6 +3,7 @@ import { rollTargetNumber } from "./dicerollers.js";
 
 import { findTotalDice } from "./helpers.js";
 import { splitStatsAndBonus } from "./helpers.js";
+import { makeStatCompareReady } from "./helpers.js";
 
 /**
  * A function intended for the ChatCommands integration, it takes a string and decides what mode to use from it
@@ -41,12 +42,32 @@ export function ironclawRollActorChat(inputstring, speaker) {
         return;
     }
 
-    if (!speaker?.actor) {
-        ui.notifications.info("No actor selected for /actorroll.");
+    if (!speaker?.actor || !speaker?.token) {
+        ui.notifications.warn("No actor selected for /actorroll.");
         return;
     }
 
-    let actor = game.actors.get(speaker.actor);
+    let actor = (speaker?.token ? game.actors.tokens[speaker.token] : null)?.token?.actor;
+    console.log(speaker);
+    console.log(actor);
+    if (!actor) {
+        actor = game.actors.get(speaker.actor);
+        if (!actor) {
+            ui.notifications.warn("No actor found for speaker: " + speaker.toString());
+            return;
+        }
+    }
+
+    let specialcheck = makeStatCompareReady(inputstring); // Special checks to allow certain special quick rolls
+    if (specialcheck === "soak") {
+        actor.popupSoakRoll(["body"], true, 3);
+        return;
+    }
+    if (specialcheck === "defense" || specialcheck === "defence") {
+        actor.popupDefenseRoll(["speed", "dodge"], false); // Actually dodge roll, despite being called "defense", in order to avoid confusion with the dodge skill for the system
+        return;
+    }
+
     let tn = -1;
     let usedstring = inputstring;
     let foo = inputstring.split(";"); // Attempt to check whether the input has two semicolons, and use the value after the third as a TN

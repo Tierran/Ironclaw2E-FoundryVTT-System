@@ -23,18 +23,26 @@ The Combat Tracker will show the result of the initiative check before the initi
 
 The system has support for the Drag Ruler module (https://github.com/manuelVo/foundryvtt-drag-ruler). The distance colors represent Stride (blue), Stride+Dash (green), Run (yellow) and over max distance (red).
 
+The system has support for the Chat Commands module (https://github.com/League-of-Foundry-Developers/Chat-Commands-Lib). If present and active, the system will register "/iroll", "/actorroll" and "/itemuse" commands.
+
 Still probably lots of WIP in the project...
 
 ### How to roll
 
 To properly format and calculate the results from Ironclaw's dice system, the system has an internal 'dice roller' to parse the dice pools into the correct format for the FoundryVTT dice roller, accessible either through the actor sheets or by the included macros. Macros allow the dice to be set either by specifying how many of each die type is rolled, or though a 'one line' parser. Most popups also include an input for extra one line dice pools.  
-The 'One Line' macros allow the dice pools to be inputted in standard dice notation: "*(number of dice)*d*(sides of the die)*, *(number)*d*(sides)*", for example "d12, 3d6,2d12". Each separate type of die must be separated with a comma, but the system automatically removes spaces between types. Multiple pools of the same type are automatically added together.
+The 'One Line' macros allow the dice pools to be inputted in standard dice notation: "*(number of dice)*d*(sides of the die)*, *(number)*d*(sides)*", for example "d12, 3d6,2d12". Each separate type of die must be separated with a comma, but the system automatically removes spaces between types. Multiple pools of the same type are automatically added together.  
+Right-clicking on a roll that has already been rolled will allow you to change the type of roll to another or change the TN of a roll. The copied roll will be shown as a new roll, but tagged as a copy and with static result numbers replacing the dice pools.  
 
 Setting up dice pools for items follows this format: "*(trait or skill name)*, *(another name)*;*(any bonus dice in one line format)*", eg. "Body, Melee Combat, dodge,weathersense;d12". The order of skills and traits are arbitrary and can include spaces in the name, but every name must be separated with a comma. The semicolon (;) separates the stat names from bonus dice, which are formatted the same way as one line rolls. If there is no bonus dice, the semicolon can be omitted.  
 For gifts that only grant situational bonuses to certain things without any related skills, like Strength or Veteran, the gift dice pool should be set without any stat names, eg. ";d12". The gift dice are used in some places within the system gift tracking.  
 
 While currently not used in the programming, the *Effect* field in weapons should be formatted so that every attribute is separated with a comma, eg. "Damage +2, Slaying, Awkward", for future-proofing.  
-Currently, the system does not allow dice pools to include items. Instead, the system tries to track common gifts and items that should be included in dice pools, eg. including worn armor in Soak rolls. This is completely hard-coded though, so I'm afraid it won't be perfect.
+Currently, the system does not allow dice pools to include items. Instead, the system tries to track common gifts and items that should be included in dice pools, eg. including worn armor in Soak rolls. This is completely hard-coded though, so I'm afraid it won't be perfect.  
+
+For Chat Commands: The /iroll command will take a one line format input after the command to roll dice as a highest roll type, with a semicolon followed by a number at the end changing it to a TN roll. Eg. "/iroll 3d6,d8" or "/iroll 3d6,d8;5"  
+The /actorroll command takes a dice pool format input, again with an additional semicolon and number changing the default roll type from highest to TN. Eg. "/actorroll dodge,speed;d12" or "/actorroll will,presence;;3"  
+In addition, /actorroll can take a simple "soak" or "defense" as input. In the former case, it will open a standard soak roll popup, while the latter opens a dodge defense popup, since "dodge" would normally refer to a roll of pure dodge skill, rather than the defense.  
+The /itemuse command takes an item name and uses that to activate a normal item use, as if the item was used through a hotbar macro. The *item* in this case refers to all things FoundryVTT considers items, not just the gear type. The name must be an **exact** match.  
 
 ### Conditions
 

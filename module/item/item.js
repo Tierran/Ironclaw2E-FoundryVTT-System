@@ -592,29 +592,29 @@ export class Ironclaw2EItem extends Item {
         const item = this.data;
         const itemData = item.data;
 
-        let first = true;
+        let first = null;
         let constructionstring = `<div class="form-group">
 	   <div class="form-group">`;
 
         if (itemData.canAttack) {
             constructionstring += `<label>Attack:</label>
-	    <input type="radio" id="attack" name="weapon" value="0" ${first ? "checked" : ""}></input>`;
-            first = false;
+	    <input type="radio" id="attack" name="weapon" value="0" ${first ? "" : "checked"}></input>`;
+            first = first || "attack";
         }
         if (itemData.canSpark) {
             constructionstring += `<label>Spark:</label>
-	    <input type="radio" id="spark" name="weapon" value="1" ${first ? "checked" : ""}></input>`;
-            first = false;
+	    <input type="radio" id="spark" name="weapon" value="1" ${first ? "" : "checked"}></input>`;
+            first = first || "spark";
         }
         if (itemData.canDefend) {
             constructionstring += `<label>Defend:</label>
-	    <input type="radio" id="defend" name="weapon" value="2" ${first ? "checked" : ""}></input>`;
-            first = false;
+	    <input type="radio" id="defend" name="weapon" value="2" ${first ? "" : "checked"}></input>`;
+            first = first || "defend";
         }
         if (itemData.canCounter) {
             constructionstring += `<label>Counter:</label>
-	    <input type="radio" id="counter" name="weapon" value="3" ${first ? "checked" : ""}></input>`;
-            first = false;
+	    <input type="radio" id="counter" name="weapon" value="3" ${first ? "" : "checked"}></input>`;
+            first = first || "counter";
         }
 
         constructionstring += `
@@ -644,7 +644,7 @@ export class Ironclaw2EItem extends Item {
                 }
             },
             default: "one",
-            render: html => { },
+            render: html => { document.getElementById(first).focus(); },
             close: html => {
                 if (confirmed) {
                     let typestring = html.find('input[name=weapon]:checked')[0].value;
