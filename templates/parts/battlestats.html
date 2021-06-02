@@ -73,16 +73,22 @@
             </li>
             {{/if}}
             {{/each}}
+            {{#each actor.lightItems as |item id|}}
+            {{#if item.data.showInBattleStats}}
+            <li class="item flexrow" data-item-id="{{item._id}}">
+                <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+                <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
+                <div class="item-controls flexrow">
+                    <a class="rollable roll-item" title="{{#if item.data.lighted}}Douse{{else}}Light{{/if}} {{item.name}}" data-roll="5" data-item="{{item._id}}"><img src="{{#if item.data.lighted}}systems/ironclaw2e/icons/illumination-light.svg{{else}}systems/ironclaw2e/icons/illumination-douse.svg{{/if}}" width="24" height="24" /></a>
+                </div>
+            </li>
+            {{/if}}
+            {{/each}}
             {{#each actor.gear as |item id|}}
             {{#if item.data.showInBattleStats}}
             <li class="item flexrow" data-item-id="{{item._id}}">
                 <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
                 <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
-                {{#if (eq item.type "illumination")}}
-                <div class="item-controls flexrow">
-                    <a class="rollable roll-item" title="{{#if item.data.lighted}}Douse{{else}}Light{{/if}} {{item.name}}" data-roll="5" data-item="{{item._id}}"><img src="{{#if item.data.lighted}}systems/ironclaw2e/icons/illumination-light.svg{{else}}systems/ironclaw2e/icons/illumination-douse.svg{{/if}}" width="24" height="24" /></a>
-                </div>
-                {{/if}}
             </li>
             {{/if}}
             {{/each}}

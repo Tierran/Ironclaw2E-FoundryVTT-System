@@ -115,7 +115,6 @@ export class Ironclaw2EActor extends Actor {
         let careers = [];
         if (data.hasExtraCareers) {
             data.extraCareerIds.forEach(x => careers.push(this.items.get(x)));
-            console.log(careers);
         }
 
         for (let [key, skill] of Object.entries(data.skills)) {
@@ -471,7 +470,7 @@ export class Ironclaw2EActor extends Actor {
             await effect.delete();
         }
     }
-    
+
     /* -------------------------------------------- */
     /*  Non-popup Roll Functions                    */
     /* -------------------------------------------- */
@@ -871,8 +870,9 @@ export class Ironclaw2EActor extends Actor {
         let hashtml = otherinputs.length > 0;
 
         let extracareers = [];
-        if (data.hasExtraCareers) {
+        if (data.hasExtraCareers) { // Check if the actor has any extra careers to show
             data.extraCareerIds.forEach(x => extracareers.push(this.items.get(x)));
+            extracareers.sort((a, b) => a.data.sort - b.data.sort);
         }
 
         let burdened = "";
@@ -892,7 +892,7 @@ export class Ironclaw2EActor extends Actor {
                 if (firstelement == "")
                     firstelement = lowerkey;
                 formconstruction += `<div class="form-group flex-group-center flex-tight">
-       <label class="normal-label">${convertCamelCase(key)}: ${reformDiceString(trait.diceArray)}</label>
+       <label class="normal-label">${(data.hasExtraCareers && key === "career" ? trait.name : convertCamelCase(key))}: ${reformDiceString(trait.diceArray)}</label>
 	   <input type="checkbox" id="${lowerkey}" name="trait" value="${lowerkey}" ${prechecked.includes(lowerkey) ? "checked" : ""}></input>
       </div>`+ "\n";
             }
@@ -900,7 +900,7 @@ export class Ironclaw2EActor extends Actor {
             if (extracareers.length > 0) {
                 for (let [index, extra] of extracareers.entries()) {
                     if (index >= 2)
-                        break; // For UI reasons, only show up to two extra careers on dice pool selection, these should select themselves from the "top" of the array
+                        break; // For UI reasons, only show up to two extra careers on dice pool selection, these should select themselves from the top of the list in the sheet
                     let lowerkey = makeStatCompareReady(extra.data.data.careerName);
                     if (firstelement == "")
                         firstelement = lowerkey;
@@ -919,8 +919,9 @@ export class Ironclaw2EActor extends Actor {
                 let lowerkey = makeStatCompareReady(key);
                 if (firstelement == "")
                     firstelement = lowerkey;
+                let usedname = convertCamelCase(key) + ": " + reformDiceString(skill.diceArray);
                 formconstruction += `<div class="form-group flex-group-center flex-tight">
-       <label class="normal-label">${convertCamelCase(key)}: ${reformDiceString(skill.diceArray)}</label>
+       <label class="${(usedname.length > 18 ? "small-label" : "normal-label")}">${usedname}</label>
 	   <input type="checkbox" id="${lowerkey}" name="skill" value="${lowerkey}" ${prechecked.includes(lowerkey) ? "checked" : ""}></input>
       </div>`+ "\n";
             }

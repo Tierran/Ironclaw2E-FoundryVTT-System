@@ -27,7 +27,7 @@
 	"ironclaw2e.config.manageEncumbranceAuto": "WORLD: Auto-manage encumbrance",
 	"ironclaw2e.config.manageEncumbranceAutoHint": "If checked, the system will automatically manage Burdened, Over-Burdened and Cannot Move statuses for actors, based on their carried weight and worn armors. Do not try to change them manually when active, doing so is likely to cause errors.",
 	"ironclaw2e.config.coinsHaveWeight": "WORLD: Make coins have weight",
-	"ironclaw2e.config.coinsHaveWeightHint": "If checked, the weight of coins will be added to the encumbrance of the actor.",
+	"ironclaw2e.config.coinsHaveWeightHint": "If checked, the weight of coins will be added to the encumbrance of the actor. Requires a restart to take effect on all actors.",
 	"ironclaw2e.config.autoPrototypeSetup": "WORLD: Auto-setup prototype tokens",
 	"ironclaw2e.config.autoPrototypeSetupHint": "If checked, newly created actors will have their prototype token's attributes use type-specific defaults.",
 	"ironclaw2e.config.confirmItemInfo": "CLIENT: Confirm sending item info",

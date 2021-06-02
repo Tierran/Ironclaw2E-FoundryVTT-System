@@ -223,7 +223,7 @@
       "defaultTN": 3
     },
     "extraCareer": {
-      "templates": [ "base" ],
+      "templates": [ ],
       "giftTags": "Trait",
       "dice": "d4",
       "careerName": "",

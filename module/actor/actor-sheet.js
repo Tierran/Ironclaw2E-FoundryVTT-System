@@ -120,9 +120,9 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const gear = [];
         const gifts = [];
         const weapons = [];
+        const lightItems = [];
 
         // Iterate through items, allocating to containers
-        // let totalWeight = 0;
         for (let i of sheetData.items) {
             let item = i.data;
             i.img = i.img || DEFAULT_TOKEN;
@@ -138,6 +138,9 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                 case 'weapon':
                     weapons.push(i);
                     break;
+                case 'illumination':
+                    lightItems.push(i);
+                    break;
                 default:
                     gear.push(i);
                     break;
@@ -148,6 +151,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         actorData.gear = gear;
         actorData.gifts = gifts;
         actorData.weapons = weapons;
+        actorData.lightItems = lightItems;
     }
 
     /* -------------------------------------------- */

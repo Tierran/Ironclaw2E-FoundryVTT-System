@@ -236,7 +236,8 @@ export class Ironclaw2EItem extends Item {
                         <p><strong>Gift dice:</strong> ${itemData.useDice}, <strong>Default TN:</strong> ${itemData.defaultTN}</p>`;
                 break;
             case 'extraCareer':
-                contents += `<p><strong>Name:</strong> ${itemData.careerName}, ${itemData.dice}</p>
+                contents += `<p><strong>Name:</strong> ${itemData.careerName}</p>
+                        <p><strong>Dice:</strong> ${itemData.dice}</p>
                         <p><strong>Skills:</strong> ${itemData.careerSkill1}, ${itemData.careerSkill2}, ${itemData.careerSkill3}</p>`;
                 break;
             case 'weapon':

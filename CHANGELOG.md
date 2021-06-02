@@ -1,5 +1,7 @@
-### 0.2.7 Roll from chat release
+### 0.2.7 Extra career chat release
  - Implemented support for the Chat Commands module
+ - Extra Career gift now properly implemented
+ - Properly separated different item types to their own internal lists to resolve sort issues
 
 ### 0.2.6 Chat looks release
  - Made chat information output look better and take into account roll mode
