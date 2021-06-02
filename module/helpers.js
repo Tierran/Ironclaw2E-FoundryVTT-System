@@ -22,7 +22,7 @@ export function findTotalDice(dicestring) {
 
     let foos = dicestring.split(",");
     for (let i = 0; i < foos.length; ++i) {
-        let bar = splitSingleDiceString(foos[i]);
+        let bar = parseSingleDiceString(foos[i]);
         if (!Array.isArray(bar))
             continue;
 
@@ -47,11 +47,11 @@ export function findTotalDice(dicestring) {
 }
 
 /**
- * Helper function to split a single part of a dice string, eg. "3d12"
- * @param {string} dicestring The single dice to be separated into two
+ * Helper function to parse a single part of a dice string, eg. "3d12"
+ * @param {string} dicestring The single dice to be parsed
  * @returns {number[] | null} Returns a two-part array, first containing the number of dice, second the sides of the die used; returns null if the input cannot be parsed
  */
-export function splitSingleDiceString(dicestring) {
+export function parseSingleDiceString(dicestring) {
     let bar = dicestring.trim();
     let index = bar.search(/d/i); // Search for the letter d in the string
     if (index == -1)
@@ -76,12 +76,12 @@ export function splitSingleDiceString(dicestring) {
  */
 export function checkDiceArrayEmpty(dicearray) {
     if (!Array.isArray(dicearray)) {
-        console.warn("Something that was not an array inputted to dice string reformer: " + dicearray);
-        return null;
+        console.warn("Something that was not an array inputted to dice array checker: " + dicearray);
+        return false;
     }
     if (dicearray.length != 5) {
-        console.warn("Something that was not a dice array (based on length) inputted to dice string reformer: " + dicearray);
-        return null;
+        console.warn("Something that was not a dice array (based on length) inputted to dice array checker: " + dicearray);
+        return false;
     }
 
     return dicearray[0] != 0 || dicearray[1] != 0 || dicearray[2] != 0 || dicearray[3] != 0 || dicearray[4] != 0;

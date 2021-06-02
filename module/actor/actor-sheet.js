@@ -50,7 +50,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
     }
 
     /**
-     * Organize and classify Items for Character sheets.
+     * Organize and classify Items for Character and Mook sheets.
      *
      * @param {Object} actorData The actor to prepare.
      *
@@ -62,13 +62,13 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         // Initialize containers.
         const gear = [];
         const gifts = [];
+        const extraCareers = [];
         const weapons = [];
         const armors = [];
         const shields = [];
         const lightItems = [];
 
         // Iterate through items, allocating to containers
-        // let totalWeight = 0;
         for (let i of sheetData.items) {
             let item = i.data;
             i.img = i.img || DEFAULT_TOKEN;
@@ -81,6 +81,9 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                 case 'gift':
                     gifts.push(i);
                     break;
+                case 'extraCareer':
+                    extraCareers.push(i);
+                    break;
                 case 'weapon':
                     weapons.push(i);
                     break;
@@ -91,7 +94,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                     shields.push(i);
                     break;
                 case 'illumination':
-                    gear.push(i);
+                    lightItems.push(i);
                     break;
                 default:
                     gear.push(i);
@@ -103,9 +106,11 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         // Assign and return
         actorData.gear = gear;
         actorData.gifts = gifts;
+        actorData.extraCareers = extraCareers;
         actorData.weapons = weapons;
         actorData.armors = armors;
         actorData.shields = shields;
+        actorData.lightItems = lightItems;
     }
 
     _prepareBeastItems(sheetData) {

@@ -8,7 +8,7 @@ import { findActorToken } from "../helpers.js";
 import { findInItems } from "../helpers.js";
 import { checkForPrechecked } from "../helpers.js";
 import { nullCheckConcat } from "../helpers.js";
-import { splitSingleDiceString } from "../helpers.js";
+import { parseSingleDiceString } from "../helpers.js";
 import { formRoll } from "../dicerollers.js";
 // From the combat-utility-belt
 import { hasConditionsIronclaw } from "../unified.js";
@@ -93,6 +93,17 @@ export class Ironclaw2EActor extends Actor {
 
         data.traits.species.skills = [makeStatCompareReady(data.traits.species.speciesSkill1), makeStatCompareReady(data.traits.species.speciesSkill2), makeStatCompareReady(data.traits.species.speciesSkill3)];
         data.traits.career.skills = [makeStatCompareReady(data.traits.career.careerSkill1), makeStatCompareReady(data.traits.career.careerSkill2), makeStatCompareReady(data.traits.career.careerSkill3)];
+
+        // Extra Career additions
+        const extraCareers = this.items.filter(element => element.data.type === 'extraCareer');
+        if (extraCareers.length > 0) {
+            data.hasExtraCareers = true;
+            let ids = [];
+            extraCareers.forEach(x => ids.push(x.data._id));
+            data.extraCareerIds = ids;
+        }
+        else
+            data.hasExtraCareers = false;
     }
 
     /**
@@ -100,6 +111,12 @@ export class Ironclaw2EActor extends Actor {
      */
     _processSkills(actorData) {
         const data = actorData.data;
+
+        let careers = [];
+        if (data.hasExtraCareers) {
+            data.extraCareerIds.forEach(x => careers.push(this.items.get(x)));
+            console.log(careers);
+        }
 
         for (let [key, skill] of Object.entries(data.skills)) {
             skill.diceArray = [0, 0, 0, 0, 0];
@@ -111,14 +128,21 @@ export class Ironclaw2EActor extends Actor {
                     skill.diceArray[5 - remainder] += 1;
                 }
             }
-            if (data.traits.species.skills.includes(makeStatCompareReady(key))) {
+            const comparekey = makeStatCompareReady(key);
+            if (data.traits.species.skills.includes(comparekey)) {
                 skill.diceArray = addArrays(skill.diceArray, data.traits.species.diceArray);
             }
-            if (data.traits.career.skills.includes(makeStatCompareReady(key))) {
+            if (data.traits.career.skills.includes(comparekey)) {
                 skill.diceArray = addArrays(skill.diceArray, data.traits.career.diceArray);
             }
 
-            // Extra Career stuff here
+            if (data.hasExtraCareers) {
+                careers.forEach(element => {
+                    if (element.data.data.skills.includes(comparekey)) {
+                        skill.diceArray = addArrays(skill.diceArray, element.data.data.diceArray);
+                    }
+                });
+            }
         }
     }
 
@@ -165,8 +189,8 @@ export class Ironclaw2EActor extends Actor {
             }
         }
 
-        let speedarr = splitSingleDiceString(data.traits.speed.dice);
-        let bodyarr = splitSingleDiceString(data.traits.body.dice);
+        let speedarr = parseSingleDiceString(data.traits.speed.dice);
+        let bodyarr = parseSingleDiceString(data.traits.body.dice);
 
         if (!Array.isArray(speedarr) || !Array.isArray(bodyarr)) {
             console.error("Battle data process failed, unable to parse dice for " + actorData.name);
@@ -259,7 +283,7 @@ export class Ironclaw2EActor extends Actor {
             }
         }
 
-        const bodyarr = splitSingleDiceString(data.traits.body.dice);
+        const bodyarr = parseSingleDiceString(data.traits.body.dice);
         if (!Array.isArray(bodyarr)) {
             console.error("Unable to parse body die for " + actorData.name);
             return;
@@ -846,6 +870,11 @@ export class Ironclaw2EActor extends Actor {
         let hasskills = data.hasOwnProperty("skills");
         let hashtml = otherinputs.length > 0;
 
+        let extracareers = [];
+        if (data.hasExtraCareers) {
+            data.extraCareerIds.forEach(x => extracareers.push(this.items.get(x)));
+        }
+
         let burdened = "";
         if (hasConditionsIronclaw("Burdened", this)) {
             burdened = `
@@ -867,7 +896,20 @@ export class Ironclaw2EActor extends Actor {
 	   <input type="checkbox" id="${lowerkey}" name="trait" value="${lowerkey}" ${prechecked.includes(lowerkey) ? "checked" : ""}></input>
       </div>`+ "\n";
             }
-            // Extra Career sutff here
+            // Extra Career additional boxes
+            if (extracareers.length > 0) {
+                for (let [index, extra] of extracareers.entries()) {
+                    if (index >= 2)
+                        break; // For UI reasons, only show up to two extra careers on dice pool selection, these should select themselves from the "top" of the array
+                    let lowerkey = makeStatCompareReady(extra.data.data.careerName);
+                    if (firstelement == "")
+                        firstelement = lowerkey;
+                    formconstruction += `<div class="form-group flex-group-center flex-tight">
+       <label class="normal-label">${extra.data.data.careerName}: ${reformDiceString(extra.data.data.diceArray)}</label>
+	   <input type="checkbox" id="${lowerkey}" name="trait" value="${lowerkey}" ${prechecked.includes(lowerkey) ? "checked" : ""}></input>
+      </div>`+ "\n";
+                }
+            }
             formconstruction += `</div>` + "\n";
         }
         if (hasskills) {

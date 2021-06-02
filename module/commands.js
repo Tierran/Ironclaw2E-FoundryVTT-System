@@ -48,8 +48,6 @@ export function ironclawRollActorChat(inputstring, speaker) {
     }
 
     let actor = (speaker?.token ? game.actors.tokens[speaker.token] : null)?.token?.actor;
-    console.log(speaker);
-    console.log(actor);
     if (!actor) {
         actor = game.actors.get(speaker.actor);
         if (!actor) {

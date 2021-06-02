@@ -202,7 +202,7 @@
     }
   },
   "Item": {
-    "types": [ "gift", "weapon", "armor", "shield", "illumination", "item" ],
+    "types": [ "gift", "weapon", "armor", "shield", "illumination", "extraCareer", "item" ],
     "templates": {
       "base": {
         "description": "",
@@ -221,6 +221,15 @@
       "exhaustWhenUsed": true,
       "useDice": "",
       "defaultTN": 3
+    },
+    "extraCareer": {
+      "templates": [ "base" ],
+      "giftTags": "Trait",
+      "dice": "d4",
+      "careerName": "",
+      "careerSkill1": "",
+      "careerSkill2": "",
+      "careerSkill3": ""
     },
     "weapon": {
       "templates": [ "base", "physical" ],

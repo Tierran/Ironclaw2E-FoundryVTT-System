@@ -3,6 +3,7 @@ import { makeStatCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
 import { splitStatsAndBonus } from "../helpers.js";
 import { getMacroSpeaker } from "../helpers.js";
+import { checkDiceArrayEmpty } from "../helpers.js";
 
 import { rollTargetNumberOneLine } from "../dicerollers.js";
 import { rollHighestOneLine } from "../dicerollers.js";
@@ -29,6 +30,7 @@ export class Ironclaw2EItem extends Item {
         }
 
         if (itemData.type === 'gift') this._prepareGiftData(itemData, actorData);
+        if (itemData.type === 'extraCareer') this._prepareCareerData(itemData, actorData);
         if (itemData.type === 'weapon') this._prepareWeaponData(itemData, actorData);
         if (itemData.type === 'armor') this._prepareArmorData(itemData, actorData);
         if (itemData.type === 'shield') this._prepareShieldData(itemData, actorData);
@@ -57,14 +59,21 @@ export class Ironclaw2EItem extends Item {
             data.giftArray = null;
             data.canUse = false;
         }
+    }
 
-        // Extra Career support
-        /*
-        if (!data.refresh || data.refresh.length == 0 || makeStatCompareReady(data.refresh) == "none") {
-            data.hasRefresh = false;
+    /**
+     * Process Extra Career type specific data
+     */
+    _prepareCareerData(itemData, actorData) {
+        const data = itemData.data;
+
+        if (data.dice.length > 0) {
+            data.diceArray = findTotalDice(data.dice);
+            data.valid = checkDiceArrayEmpty(data.diceArray);
+            data.skills = [makeStatCompareReady(data.careerSkill1), makeStatCompareReady(data.careerSkill2), makeStatCompareReady(data.careerSkill3)];
         } else {
-            data.hasRefresh = true;
-        }*/
+            data.valid = false;
+        }
     }
 
     /**
@@ -225,6 +234,10 @@ export class Ironclaw2EItem extends Item {
                 contents += `<p><strong>Tags:</strong> ${itemData.giftTags}</p>
                         <p><strong>Refresh:</strong> ${itemData.refresh}, <strong>Exhausted:</strong> ${itemData.exhaustWhenUsed ? (itemData.exhausted ? "Yes" : "No") : "Never"}</p>
                         <p><strong>Gift dice:</strong> ${itemData.useDice}, <strong>Default TN:</strong> ${itemData.defaultTN}</p>`;
+                break;
+            case 'extraCareer':
+                contents += `<p><strong>Name:</strong> ${itemData.careerName}, ${itemData.dice}</p>
+                        <p><strong>Skills:</strong> ${itemData.careerSkill1}, ${itemData.careerSkill2}, ${itemData.careerSkill3}</p>`;
                 break;
             case 'weapon':
                 contents += `<p><strong>Effect:</strong> ${itemData.effect}</p>
