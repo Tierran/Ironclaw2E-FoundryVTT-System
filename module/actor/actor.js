@@ -96,6 +96,7 @@ export class Ironclaw2EActor extends Actor {
 
         // Extra Career additions
         const extraCareers = this.items.filter(element => element.data.type === 'extraCareer');
+        extraCareers.sort((a, b) => a.data.sort - b.data.sort);
         if (extraCareers.length > 0) {
             data.hasExtraCareers = true;
             let ids = [];
@@ -112,9 +113,9 @@ export class Ironclaw2EActor extends Actor {
     _processSkills(actorData) {
         const data = actorData.data;
 
-        let careers = [];
+        let extracareers = [];
         if (data.hasExtraCareers) {
-            data.extraCareerIds.forEach(x => careers.push(this.items.get(x)));
+            data.extraCareerIds.forEach(x => extracareers.push(this.items.get(x)));
         }
 
         for (let [key, skill] of Object.entries(data.skills)) {
@@ -136,7 +137,7 @@ export class Ironclaw2EActor extends Actor {
             }
 
             if (data.hasExtraCareers) {
-                careers.forEach(element => {
+                extracareers.forEach(element => {
                     if (element.data.data.skills.includes(comparekey)) {
                         skill.diceArray = addArrays(skill.diceArray, element.data.data.diceArray);
                     }
@@ -359,6 +360,20 @@ export class Ironclaw2EActor extends Actor {
                     totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(trait.diceArray, 2) : trait.diceArray));
                     label += convertCamelCase(key);
                     labelgiven = true;
+                }
+            }
+            if (data.hasExtraCareers) {
+                let extracareers = [];
+                data.extraCareerIds.forEach(x => extracareers.push(this.items.get(x)));
+                for (let [index, extra] of extracareers.entries()) {
+                    let key = makeStatCompareReady(extra.data.data.careerName);
+                    if (traitnames.includes(key)) {
+                        if (labelgiven)
+                            label += " + ";
+                        totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(extra.data.data.diceArray, 2) : extra.data.data.diceArray));
+                        label += extra.data.data.careerName;
+                        labelgiven = true;
+                    }
                 }
             }
         }
@@ -872,7 +887,6 @@ export class Ironclaw2EActor extends Actor {
         let extracareers = [];
         if (data.hasExtraCareers) { // Check if the actor has any extra careers to show
             data.extraCareerIds.forEach(x => extracareers.push(this.items.get(x)));
-            extracareers.sort((a, b) => a.data.sort - b.data.sort);
         }
 
         let burdened = "";
