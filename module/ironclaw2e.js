@@ -35,6 +35,15 @@ Hooks.once('init', async function () {
         rollHighestOneLine
     };
 
+    let cubActive = game.modules.get("combat-utility-belt")?.active == true;
+    // Combat Utility Belt check
+    if (cubActive) {
+
+    }
+    else {
+        ui.notifications.info("Combat Utility Belt not detected! Please install and activate CUB and its Enhanced Conditions for condition tracking.");
+    }
+
     // Define custom Entity classes
     CONFIG.Actor.entityClass = Ironclaw2EActor;
     CONFIG.Item.entityClass = Ironclaw2EItem;
@@ -142,11 +151,6 @@ Hooks.once("ready", async function () {
             skipDefeated: false,
             manualTN: -1
         });
-    }
-    
-    // Combat Utility Belt warning
-    if (!game.modules.get("combat-utility-belt")?.active) {
-        ui.notifications.info("Combat Utility Belt not detected! Please install and activate CUB and its Enhanced Conditions for condition tracking.");
     }
 });
 
@@ -275,7 +279,7 @@ Hooks.on("chatCommandsReady", function (chatCommands) {
         },
         shouldDisplayToChat: false,
         iconClass: "fa-dice-d6",
-        description: "Basic roll command"
+        description: game.i18n.localize("ironclaw2e.chat.iroll")
     }));
 
     // Trigger an actor dice pool popup, with optional preselected stats and dice
@@ -287,7 +291,7 @@ Hooks.on("chatCommandsReady", function (chatCommands) {
         },
         shouldDisplayToChat: false,
         iconClass: "fa-user",
-        description: "Actor dice pool popup"
+        description: game.i18n.localize("ironclaw2e.chat.actorroll")
     }));
 
     // Use an item as the currently selected actor
@@ -299,7 +303,7 @@ Hooks.on("chatCommandsReady", function (chatCommands) {
         },
         shouldDisplayToChat: false,
         iconClass: "fa-fist-raised",
-        description: "Use an item"
+        description: game.i18n.localize("ironclaw2e.chat.itemuse")
     }));
 });
 

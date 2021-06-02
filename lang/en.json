@@ -9,6 +9,10 @@
 
 	"ironclaw2e.ui.encumbranceAutoActive": "Auto-Encumbrance management active, condition modification cancelled.",
 
+	"ironclaw2e.chat.iroll": "Basic Ironclaw roll",
+	"ironclaw2e.chat.actorroll": "Actor dice pool popup",
+	"ironclaw2e.chat.itemuse": "Use an item",
+
 	"ironclaw2e.combat.sideBasedInitiative": "Use side-based initiative",
 	"ironclaw2e.combat.sideBasedInitiativeHint": "Use the default side-based initiative of Ironclaw. If set, select from the dropdown list below for the exact order. If not set, use the alternative, more traditional initiative based on the highest die in the Initiative check and breaking ties on the second highest.",
 	"ironclaw2e.combat.sidesUsed": "Combat sides used",
