@@ -1,4 +1,8 @@
-class CommonSystemInfo {
+/** Common class for common system info that might be used */
+export class CommonSystemInfo {
+    /**
+     * List of stats that are limited by the Burdened condition
+     */
     static burdenedList = Object.freeze(["speed", "climbing", "dodge", "endurance", "jumping", "stealth", "swimming"]);
 }
 

@@ -12,10 +12,10 @@ import { parseSingleDiceString } from "../helpers.js";
 import { checkDiceArrayIndex } from "../helpers.js";
 import { formRoll } from "../dicerollers.js";
 // For condition management
-import { hasConditionsIronclaw } from "../unified.js";
-import { getConditionNamesIronclaw } from "../unified.js";
-import { addConditionsIronclaw } from "../unified.js";
-import { removeConditionsIronclaw } from "../unified.js";
+import { hasConditionsIronclaw } from "../conditions.js";
+import { getConditionNamesIronclaw } from "../conditions.js";
+import { addConditionsIronclaw } from "../conditions.js";
+import { removeConditionsIronclaw } from "../conditions.js";
 // The rest are for the supermassive function
 import { rollTargetNumber } from "../dicerollers.js";
 import { rollHighest } from "../dicerollers.js";
@@ -976,7 +976,7 @@ export class Ironclaw2EActor extends Actor {
      <div class="form-group">
        <label class="normal-label">Limit All Dice Pools:</label>
        <input type="checkbox" id="iflimit" name="iflimit" value="1"></input>
-	   <input id="limit" name="limit" value="" onfocus="this.select();"></input>
+	   <input id="limit" name="limit" value="" placeholder="Max die type" onfocus="this.select();"></input>
      </div>
      </form>
      `,

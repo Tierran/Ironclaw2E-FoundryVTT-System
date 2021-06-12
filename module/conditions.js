@@ -1,3 +1,5 @@
+
+
 /**
  * Unified function to get whether the target(s) has any of the select conditions for Ironclaw2e, right now here in case CUB is not installed
  * @param {String[] | String} conditions Conditions to check for

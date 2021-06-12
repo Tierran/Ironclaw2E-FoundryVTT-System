@@ -3,7 +3,7 @@ import { rollHighest } from "../dicerollers.js";
 import { rollTargetNumberDialog } from "../dicerollers.js";
 import { rollHighestDialog } from "../dicerollers.js";
 import { splitStatString } from "../helpers.js";
-import { getConditionByNameIronclaw } from "../unified.js";
+import { getConditionByNameIronclaw } from "../conditions.js";
 
 /**
  * Extend the basic ActorSheet

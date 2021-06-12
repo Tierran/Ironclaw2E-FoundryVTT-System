@@ -160,8 +160,8 @@ Hooks.once("ready", async function () {
     }
 
     /// CUB remove defaults nag
-    if (game.ironclaw2e.useCUBConditions && game.settings.get("combat-utility-belt", "removeDefaultEffects")) {
-        ui.notifications.info("Combat Utility Belt detected, but normal conditions are not removed. The GM should disable them from the Enhanced Condition settings.");
+    if (game.ironclaw2e.useCUBConditions && game.settings.get("combat-utility-belt", "removeDefaultEffects") === false) {
+        ui.notifications.info("Combat Utility Belt detected, but normal conditions are not removed. The GM should disable them from the Enhanced Condition settings.", { permanent: true });
     }
 
     console.log("Ironclaw System ready");
