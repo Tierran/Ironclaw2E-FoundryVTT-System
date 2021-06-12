@@ -9,8 +9,9 @@ import { findInItems } from "../helpers.js";
 import { checkForPrechecked } from "../helpers.js";
 import { nullCheckConcat } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
+import { checkDiceArrayIndex } from "../helpers.js";
 import { formRoll } from "../dicerollers.js";
-// From the combat-utility-belt
+// For condition management
 import { hasConditionsIronclaw } from "../unified.js";
 import { getConditionNamesIronclaw } from "../unified.js";
 import { addConditionsIronclaw } from "../unified.js";
@@ -763,7 +764,7 @@ export class Ironclaw2EActor extends Actor {
     /* -------------------------------------------- */
 
     /** Damage calculation popup */
-    popupDamage(readydamage = "") {
+    popupDamage(readydamage = "", readysoak = "") {
         let confirmed = false;
         let speaker = getMacroSpeaker(this);
         let addeddamage = 0;
@@ -773,10 +774,14 @@ export class Ironclaw2EActor extends Actor {
             title: "Damage Calculation for " + speaker.alias,
             content: `
      <form class="ironclaw2e">
-      <h1>Set damage for ${this.data.name}</h1>
+      <h1>Add damage to ${this.data.name}</h1>
       <div class="form-group">
        <label class="normal-label">Damage received:</label>
 	   <input id="damage" name="damage" value="${readydamage}" onfocus="this.select();"></input>
+      </div>
+      <div class="form-group">
+       <label class="normal-label">Soak:</label>
+	   <input id="soak" name="soak" value="${readysoak}" onfocus="this.select();"></input>
       </div>
       <div class="form-group">
        <span class="normal-label">Additional Damage: ${addeddamage}</span>
@@ -810,6 +815,8 @@ export class Ironclaw2EActor extends Actor {
                 if (confirmed) {
                     let DAMAGE = html.find('[name=damage]')[0].value;
                     let damage = 0; if (DAMAGE.length > 0) damage = parseInt(DAMAGE);
+                    let SOAK = html.find('[name=soak]')[0].value;
+                    let soak = 0; if (SOAK.length > 0) soak = parseInt(SOAK);
                     let ADDED = html.find('[name=added]')[0];
                     let added = ADDED.checked;
                     let KNOCKOUT = html.find('[name=knockout]')[0];
@@ -817,7 +824,7 @@ export class Ironclaw2EActor extends Actor {
                     let ALLOW = html.find('[name=nonlethal]')[0];
                     let allow = ALLOW.checked;
 
-                    this.applyDamage(damage + (added ? addeddamage : 0), knockout, allow);
+                    this.applyDamage(damage + (added ? addeddamage : 0) - soak, knockout, allow);
                 }
             }
         });
@@ -1004,10 +1011,14 @@ export class Ironclaw2EActor extends Actor {
 
                     let IFBURDENED = html.find('[name=burdened]');
                     let isburdened = IFBURDENED.length > 0 ? IFBURDENED[0].checked : false;
+
                     let IFLIMIT = html.find('[name=iflimit]')[0];
                     let uselimit = IFLIMIT.checked;
                     let LIMIT = html.find('[name=limit]')[0].value;
-                    let limit = 0; if (LIMIT.length > 0) limit = parseInt(LIMIT);
+                    let limit = 0;
+                    let limitparsed = parseSingleDiceString(LIMIT.trim()); // Check if the limit field is a die, in which case, parse what value it's meant to limit to
+                    if (Array.isArray(limitparsed)) limit = checkDiceArrayIndex(limitparsed[1]);
+                    else if (LIMIT.length > 0) limit = parseInt(LIMIT);
 
                     let IFTNSS = html.find('[name=iftn]')[0];
                     let IFTN = IFTNSS.checked;

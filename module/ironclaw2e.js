@@ -32,24 +32,15 @@ Hooks.once('init', async function () {
         rollTargetNumberDialog,
         rollHighestDialog,
         rollTargetNumberOneLine,
-        rollHighestOneLine
+        rollHighestOneLine,
+        "useCUBConditions": false
     };
-
-    let cubActive = game.modules.get("combat-utility-belt")?.active == true;
-    // Combat Utility Belt check
-    if (cubActive) {
-
-    }
-    else {
-        ui.notifications.info("Combat Utility Belt not detected! Please install and activate CUB and its Enhanced Conditions for condition tracking.");
-    }
 
     // Define custom Entity classes
     CONFIG.Actor.entityClass = Ironclaw2EActor;
     CONFIG.Item.entityClass = Ironclaw2EItem;
     CONFIG.Combat.entityClass = Ironclaw2ECombat;
     CONFIG.ui.combat = Ironclaw2ECombatTracker;
-    CONFIG.time.roundTime = 6;
 
     /**
      * Set an initiative formula for the system
@@ -59,6 +50,7 @@ Hooks.once('init', async function () {
         formula: "-1",
         decimals: 2
     };
+    CONFIG.time.roundTime = 6;
 
     // Register sheet application classes
     Actors.unregisterSheet("core", ActorSheet);
@@ -136,6 +128,20 @@ Hooks.once('init', async function () {
     Handlebars.registerHelper('usableGift', function (gift) {
         return gift.data.exhaustWhenUsed || gift.data.useDice?.length > 0;
     });
+
+    console.log("Ironclaw System init complete");
+});
+
+Hooks.once('setup', async function () {
+    // Combat Utility Belt check
+    let cubActive = game.modules.get("combat-utility-belt")?.active == true;
+    let conditionsActive = game.settings.get("combat-utility-belt", "enableEnhancedConditions");
+    if (cubActive && conditionsActive) {
+        game.ironclaw2e.useCUBConditions = true;
+        console.log("CUB detected and Enhanced Conditions active! Using CUB Conditions.");
+    }
+
+    console.log("Ironclaw System setup complete");
 });
 
 Hooks.once("ready", async function () {
@@ -152,6 +158,13 @@ Hooks.once("ready", async function () {
             manualTN: -1
         });
     }
+
+    /// CUB remove defaults nag
+    if (game.ironclaw2e.useCUBConditions && game.settings.get("combat-utility-belt", "removeDefaultEffects")) {
+        ui.notifications.info("Combat Utility Belt detected, but normal conditions are not removed. The GM should disable them from the Enhanced Condition settings.");
+    }
+
+    console.log("Ironclaw System ready");
 });
 
 async function loadHandleBarTemplates() {

@@ -6,7 +6,7 @@ import { splitStatsAndBonus } from "./helpers.js";
 import { makeStatCompareReady } from "./helpers.js";
 
 /**
- * A function intended for the ChatCommands integration, it takes a string and decides what mode to use from it
+ * A function intended for the ChatCommands integration, it takes a string and tries to convert it into a sort-of one-line roll
  * @param {string} inputstring A one-line style string, with a target number attached to it after a semicolon after the one-line part
  */
 export function ironclawRollChat(inputstring) {
@@ -36,6 +36,11 @@ export function ironclawRollChat(inputstring) {
         rollHighest(dicearray[0], dicearray[1], dicearray[2], dicearray[3], dicearray[4]);
 }
 
+/**
+ * A function intended for the ChatCommands integration, it takes a string and tries to use it as a stat string to open the actor's dice popup with pre-checked fields
+ * @param {string} inputstring An item roll string, with a target number attached to it after an extra semicolon after the extra dice section
+ * @param {any} speaker The caller of the function
+ */
 export function ironclawRollActorChat(inputstring, speaker) {
     if (typeof inputstring !== "string") {
         console.warn("Something other than a string inputted into ironclawRollActorChat: " + inputstring.toString());

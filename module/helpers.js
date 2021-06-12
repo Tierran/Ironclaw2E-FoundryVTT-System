@@ -30,16 +30,9 @@ export function findTotalDice(dicestring) {
 
         if (total == 0 || sides == 0)
             continue;
-        else if (sides == 12)
-            totaldice[0] += total;
-        else if (sides == 10)
-            totaldice[1] += total;
-        else if (sides == 8)
-            totaldice[2] += total;
-        else if (sides == 6)
-            totaldice[3] += total;
-        else if (sides == 4)
-            totaldice[4] += total;
+        let diceindex = checkDiceArrayIndex(sides);
+        if (diceindex >= 0)
+            totaldice[diceindex] += total;
         else
             console.log("Non-standard dice found while totaling up dice: " + dicestring);
     }
@@ -67,6 +60,31 @@ export function parseSingleDiceString(dicestring) {
         return null; // If either of the variables end up as NaN, return null
 
     return [total, sides]; // Return total and sides as an array
+}
+
+/**
+ * Simple helper to check which dice array index a die with a given number of sides would belong to
+ * @param {number} sides The sides of the die to check
+ * @returns {number} The dice array index the dice would belong to, or -1 for invalid
+ */
+export function checkDiceArrayIndex(sides) {
+    if (isNaN(sides)) {
+        console.warn("Something that was NaN inputted to dice index checker: " + sides);
+        return -1;
+    }
+
+    if (sides == 12)
+        return 0;
+    else if (sides == 10)
+        return 1;
+    else if (sides == 8)
+        return 2;
+    else if (sides == 6)
+        return 3;
+    else if (sides == 4)
+        return 4;
+    else
+        return -1;
 }
 
 /**

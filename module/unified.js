@@ -6,7 +6,7 @@
  * @returns {boolean} Whether the target has any of the conditions
  */
 export function hasConditionsIronclaw(conditions, target, warn = false) {
-    if (!game.cub) {
+    if (!game.ironclaw2e.useCUBConditions) {
         ui.notifications.info("Combat Utility Belt not installed, condition check failed.");
         return false;
     }
@@ -21,7 +21,7 @@ export function hasConditionsIronclaw(conditions, target, warn = false) {
  * @returns {string[]} Array of conditions the target has
  */
 export function getConditionNamesIronclaw(target, warn = false) {
-    if (!game.cub) {
+    if (!game.ironclaw2e.useCUBConditions) {
         ui.notifications.info("Combat Utility Belt not installed, condition check failed.");
         return;
     }
@@ -48,7 +48,7 @@ export function getConditionNamesIronclaw(target, warn = false) {
  * @returns {Object[]} Array of conditions the target has
  */
 export function getConditionsIronclaw(target, warn = false) {
-    if (!game.cub) {
+    if (!game.ironclaw2e.useCUBConditions) {
         ui.notifications.info("Combat Utility Belt not installed, condition check failed.");
         return;
     }
@@ -75,7 +75,7 @@ export function getConditionsIronclaw(target, warn = false) {
  * @param {boolean} warn Whether to use CUB's warnings
  */
 export async function addConditionsIronclaw(conditions, target, warn = false) {
-    if (!game.cub) {
+    if (!game.ironclaw2e.useCUBConditions) {
         ui.notifications.info("Combat Utility Belt not installed, adding condition failed.");
         return;
     }
@@ -91,7 +91,7 @@ export async function addConditionsIronclaw(conditions, target, warn = false) {
  * @param {boolean} warn Whether to use CUB's warnings
  */
 export async function removeConditionsIronclaw(conditions, target, checkfirst = true, warn = false) {
-    if (!game.cub) {
+    if (!game.ironclaw2e.useCUBConditions) {
         ui.notifications.info("Combat Utility Belt not installed, removing condition failed.");
         return;
     }
@@ -107,7 +107,7 @@ export async function removeConditionsIronclaw(conditions, target, checkfirst = 
  * @returns {Object} Array of conditions the target have
  */
 export function getConditionByNameIronclaw(condition, warn = false) {
-    if (!game.cub) {
+    if (!game.ironclaw2e.useCUBConditions) {
         ui.notifications.info("Combat Utility Belt not installed, condition check failed.");
         return;
     }
