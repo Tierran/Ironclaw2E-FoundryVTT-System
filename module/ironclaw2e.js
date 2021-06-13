@@ -133,7 +133,7 @@ Hooks.once('init', async function () {
         return gift.data.exhaustWhenUsed || gift.data.useDice?.length > 0;
     });
 
-    console.log("Ironclaw System init complete");
+    console.log("Ironclaw2E System init complete");
 });
 
 Hooks.once('setup', async function () {
@@ -145,7 +145,7 @@ Hooks.once('setup', async function () {
         console.log("CUB detected and Enhanced Conditions active! Using CUB Conditions.");
     }
 
-    console.log("Ironclaw System setup complete");
+    console.log("Ironclaw2E System setup complete");
 });
 
 Hooks.once("ready", async function () {
@@ -165,10 +165,10 @@ Hooks.once("ready", async function () {
 
     /// CUB remove defaults nag
     if (game.ironclaw2e.useCUBConditions && game.settings.get("combat-utility-belt", "removeDefaultEffects") === false) {
-        ui.notifications.info("Combat Utility Belt detected, but normal conditions are not removed. The GM should disable them from the Enhanced Condition settings.", { permanent: true });
+        ui.notifications.info(game.i18n.localize("ironclaw2e.ui.removeDefaultConditionsNag"), { permanent: true });
     }
 
-    console.log("Ironclaw System ready");
+    console.log("Ironclaw2E System ready");
 });
 
 async function loadHandleBarTemplates() {

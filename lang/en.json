@@ -8,6 +8,7 @@
   "ironclaw2e.copyToHighest": "Copy To Highest Roll",
 
   "ironclaw2e.ui.encumbranceAutoActive": "Auto-Encumbrance management active, condition modification cancelled.",
+  "ironclaw2e.ui.removeDefaultConditionsNag": "Combat Utility Belt detected, but default conditions are not removed. The GM should disable them from the Enhanced Conditions settings.",
 
   "ironclaw2e.chat.iroll": "Basic Ironclaw roll",
   "ironclaw2e.chat.actorroll": "Actor dice pool popup",
