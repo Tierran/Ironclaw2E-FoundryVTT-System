@@ -91,6 +91,10 @@ export function getConditionsIronclaw(target, warn = false) {
  * @param {boolean} warn Whether to use CUB's warnings
  */
 export async function addConditionsIronclaw(conditions, target, warn = false) {
+    if (!game.ready) { // If the game isn't fully ready yet, wait until it is
+        await game.ironclaw2e.waitUntilReady();
+    }
+
     if (game.ironclaw2e.useCUBConditions) {
         let cubconditions = CommonConditionInfo.convertToCub(conditions);
         return game.cub.addCondition(cubconditions, target, { "warn": warn });
@@ -100,11 +104,14 @@ export async function addConditionsIronclaw(conditions, target, warn = false) {
         if (!actor) return false;
         let usedconditions = Array.isArray(conditions) ? conditions : [conditions];
         if (hasConditionsIronclaw(conditions, target, warn)) {
-            const duplicateeffects = getConditionsIronclaw(target, warn);
-            usedconditions = usedconditions.filter(x => !duplicateeffects.some(y => y.data.flags?.core?.statusId === x));
+            const existingeffects = getConditionsIronclaw(target, warn);
+            usedconditions = usedconditions.filter(x => existingeffects.some(y => y.data.flags?.core?.statusId === x) == false);
         }
-        const effects = CommonConditionInfo.getMatchedConditions(usedconditions);
-        await actor.createEmbeddedEntity("ActiveEffect", effects);
+        const effects = prepareEffects(CommonConditionInfo.getMatchedConditions(usedconditions));
+
+        if (effects.length > 0) {
+            await actor.createEmbeddedEntity("ActiveEffect", effects);
+        }
     }
 }
 
@@ -116,6 +123,10 @@ export async function addConditionsIronclaw(conditions, target, warn = false) {
  * @param {boolean} warn Whether to use CUB's warnings
  */
 export async function removeConditionsIronclaw(conditions, target, checkfirst = true, warn = false) {
+    if (!game.ready) { // If the game isn't fully ready yet, wait until it is
+        await game.ironclaw2e.waitUntilReady();
+    }
+
     if (game.ironclaw2e.useCUBConditions) {
         if (checkfirst === false || (hasConditionsIronclaw(conditions, target))) {
             let cubconditions = CommonConditionInfo.convertToCub(conditions);
@@ -130,7 +141,8 @@ export async function removeConditionsIronclaw(conditions, target, checkfirst = 
         let removals = [];
         actor.effects.forEach((value, key) => { if (conditions.includes(value.data.flags?.core?.statusId)) removals.push(key) });
 
-        await actor.deleteEmbeddedEntity("ActiveEffect", removals);
+        if (removals.length > 0)
+            await actor.deleteEmbeddedEntity("ActiveEffect", removals);
     }
 }
 
@@ -164,6 +176,21 @@ export function getConditionByNameIronclaw(condition, warn = false) {
  */
 function getTargetActor(target) {
     return (target instanceof Actor ? target : (target instanceof Token ? target.actor : null));
+}
+
+function prepareEffects(effects) {
+    let effectDatas = [];
+    effects = Array.isArray(effects) ? effects : [effects];
+
+    for (let effect of effects) {
+        const createData = duplicate(effect);
+        createData.label = game.i18n.localize(effect.label);
+        createData["flags.core.statusId"] = effect.id;
+        delete createData.id;
+        effectDatas.push(createData);
+    }
+
+    return effectDatas;
 }
 
 /* -------------------------------------------- */

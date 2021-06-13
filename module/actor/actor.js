@@ -865,7 +865,7 @@ export class Ironclaw2EActor extends Actor {
             close: html => {
                 if (confirmed) {
                     let COND = html.find('[name=cond]')[0].value;
-                    this.addEffect(COND);
+                    if (COND.length > 0) this.addEffect(makeStatCompareReady(COND));
                 }
             }
         });

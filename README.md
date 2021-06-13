@@ -9,8 +9,6 @@ While the system has compendiums, they **do not** contain characters, gifts, gea
 
 This system was built from the Boilerplate system found here: https://gitlab.com/asacolips-projects/foundry-mods/boilerplate
 
-NOTE: This system requires the Combat Utility Belt (https://github.com/death-save/combat-utility-belt) module and it's Enhanced Conditions to be installed and activated to fully function, as the Ironclaw combat system is based completely on status effects. Please remember to activate it and disable the default Foundry status conditions, if not already disabled.
-
 ## Usage
 
 For rolling actor dice pools, actor sheets have a button to open a dice poll popup, which allows you to select what pools to use for the roll. The system has some support for specific rolls to automatically pre-select relevant dice pools and add modifiers through hard-coded logic. This does require any added gifts to have the same name as they do in the books to function, but allows easier rolling of dice.  
@@ -22,11 +20,11 @@ In sheets, things with red outlines signify a clickable function, while blue sig
 Ironclaw's initiative system is supported, both the normal side-based and the alternate classic style. Configuring the specifics is done through the combat tracker settings as normal, the system supporting a few different ways to classify sides in a battle. The system also auto-rolls the initiative check for battle participants when 'rolling' initiative.  
 The Combat Tracker will show the result of the initiative check before the initiative itself, either as the number of successes, or as Tie (T), Failure (F), or Botch (B).  
 
-The system has support for the Drag Ruler module (https://github.com/manuelVo/foundryvtt-drag-ruler). The distance colors represent Stride (blue), Stride+Dash (green), Run (yellow) and over max distance (red).
+The system has support for the Drag Ruler module (https://github.com/manuelVo/foundryvtt-drag-ruler). The distance colors represent Stride (blue), Stride+Dash (green), Run (yellow) and over max distance (red).  
+The system has support for the Chat Commands module (https://github.com/League-of-Foundry-Developers/Chat-Commands-Lib). If present and active, the system will register "/iroll", "/actorroll" and "/itemuse" commands.  
+The system has support for the Combat Utility Belt module (https://github.com/League-of-Foundry-Developers/Chat-Commands-Lib), specifically for its Enhanced Conditions system. If present and active, the system will try to use the EC for conditions. Proper setup explained below.  
 
-The system has support for the Chat Commands module (https://github.com/League-of-Foundry-Developers/Chat-Commands-Lib). If present and active, the system will register "/iroll", "/actorroll" and "/itemuse" commands.
-
-Still probably lots of WIP in the project...
+Some aspects are still almost certainly WIP.  
 
 ### How to roll
 
@@ -47,11 +45,16 @@ The /itemuse command takes an item name and uses that to activate a normal item 
 
 ### Conditions
 
+The system has a full set of standard Ironclaw status effect conditions set up and supported, as well as a few extras (the Miscs) purely for GM to differentiate between tokens if they want. Information on them is provided in the status effects compendium pack.  
+Damage calculations have a separate pop-up function for simpler calculation. Just input the raw damage from the attack and the soak successes, even if the value goes negative. Do NOT including any added by standard conditions. The system will automatically add the damage from Hurt and Injured if they apply, as noted in the "Additional Damage" part.  
+
+With Combat Utility Belt's Enhanced Conditions set up, the system has somewhat better support for multiple defeat conditions and built-in chat linking for the Compendium information entries. The CUB is not necessary, but can make some things smoother.  
+<details>
+<summary>Step by step explanation of setup</summary>
+
 Step by step explanation to setting Combat Utility Belt's Enhanced Conditions up: There's a button in the right side menu under Game Settings (right-most tab) for "CUBPuter". It opens an 80's command line looking window. Click the  ":gear: Settings" and disable the "Use oldschool CRT styling" to get rid of that. Then click "Select gadget", choose Enhanced Conditions, enable it, and also enable "Remove Default Status Effects".  
 Then next, under CUPButer should be "Condition Lab". Open it, and select "Import" from top right. It should open a file picker, navigate inside FoundryVTT's data folder to get the condition map from Ironclaw2E's *systems/ironclaw2e/condition-maps* directory. (Default in Windows: %localappdata%/FoundryVTT/Data/systems/ironclaw2e/condition-maps )
-
-With Combat Utility Belt's Enhanced Conditions set up, the token status effect quick menu shows all of the standard Ironclaw conditions, as well as a few extras (the Miscs) purely for GM to differentiate between tokens if they want. Information on them is provided in the status effects compendium pack.  
-Damage calculations have a separate pop-up function for simpler calculation. Just input the raw damage from the attack after soak, even if the value goes negative, NOT including any added by standard conditions. The system will automatically add the damage from Hurt and Injured if they apply.  
+</summary>
 
 ## License
 

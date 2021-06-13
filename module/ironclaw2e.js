@@ -35,7 +35,8 @@ Hooks.once('init', async function () {
         rollHighestDialog,
         rollTargetNumberOneLine,
         rollHighestOneLine,
-        "useCUBConditions": false
+        "useCUBConditions": false,
+        waitUntilReady
     };
 
     // Define custom Entity classes
@@ -417,4 +418,15 @@ function popupSelect(prechecked = [], tnyes = false, tnnum = 3, extradice = "") 
     if (!actor) return ui.notifications.warn("No actor found to popup macro for: " + speaker);
 
     return actor.popupSelectRolled(prechecked, tnyes, tnnum, extradice);
+}
+
+/**
+ * Quick and dirty way to make condition adding and removing wait until the game is fully ready
+ * @param {any} resolve
+ */
+async function waitUntilReady(resolve) {
+    while (!game.ready) {
+        await sleep(500);
+    }
+    return true;
 }

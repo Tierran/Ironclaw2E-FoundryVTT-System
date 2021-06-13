@@ -1,3 +1,8 @@
+### 0.2.8 Unconditional conditions release
+ - Removed dependency to Combat Utility Belt for using Ironclaw conditions
+ - Bug fixing
+ - Final FoundryVTT 0.7 release
+
 ### 0.2.7 Extra career chat release
  - Implemented support for the Chat Commands module
  - Extra Career gift now properly implemented
