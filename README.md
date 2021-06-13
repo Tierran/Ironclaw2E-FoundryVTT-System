@@ -54,7 +54,7 @@ With Combat Utility Belt's Enhanced Conditions set up, the system has somewhat b
 
 Step by step explanation to setting Combat Utility Belt's Enhanced Conditions up: There's a button in the right side menu under Game Settings (right-most tab) for "CUBPuter". It opens an 80's command line looking window. Click the  ":gear: Settings" and disable the "Use oldschool CRT styling" to get rid of that. Then click "Select gadget", choose Enhanced Conditions, enable it, and also enable "Remove Default Status Effects".  
 Then next, under CUPButer should be "Condition Lab". Open it, and select "Import" from top right. It should open a file picker, navigate inside FoundryVTT's data folder to get the condition map from Ironclaw2E's *systems/ironclaw2e/condition-maps* directory. (Default in Windows: %localappdata%/FoundryVTT/Data/systems/ironclaw2e/condition-maps )
-</summary>
+</details>
 
 ## License
 
