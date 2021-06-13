@@ -1,3 +1,5 @@
+import { makeStatCompareReady } from "./helpers.js";
+
 /**
  * Unified function to get whether the target has any of the select conditions for Ironclaw2E
  * @param {String[] | String} conditions Conditions to check for, make sure they are comparison-ready
@@ -80,7 +82,7 @@ export function getConditionsIronclaw(target, warn = false) {
 
         actor.effects.forEach((value, key) => conds.push(value));
     }
-    
+
     return conds;
 }
 
@@ -153,7 +155,8 @@ export async function removeConditionsIronclaw(conditions, target, checkfirst = 
  * @returns {Object} Array of conditions the target have
  */
 export function getConditionByNameIronclaw(condition, warn = false) {
-    let name = condition?.flags?.core?.statusId || condition?.data?.flags?.core?.statusId || condition;
+    let name = condition?.label || condition;
+    name = makeStatCompareReady(name);
 
     if (game.ironclaw2e.useCUBConditions) {
         name = CommonConditionInfo.convertToCub(name);
@@ -407,14 +410,14 @@ export class CommonConditionInfo {
     /**
      * Map of standard names and their proper names in the CUB-provided condition-map
      */
-    static cubList = Object.freeze(new Map([{ key: "focused", value: "Focused" }, { key: "guarding", value: "Guarding" }, { key: "reeling", value: "Reeling" }, { key: "hurt", value: "Hurt" }, { key: "afraid", value: "Afraid" },
-    { key: "injured", value: "Injured" }, { key: "dying", value: "Dying" }, { key: "dead", value: "Dead" }, { key: "overkilled", value: "Overkilled" }, { key: "asleep", value: "Asleep" }, { key: "unconscious", value: "Unconscious" },
-    { key: "burdened", value: "Burdened" }, { key: "over-burdened", value: "Over-Burdened" }, { key: "cannotmove", value: "Cannot Move" }, { key: "fatigued", value: "Fatigued" }, { key: "sick", value: "Sick" },
-    { key: "confused", value: "Confused" }, { key: "terrified", value: "Terrified" }, { key: "enraged", value: "Enraged" }, { key: "knockdown", value: "Knockdown" }, { key: "berserk", value: "Berserk" },
-    { key: "blinded", value: "Blinded" }, { key: "silenced", value: "Silenced" }, { key: "fulltilt", value: "Full Tilt" }, { key: "slowed", value: "Slowed" }, { key: "immobilized", value: "Immobilized" },
-    { key: "half-buried", value: "Half-Buried" }, { key: "onfire", value: "On Fire" }, { key: "mesmerized", value: "Mesmerized" }, { key: "marionette", value: "Marionette" }, { key: "controlled", value: "Controlled" },
-    { key: "allfours", value: "All Fours" }, { key: "flying", value: "Flying" }, { key: "grappled", value: "Grappled" }, { key: "misc-a", value: "Misc-A" }, { key: "misc-b", value: "Misc-B" }, { key: "misc-c", value: "Misc-C" },
-        { key: "misc-d", value: "Misc-D" }, { key: "misc-e", value: "Misc-E" }, { key: "misc-f", value: "Misc-F" }]));
+    static cubList = Object.freeze(new Map([["focused", "Focused"], ["guarding", "Guarding"], ["reeling", "Reeling"], ["hurt", "Hurt"], ["afraid", "Afraid"],
+    ["injured", "Injured"], ["dying", "Dying"], ["dead", "Dead"], ["overkilled", "Overkilled"], ["asleep", "Asleep"], ["unconscious", "Unconscious"],
+    ["burdened", "Burdened"], ["over-burdened", "Over-Burdened"], ["cannotmove", "Cannot Move"], ["fatigued", "Fatigued"], ["sick", "Sick"],
+    ["confused", "Confused"], ["terrified", "Terrified"], ["enraged", "Enraged"], ["knockdown", "Knockdown"], ["berserk", "Berserk"],
+    ["blinded", "Blinded"], ["silenced", "Silenced"], ["fulltilt", "Full Tilt"], ["slowed", "Slowed"], ["immobilized", "Immobilized"],
+    ["half-buried", "Half-Buried"], ["onfire", "On Fire"], ["mesmerized", "Mesmerized"], ["marionette", "Marionette"], ["controlled", "Controlled"],
+    ["allfours", "All Fours"], ["flying", "Flying"], ["grappled", "Grappled"], ["misc-a", "Misc-A"], ["misc-b", "Misc-B"], ["misc-c", "Misc-C"],
+    ["misc-d", "Misc-D"], ["misc-e", "Misc-E"], ["misc-f", "Misc-F"]]));
 
     /**
      * Convert a single or a list of conditions from id's into CUB condition names
