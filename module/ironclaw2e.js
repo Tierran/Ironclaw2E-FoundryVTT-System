@@ -19,6 +19,8 @@ import { makeStatCompareReady } from "./helpers.js";
 import { ironclawRollChat } from "./commands.js";
 import { ironclawRollActorChat } from "./commands.js";
 
+import { CommonConditionInfo } from "./conditions.js";
+
 Hooks.once('init', async function () {
 
     game.ironclaw2e = {
@@ -41,6 +43,7 @@ Hooks.once('init', async function () {
     CONFIG.Item.entityClass = Ironclaw2EItem;
     CONFIG.Combat.entityClass = Ironclaw2ECombat;
     CONFIG.ui.combat = Ironclaw2ECombatTracker;
+    CONFIG.statusEffects = CommonConditionInfo.conditionList;
 
     /**
      * Set an initiative formula for the system
@@ -135,7 +138,7 @@ Hooks.once('init', async function () {
 Hooks.once('setup', async function () {
     // Combat Utility Belt check
     let cubActive = game.modules.get("combat-utility-belt")?.active == true;
-    let conditionsActive = game.settings.get("combat-utility-belt", "enableEnhancedConditions");
+    let conditionsActive = cubActive ? game.settings.get("combat-utility-belt", "enableEnhancedConditions") : false; // Since get throws an error if the key does not exist, first check if CUB is even active
     if (cubActive && conditionsActive) {
         game.ironclaw2e.useCUBConditions = true;
         console.log("CUB detected and Enhanced Conditions active! Using CUB Conditions.");

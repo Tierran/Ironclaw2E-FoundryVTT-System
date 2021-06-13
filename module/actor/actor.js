@@ -162,7 +162,7 @@ export class Ironclaw2EActor extends Actor {
             stridebonus += 1;
             dashbonus += 2;
             runbonus += 6;
-            if (hasConditionsIronclaw("All Fours", this)) {
+            if (hasConditionsIronclaw("allfours", this)) {
                 let allfours = findInItems(this.items, "allfours", "gift");
                 if (allfours) {
                     stridebonus += 1;
@@ -173,11 +173,11 @@ export class Ironclaw2EActor extends Actor {
         }
 
         // Coward and Flight of the Prey bonuses
-        if (hasConditionsIronclaw(["Afraid", "Terrified"], this)) {
+        if (hasConditionsIronclaw(["afraid", "terrified"], this)) {
             let coward = findInItems(this.items, "coward", "gift");
             if (coward) {
                 let flightofprey = findInItems(this.items, "flightoftheprey", "gift");
-                if (flightofprey && hasConditionsIronclaw("Afraid", this)) {
+                if (flightofprey && hasConditionsIronclaw("afraid", this)) {
                     stridebonus += 1;
                     dashbonus += 4;
                     runbonus += 16;
@@ -202,22 +202,22 @@ export class Ironclaw2EActor extends Actor {
 
         let speedint = speedarr[1];
         let bodyint = bodyarr[1];
-        if (speedint > 8 && hasConditionsIronclaw("Burdened", this)) speedint = 8;
+        if (speedint > 8 && hasConditionsIronclaw("burdened", this)) speedint = 8;
 
         // Stride setup
         data.stride = 1 + stridebonus;
-        if (hasConditionsIronclaw(["Slowed", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
+        if (hasConditionsIronclaw(["slowed", "immobilized", "half-buried", "cannotmove"], this)) {
             data.stride = 0;
         }
         // Dash setup
         data.dash = Math.round(speedint / 2) + (bodyint > speedint ? 1 : 0) + dashbonus;
-        if (hasConditionsIronclaw(["Burdened", "Blinded", "Slowed", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
+        if (hasConditionsIronclaw(["burdened", "blinded", "slowed", "immobilized", "half-buried", "cannotmove"], this)) {
             data.dash = 0;
         }
 
         // Run setup
         data.run = bodyint + speedint + data.dash + runbonus;
-        if (hasConditionsIronclaw(["Over-Burdened", "Immobilized", "Half-Buried", "Cannot Move"], this)) {
+        if (hasConditionsIronclaw(["over-burdened", "immobilized", "half-buried", "cannotmove"], this)) {
             data.run = 0;
         }
 
@@ -304,18 +304,18 @@ export class Ironclaw2EActor extends Actor {
         const manageburdened = game.settings.get("ironclaw2e", "manageEncumbranceAuto");
         if (manageburdened) {
             if (totalweight > data.encumbranceOverBurdened || totalarmors > 3) {
-                this.addEffect(["Burdened", "Over-Burdened", "Cannot Move"]);
+                this.addEffect(["burdened", "over-burdened", "cannotmove"]);
             }
             else if (totalweight > data.encumbranceBurdened || totalarmors == 3) {
-                this.deleteEffect(["Cannot Move"], false);
-                this.addEffect(["Burdened", "Over-Burdened"]);
+                this.deleteEffect(["cannotmove"], false);
+                this.addEffect(["burdened", "over-burdened"]);
             }
             else if (totalweight > data.encumbranceNone || totalarmors == 2) {
-                this.deleteEffect(["Over-Burdened", "Cannot Move"], false);
-                this.addEffect(["Burdened"]);
+                this.deleteEffect(["over-burdened", "cannotmove"], false);
+                this.addEffect(["burdened"]);
             }
             else {
-                this.deleteEffect(["Burdened", "Over-Burdened", "Cannot Move"], false);
+                this.deleteEffect(["burdened", "over-burdened", "cannotmove"], false);
             }
         }
     }
@@ -452,19 +452,19 @@ export class Ironclaw2EActor extends Actor {
     }
 
     applyDamage(damage, knockout, nonlethal = false) {
-        let adding = ["Reeling"];
+        let adding = ["reeling"];
         if (damage >= 1) {
-            adding.push("Hurt");
-            if (knockout) adding.push("Asleep");
+            adding.push("hurt");
+            if (knockout) adding.push("asleep");
         }
         if (damage >= 2) {
-            adding.push("Afraid");
-            if (knockout) adding.push("Unconscious");
+            adding.push("afraid");
+            if (knockout) adding.push("unconscious");
         }
-        if (damage >= 3) adding.push("Injured");
-        if (damage >= 4) adding.push("Dying");
-        if (damage >= 5 && !nonlethal) adding.push("Dead");
-        if (damage >= 6 && !nonlethal) adding.push("Overkilled");
+        if (damage >= 3) adding.push("injured");
+        if (damage >= 4) adding.push("dying");
+        if (damage >= 5 && !nonlethal) adding.push("dead");
+        if (damage >= 6 && !nonlethal) adding.push("overkilled");
         this.addEffect(adding);
     }
 
@@ -503,7 +503,7 @@ export class Ironclaw2EActor extends Actor {
         let constructionkeys = [];
         let constructionarray = [];
         let prechecked = ["speed", "mind"];
-        const burdened = hasConditionsIronclaw("Burdened", this);
+        const burdened = hasConditionsIronclaw("burdened", this);
 
         // Danger Sense bonus
         let dangersense = findInItems(this.items, "dangersense", "gift");
@@ -584,7 +584,7 @@ export class Ironclaw2EActor extends Actor {
 
         // Guard Soak
         if (findInItems(this.items, "guardsoak", "gift")) {
-            if (hasConditionsIronclaw("Guarding", this)) {
+            if (hasConditionsIronclaw("guarding", this)) {
                 let veteran = findInItems(this.items, "veteran", "gift");
                 let guardbonus = [0, 0, 1, 0, 0];
                 let guardlabel = "Guard soak";
@@ -630,10 +630,10 @@ export class Ironclaw2EActor extends Actor {
         }
 
         // Coward bonus when Afraid or Terrified
-        if (hasConditionsIronclaw(["Afraid", "Terrified"], this)) {
+        if (hasConditionsIronclaw(["afraid", "terrified"], this)) {
             let coward = findInItems(this.items, "coward", "gift");
             let flightofprey = findInItems(this.items, "flightoftheprey", "gift");
-            if (flightofprey && coward && hasConditionsIronclaw("Afraid", this)) {
+            if (flightofprey && coward && hasConditionsIronclaw("afraid", this)) {
                 constructionkeys.push(flightofprey.data.name);
                 constructionarray.push(flightofprey.data.data.giftArray);
                 formconstruction += `<div class="form-group flexrow">
@@ -652,7 +652,7 @@ export class Ironclaw2EActor extends Actor {
         }
 
         // Guarding bonus
-        if (hasConditionsIronclaw("Guarding", this)) {
+        if (hasConditionsIronclaw("guarding", this)) {
             let veteran = findInItems(this.items, "veteran", "gift");
             let guardbonus = [0, 0, 1, 0, 0];
             let guardlabel = "Guarding";
@@ -678,7 +678,7 @@ export class Ironclaw2EActor extends Actor {
         }
 
         // Focused Fighter bonus
-        if (hasConditionsIronclaw("Focused", this)) {
+        if (hasConditionsIronclaw("focused", this)) {
             let focused = findInItems(this.items, "focusedfighter", "gift");
             if (focused) {
                 constructionkeys.push(focused.data.name);
@@ -726,7 +726,7 @@ export class Ironclaw2EActor extends Actor {
         let constructionarray = [];
 
         // Guarding bonus
-        if (hasConditionsIronclaw("Guarding", this)) {
+        if (hasConditionsIronclaw("guarding", this)) {
             let veteran = findInItems(this.items, "veteran", "gift");
             let guardbonus = [0, 0, 1, 0, 0];
             let guardlabel = "Guarding";
@@ -744,7 +744,7 @@ export class Ironclaw2EActor extends Actor {
         }
 
         // Focused Fighter bonus
-        if (hasConditionsIronclaw("Focused", this)) {
+        if (hasConditionsIronclaw("focused", this)) {
             let focused = findInItems(this.items, "focusedfighter", "gift");
             if (focused) {
                 constructionkeys.push(focused.data.name);
@@ -768,8 +768,8 @@ export class Ironclaw2EActor extends Actor {
         let confirmed = false;
         let speaker = getMacroSpeaker(this);
         let addeddamage = 0;
-        if (hasConditionsIronclaw("Hurt", this)) addeddamage++;
-        if (hasConditionsIronclaw("Injured", this)) addeddamage++;
+        if (hasConditionsIronclaw("hurt", this)) addeddamage++;
+        if (hasConditionsIronclaw("injured", this)) addeddamage++;
         let dlog = new Dialog({
             title: "Damage Calculation for " + speaker.alias,
             content: `
@@ -780,7 +780,7 @@ export class Ironclaw2EActor extends Actor {
 	   <input id="damage" name="damage" value="${readydamage}" onfocus="this.select();"></input>
       </div>
       <div class="form-group">
-       <label class="normal-label">Soak:</label>
+       <label class="normal-label">Soaked:</label>
 	   <input id="soak" name="soak" value="${readysoak}" onfocus="this.select();"></input>
       </div>
       <div class="form-group">
@@ -897,7 +897,7 @@ export class Ironclaw2EActor extends Actor {
         }
 
         let burdened = "";
-        if (hasConditionsIronclaw("Burdened", this)) {
+        if (hasConditionsIronclaw("burdened", this)) {
             burdened = `
      <div class="form-group">
        <label class="normal-label">Apply Burdened Limit automatically:</label>

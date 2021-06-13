@@ -545,11 +545,17 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const li = $(event.currentTarget).parents(".item");
         const cond = this.actor.getEmbeddedEntity("ActiveEffect", li.data("itemId"));
         if (!cond) return;
-        const foobar = getConditionByNameIronclaw(cond);
-        if (!foobar?.referenceId) return;
-        let chatdata = { content: `${foobar.referenceId}{${foobar.name}}` };
+        const basecondition = getConditionByNameIronclaw(cond);
+        if (!basecondition) return;
+        let chatdata;
+        if (basecondition?.referenceId) {
+            chatdata = { content: `${basecondition.referenceId}{${basecondition.name}}` };
+        } else {
+            let localname = game.i18n.localize(basecondition.label);
+            chatdata = { content: `<img class="item-image" src="${basecondition.icon}" title="${localname}" width="20" height="20"/> ${localname}` };
+        }
 
-        ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
+        ChatMessage.applyRollMode(chatdata, game.settings.get("core", "rollMode"));
         CONFIG.ChatMessage.entityClass.create(chatdata);
     }
 }
