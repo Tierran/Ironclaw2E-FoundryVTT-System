@@ -36,13 +36,13 @@ export class Ironclaw2ECombat extends Combat {
                     break;
                 case 2:
                 case 3:
-                    side = (combatant.actor.hasPlayerOwner || combatant.token.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY ? 1 : 0); // If the combatant is a player or allied, side 1, otherwise side 0
+                    side = (combatant.actor.hasPlayerOwner || combatant.token.data?.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY ? 1 : 0); // If the combatant is a player or allied, side 1, otherwise side 0
                     if (initType === 2) return side == 1 ? 2 : 1;
                     else return side == 0 ? 2 : 1;
                     break;
                 case 4:
                 case 5:
-                    side = side = (combatant.actor.hasPlayerOwner ? 1 : (combatant.token.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY ? 2 : 0)); // If the combatant is a player, side 1, otherwise if the combatant is allied, side 2, otherwise side 0
+                    side = side = (combatant.actor.hasPlayerOwner ? 1 : (combatant.token.data?.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY ? 2 : 0)); // If the combatant is a player, side 1, otherwise if the combatant is allied, side 2, otherwise side 0
                     if (initType === 4) return side == 1 ? 3 : (side == 2 ? 2 : 1);
                     else return side == side == 0 ? 3 : (side == 1 ? 2 : 1);
                     break;
@@ -73,8 +73,8 @@ export class Ironclaw2ECombat extends Combat {
                 otherSide = allcombatants.filter(x => x?.actor?.hasPlayerOwner !== playerOwnerComparison);
             }
             else {
-                let playerOwnerComparison = combatant.actor.hasPlayerOwner || combatant.token.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY;
-                otherSide = allcombatants.filter(x => (x?.actor?.hasPlayerOwner || x?.token?.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY) !== playerOwnerComparison);
+                let playerOwnerComparison = combatant.actor.hasPlayerOwner || combatant.token.data?.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY;
+                otherSide = allcombatants.filter(x => (x?.actor?.hasPlayerOwner || x?.token?.data?.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY) !== playerOwnerComparison);
             }
             return Ironclaw2ECombat.getDistanceTN(Ironclaw2ECombat.getDistanceToClosestOther(combatant, otherSide));
         }
@@ -93,7 +93,7 @@ export class Ironclaw2ECombat extends Combat {
         if (combatant?.token) {
             othercombatants.forEach(x => {
                 if (x?.token) {
-                    let dist = canvas.grid.measureDistance(combatant.token, x.token);
+                    let dist = canvas.grid.measureDistance(combatant.token.data, x.token.data);
                     if (distance > dist) distance = dist;
                 }
             });
