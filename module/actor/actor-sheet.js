@@ -2,7 +2,7 @@ import { rollTargetNumber } from "../dicerollers.js";
 import { rollHighest } from "../dicerollers.js";
 import { rollTargetNumberDialog } from "../dicerollers.js";
 import { rollHighestDialog } from "../dicerollers.js";
-import { splitStatString } from "../helpers.js";
+import { makeStatCompareReady, splitStatString } from "../helpers.js";
 import { getConditionByNameIronclaw } from "../conditions.js";
 
 /**
@@ -32,21 +32,39 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
     /** @override */
     getData() {
-        const data = super.getData();
-        data.dtypes = ["String", "Number", "Boolean"];
+        const baseData = super.getData();
+        baseData.dtypes = ["String", "Number", "Boolean"];
+        //console.log(baseData);
+
+        let sheetData = {};
+        // Insert the basics
+        sheetData.actor = baseData.data;
+        sheetData.items = baseData.items;
+
+        // Insert necessary misc data
+        sheetData.options = baseData.options;
+        sheetData.cssClass = baseData.cssClass;
+        sheetData.editable = baseData.editable;
+        sheetData.limited = baseData.limited;
+        sheetData.title = baseData.title;
+        sheetData.dtypes = baseData.dtypes;
 
         // Prepare items.
         if (this.actor.data.type == 'character') {
-            this._prepareCharacterItems(data);
+            this._prepareCharacterItems(sheetData);
         }
         if (this.actor.data.type == 'mook') {
-            this._prepareCharacterItems(data);
+            this._prepareCharacterItems(sheetData);
         }
         if (this.actor.data.type == 'beast') {
-            this._prepareBeastItems(data);
+            this._prepareBeastItems(sheetData);
         }
 
-        return data;
+        // Grab the actual template data and effects
+        sheetData.data = baseData.data.data;
+        sheetData.effects = baseData.effects;
+        //console.log(sheetData);
+        return sheetData;
     }
 
     /**
@@ -169,16 +187,18 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         // Update Inventory Item
         html.find('.item-edit').click(ev => {
             const li = $(ev.currentTarget).parents(".item");
-            const item = this.actor.getOwnedItem(li.data("itemId"));
+            const item = this.actor.items.get(li.data("itemId"));
             item.sheet.render(true);
         });
 
         // Delete Inventory Item
         html.find('.item-delete').click(ev => {
             const li = $(ev.currentTarget).parents(".item");
-            this.actor.deleteOwnedItem(li.data("itemId"));
+            const item = this.actor.items.get(li.data("itemId"));
+            item.delete();
             li.slideUp(200, () => this.render(false));
         });
+
 
         // Rollable functions.
         html.find('.roll-order').click(this._onOrderRoll.bind(this));
@@ -198,7 +218,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         html.find('.roll-double-info-cond').dblclick(this._onConditionInfo.bind(this));
 
         // Drag events for macros.
-        if (this.actor.owner) {
+        if (this.actor.isOwner) {
             let handler = ev => this._onDragStart(ev);
             html.find('li.item').each((i, li) => {
                 if (li.classList.contains("inventory-header")) return;
@@ -209,11 +229,11 @@ export class Ironclaw2EActorSheet extends ActorSheet {
     }
 
     /**
-     * Handle creating a new Owned Item for the actor using initial data defined in the HTML dataset
-     * @param {Event} event   The originating click event
-     * @private
-     */
-    _onItemCreate(event) {
+   * Handle creating a new Owned Item for the actor using initial data defined in the HTML dataset
+   * @param {Event} event   The originating click event
+   * @private
+   */
+    async _onItemCreate(event) {
         event.preventDefault();
         const header = event.currentTarget;
         // Get the type of item to create.
@@ -232,8 +252,9 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         delete itemData.data["type"];
 
         // Finally, create the item!
-        return this.actor.createOwnedItem(itemData);
+        return await Item.create(itemData, { parent: this.actor });
     }
+
 
     /**
      * Handle the click event to pop-up
@@ -349,7 +370,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const element = event.currentTarget;
         const dataset = element.dataset;
         const manageburdened = game.settings.get("ironclaw2e", "manageEncumbranceAuto");
-        
+
         if (manageburdened) {
             ui.notifications.info(game.i18n.localize("ironclaw2e.ui.encumbranceAutoActive"));
             return;
@@ -450,7 +471,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const data = this.actor.data.data;
 
         if (dataset.roll && dataset.item) {
-            const item = this.actor.getOwnedItem(dataset.item);
+            const item = this.actor.items.get(dataset.item);
 
             switch (parseInt(dataset.roll)) {
                 case 0:
@@ -490,29 +511,29 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const data = this.actor.data.data;
 
         if (dataset.roll && dataset.item) {
-            const item = this.actor.getOwnedItem(dataset.item);
+            const item = this.actor.items.get(dataset.item);
             let foobar;
 
             switch (parseInt(dataset.roll)) {
                 case 0:
                     if (!item.data.data.hasOwnProperty("showInBattleStats"))
                         break;
-                    foobar = { "_id": item._id, "data.showInBattleStats": !item.data.data.showInBattleStats };
+                    foobar = { "_id": item.id, "data.showInBattleStats": !item.data.data.showInBattleStats };
                     break;
                 case 1:
                     if (!item.data.data.hasOwnProperty("exhausted"))
                         break;
-                    foobar = { "_id": item._id, "data.exhausted": !item.data.data.exhausted };
+                    foobar = { "_id": item.id, "data.exhausted": !item.data.data.exhausted };
                     break;
                 case 2:
                     if (!item.data.data.hasOwnProperty("worn"))
                         break;
-                    foobar = { "_id": item._id, "data.worn": !item.data.data.worn };
+                    foobar = { "_id": item.id, "data.worn": !item.data.data.worn };
                     break;
                 case 3:
                     if (!item.data.data.hasOwnProperty("held"))
                         break;
-                    foobar = { "_id": item._id, "data.held": !item.data.data.held };
+                    foobar = { "_id": item.id, "data.held": !item.data.data.held };
                     break;
                 default:
                     console.warn("_onItemChangeStat got an unknown value: " + dataset.roll);
@@ -520,7 +541,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             }
 
             if (foobar) {
-                this.actor.updateOwnedItem(foobar);
+                item.update(foobar);
             }
         }
     }
@@ -532,7 +553,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const data = this.actor.data.data;
 
         const li = $(event.currentTarget).parents(".item");
-        const item = this.actor.getOwnedItem(li.data("itemId"));
+        const item = this.actor.items.get(li.data("itemId"));
         item?.sendInfoToChat();
     }
 
@@ -543,7 +564,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const data = this.actor.data.data;
 
         const li = $(event.currentTarget).parents(".item");
-        const cond = this.actor.getEmbeddedEntity("ActiveEffect", li.data("itemId"));
+        const cond = this.actor.getEmbeddedDocument("ActiveEffect", li.data("itemId"));
         if (!cond) return;
         const basecondition = getConditionByNameIronclaw(cond);
         if (!basecondition) return;
@@ -556,6 +577,6 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         }
 
         ChatMessage.applyRollMode(chatdata, game.settings.get("core", "rollMode"));
-        CONFIG.ChatMessage.entityClass.create(chatdata);
+        CONFIG.ChatMessage.documentClass.create(chatdata);
     }
 }

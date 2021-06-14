@@ -160,7 +160,7 @@
                         <div></div>
                     </div>
                     <div class="skill flexrow">
-                        <input class="favored-use" type="text" name="data.skills.{{key}}.favoreduse" value="{{skill.favoreduse}}" data-dtype="String" />
+                        <input class="favored-use" type="text" name="data.skills.{{key}}.favoreduse" placeholder="Favored use" value="{{skill.favoreduse}}" data-dtype="String" />
                     </div>
                 </div>
                 {{/each}}
@@ -277,9 +277,9 @@
             <div class="flexcol">
                 <div class="flexrow flex-group-left flex-tight">
                     <span class="resource-label">Encumbrance:</span>
-                    <span class="normal-label rollable roll-enc-effect" data-removals="Cannot Move,Over-Burdened,Burdened" data-additions="">None: {{data.encumbranceNone}}</span>
-                    <span class="normal-label rollable roll-enc-effect" data-removals="Cannot Move,Over-Burdened" data-additions="Burdened">Burdened: {{data.encumbranceBurdened}}</span>
-                    <span class="normal-label rollable roll-enc-effect" data-removals="Cannot Move" data-additions="Burdened,Over-Burdened">Over-Burdened: {{data.encumbranceOverBurdened}}</span>
+                    <span class="normal-label rollable roll-enc-effect" data-removals="cannotmove,over-burdened,burdened" data-additions="">None: {{data.encumbranceNone}}</span>
+                    <span class="normal-label rollable roll-enc-effect" data-removals="cannotmove,over-burdened" data-additions="burdened">Burdened: {{data.encumbranceBurdened}}</span>
+                    <span class="normal-label rollable roll-enc-effect" data-removals="cannotmove" data-additions="burdened,over-burdened">Over-Burdened: {{data.encumbranceOverBurdened}}</span>
                 </div>
                 <span class="bold-text allow-selection">Total carried weight: {{valueRoundTo data.totalWeight 2}} stones</span>
                 <span class="bold-text allow-selection">Number of armors worn: {{data.totalArmors}}</span>

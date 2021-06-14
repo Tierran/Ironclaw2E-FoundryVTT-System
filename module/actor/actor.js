@@ -28,6 +28,22 @@ import { burdenedLimitedStat } from "../helpers.js";
  */
 export class Ironclaw2EActor extends Actor {
 
+    async _preCreate(data, options, user) {
+        const autoPrototypeSetup = game.settings.get("ironclaw2e", "autoPrototypeSetup");
+        if (!autoPrototypeSetup) // If not enabled, immediately return out of the function
+            return;
+
+        data.token = {};
+        data.token.displayName = 20;
+
+        if (data.type === 'character') {
+            data.token.actorLink = true;
+            data.token.vision = true;
+        }
+
+        this.data.update(data);
+    }
+
     /**
      * Augment the basic actor data with additional dynamic data.
      */
@@ -101,7 +117,7 @@ export class Ironclaw2EActor extends Actor {
         if (extraCareers.length > 0) {
             data.hasExtraCareers = true;
             let ids = [];
-            extraCareers.forEach(x => ids.push(x.data._id));
+            extraCareers.forEach(x => ids.push(x.id));
             data.extraCareerIds = ids;
         }
         else
@@ -328,7 +344,7 @@ export class Ironclaw2EActor extends Actor {
     async _updateTokenLighting(lightdata) {
         let foundtoken = findActorToken(this);
         if (foundtoken) {
-            await foundtoken.update(lightdata);
+            await foundtoken.document.update(lightdata);
         }
 
         // Update prototype token, if applicable
@@ -417,15 +433,17 @@ export class Ironclaw2EActor extends Actor {
                     "type": lightsource.data.data.lightAnimationType, "speed": lightsource.data.data.lightAnimationSpeed, "intensity": lightsource.data.data.lightAnimationIntensity
                 }
             };
-            const index = lightsources.findIndex(element => element.data._id == lightsource.data._id);
+            const index = lightsources.findIndex(element => element.id == lightsource.id);
             if (index > -1)
                 lightsources.splice(index, 1); // Exclude from dousing
-            this.updateOwnedItem({ "_id": lightsource.data._id, "data.lighted": true });
+            lightsource.update({ "_id": lightsource.id, "data.lighted": true });
         }
 
+        let doused = [];
         for (let l of lightsources) { // Douse all other light sources, including the caller if it was previously lighted
-            this.updateOwnedItem({ "_id": l._id, "data.lighted": false });
+            doused.push({ "_id": l.id, "data.lighted": false });
         }
+        this.updateEmbeddedDocuments("Item", doused);
 
         this._updateTokenLighting(updatedlightdata);
     }
@@ -994,7 +1012,7 @@ export class Ironclaw2EActor extends Actor {
             },
             default: "one",
             render: html => { document.getElementById("iftn").focus(); },
-            close: html => {
+            close: async html => {
                 if (confirmed) {
                     let traitchecks = html.find('input:checkbox[name=trait]:checked');
                     let skillchecks = html.find('input:checkbox[name=skill]:checked');
@@ -1067,9 +1085,9 @@ export class Ironclaw2EActor extends Actor {
 
                     let rollmessage;
                     if (IFTN)
-                        rollmessage = rollTargetNumber(TN, totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
+                        rollmessage = await rollTargetNumber(TN, totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
                     else
-                        rollmessage = rollHighest(totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
+                        rollmessage = await rollHighest(totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
 
                     if (successfunc && typeof (successfunc) == "function") {
                         successfunc(rollmessage);

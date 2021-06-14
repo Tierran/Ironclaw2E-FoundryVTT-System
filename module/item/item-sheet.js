@@ -29,8 +29,21 @@ export class Ironclaw2EItemSheet extends ItemSheet {
 
     /** @override */
     getData() {
-        const data = super.getData();
-        return data;
+        const baseData = super.getData();
+        let sheetData = {};
+        // Insert the basics
+        sheetData.item = baseData.data;
+        sheetData.data = baseData.data.data;
+
+        // Insert necessary misc data
+        sheetData.options = baseData.options;
+        sheetData.cssClass = baseData.cssClass;
+        sheetData.editable = baseData.editable;
+        sheetData.limited = baseData.limited;
+        sheetData.title = baseData.title;
+        sheetData.dtypes = baseData.dtypes;
+
+        return sheetData;
     }
 
     /* -------------------------------------------- */

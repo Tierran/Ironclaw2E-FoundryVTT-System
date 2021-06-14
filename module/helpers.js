@@ -233,7 +233,7 @@ export function reformDiceString(dicearray, humanreadable = false) {
  * @returns {string} The stat name in all lowercase with whitespace trimmed away
  */
 export function makeStatCompareReady(stat) {
-    return stat.trim().replace(/\s/g, '').toLowerCase();
+    return typeof (stat) === "string" ? stat.trim().replace(/\s/g, '').toLowerCase() : "error";
 }
 
 /**
@@ -242,7 +242,7 @@ export function makeStatCompareReady(stat) {
  * @returns {string} Human-readable version of camelCase
  */
 export function convertCamelCase(camelCase) {
-    return camelCase.replace(/([A-Z])/g, ' $1').replace(/^./, function (str) { return str.toUpperCase(); });
+    return typeof (camelCase) === "string" ? camelCase.replace(/([A-Z])/g, ' $1').replace(/^./, function (str) { return str.toUpperCase(); }) : "error";
 }
 
 /**

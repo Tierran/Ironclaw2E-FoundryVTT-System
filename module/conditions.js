@@ -20,9 +20,9 @@ export function hasConditionsIronclaw(conditions, target, warn = false) {
     else {
         let actor = getTargetActor(target);
         if (!actor) return false;
-
         conditions = Array.isArray(conditions) ? conditions : [conditions];
-        return actor.effects.entries.some(x => conditions.includes(x.data.flags?.core?.statusId));
+
+        return actor.data.effects.some(x => conditions.includes(x.data.flags?.core?.statusId));
     }
 }
 
@@ -50,7 +50,7 @@ export function getConditionNamesIronclaw(target, warn = false) {
         let actor = getTargetActor(target);
         if (!actor) return false;
 
-        actor.effects.forEach((value, key) => names.push(value.data.label));
+        actor.data.effects.forEach((value) => names.push(value.data.label));
     }
 
     return names;
@@ -80,7 +80,7 @@ export function getConditionsIronclaw(target, warn = false) {
         let actor = getTargetActor(target);
         if (!actor) return false;
 
-        actor.effects.forEach((value, key) => conds.push(value));
+        actor.data.effects.forEach((value) => conds.push(value));
     }
 
     return conds;
@@ -107,12 +107,11 @@ export async function addConditionsIronclaw(conditions, target, warn = false) {
         let usedconditions = Array.isArray(conditions) ? conditions : [conditions];
         if (hasConditionsIronclaw(conditions, target, warn)) {
             const existingeffects = getConditionsIronclaw(target, warn);
-            usedconditions = usedconditions.filter(x => existingeffects.some(y => y.data.flags?.core?.statusId === x) == false);
+            usedconditions = usedconditions.filter(x => existingeffects.some(y => y.getFlag("core", "statusId") === x) == false);
         }
         const effects = prepareEffects(CommonConditionInfo.getMatchedConditions(usedconditions));
-
         if (effects.length > 0) {
-            await actor.createEmbeddedEntity("ActiveEffect", effects);
+            await actor.createEmbeddedDocuments("ActiveEffect", effects);
         }
     }
 }
@@ -141,10 +140,9 @@ export async function removeConditionsIronclaw(conditions, target, checkfirst = 
         conditions = Array.isArray(conditions) ? conditions : [conditions];
 
         let removals = [];
-        actor.effects.forEach((value, key) => { if (conditions.includes(value.data.flags?.core?.statusId)) removals.push(key) });
-
+        actor.data.effects.forEach((value) => { if (conditions.includes(value.getFlag("core", "statusId"))) removals.push(value.id); });
         if (removals.length > 0)
-            await actor.deleteEmbeddedEntity("ActiveEffect", removals);
+            await actor.deleteEmbeddedDocuments("ActiveEffect", removals);
     }
 }
 
@@ -155,7 +153,7 @@ export async function removeConditionsIronclaw(conditions, target, checkfirst = 
  * @returns {Object} Array of conditions the target have
  */
 export function getConditionByNameIronclaw(condition, warn = false) {
-    let name = condition?.label || condition;
+    let name = condition?.data?.label || condition;
     name = makeStatCompareReady(name);
 
     if (game.ironclaw2e.useCUBConditions) {

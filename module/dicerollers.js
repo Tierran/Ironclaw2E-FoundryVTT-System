@@ -6,8 +6,8 @@ import { getMacroSpeaker } from "./helpers.js";
  *   roll: Roll,
  *   highest: number,
  *   tnData: TNData|null,
- *   message: Object|Promise,
- *   isPromise: boolean
+ *   message: Object,
+ *   isSent: boolean
  * }} DiceReturn
  */
 
@@ -29,14 +29,14 @@ import { getMacroSpeaker } from "./helpers.js";
  * @param {string} label Optional value to display some text before the result text
  * @param {Actor} rollingactor Optional value to display the roll as from a specific actor
  * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
- * @returns {DiceReturn} The roll and the message promise or data (depending on sendinchat, true | false) in an object
+ * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
  */
-export function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", rollingactor = null, sendinchat = true) {
+export async function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", rollingactor = null, sendinchat = true) {
     let rollstring = formRoll(d12, d10, d8, d6, d4);
     if (rollstring.length == 0)
         return null;
 
-    let roll = new Roll("{" + rollstring + "}cs>" + tni).evaluate();
+    let roll = await new Roll("{" + rollstring + "}cs>" + tni).evaluate({ async: true });
 
     const successes = roll.total;
     let highest = 0;
@@ -51,13 +51,13 @@ export function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", rollinga
     /** @type TNData */
     let tnData = { "successes": successes, "ties": ties };
 
-    let msg = roll.toMessage({
+    let msg = await roll.toMessage({
         speaker: getMacroSpeaker(rollingactor),
         flavor: flavorstring,
         flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.label": label }
     }, { create: sendinchat });
 
-    return { "roll": roll, "highest": highest, "tnData": tnData, "message": msg, "isPromise": sendinchat };
+    return { "roll": roll, "highest": highest, "tnData": tnData, "message": msg, "isSent": sendinchat };
 };
 
 /**
@@ -65,9 +65,9 @@ export function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", rollinga
  * @param {number} tni Target number
  * @param {Object} message Message containing the roll to copy
  * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
- * @returns {DiceReturn} The roll and the message promise or data (depending on sendinchat, true | false) in an object
+ * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
  */
-export function copyToRollTN(tni, message, sendinchat = true) {
+export async function copyToRollTN(tni, message, sendinchat = true) {
     if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
         console.log("Somehow, a message that isn't a roll got into 'copyToRollTN'.");
         console.log(message);
@@ -80,7 +80,7 @@ export function copyToRollTN(tni, message, sendinchat = true) {
     if (typeof label != "string")
         return;
 
-    let roll = new Roll("{" + rollstring + "}cs>" + tni).evaluate();
+    let roll = await new Roll("{" + rollstring + "}cs>" + tni).evaluate({ async: true });
 
     const successes = roll.total;
     let highest = 0;
@@ -95,13 +95,13 @@ export function copyToRollTN(tni, message, sendinchat = true) {
     /** @type TNData */
     let tnData = { "successes": successes, "ties": ties };
 
-    let msg = roll.toMessage({
+    let msg = await roll.toMessage({
         speaker: message.data.speaker,
         flavor: flavorstring,
         flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.label": label }
     }, { create: sendinchat });
 
-    return { "roll": roll, "highest": highest, "tnData": tnData, "message": msg, "isPromise": sendinchat };
+    return { "roll": roll, "highest": highest, "tnData": tnData, "message": msg, "isSent": sendinchat };
 }
 
 /**
@@ -114,23 +114,23 @@ export function copyToRollTN(tni, message, sendinchat = true) {
  * @param {string} label Optional value to display some text before the result text
  * @param {Actor} rollingactor Optional value to display the roll as from a specific actor
  * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
- * @returns {DiceReturn} The roll and the message promise or data (depending on sendinchat, true | false) in an object
+ * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
  */
-export function rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor = null, sendinchat = true) {
+export async function rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor = null, sendinchat = true) {
     let rollstring = formRoll(d12, d10, d8, d6, d4);
     if (rollstring.length == 0)
         return null;
 
-    let roll = new Roll("{" + rollstring + "}kh1").evaluate();
+    let roll = await new Roll("{" + rollstring + "}kh1").evaluate({ async: true });
     const flavorstring = flavorStringHighest(roll.total, label);
 
-    let msg = roll.toMessage({
+    let msg = await roll.toMessage({
         speaker: getMacroSpeaker(rollingactor),
         flavor: flavorstring,
         flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.label": label }
     }, { create: sendinchat });
 
-    return { "roll": roll, "highest": roll.total, "tnData": null, "message": msg, "isPromise": sendinchat };
+    return { "roll": roll, "highest": roll.total, "tnData": null, "message": msg, "isSent": sendinchat };
 };
 
 /**
@@ -138,9 +138,9 @@ export function rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor = nul
  * @param {number} tni Target number
  * @param {Object} message Message containing the roll to copy
  * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
- * @returns {DiceReturn} The roll and the message promise or data (depending on sendinchat, true | false) in an object
+ * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
  */
-export function copyToRollHighest(message, sendinchat = true) {
+export async function copyToRollHighest(message, sendinchat = true) {
     if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
         console.log("Somehow, a message that isn't a roll got into 'copyToRollHighest'.");
         console.log(message);
@@ -153,16 +153,16 @@ export function copyToRollHighest(message, sendinchat = true) {
     if (typeof label != "string")
         return;
 
-    let roll = new Roll("{" + rollstring + "}kh1").evaluate();
+    let roll = await new Roll("{" + rollstring + "}kh1").evaluate({ async: true });
     const flavorstring = flavorStringHighest(roll.total, "Copy High: " + label);
 
-    let msg = roll.toMessage({
+    let msg = await roll.toMessage({
         speaker: message.data.speaker,
         flavor: flavorstring,
         flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.label": label }
     }, { create: sendinchat });
 
-    return { "roll": roll, "highest": roll.total, "tnData": null, "message": msg, "isPromise": sendinchat };
+    return { "roll": roll, "highest": roll.total, "tnData": null, "message": msg, "isSent": sendinchat };
 }
 
 

@@ -5,6 +5,7 @@ import { Ironclaw2EItem } from "./item/item.js";
 import { Ironclaw2EItemSheet } from "./item/item-sheet.js";
 
 import { Ironclaw2ECombat } from "./combat.js";
+import { Ironclaw2ECombatant } from "./combat.js";
 import { Ironclaw2ECombatTracker } from "./combat.js";
 
 import { rollTargetNumberDialog } from "./dicerollers.js";
@@ -40,9 +41,10 @@ Hooks.once('init', async function () {
     };
 
     // Define custom Entity classes
-    CONFIG.Actor.entityClass = Ironclaw2EActor;
-    CONFIG.Item.entityClass = Ironclaw2EItem;
-    CONFIG.Combat.entityClass = Ironclaw2ECombat;
+    CONFIG.Actor.documentClass = Ironclaw2EActor;
+    CONFIG.Item.documentClass = Ironclaw2EItem;
+    CONFIG.Combat.documentClass = Ironclaw2ECombat;
+    CONFIG.Combatant.documentClass = Ironclaw2ECombatant;
     CONFIG.ui.combat = Ironclaw2ECombatTracker;
     CONFIG.statusEffects = CommonConditionInfo.conditionList;
 
@@ -126,7 +128,7 @@ Hooks.once('init', async function () {
     });
 
     Handlebars.registerHelper('valueRoundTo', function (val, roundto) {
-        return val.toFixed(roundto);
+        return isNaN(val) ? "NaN" : val.toFixed(roundto);
     });
 
     Handlebars.registerHelper('usableGift', function (gift) {
@@ -181,20 +183,6 @@ async function loadHandleBarTemplates() {
 
 Hooks.once("init", function () {
     loadHandleBarTemplates();
-});
-
-Hooks.on("preCreateActor", function (createData) {
-    const autoPrototypeSetup = game.settings.get("ironclaw2e", "autoPrototypeSetup");
-    if (!autoPrototypeSetup) // If not enabled, immediately return out of the hook
-        return true;
-
-    createData.token = {};
-    createData.token.displayName = 20;
-
-    if (createData.type === 'character') {
-        createData.token.actorLink = true;
-        createData.token.vision = true;
-    }
 });
 
 function addIronclawChatLogContext(html, entryOptions) {

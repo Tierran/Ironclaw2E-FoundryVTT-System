@@ -3,31 +3,17 @@
  * @extends {Combat}
  */
 export class Ironclaw2ECombat extends Combat {
-    constructor(...args) {
-        super(...args);
-    }
-
-    /** @override */
-    _getInitiativeRoll(combatant, formula) {
-        return combatant.actor ? combatant.actor.initiativeRoll(1).roll : Roll.create(formula).evaluate();
+    constructor(data, context) {
+        super(data, context);
     }
 
     /**
-     * Get the initiative check for the combatant, with a backup system in case the combatant is missing an actor, somehow
-     * @param {Combatant} combatant
-     * @param {number} tn
-     * @param {string} formula
-     * @returns {DiceReturn|null}
-     * @private
+     * 
+     * @param {any} combatant
+     * @param {any} formula
      */
-    _getInitiativeRollIronclaw(combatant, tn, formula) {
-        if (combatant?.actor) {
-            return combatant.actor.initiativeRoll(2, tn);
-        }
-        else {
-            const roll = this._getInitiativeRoll(combatant, formula);
-            return { "roll": roll, "highest": roll.total, "tnData": null, "message": {}, "isPromise": false };;
-        }
+    _getInitiativeRoll(combatant, formula) {
+        return combatant.actor ? combatant.actor.initiativeRoll(1).roll : Roll.create(formula).evaluate({ async: true });
     }
 
     /**
@@ -37,7 +23,7 @@ export class Ironclaw2ECombat extends Combat {
      * @returns {number}
      * @private
      */
-    _getInitiativeGroup(combatant, settings) {
+    static getInitiativeGroup(combatant, settings) {
         if (combatant?.actor && combatant?.token && settings?.initType) {
             let side = -1;
             const initType = parseInt(settings.initType);
@@ -76,7 +62,7 @@ export class Ironclaw2ECombat extends Combat {
      * @returns {number}
      * @private
      */
-    _getInitiativeTN(combatant, allcombatants, settings) {
+    static getInitiativeTN(combatant, allcombatants, settings) {
         if (settings?.manualTN && settings.manualTN > 0) {
             return settings.manualTN;
         }
@@ -90,7 +76,7 @@ export class Ironclaw2ECombat extends Combat {
                 let playerOwnerComparison = combatant.actor.hasPlayerOwner || combatant.token.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY;
                 otherSide = allcombatants.filter(x => (x?.actor?.hasPlayerOwner || x?.token?.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY) !== playerOwnerComparison);
             }
-            return this._getDistanceTN(this._getDistanceToClosestOther(combatant, otherSide));
+            return Ironclaw2ECombat.getDistanceTN(Ironclaw2ECombat.getDistanceToClosestOther(combatant, otherSide));
         }
         else return 2;
     }
@@ -102,7 +88,7 @@ export class Ironclaw2ECombat extends Combat {
      * @returns {number}
      * @private
      */
-    _getDistanceToClosestOther(combatant, othercombatants) {
+    static getDistanceToClosestOther(combatant, othercombatants) {
         let distance = 10000;
         if (combatant?.token) {
             othercombatants.forEach(x => {
@@ -121,7 +107,7 @@ export class Ironclaw2ECombat extends Combat {
      * @returns {number}
      * @private
      */
-    _getDistanceTN(distance) {
+    static getDistanceTN(distance) {
         if (distance <= 4) return 2;
         if (distance <= 12) return 3;
         if (distance <= 36) return 4;
@@ -141,12 +127,12 @@ export class Ironclaw2ECombat extends Combat {
     async resetAll() {
         const updates = this.data.combatants.map(c => {
             return {
-                _id: c._id,
+                _id: c.id,
                 initiative: null,
                 flags: { "ironclaw2e.initiativeResult": null }
             }
         });
-        await this.updateEmbeddedEntity("Combatant", updates);
+        await this.updateEmbeddedDocuments("Combatant", updates);
         return this.update({ turn: 0 });
     }
 
@@ -158,24 +144,26 @@ export class Ironclaw2ECombat extends Combat {
 
         // Structure input data
         ids = typeof ids === "string" ? [ids] : ids;
-        const currentId = this.combatant._id;
+        const currentId = this.combatant.id;
+        const rollMode = messageOptions.rollMode || game.settings.get("core", "rollMode");
 
         // Iterate over Combatants, performing an initiative roll for each
-        const [updates, messages] = ids.reduce((results, id, i) => {
-            let [updates, messages] = results;
+        const updates = [];
+        const messages = [];
+        // Iterate over Combatants, performing an initiative roll for each
+        for (let [i, id] of ids.entries()) {
 
-            // Get Combatant data
-            const c = this.getCombatant(id);
-            if (!c || !c.owner) return results;
+            // Get Combatant data (non-strictly)
+            const combatant = this.combatants.get(id);
+            if (!combatant?.isOwner) continue;
 
             // Roll initiative
-            const tn = this._getInitiativeTN(c, this.combatants, settings);
-            const cf = formula || this._getInitiativeFormula(c);
-            const initRoll = this._getInitiativeRollIronclaw(c, tn, cf);
+            const tn = Ironclaw2ECombat.getInitiativeTN(combatant, this.combatants, settings);
+            const initRoll = await combatant.getInitiativeRollIronclaw(tn);
 
             let initiative = -2;
             if (settings?.sideBased) {
-                initiative = this._getInitiativeGroup(c, settings);
+                initiative = Ironclaw2ECombat.getInitiativeGroup(combatant, settings);
             } else {
                 let skipped = false;
                 let decimals = 0;
@@ -189,7 +177,7 @@ export class Ironclaw2ECombat extends Combat {
                 initiative = initRoll.highest + (decimals / 20);
             }
 
-            let flavorString = c.token.name + ", " + (initRoll.message.flavor || "rolling for initiative:");
+            let flavorString = initRoll.message.flavor ? [initRoll.message.flavor.slice(0, 3), combatant.token.name + ", ", initRoll.message.flavor.slice(3)].join("") : combatant.token.name + " rolling for initiative:";
             let initResult = "";
             if (initRoll.tnData) {
                 initResult = initRoll.tnData.successes > 0 ? initRoll.tnData.successes.toString() : (initRoll.tnData.ties ? "T" : (initRoll.highest === 1 ? "B" : "F")); // Set the result as either the number of successes, or Ties, Botch, or Fail
@@ -199,41 +187,38 @@ export class Ironclaw2ECombat extends Combat {
 
             // Determine the roll mode
             let rollMode = messageOptions.rollMode || game.settings.get("core", "rollMode");
-            if ((c.token.hidden || c.hidden) && (rollMode === "roll")) rollMode = "gmroll";
+            if ((combatant.token.hidden || combatant.hidden) && (rollMode === "roll")) rollMode = "gmroll";
 
             // Construct chat message data
             let messageData = mergeObject({
                 speaker: {
-                    scene: canvas.scene._id,
-                    actor: c.actor ? c.actor._id : null,
-                    token: c.token._id,
-                    alias: c.token.name
+                    scene: canvas.scene.id,
+                    actor: combatant.actor ? combatant.actor.id : null,
+                    token: combatant.token.id,
+                    alias: combatant.token.name
                 },
                 flavor: flavorString,
                 flags: { "core.initiativeRoll": true }
             }, messageOptions);
             messageData = mergeObject(initRoll.message, messageData);
-            const chatData = initRoll.roll.toMessage(messageData, { create: false, rollMode });
+            const chatData = await initRoll.roll.toMessage(messageData, { create: false, rollMode });
 
             // Play 1 sound for the whole rolled set
             if (i > 0) chatData.sound = null;
             messages.push(chatData);
-
-            // Return the Roll and the chat data
-            return results;
-        }, [[], []]);
+        }
         if (!updates.length) return this;
 
         // Update multiple combatants
-        await this.updateEmbeddedEntity("Combatant", updates);
+        await this.updateEmbeddedDocuments("Combatant", updates);
 
         // Ensure the turn order remains with the same combatant
         if (updateTurn) {
-            await this.update({ turn: this.turns.findIndex(t => t._id === currentId) });
+            await this.update({ turn: this.turns.findIndex(t => t.id === currentId) });
         }
 
         // Create multiple chat messages
-        await CONFIG.ChatMessage.entityClass.create(messages);
+        await ChatMessage.implementation.create(messages);
 
         // Return the updated Combat
         return this;
@@ -254,6 +239,38 @@ export class Ironclaw2ECombat extends Combat {
         let cn = an.localeCompare(bn);
         if (cn !== 0) return cn;
         return a.tokenId - b.tokenId;
+    }
+}
+
+export class Ironclaw2ECombatant extends Combatant {
+    constructor(data, context) {
+        super(data, context);
+    }
+
+    /**
+     * Get the initiative check for the combatant, with a backup system in case the combatant is missing an actor, somehow
+     * @param {number} tn
+     * @returns {Promise<DiceReturn>}
+     */
+    getInitiativeRollIronclaw(tn) {
+        if (this.actor) {
+            return this.actor.initiativeRoll(2, tn);
+        }
+        else {
+            const roll = this.getInitiativeRoll();
+            return Promise.resolve({ "roll": roll, "highest": roll.total, "tnData": null, "message": {}, "isSent": false });
+        }
+    }
+
+    /** @override */
+    rollInitiative(formula) { console.warn("Basic rollInitiative called on Ironclaw2ECombatant. This shouldn't happen."); }
+
+    /**
+     * Update the value of the tracked resource for this Combatant.
+     * @returns {null|object}
+     */
+    updateResource() {
+        return this.resource = this.getFlag("ironclaw2e", "initiativeResult") || null;
     }
 }
 

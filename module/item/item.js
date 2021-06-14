@@ -290,13 +290,13 @@ export class Ironclaw2EItem extends Item {
                 render: html => { },
                 close: html => {
                     if (confirmed) {
-                        CONFIG.ChatMessage.entityClass.create(chatData);
+                        CONFIG.ChatMessage.documentClass.create(chatData);
                     }
                 }
             });
             dlog.render(true);
         } else {
-            CONFIG.ChatMessage.entityClass.create(chatData);
+            CONFIG.ChatMessage.documentClass.create(chatData);
         }
     }
 
@@ -532,7 +532,7 @@ export class Ironclaw2EItem extends Item {
                             "speaker": speaker
                         };
                         ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
-                        CONFIG.ChatMessage.entityClass.create(chatData);
+                        CONFIG.ChatMessage.documentClass.create(chatData);
                     }
                 }
             }
@@ -591,7 +591,7 @@ export class Ironclaw2EItem extends Item {
                             "speaker": speaker
                         };
                         ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
-                        CONFIG.ChatMessage.entityClass.create(chatData);
+                        CONFIG.ChatMessage.documentClass.create(chatData);
                     }
                 }
             }
