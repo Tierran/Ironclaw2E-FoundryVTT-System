@@ -1,3 +1,7 @@
+### 0.3.0 Upgraded release
+ - Upgraded to FoundryVTT 0.8.6
+ - System functional from a quick look
+
 ### 0.2.8 Unconditional conditions release
  - Removed dependency to Combat Utility Belt for using Ironclaw conditions
  - Bug fixing
