@@ -145,7 +145,6 @@ export class Ironclaw2ECombat extends Combat {
         // Structure input data
         ids = typeof ids === "string" ? [ids] : ids;
         const currentId = this.combatant.id;
-        const rollMode = messageOptions.rollMode || game.settings.get("core", "rollMode");
 
         // Iterate over Combatants, performing an initiative roll for each
         const updates = [];
@@ -201,10 +200,10 @@ export class Ironclaw2ECombat extends Combat {
                 flags: { "core.initiativeRoll": true }
             }, messageOptions);
             messageData = mergeObject(initRoll.message, messageData);
+            // Play 1 sound for the whole rolled set
+            if (i > 0) messageData.sound = null;
             const chatData = await initRoll.roll.toMessage(messageData, { create: false, rollMode });
 
-            // Play 1 sound for the whole rolled set
-            if (i > 0) chatData.sound = null;
             messages.push(chatData);
         }
         if (!updates.length) return this;
