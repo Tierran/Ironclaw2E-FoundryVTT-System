@@ -1,4 +1,16 @@
 {
+  "ACTOR.TypeCharacter": "Character",
+  "ACTOR.TypeMook": "Mook",
+  "ACTOR.TypeBeast": "Beast",
+  "ACTOR.TypeMarker": "Marker",
+  "ITEM.TypeGift": "Gift",
+  "ITEM.TypeWeapon": "Weapon",
+  "ITEM.TypeArmor": "Armor",
+  "ITEM.TypeShield": "Shield",
+  "ITEM.TypeIllumination": "Light Source",
+  "ITEM.TypeExtracareer": "Extra Career",
+  "ITEM.TypeItem": "Item",
+
   "ironclaw2e.speeds.stride": "Stride",
   "ironclaw2e.speeds.dash": "Dash + Stride",
   "ironclaw2e.speeds.run": "Run",
@@ -37,7 +49,7 @@
   "ironclaw2e.config.autoPrototypeSetupHint": "If checked, newly created actors will have their prototype token's attributes use type-specific defaults.",
   "ironclaw2e.config.calculateAttackEffects": "WORLD: Auto-calculate attack effects",
   "ironclaw2e.config.calculateAttackEffectsHint": "If checked, successful and tied attacks with weapons will also create a chat message that contains the raw damage of the attack based on the effects and successes.",
-  
+
   "ironclaw2e.config.defaultSendDamage": "CLIENT: Damage to chat by default",
   "ironclaw2e.config.defaultSendDamageHint": "If checked, the damage-applying dialog will have the 'Send to chat' option checked by default.",
   "ironclaw2e.config.confirmItemInfo": "CLIENT: Confirm sending item info",
