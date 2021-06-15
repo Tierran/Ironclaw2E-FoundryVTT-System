@@ -339,7 +339,7 @@ export function getMacroSpeaker(rollingactor) {
     if (prefertokens) {
         let chattoken = findActorToken(rollingactor);
         if (chattoken) {
-            return ChatMessage.getSpeaker({ token: chattoken });
+            return ChatMessage.getSpeaker({ token: chattoken?.document });
         }
     }
 
