@@ -1,3 +1,9 @@
+### 0.3.1 Effect split release
+ - Upgraded to FoundryVTT 0.8.7
+ - Split off the "Resist with ... vs. 3" weapon effect from other effects into its own field
+ - Added an option for the system to attempt to auto-calculate weapon damage based on its effects and the successes in the attack check
+ - Added an option to send the heaviest damage effect to chat when applying damage
+
 ### 0.3.0 Upgraded release
  - Upgraded to FoundryVTT 0.8.6
  - System functional from a quick look

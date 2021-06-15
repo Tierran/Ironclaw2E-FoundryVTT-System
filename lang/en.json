@@ -48,7 +48,7 @@
   "ironclaw2e.config.autoPrototypeSetup": "WORLD: Auto-setup prototype tokens",
   "ironclaw2e.config.autoPrototypeSetupHint": "If checked, newly created actors will have their prototype token's attributes use type-specific defaults.",
   "ironclaw2e.config.calculateAttackEffects": "WORLD: Auto-calculate attack effects",
-  "ironclaw2e.config.calculateAttackEffectsHint": "If checked, successful and tied attacks with weapons will also create a chat message that contains the raw damage of the attack based on the effects and successes.",
+  "ironclaw2e.config.calculateAttackEffectsHint": "If checked, successful and tied attacks with weapons will also create a chat message that contains the calculated raw damage of the attack based on the effects and successes.",
 
   "ironclaw2e.config.defaultSendDamage": "CLIENT: Damage to chat by default",
   "ironclaw2e.config.defaultSendDamageHint": "If checked, the damage-applying dialog will have the 'Send to chat' option checked by default.",

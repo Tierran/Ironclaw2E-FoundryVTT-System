@@ -26,6 +26,12 @@ The system has support for the Combat Utility Belt module (https://github.com/Le
 
 Some aspects are still almost certainly WIP.  
 
+#### Options
+
+By default, certain automation options are turned off, in case they conflict with the way a GM wants to run the system. These can be turned on in the system configuration at their leisure.  
+ - Automated encumbrance system: Based on carried weight and worn armors, the system will give the actors encumbrance conditions as appropriate. The system is tested and should work fine, but it is potentially slightly unstable due to its implementation.  
+ - Auto-calculate attack damage: When attacking with a weapon, the system will attempt to check what the potential damage with the weapon would be, based on the successes and effects, then create a chat message with that information.  
+
 ### How to roll
 
 To properly format and calculate the results from Ironclaw's dice system, the system has an internal 'dice roller' to parse the dice pools into the correct format for the FoundryVTT dice roller, accessible either through the actor sheets or by the included macros. Macros allow the dice to be set either by specifying how many of each die type is rolled, or though a 'one line' parser. Most popups also include an input for extra one line dice pools.  

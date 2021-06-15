@@ -102,7 +102,7 @@ Hooks.once('init', async function () {
         hint: "ironclaw2e.config.calculateAttackEffectsHint",
         scope: "world",
         type: Boolean,
-        default: true,
+        default: false,
         config: true
     });
 
