@@ -1,5 +1,6 @@
 import { findTotalDice } from "./helpers.js";
 import { getMacroSpeaker } from "./helpers.js";
+import { CommonSystemInfo } from "./helpers.js";
 
 /**
  * @typedef {{
@@ -471,17 +472,17 @@ export function formRoll(d12, d10, d8, d6, d4) {
  */
 function flavorStringTN(successes, ties, botched, label) {
     if (successes > 0) {
-        return (label.length > 0 ? "<p>" + label + "</p>" : "") + "<p style=\"font-size:20px;color:green\">Success, with " + successes + " successes.</p>";
+        return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:20px;color:${CommonSystemInfo.resultColors.success}">Success, with ${successes} successes.</p>`;
     }
     else {
         if (botched) {
-            return (label.length > 0 ? "<p>" + label + "</p>" : "") + "<p style=\"font-size:20px;color:red\">Botch! All ones!</p>";
+            return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:20px;color:${CommonSystemInfo.resultColors.botch}">Botch! All ones!</p>`;
         }
         else if (ties > 0) {
-            return (label.length > 0 ? "<p>" + label + "</p>" : "") + "<p style=\"font-size:20px;color:darkgoldenrod\">Tie, with " + ties + " tied dice.</p>";
+            return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:20px;color:${CommonSystemInfo.resultColors.tie}">Tie, with ${ties} tied dice.</p>`;
         }
         else {
-            return (label.length > 0 ? "<p>" + label + "</p>" : "") + "<p style=\"font-size:20px;color:black\">Failure. TN not exceeded or met.</p>";
+            return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:20px;color:${CommonSystemInfo.resultColors.failure}">Failure. TN not exceeded or met.</p>`;
         }
     }
 }
@@ -493,7 +494,7 @@ function flavorStringTN(successes, ties, botched, label) {
  * @returns {string} The formed flavor string
  */
 function flavorStringHighest(highest, label) {
-    return (label.length > 0 ? "<p>" + label + "</p>" : "") + "<p style=\"font-size:20px;color:" + (highest > 1 ? "black" : "red") + "\">Highest die was " + highest + "</p>";
+    return (label.length > 0 ? "<p>" + label + "</p>" : "") + "<p style=\"font-size:20px;color:" + (highest > 1 ? CommonSystemInfo.resultColors.normal : CommonSystemInfo.resultColors.botch) + "\">Highest die was " + highest + "</p>";
 }
 
 /**

@@ -97,8 +97,24 @@ Hooks.once('init', async function () {
         default: true,
         config: true
     });
+    game.settings.register("ironclaw2e", "calculateAttackEffects", {
+        name: "ironclaw2e.config.calculateAttackEffects",
+        hint: "ironclaw2e.config.calculateAttackEffectsHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: true
+    });
 
     // Register system client settings
+    game.settings.register("ironclaw2e", "defaultSendDamage", {
+        name: "ironclaw2e.config.defaultSendDamage",
+        hint: "ironclaw2e.config.defaultSendDamageHint",
+        scope: "client",
+        type: Boolean,
+        default: true,
+        config: true
+    });
     game.settings.register("ironclaw2e", "confirmItemInfo", {
         name: "ironclaw2e.config.confirmItemInfo",
         hint: "ironclaw2e.config.confirmItemInfoHint",

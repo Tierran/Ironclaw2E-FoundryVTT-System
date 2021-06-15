@@ -245,7 +245,7 @@ input.center-text {
 }
 
 .ironclaw2e .sheet-body-small {
-    max-height: 300px;
+    max-height: 350px;
 }
 
 .ironclaw2e .tox .tox-editor-container {
@@ -319,6 +319,13 @@ input.center-text {
     font-size: large;
     text-transform: capitalize;
     margin: 4px;
+}
+
+.ironclaw2e .chat-header-lesser {
+    font-weight: bold;
+    font-size: larger;
+    text-transform: capitalize;
+    margin: 2px;
 }
 
 .ironclaw2e .chat-header-small {

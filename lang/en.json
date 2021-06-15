@@ -35,6 +35,11 @@
   "ironclaw2e.config.coinsHaveWeightHint": "If checked, the weight of coins will be added to the encumbrance of the actor. Requires a restart to take effect on all actors.",
   "ironclaw2e.config.autoPrototypeSetup": "WORLD: Auto-setup prototype tokens",
   "ironclaw2e.config.autoPrototypeSetupHint": "If checked, newly created actors will have their prototype token's attributes use type-specific defaults.",
+  "ironclaw2e.config.calculateAttackEffects": "WORLD: Auto-calculate attack effects",
+  "ironclaw2e.config.calculateAttackEffectsHint": "If checked, successful and tied attacks with weapons will also create a chat message that contains the raw damage of the attack based on the effects and successes.",
+  
+  "ironclaw2e.config.defaultSendDamage": "CLIENT: Damage to chat by default",
+  "ironclaw2e.config.defaultSendDamageHint": "If checked, the damage-applying dialog will have the 'Send to chat' option checked by default.",
   "ironclaw2e.config.confirmItemInfo": "CLIENT: Confirm sending item info",
   "ironclaw2e.config.confirmItemInfoHint": "If checked, the system will pop a confirmation dialog before actually sending information about items to the chat.",
 

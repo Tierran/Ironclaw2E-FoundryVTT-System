@@ -1,9 +1,11 @@
 import { findTotalDice } from "../helpers.js";
 import { makeStatCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
+import { splitStatString } from "../helpers.js";
 import { splitStatsAndBonus } from "../helpers.js";
 import { getMacroSpeaker } from "../helpers.js";
 import { checkDiceArrayEmpty } from "../helpers.js";
+import { CommonSystemInfo } from "../helpers.js";
 
 import { rollTargetNumberOneLine } from "../dicerollers.js";
 import { rollHighestOneLine } from "../dicerollers.js";
@@ -127,6 +129,21 @@ export class Ironclaw2EItem extends Item {
             data.sparkArray = null;
             data.canSpark = false;
         }
+        // Effects
+        if (data.effect.length > 0) {
+            data.effectsSplit = splitStatString(data.effect);
+            const foo = data.effectsSplit.findIndex(element => element.includes("damage"));
+            if (foo >= 0) {
+                const bar = data.effectsSplit.splice(foo, 1);
+                if (bar.length > 0) {
+                    const damage = parseInt(bar[0].slice(-1));
+                    data.damageEffect = isNaN(damage) ? 0 : damage;
+                }
+            }
+            if (data.hasResist) {
+                data.resistStats = splitStatString(data.specialResist);
+            }
+        }
     }
 
     /**
@@ -160,9 +177,12 @@ export class Ironclaw2EItem extends Item {
         const data = itemData.data;
     }
 
+    /* -------------------------------------------- */
+    /* End of Data Processing                       */
+    /* -------------------------------------------- */
+
     /**
-     * Handle clickable rolls.
-     * @param {Event} event   The originating click event
+     * Generic function to roll whatever is appropriate for the item
      */
     async roll() {
         // Basic template rendering data
@@ -203,16 +223,11 @@ export class Ironclaw2EItem extends Item {
                 this.sendInfoToChat();
                 break;
         }
-        /**
-        let roll = new Roll('d20+@abilities.str.mod', actorData);
-        let label = `Rolling ${item.name}`;
-        roll.roll().toMessage({
-            speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-            flavor: label
-        });
-        */
     }
 
+    /** 
+     *  Send information about the item to the chat as a message
+     */
     async sendInfoToChat() {
         const token = this.actor.token;
         const item = this.data;
@@ -241,6 +256,8 @@ export class Ironclaw2EItem extends Item {
                         <p><strong>Skills:</strong> ${itemData.careerSkill1}, ${itemData.careerSkill2}, ${itemData.careerSkill3}</p>`;
                 break;
             case 'weapon':
+                if (itemData.hasResist)
+                    contents += `<p><strong>Resist with:</strong> ${itemData.specialResist} vs. 3</p>`;
                 contents += `<p><strong>Effect:</strong> ${itemData.effect}</p>
                         <p><strong>Descriptors:</strong> ${itemData.descriptors}</p>
                         <p><strong>Equip:</strong> ${itemData.equip}, <strong>Range:</strong> ${itemData.range}</p>`;
@@ -298,6 +315,73 @@ export class Ironclaw2EItem extends Item {
         } else {
             CONFIG.ChatMessage.documentClass.create(chatData);
         }
+    }
+
+    /**
+     * After attacking with a weapon, calculate damage from successes and attributes
+     * @param {DiceReturn} info
+     */
+    sendAttackToChat(info, resolvedsuccesses = -1) {
+        if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
+            return; // If the system is turned off, return out
+        }
+        if (!info || !info.tnData) { // Return out in case the info turns out blank, or is highest mode
+            return;
+        }
+        if ((!info.tnData.successes || info.tnData.successes < 1) && (!info.tnData.ties || info.tnData.ties < 1)) {
+            return; // Return out of a complete failure, no need to display anything
+        }
+
+        const item = this.data;
+        const itemData = item.data;
+        if (item.type !== 'weapon') {
+            console.warn("A non-weapon type attempted to send Attack Data: " + item.name);
+            return;
+        }
+        if (itemData.effect.length == 0) {
+            return; // If the weapon has no effects listed, return out
+        }
+        if (itemData.hasResist && resolvedsuccesses > 0) {
+            return; // Return out of a resisted weapon unless the resisted successes have already been resolved
+        }
+
+        const successes = resolvedsuccesses > 0 ? resolvedsuccesses : (isNaN(info.tnData.successes) ? 0 : info.tnData.successes);
+        const ties = isNaN(info.tnData.ties) ? 0 : info.tnData.ties;
+
+        let success = successes > 0;
+        let used = success ? successes : ties;
+        let contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
+        <img class="item-image" src="${item.img}" title="${item.name}" width="25" height="25"/>
+        <h3 class="chat-header-lesser">Damage of ${item.name}</h3>
+        </header>
+        <div class="chat-content"><div class="chat-item">`;
+
+        if (success) {
+            contents += `<p style="color:${CommonSystemInfo.resultColors.success}">Success, the damage effect:</p>`;
+        } else {
+            contents += `<p style="color:${CommonSystemInfo.resultColors.tie}">Tied, if tie is broken favorably:</p>`;
+        }
+
+        if (itemData.effectsSplit.includes("slaying")) {
+            contents += `<p>Slaying Damage: <strong>${itemData.damageEffect + (used * 2)}</strong></p>`;
+        } else if (itemData.effectsSplit.includes("critical")) {
+            contents += `<p>Critical Damage: <strong>${itemData.damageEffect + Math.floor(used * 1.5)}</strong></p>`;
+        } else {
+            contents += `<p>Normal Damage: <strong>${itemData.damageEffect + used}</strong></p>`;
+        }
+
+        if (itemData.effectsSplit.includes("impaling")) {
+            contents += `<p>Impaling Damage: <strong>${itemData.damageEffect + (used * 2)}</strong>, unless target retreats</p>`;
+        }
+
+        contents += `<p>All effects: ${itemData.effect}</p></div></div></div>`;
+
+        let chatData = {
+            content: contents,
+            speaker: getMacroSpeaker(this.actor)
+        };
+        ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
+        CONFIG.ChatMessage.documentClass.create(chatData);
     }
 
     /* -------------------------------------------- */
@@ -371,7 +455,7 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, 2);
+        this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, 2, (x => { this.sendAttackToChat(x); }));
     }
 
     defenseRoll() {
@@ -456,7 +540,7 @@ export class Ironclaw2EItem extends Item {
                     this.actor.popupDefenseRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " parry roll: ", true, callback);
                     break;
                 case 2: // Attack roll
-                    this.actor.popupAttackRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " attack roll" + (this.data.data.effect ? ", Effect: " + this.data.data.effect : ": "), callback);
+                    this.actor.popupAttackRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " attack roll" + (this.data.data.effect ? ", Effect: " + this.data.data.effect + (this.data.data.hasResist ? ", Resist with " + this.data.data.specialResist + " vs. 3 " : "") : ": "), callback);
                     break;
                 case 3: // Counter roll
                     this.actor.popupCounterRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " counter roll" + (this.data.data.effect ? ", Effect: " + this.data.data.effect : ": "), callback);

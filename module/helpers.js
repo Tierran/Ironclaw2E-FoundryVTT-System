@@ -4,6 +4,10 @@ export class CommonSystemInfo {
      * List of stats that are limited by the Burdened condition
      */
     static burdenedList = Object.freeze(["speed", "climbing", "dodge", "endurance", "jumping", "stealth", "swimming"]);
+    /**
+     * List of CSS colors to use for different message types
+     */
+    static resultColors = { success: "green", tie: "darkgoldenrod", normal: "black", failure: "black", botch: "red" };
 }
 
 

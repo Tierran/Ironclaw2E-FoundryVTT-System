@@ -451,4 +451,13 @@ export class CommonConditionInfo {
         }
         return matches;
     }
+
+    /**
+     * Returns the translation identifier for a given condition
+     * @param {string} condition
+     * @returns {string}
+     */
+    static getConditionLabel(condition) {
+        return this.conditionList.find(cond => cond.id == condition)?.label;
+    }
 }

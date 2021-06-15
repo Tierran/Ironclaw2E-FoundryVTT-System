@@ -10,7 +10,7 @@ import { checkForPrechecked } from "../helpers.js";
 import { nullCheckConcat } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
 import { checkDiceArrayIndex } from "../helpers.js";
-import { formRoll } from "../dicerollers.js";
+import { CommonConditionInfo } from "../conditions.js";
 // For condition management
 import { hasConditionsIronclaw } from "../conditions.js";
 import { getConditionNamesIronclaw } from "../conditions.js";
@@ -317,6 +317,7 @@ export class Ironclaw2EActor extends Actor {
         data.totalWeight = totalweight;
         data.totalArmors = totalarmors;
 
+        // Automatic Encumbrance Management
         const manageburdened = game.settings.get("ironclaw2e", "manageEncumbranceAuto");
         if (manageburdened) {
             if (totalweight > data.encumbranceOverBurdened || totalarmors > 3) {
@@ -335,6 +336,10 @@ export class Ironclaw2EActor extends Actor {
             }
         }
     }
+
+    /* -------------------------------------------- */
+    /* End of Data Processing                       */
+    /* -------------------------------------------- */
 
     /**
      * Update tokens associated with this actor with lighting data
@@ -484,6 +489,7 @@ export class Ironclaw2EActor extends Actor {
         if (damage >= 5 && !nonlethal) adding.push("dead");
         if (damage >= 6 && !nonlethal) adding.push("overkilled");
         this.addEffect(adding);
+        return adding;
     }
 
     async addEffect(condition) {
@@ -786,8 +792,11 @@ export class Ironclaw2EActor extends Actor {
         let confirmed = false;
         let speaker = getMacroSpeaker(this);
         let addeddamage = 0;
+
         if (hasConditionsIronclaw("hurt", this)) addeddamage++;
         if (hasConditionsIronclaw("injured", this)) addeddamage++;
+        const confirmSend = game.settings.get("ironclaw2e", "defaultSendDamage");
+
         let dlog = new Dialog({
             title: "Damage Calculation for " + speaker.alias,
             content: `
@@ -812,6 +821,10 @@ export class Ironclaw2EActor extends Actor {
       <div class="form-group">
        <label>Non-lethal attack?</label>
        <input type="checkbox" id="nonlethal" name="nonlethal" value="1"></input>
+      </div>
+      <div class="form-group">
+       <label>Send to Chat?</label>
+       <input type="checkbox" id="send" name="send" value="1" ${confirmSend ? "checked" : ""}></input>
       </div>
      </form>
      `,
@@ -841,8 +854,20 @@ export class Ironclaw2EActor extends Actor {
                     let knockout = KNOCKOUT.checked;
                     let ALLOW = html.find('[name=nonlethal]')[0];
                     let allow = ALLOW.checked;
+                    let SEND = html.find('[name=send]')[0];
+                    let send = SEND.checked;
 
-                    this.applyDamage(damage + (added ? addeddamage : 0) - soak, knockout, allow);
+                    let statuses = this.applyDamage(damage + (added ? addeddamage : 0) - soak, knockout, allow);
+
+                    if (send) {
+                        const reportedStatus = statuses[statuses.length - 1];
+                        let chatData = {
+                            "content": `${speaker.alias} is ${game.i18n.localize(CommonConditionInfo.getConditionLabel(reportedStatus))}!`,
+                            "speaker": speaker
+                        };
+                        ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
+                        CONFIG.ChatMessage.documentClass.create(chatData);
+                    }
                 }
             }
         });
@@ -889,6 +914,10 @@ export class Ironclaw2EActor extends Actor {
         });
         dlog.render(true);
     }
+
+    /* -------------------------------------------- */
+    /* Supermassive Generic Dice Pool Roll Popup    */
+    /* -------------------------------------------- */
 
     /** Supermassive function to make a dynamic popup window asking about which exact dice pools should be included
      * @param {string[]} prechecked Skills to autocheck on the dialog

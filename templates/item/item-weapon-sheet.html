@@ -44,6 +44,13 @@
                 <h3 class="header-label">Attributes</h3>
                 <div class="resource flex-group-center">
                     <label class="resource-label">Effect:</label>
+                    {{#if data.hasResist}}
+                    <div class="resource flexrow flex-center">
+                        <label class="resource-label" style="max-width:120px">Resist With:</label>
+                        <input type="text" name="data.specialResist" value="{{data.specialResist}}" data-dtype="String" />
+                        <span class="resource-label" style="max-width:60px">vs. 3</span>
+                    </div>
+                    {{/if}}
                     <input type="text" name="data.effect" value="{{data.effect}}" data-dtype="String" />
                 </div>
                 <div class="resource flex-group-center">
@@ -57,6 +64,8 @@
                     <input type="text" name="data.range" value="{{data.range}}" data-dtype="String" />
                     <label class="resource-label">Use Spark:</label>
                     <input type="checkbox" name="data.useSpark" {{checked data.useSpark}} data-dtype="Boolean" />
+                    <label class="resource-label">Has Resist:</label>
+                    <input type="checkbox" name="data.hasResist" {{checked data.hasResist}} data-dtype="Boolean" />
                 </div>
                 <h3 class="header-label">Dice Pools</h3>
                 <div class="resource flex-group-center">
