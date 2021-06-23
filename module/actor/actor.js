@@ -943,12 +943,18 @@ export class Ironclaw2EActor extends Actor {
             data.extraCareerIds.forEach(x => extracareers.push(this.items.get(x)));
         }
 
-        let burdened = "";
+        let statuseffectnotes = "";
         if (hasConditionsIronclaw("burdened", this)) {
-            burdened = `
+            statuseffectnotes = `
      <div class="form-group">
        <label class="normal-label">Apply Burdened Limit automatically:</label>
        <input type="checkbox" id="burdened" name="burdened" value="1" checked></input>
+     </div>`;
+        }
+        if (hasConditionsIronclaw("hiding", this)) {
+            statuseffectnotes = `
+     <div class="form-group">
+       <span class="normal-text"><strong>Hiding:</strong> Improved cover and concealment:</span>
      </div>`;
         }
 
@@ -1013,7 +1019,7 @@ export class Ironclaw2EActor extends Actor {
        <input type="checkbox" id="iftn" name="iftn" value="1" ${tnyes ? "checked" : ""}></input>
 	   <input id="tn" name="tn" value="${tnnum}" onfocus="this.select();"></input>
      </div>
-      ${burdened}
+      ${statuseffectnotes}
       ${formconstruction}
       ${otherinputs}
 	  <div class="form-group">

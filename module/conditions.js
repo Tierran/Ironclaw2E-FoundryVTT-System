@@ -375,6 +375,11 @@ export class CommonConditionInfo {
         icon: "icons/svg/net.svg"
     },
     {
+        id: "hiding",
+        label: "ironclaw2e.effect.status.hiding",
+        icon: "icons/svg/mystery-man.svg"
+    },
+    {
         id: "misc-a",
         label: "ironclaw2e.effect.status.misc-a",
         icon: "icons/svg/eye.svg"
@@ -414,7 +419,7 @@ export class CommonConditionInfo {
     ["confused", "Confused"], ["terrified", "Terrified"], ["enraged", "Enraged"], ["knockdown", "Knockdown"], ["berserk", "Berserk"],
     ["blinded", "Blinded"], ["silenced", "Silenced"], ["fulltilt", "Full Tilt"], ["slowed", "Slowed"], ["immobilized", "Immobilized"],
     ["half-buried", "Half-Buried"], ["onfire", "On Fire"], ["mesmerized", "Mesmerized"], ["marionette", "Marionette"], ["controlled", "Controlled"],
-    ["allfours", "All Fours"], ["flying", "Flying"], ["grappled", "Grappled"], ["misc-a", "Misc-A"], ["misc-b", "Misc-B"], ["misc-c", "Misc-C"],
+    ["allfours", "All Fours"], ["flying", "Flying"], ["grappled", "Grappled"], ["hiding", "Hiding"], ["misc-a", "Misc-A"], ["misc-b", "Misc-B"], ["misc-c", "Misc-C"],
     ["misc-d", "Misc-D"], ["misc-e", "Misc-E"], ["misc-f", "Misc-F"]]));
 
     /**

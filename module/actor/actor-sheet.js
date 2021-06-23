@@ -570,7 +570,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         if (!basecondition) return;
         let chatdata;
         if (basecondition?.referenceId) {
-            chatdata = { content: `${basecondition.referenceId}{${basecondition.name}}` };
+            chatdata = { content: `${basecondition.referenceId}` };
         } else {
             let localname = game.i18n.localize(basecondition.label);
             chatdata = { content: `<img class="item-image" src="${basecondition.icon}" title="${localname}" width="20" height="20"/> ${localname}` };
