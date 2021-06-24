@@ -44,15 +44,23 @@ export class Ironclaw2EActor extends Actor {
         this.data.update(data);
     }
 
-    /**
-     * Augment the basic actor data with additional dynamic data.
+    /** @override
+     * Perform any last data modifications after super.prepareData has finished executing
      */
     prepareData() {
+        // Performs the following, in order: data reset, prepareBaseData(), prepareEmbeddedDocuments(), prepareDerivedData()
         super.prepareData();
-
         const actorData = this.data;
-        const data = actorData.data;
-        const flags = actorData.flags;
+
+        // Automatic Encumbrance Management
+        this._encumbranceAutoManagement(actorData);
+    }
+
+    /** @override
+     * Augment the basic actor data with additional dynamic data.
+     */
+    prepareDerivedData() {
+        const actorData = this.data;
 
         // Make separate methods for each Actor type (character, npc, etc.) to keep
         // things organized.
@@ -65,8 +73,6 @@ export class Ironclaw2EActor extends Actor {
      * Prepare Character type specific data
      */
     _prepareCharacterData(actorData) {
-        const data = actorData.data;
-
         this._processTraits(actorData);
         this._processSkills(actorData);
         this._processCoinageData(actorData);
@@ -78,8 +84,6 @@ export class Ironclaw2EActor extends Actor {
      * Prepare Mook type specific data
      */
     _prepareMookData(actorData) {
-        const data = actorData.data;
-
         this._processTraits(actorData);
         this._processSkills(actorData);
         this._processCoinageData(actorData);
@@ -91,8 +95,6 @@ export class Ironclaw2EActor extends Actor {
      * Prepare Beast type specific data
      */
     _prepareBeastData(actorData) {
-        const data = actorData.data;
-
         this._processTraits(actorData);
         this._processItemData(actorData);
         this._processBattleData(actorData);
@@ -316,18 +318,24 @@ export class Ironclaw2EActor extends Actor {
         }
         data.totalWeight = totalweight;
         data.totalArmors = totalarmors;
+    }
 
-        // Automatic Encumbrance Management
+    /** 
+     *  Automatic encumbrance management, performed if the setting is enabled
+     */
+    _encumbranceAutoManagement(actorData) {
         const manageburdened = game.settings.get("ironclaw2e", "manageEncumbranceAuto");
+        const data = actorData.data;
+
         if (manageburdened) {
-            if (totalweight > data.encumbranceOverBurdened || totalarmors > 3) {
+            if (data.totalWeight > data.encumbranceOverBurdened || data.totalArmors > 3) {
                 this.addEffect(["burdened", "over-burdened", "cannotmove"]);
             }
-            else if (totalweight > data.encumbranceBurdened || totalarmors == 3) {
+            else if (data.totalWeight > data.encumbranceBurdened || data.totalArmors == 3) {
                 this.deleteEffect(["cannotmove"], false);
                 this.addEffect(["burdened", "over-burdened"]);
             }
-            else if (totalweight > data.encumbranceNone || totalarmors == 2) {
+            else if (data.totalWeight > data.encumbranceNone || data.totalArmors == 2) {
                 this.deleteEffect(["over-burdened", "cannotmove"], false);
                 this.addEffect(["burdened"]);
             }

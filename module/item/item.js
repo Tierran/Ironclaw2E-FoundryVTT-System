@@ -15,12 +15,18 @@ import { rollHighestOneLine } from "../dicerollers.js";
  * @extends {Item}
  */
 export class Ironclaw2EItem extends Item {
-    /**
-     * Augment the basic Item data model with additional dynamic data.
+    /** @override
+     * Perform any last data modifications after super.prepareData has finished executing
      */
     prepareData() {
         super.prepareData();
 
+    }
+    
+    /** @override
+     * Augment the basic Item data model with additional dynamic data.
+     */
+    prepareDerivedData() {
         // Get the Item's data
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
