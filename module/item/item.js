@@ -253,8 +253,9 @@ export class Ironclaw2EItem extends Item {
         switch (item.type) {
             case 'gift':
                 contents += `<p><strong>Tags:</strong> ${itemData.giftTags}</p>
-                        <p><strong>Refresh:</strong> ${itemData.refresh}, <strong>Exhausted:</strong> ${itemData.exhaustWhenUsed ? (itemData.exhausted ? "Yes" : "No") : "Never"}</p>
-                        <p><strong>Gift dice:</strong> ${itemData.useDice}, <strong>Default TN:</strong> ${itemData.defaultTN}</p>`;
+                        <p><strong>Refresh:</strong> ${itemData.refresh}, <strong>Exhausted:</strong> ${itemData.exhaustWhenUsed ? (itemData.exhausted ? "Yes" : "No") : "Never"}</p>`;
+                if (itemData.useDice) contents += `<p><strong>Gift dice:</strong> ${itemData.useDice}, <strong>Default TN:</strong> ${itemData.defaultTN}</p>`;
+                else contents += `<p><strong>No gift dice</strong></p>`;
                 break;
             case 'extraCareer':
                 contents += `<p><strong>Name:</strong> ${itemData.careerName}</p>
@@ -267,6 +268,10 @@ export class Ironclaw2EItem extends Item {
                 contents += `<p><strong>Effect:</strong> ${itemData.effect}</p>
                         <p><strong>Descriptors:</strong> ${itemData.descriptors}</p>
                         <p><strong>Equip:</strong> ${itemData.equip}, <strong>Range:</strong> ${itemData.range}</p>`;
+                if (itemData.attackDice) contents += `<p><strong>Attack dice:</strong> ${itemData.attackDice}</p>`;
+                if (itemData.useSpark) contents += `<p><strong>Spark die:</strong> ${itemData.sparkDie}</p>`;
+                if (itemData.defenseDice) contents += `<p><strong>Parry dice:</strong> ${itemData.defenseDice}</p>`;
+                if (itemData.counterDice) contents += `<p><strong>Counter dice:</strong> ${itemData.counterDice}</p>`;
                 break;
             case 'illumination':
                 contents += `<p><strong>Dim Light:</strong> ${itemData.dimLight}, <strong>Bright Light:</strong> ${itemData.brightLight}, <strong>Angle:</strong> ${itemData.lightAngle}</p>`;
@@ -363,7 +368,7 @@ export class Ironclaw2EItem extends Item {
         <div class="chat-content"><div class="chat-item">`;
 
         if (success) {
-            contents += `<p style="color:${CommonSystemInfo.resultColors.success}">Success, the damage effect:</p>`;
+            contents += `<p style="color:${CommonSystemInfo.resultColors.success}">Attack hits, with damage effect:</p>`;
         } else {
             contents += `<p style="color:${CommonSystemInfo.resultColors.tie}">Tied, if tie is broken favorably:</p>`;
         }

@@ -139,6 +139,9 @@ export class Ironclaw2EActor extends Actor {
 
         for (let [key, skill] of Object.entries(data.skills)) {
             skill.diceArray = [0, 0, 0, 0, 0];
+            skill.diceString = "";
+            skill.totalDiceString = "";
+
             if (skill.marks > 0) {
                 let d12s = Math.floor(skill.marks / 5);
                 let remainder = skill.marks % 5;
@@ -146,6 +149,7 @@ export class Ironclaw2EActor extends Actor {
                 if (remainder > 0) {
                     skill.diceArray[5 - remainder] += 1;
                 }
+                skill.diceString = reformDiceString(skill.diceArray, true); // For showing in the sheet how many dice the marks give
             }
             const comparekey = makeStatCompareReady(key);
             if (data.traits.species.skills.includes(comparekey)) {
@@ -162,6 +166,8 @@ export class Ironclaw2EActor extends Actor {
                     }
                 });
             }
+
+            skill.totalDiceString = reformDiceString(skill.diceArray, true); // For showing in the sheet how many dice the skill has in total
         }
     }
 
@@ -800,9 +806,16 @@ export class Ironclaw2EActor extends Actor {
         let confirmed = false;
         let speaker = getMacroSpeaker(this);
         let addeddamage = 0;
+        let addedconditions = "";
 
-        if (hasConditionsIronclaw("hurt", this)) addeddamage++;
-        if (hasConditionsIronclaw("injured", this)) addeddamage++;
+        if (hasConditionsIronclaw("hurt", this)) {
+            addeddamage++;
+            addedconditions = game.i18n.localize(CommonConditionInfo.getConditionLabel("hurt"));
+        }
+        if (hasConditionsIronclaw("injured", this)) {
+            addeddamage++;
+            addedconditions += (addedconditions ? ", " : "") + game.i18n.localize(CommonConditionInfo.getConditionLabel("injured"));
+        }
         const confirmSend = game.settings.get("ironclaw2e", "defaultSendDamage");
 
         let dlog = new Dialog({
@@ -819,7 +832,7 @@ export class Ironclaw2EActor extends Actor {
 	   <input id="soak" name="soak" value="${readysoak}" onfocus="this.select();"></input>
       </div>
       <div class="form-group">
-       <span class="normal-label">Additional Damage: ${addeddamage}</span>
+       <span class="normal-label" title="${addeddamage ? "Damage added by " + addedconditions : "No damage added by conditions"}">Condition Damage: ${addeddamage}</span>
        <input type="checkbox" id="added" name="added" value="1" checked></input>
       </div>
       <div class="form-group">
@@ -1003,7 +1016,7 @@ export class Ironclaw2EActor extends Actor {
                     firstelement = lowerkey;
                 let usedname = convertCamelCase(key) + ": " + reformDiceString(skill.diceArray);
                 formconstruction += `<div class="form-group flex-group-center flex-tight">
-       <label class="${(usedname.length > 18 ? "small-label" : "normal-label")}">${usedname}</label>
+       <label class="${usedname.length > 26 ? "tiny-label" : (usedname.length > 18 ? "small-label" : "normal-label")}">${usedname}</label>
 	   <input type="checkbox" id="${lowerkey}" name="skill" value="${lowerkey}" ${prechecked.includes(lowerkey) ? "checked" : ""}></input>
       </div>`+ "\n";
             }

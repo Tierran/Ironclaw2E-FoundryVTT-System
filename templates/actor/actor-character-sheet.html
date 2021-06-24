@@ -154,10 +154,12 @@
                 <div class="skill flexcol flex-group-center flex-tight">
                     <span class="resource-label">{{key}}</span>
                     <div class="skill flexrow">
-                        <div></div>
-                        <label for="data.skills.{{key}}.marks" class="normal-label">Marks:</label>
-                        <input type="text" name="data.skills.{{key}}.marks" value="{{skill.marks}}" data-dtype="Number" />
-                        <div></div>
+                        <span class="small-label under-header">Total dice: {{skill.totalDiceString}}</span>
+                    </div>
+                    <div class="skill flexrow flex-center">
+                        <label for="data.skills.{{key}}.marks" class="normal-label" style="flex:0 0 56px">Marks:</label>
+                        <input type="text" style="flex:0 0 32px" name="data.skills.{{key}}.marks" value="{{skill.marks}}" data-dtype="Number" />
+                        <span class="small-label" style="flex:0 0 110px">Mark dice: {{skill.diceString}}</span>
                     </div>
                     <div class="skill flexrow">
                         <input class="favored-use" type="text" name="data.skills.{{key}}.favoreduse" placeholder="Favored use" value="{{skill.favoreduse}}" data-dtype="String" />

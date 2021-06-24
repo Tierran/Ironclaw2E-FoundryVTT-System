@@ -278,6 +278,12 @@ input.center-text {
     text-transform: capitalize;
 }
 
+.ironclaw2e .tiny-label {
+    font-weight: bold;
+    font-size: 60%;
+    text-transform: capitalize;
+}
+
 .ironclaw2e .bold-text {
     font-weight: bold;
     text-transform: none;
@@ -294,10 +300,20 @@ input.center-text {
     text-transform: none;
 }
 
+.ironclaw2e .tiny-text {
+    font-weight: normal;
+    font-size: x-small;
+    text-transform: none;
+}
+
 .ironclaw2e .favored-use {
     font-weight: normal;
     font-size: smaller;
-    min-width: 200px;
+    min-width: 220px;
+}
+
+.ironclaw2e .under-header {
+    margin: 1px 2px 8px 2px;
 }
 
 .ironclaw2e .tabs {
