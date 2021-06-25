@@ -171,13 +171,27 @@ export async function copyToRollHighest(message, sendinchat = true) {
 /*  Dialog Macros                               */
 /* -------------------------------------------- */
 
-export function rollTargetNumberDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0, label = "", rollingactor = null) {
+/**
+ * Dialog macro function for a target number roll that displays a separate input field for every dice type
+ * No inputs need to actually be given, but default values can be inputted
+ * @param {number} tn Target number for the roll
+ * @param {number} d12s Number of d12 dice
+ * @param {number} d10s Number of d10 dice
+ * @param {number} d8s Number of d8 dice
+ * @param {number} d6s Number of d6 dice
+ * @param {number} d4s Number of d4 dice
+ * @param {string} label The label given to the roll function to display in the chat message
+ * @param {string} rolltitle The title shown as the dialog's purpose
+ * @param {Actor} rollingactor The actor for which the roll is for
+ */
+export async function rollTargetNumberDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0, label = "", rolltitle = "", rollingactor = null) {
     let confirmed = false;
     let speaker = getMacroSpeaker(rollingactor);
-    let dlog = new Dialog({
-        title: "Target Number Roll for " + speaker.alias,
-        content: `
-     <form>
+    let resolvedroll = new Promise((resolve) => {
+        let dlog = new Dialog({
+            title: (rolltitle ? rolltitle : "Target Number Roll") + " for " + speaker.alias,
+            content: `
+     <form class="ironclaw2e">
       <div class="form-group">
        <label>Target Number of Roll:</label>
 	   <input id="tn" name="tn" value="${tn.toString()}" onfocus="this.select();"></input>
@@ -204,48 +218,65 @@ export function rollTargetNumberDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0, d6s 
       </div>
      </form>
      `,
-        buttons: {
-            one: {
-                icon: '<i class="fas fa-check"></i>',
-                label: "Roll!",
-                callback: () => confirmed = true
+            buttons: {
+                one: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: "Roll!",
+                    callback: () => confirmed = true
+                },
+                two: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: "Cancel",
+                    callback: () => confirmed = false
+                }
             },
-            two: {
-                icon: '<i class="fas fa-times"></i>',
-                label: "Cancel",
-                callback: () => confirmed = false
+            default: "one",
+            render: html => { document.getElementById("tn").focus(); },
+            close: html => {
+                if (confirmed) {
+                    let TNSS = html.find('[name=tn]')[0].value;
+                    let TN = 0; if (TNSS.length > 0) TN = parseInt(TNSS);
+                    let D12SS = html.find('[name=d12s]')[0].value;
+                    let D12S = 0; if (D12SS.length > 0) D12S = parseInt(D12SS);
+                    let D10SS = html.find('[name=d10s]')[0].value;
+                    let D10S = 0; if (D10SS.length > 0) D10S = parseInt(D10SS);
+                    let D8SS = html.find('[name=d8s]')[0].value;
+                    let D8S = 0; if (D8SS.length > 0) D8S = parseInt(D8SS);
+                    let D6SS = html.find('[name=d6s]')[0].value;
+                    let D6S = 0; if (D6SS.length > 0) D6S = parseInt(D6SS);
+                    let D4SS = html.find('[name=d4s]')[0].value;
+                    let D4S = 0; if (D4SS.length > 0) D4S = parseInt(D4SS);
+                    resolve(rollTargetNumber(TN, D12S, D10S, D8S, D6S, D4S, label, rollingactor));
+                } else {
+                    resolve(null);
+                }
             }
-        },
-        default: "one",
-        render: html => { document.getElementById("tn").focus(); },
-        close: html => {
-            if (confirmed) {
-                let TNSS = html.find('[name=tn]')[0].value;
-                let TN = 0; if (TNSS.length > 0) TN = parseInt(TNSS);
-                let D12SS = html.find('[name=d12s]')[0].value;
-                let D12S = 0; if (D12SS.length > 0) D12S = parseInt(D12SS);
-                let D10SS = html.find('[name=d10s]')[0].value;
-                let D10S = 0; if (D10SS.length > 0) D10S = parseInt(D10SS);
-                let D8SS = html.find('[name=d8s]')[0].value;
-                let D8S = 0; if (D8SS.length > 0) D8S = parseInt(D8SS);
-                let D6SS = html.find('[name=d6s]')[0].value;
-                let D6S = 0; if (D6SS.length > 0) D6S = parseInt(D6SS);
-                let D4SS = html.find('[name=d4s]')[0].value;
-                let D4S = 0; if (D4SS.length > 0) D4S = parseInt(D4SS);
-                rollTargetNumber(TN, D12S, D10S, D8S, D6S, D4S, label, rollingactor);
-            }
-        }
+        });
+        dlog.render(true);
     });
-    dlog.render(true);
+    return await resolvedroll;
 }
 
-export function rollHighestDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0, label = "", rollingactor = null) {
+/**
+ * Dialog macro function for a highest roll that displays a separate input field for every dice type
+ * No inputs need to actually be given, but default values can be inputted
+ * @param {number} d12s Number of d12 dice
+ * @param {number} d10s Number of d10 dice
+ * @param {number} d8s Number of d8 dice
+ * @param {number} d6s Number of d6 dice
+ * @param {number} d4s Number of d4 dice
+ * @param {string} label The label given to the roll function to display in the chat message
+ * @param {string} rolltitle The title shown as the dialog's purpose
+ * @param {Actor} rollingactor The actor for which the roll is for
+ */
+export async function rollHighestDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0, label = "", rolltitle = "", rollingactor = null) {
     let confirmed = false;
     let speaker = getMacroSpeaker(rollingactor);
-    let dlog = new Dialog({
-        title: "Highest Roll for " + speaker.alias,
-        content: `
-     <form>
+    let resolvedroll = new Promise((resolve) => {
+        let dlog = new Dialog({
+            title: (rolltitle ? rolltitle : "Highest Roll") + " for " + speaker.alias,
+            content: `
+     <form class="ironclaw2e">
       <div class="form-group">
        <label>D12 dice to Roll:</label>
 	   <input id="d12s" name="d12s" value="${d12s != 0 ? d12s.toString() : ""}" onfocus="this.select();"></input>
@@ -268,46 +299,60 @@ export function rollHighestDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0,
       </div>
      </form>
      `,
-        buttons: {
-            one: {
-                icon: '<i class="fas fa-check"></i>',
-                label: "Roll!",
-                callback: () => confirmed = true
+            buttons: {
+                one: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: "Roll!",
+                    callback: () => confirmed = true
+                },
+                two: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: "Cancel",
+                    callback: () => confirmed = false
+                }
             },
-            two: {
-                icon: '<i class="fas fa-times"></i>',
-                label: "Cancel",
-                callback: () => confirmed = false
+            default: "one",
+            render: html => { document.getElementById("d12s").focus(); },
+            close: html => {
+                if (confirmed) {
+                    let D12SS = html.find('[name=d12s]')[0].value;
+                    let D12S = 0; if (D12SS.length > 0) D12S = parseInt(D12SS);
+                    let D10SS = html.find('[name=d10s]')[0].value;
+                    let D10S = 0; if (D10SS.length > 0) D10S = parseInt(D10SS);
+                    let D8SS = html.find('[name=d8s]')[0].value;
+                    let D8S = 0; if (D8SS.length > 0) D8S = parseInt(D8SS);
+                    let D6SS = html.find('[name=d6s]')[0].value;
+                    let D6S = 0; if (D6SS.length > 0) D6S = parseInt(D6SS);
+                    let D4SS = html.find('[name=d4s]')[0].value;
+                    let D4S = 0; if (D4SS.length > 0) D4S = parseInt(D4SS);
+                    resolve(rollHighest(D12S, D10S, D8S, D6S, D4S, label, rollingactor));
+                } else {
+                    resolve(null);
+                }
             }
-        },
-        default: "one",
-        render: html => { document.getElementById("d12s").focus(); },
-        close: html => {
-            if (confirmed) {
-                let D12SS = html.find('[name=d12s]')[0].value;
-                let D12S = 0; if (D12SS.length > 0) D12S = parseInt(D12SS);
-                let D10SS = html.find('[name=d10s]')[0].value;
-                let D10S = 0; if (D10SS.length > 0) D10S = parseInt(D10SS);
-                let D8SS = html.find('[name=d8s]')[0].value;
-                let D8S = 0; if (D8SS.length > 0) D8S = parseInt(D8SS);
-                let D6SS = html.find('[name=d6s]')[0].value;
-                let D6S = 0; if (D6SS.length > 0) D6S = parseInt(D6SS);
-                let D4SS = html.find('[name=d4s]')[0].value;
-                let D4S = 0; if (D4SS.length > 0) D4S = parseInt(D4SS);
-                rollHighest(D12S, D10S, D8S, D6S, D4S, label, rollingactor);
-            }
-        }
+        });
+        dlog.render(true);
     });
-    dlog.render(true);
+    return await resolvedroll;
 }
 
-export function rollTargetNumberOneLine(tnnum = 3, readydice = "", label = "", rollingactor = null) {
+/**
+ * Dialog macro function for a target number roll that displays a single dice input field for standard dice notation that will then be parsed
+ * No inputs need to actually be given, but default values can be inputted
+ * @param {number} tnnum The target number for the roll
+ * @param {string} readydice The dice for the roll, in standard dice notation to be parsed
+ * @param {string} label The label given to the roll function to display in the chat message
+ * @param {string} rolltitle The title shown as the dialog's purpose
+ * @param {Actor} rollingactor The actor for which the roll is for
+ */
+export async function rollTargetNumberOneLine(tnnum = 3, readydice = "", label = "", rolltitle = "", rollingactor = null) {
     let confirmed = false;
     let speaker = getMacroSpeaker(rollingactor);
-    let dlog = new Dialog({
-        title: "Target Number Roll for " + speaker.alias,
-        content: `
-     <form>
+    let resolvedroll = new Promise((resolve) => {
+        let dlog = new Dialog({
+            title: (rolltitle ? rolltitle : "Target Number Roll") + " for " + speaker.alias,
+            content: `
+     <form class="ironclaw2e">
       <div class="form-group">
        <label>Target Number of Roll:</label>
 	   <input id="tn" name="tn" value="${tnnum}" onfocus="this.select();"></input>
@@ -320,40 +365,53 @@ export function rollTargetNumberOneLine(tnnum = 3, readydice = "", label = "", r
       </div>
      </form>
      `,
-        buttons: {
-            one: {
-                icon: '<i class="fas fa-check"></i>',
-                label: "Roll!",
-                callback: () => confirmed = true
+            buttons: {
+                one: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: "Roll!",
+                    callback: () => confirmed = true
+                },
+                two: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: "Cancel",
+                    callback: () => confirmed = false
+                }
             },
-            two: {
-                icon: '<i class="fas fa-times"></i>',
-                label: "Cancel",
-                callback: () => confirmed = false
+            default: "one",
+            render: html => { document.getElementById("tn").focus(); },
+            close: html => {
+                if (confirmed) {
+                    let TNSS = html.find('[name=tn]')[0].value;
+                    let TN = 0; if (TNSS.length > 0) TN = parseInt(TNSS);
+                    let DICES = html.find('[name=dices]')[0].value;
+                    let DICE = findTotalDice(DICES);
+                    resolve(rollTargetNumber(TN, DICE[0], DICE[1], DICE[2], DICE[3], DICE[4], label, rollingactor));
+                } else {
+                    resolve(null);
+                }
             }
-        },
-        default: "one",
-        render: html => { document.getElementById("tn").focus(); },
-        close: html => {
-            if (confirmed) {
-                let TNSS = html.find('[name=tn]')[0].value;
-                let TN = 0; if (TNSS.length > 0) TN = parseInt(TNSS);
-                let DICES = html.find('[name=dices]')[0].value;
-                let DICE = findTotalDice(DICES);
-                rollTargetNumber(TN, DICE[0], DICE[1], DICE[2], DICE[3], DICE[4], label, rollingactor);
-            }
-        }
+        });
+        dlog.render(true);
     });
-    dlog.render(true);
+    return await resolvedroll;
 }
 
-export function rollHighestOneLine(readydice = "", label = "", rollingactor = null) {
+/**
+ * Dialog macro function for a target number roll that displays a single dice input field for standard dice notation that will then be parsed
+ * No inputs need to actually be given, but default values can be inputted
+ * @param {string} readydice The dice for the roll, in standard dice notation to be parsed
+ * @param {string} label The label given to the roll function to display in the chat message
+ * @param {string} rolltitle The title shown as the dialog's purpose
+ * @param {Actor} rollingactor The actor for which the roll is for
+ */
+export async function rollHighestOneLine(readydice = "", label = "", rolltitle = "", rollingactor = null) {
     let confirmed = false;
     let speaker = getMacroSpeaker(rollingactor);
-    let dlog = new Dialog({
-        title: "Highest Roll for " + speaker.alias,
-        content: `
-     <form>
+    let resolvedroll = new Promise((resolve) => {
+        let dlog = new Dialog({
+            title: (rolltitle ? rolltitle : "Highest Roll") + " for " + speaker.alias,
+            content: `
+     <form class="ironclaw2e">
       <div class="form-group">
        <label>Dice to roll:</label>
       </div>
@@ -362,37 +420,47 @@ export function rollHighestOneLine(readydice = "", label = "", rollingactor = nu
       </div>
      </form>
      `,
-        buttons: {
-            one: {
-                icon: '<i class="fas fa-check"></i>',
-                label: "Roll!",
-                callback: () => confirmed = true
+            buttons: {
+                one: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: "Roll!",
+                    callback: () => confirmed = true
+                },
+                two: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: "Cancel",
+                    callback: () => confirmed = false
+                }
             },
-            two: {
-                icon: '<i class="fas fa-times"></i>',
-                label: "Cancel",
-                callback: () => confirmed = false
+            default: "one",
+            render: html => { document.getElementById("dices").focus(); },
+            close: html => {
+                if (confirmed) {
+                    let DICES = html.find('[name=dices]')[0].value;
+                    let DICE = findTotalDice(DICES);
+                    resolve(rollHighest(DICE[0], DICE[1], DICE[2], DICE[3], DICE[4], label, rollingactor));
+                } else {
+                    resolve(null);
+                }
             }
-        },
-        default: "one",
-        render: html => { document.getElementById("dices").focus(); },
-        close: html => {
-            if (confirmed) {
-                let DICES = html.find('[name=dices]')[0].value;
-                let DICE = findTotalDice(DICES);
-                rollHighest(DICE[0], DICE[1], DICE[2], DICE[3], DICE[4], label, rollingactor);
-            }
-        }
+        });
+        dlog.render(true);
     });
-    dlog.render(true);
+    return await resolvedroll;
 }
 
-export function copyToRollTNDialog(message) {
+/**
+ * Function that takes a message with a roll and asks for a target number to use in copying the results of the roll to a new one
+ * @param {ChatMessage} message The chat message to copy the roll from, assuming it has one
+ * @param {string} rolltitle The title shown as the dialog's purpose
+ */
+export async function copyToRollTNDialog(message, rolltitle = "") {
     let confirmed = false;
-    let dlog = new Dialog({
-        title: "Change Roll to TN",
-        content: `
-     <form>
+    let resolvedroll = new Promise((resolve) => {
+        let dlog = new Dialog({
+            title: (rolltitle ? rolltitle : "Change Roll to TN"),
+            content: `
+     <form class="ironclaw2e">
       <div class="form-group">
        <label>Target Number:</label>
       </div>
@@ -401,29 +469,33 @@ export function copyToRollTNDialog(message) {
       </div>
      </form>
      `,
-        buttons: {
-            one: {
-                icon: '<i class="fas fa-check"></i>',
-                label: "Copy",
-                callback: () => confirmed = true
+            buttons: {
+                one: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: "Copy",
+                    callback: () => confirmed = true
+                },
+                two: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: "Cancel",
+                    callback: () => confirmed = false
+                }
             },
-            two: {
-                icon: '<i class="fas fa-times"></i>',
-                label: "Cancel",
-                callback: () => confirmed = false
+            default: "one",
+            render: html => { document.getElementById("tn").focus(); },
+            close: html => {
+                if (confirmed) {
+                    let DICES = html.find('[name=tn]')[0].value;
+                    let TN = 0; if (DICES.length > 0) TN = parseInt(DICES);
+                    resolve(copyToRollTN(TN, message));
+                } else {
+                    resolve(null);
+                }
             }
-        },
-        default: "one",
-        render: html => { document.getElementById("tn").focus(); },
-        close: html => {
-            if (confirmed) {
-                let DICES = html.find('[name=tn]')[0].value;
-                let TN = 0; if (DICES.length > 0) TN = parseInt(DICES);
-                copyToRollTN(TN, message);
-            }
-        }
+        });
+        dlog.render(true);
     });
-    dlog.render(true);
+    return await resolvedroll;
 }
 
 /* -------------------------------------------- */

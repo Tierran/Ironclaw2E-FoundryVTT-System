@@ -30,7 +30,7 @@ Some aspects are still almost certainly WIP.
 
 By default, certain automation options are turned off, in case they conflict with the way a GM wants to run the system. These can be turned on in the system configuration at their leisure.  
  - **Automated encumbrance system:** Based on carried weight and worn armors, the system will give the actors encumbrance conditions as appropriate. The system is tested and should work fine, but it is potentially slightly unstable due to its implementation.  
- - **Auto-calculate attack damage:** When attacking with a weapon, the system will attempt to check what the potential damage with the weapon would be, based on the successes and effects, then create a chat message with that information.  
+ - **Auto-calculate attack damage:** When attacking with a weapon, the system will attempt to check what the potential damage with the weapon would be, based on the successes and effects, then create a chat message with that information. Rolls representing counter-attacks and resisted attacks can be right-clicked to resolve them, triggering a popup to input the needed data to figure out how much damage the attack ultimately causes.  
 
 ### How to roll
 
@@ -52,7 +52,7 @@ The /itemuse command takes an item name and uses that to activate a normal item 
 ### Conditions
 
 The system has a full set of standard Ironclaw status effect conditions set up and supported, as well as a few extras (the Miscs) purely for GM to differentiate between tokens if they want. Information on them is provided in the status effects compendium pack.  
-Damage calculations have a separate pop-up function for simpler calculation. Just input the raw damage from the attack and the soak successes, even if the value goes negative. Do NOT including any added by standard conditions. The system will automatically add the damage from Hurt and Injured if they apply, as noted in the "Additional Damage" part.  
+Damage calculations have a separate pop-up function for simpler calculation. Just input the raw damage from the attack and the soak successes, even if the value goes negative. Do NOT including any added by standard conditions. The system will automatically add the damage from Hurt and Injured if they apply, as noted in the "Condition Damage" part.  
 
 With Combat Utility Belt's Enhanced Conditions set up, the system has somewhat better support for multiple defeat conditions and built-in chat linking for the Compendium information entries. The CUB is not necessary, but can make some things smoother.  
 <details>

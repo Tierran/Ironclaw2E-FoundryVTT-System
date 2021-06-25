@@ -116,7 +116,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                     break;
                 default:
                     gear.push(i);
-                    console.warn("Unknown item type in character data, pushed into gear: " + i);
+                    console.warn("Unknown item type in character data, pushed into gear: " + i.name);
                     break;
             }
         }

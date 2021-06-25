@@ -296,13 +296,13 @@ input.center-text {
 
 .ironclaw2e .small-text {
     font-weight: normal;
-    font-size: small;
+    font-size: 80%;
     text-transform: none;
 }
 
 .ironclaw2e .tiny-text {
     font-weight: normal;
-    font-size: x-small;
+    font-size: 60%;
     text-transform: none;
 }
 

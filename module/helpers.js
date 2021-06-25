@@ -362,7 +362,7 @@ export function findActorToken(actor) {
     }
     else {
         let tokenarray = actor.getActiveTokens(true);
-        if (tokenarray.length > 0 && tokenarray[0].data.actorLink == true)
+        if (tokenarray.length > 0 && tokenarray[0]?.data?.actorLink === true)
             foundtoken = tokenarray[0];
     }
     return foundtoken;

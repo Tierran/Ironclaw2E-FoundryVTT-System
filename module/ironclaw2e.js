@@ -28,6 +28,7 @@ Hooks.once('init', async function () {
         Ironclaw2EActor,
         Ironclaw2EItem,
         Ironclaw2ECombat,
+        Ironclaw2ECombatant,
         Ironclaw2ECombatTracker,
         rollItemMacro,
         popupMacro,
@@ -202,33 +203,35 @@ Hooks.once("init", function () {
 });
 
 function addIronclawChatLogContext(html, entryOptions) {
-    entryOptions.push({
-        name: "ironclaw2e.copyToTN",
-        icon: '<i class="fas fa-bullseye"></i>',
-        condition: li => {
-            const message = game.messages.get(li.data("messageId"));
-            const type = message.getFlag("ironclaw2e", "rollType");
-            const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type != "TN";
-            return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+    entryOptions.push(
+        {
+            name: "ironclaw2e.copyToTN",
+            icon: '<i class="fas fa-bullseye"></i>',
+            condition: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const type = message.getFlag("ironclaw2e", "rollType");
+                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type != "TN";
+                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+            },
+            callback: li => {
+                const message = game.messages.get(li.data("messageId"));
+                copyToRollTNDialog(message);
+            }
         },
-        callback: li => {
-            const message = game.messages.get(li.data("messageId"));
-            copyToRollTNDialog(message);
-        }
-    }, {
-        name: "ironclaw2e.changeTN",
-        icon: '<i class="fas fa-bullseye"></i>',
-        condition: li => {
-            const message = game.messages.get(li.data("messageId"));
-            const type = message.getFlag("ironclaw2e", "rollType");
-            const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type == "TN";
-            return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+        {
+            name: "ironclaw2e.changeTN",
+            icon: '<i class="fas fa-bullseye"></i>',
+            condition: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const type = message.getFlag("ironclaw2e", "rollType");
+                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type == "TN";
+                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+            },
+            callback: li => {
+                const message = game.messages.get(li.data("messageId"));
+                copyToRollTNDialog(message);
+            }
         },
-        callback: li => {
-            const message = game.messages.get(li.data("messageId"));
-            copyToRollTNDialog(message);
-        }
-    },
         {
             name: "ironclaw2e.copyToHighest",
             icon: '<i class="fas fa-dice-d6"></i>',
@@ -242,10 +245,100 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const message = game.messages.get(li.data("messageId"));
                 copyToRollHighest(message);
             }
+        },
+        {
+            name: "ironclaw2e.resolveCounter",
+            icon: '<i class="fas fa-fist-raised"></i>',
+            condition: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const active = game.settings.get("ironclaw2e", "calculateAttackEffects");
+                const type = message.getFlag("ironclaw2e", "hangingAttack");
+                const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
+                const actorid = message.getFlag("ironclaw2e", "hangingActor");
+                // Check whether the attack effect calculation is active, the message has a roll, has a weapon id and actor id, and has explicitly been set to have a hanging counter-attack
+                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && actorid && type === "counter";
+                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+            },
+            callback: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
+                const actorid = message.getFlag("ironclaw2e", "hangingActor");
+                const actor = game.actors.get(actorid);
+                const weapon = actor.items.get(weaponid);
+                weapon?.resolveCounterAttack?.(message);
+            }
+        },
+        {
+            name: "ironclaw2e.resolveResist",
+            icon: '<i class="fas fa-bolt"></i>',
+            condition: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const active = game.settings.get("ironclaw2e", "calculateAttackEffects");
+                const type = message.getFlag("ironclaw2e", "hangingAttack");
+                const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
+                const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
+                // Check whether the attack effect calculation is active, the message has a roll, has a weapon id and successes set and has explicitly been set to have a hanging resist attack
+                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && successes && type === "resist";
+                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+            },
+            callback: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
+                const actorid = message.getFlag("ironclaw2e", "hangingActor");
+                const actor = game.actors.get(actorid);
+                const weapon = actor.items.get(weaponid);
+                weapon?.resolveResistedAttack?.(message);
+            }
+        },
+        {
+            name: "ironclaw2e.resolveAsNormal",
+            icon: '<i class="fas fa-fist-raised"></i>',
+            condition: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const active = game.settings.get("ironclaw2e", "calculateAttackEffects");
+                const type = message.getFlag("ironclaw2e", "hangingAttack");
+                const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
+                const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
+                // Check whether the attack effect calculation is active, the message has a roll, has a weapon id and successes set and has explicitly been set to have a hanging resist attack
+                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && successes && type === "resist";
+                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+            },
+            callback: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
+                const actorid = message.getFlag("ironclaw2e", "hangingActor");
+                const actor = game.actors.get(actorid);
+                const weapon = actor.items.get(weaponid);
+                console.log(message);
+                console.log(actorid);
+                console.log(weaponid);
+                console.log(game.actors);
+                console.log(actor.items);
+                console.log(weapon);
+                weapon?.resolveAsNormalAttack?.(message);
+            }
         });
 }
-
 Hooks.on("getChatLogEntryContext", addIronclawChatLogContext);
+
+/**
+ * Delay an async function for set milliseconds
+ * @param {number} ms
+ */
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Quick and dirty way to make condition adding and removing wait until the game is fully ready
+ * @param {any} resolve
+ */
+async function waitUntilReady(resolve) {
+    while (!game.ready) {
+        await sleep(500);
+    }
+    return true;
+}
 
 /* -------------------------------------------- */
 /*  External Module Support                     */
@@ -263,9 +356,9 @@ Hooks.once("dragRuler.ready", (SpeedProvider) => {
         }
 
         getRanges(token) {
-            const stridespeed = token.actor.data.data.stride;
-            const dashspeed = token.actor.data.data.dash;
-            const runspeed = token.actor.data.data.run;
+            const stridespeed = token.actor?.data.data.stride || 0;
+            const dashspeed = token.actor?.data.data.dash || 0;
+            const runspeed = token.actor?.data.data.run || 0;
 
             const ranges = [
                 { range: stridespeed, color: "stride" },
@@ -279,14 +372,6 @@ Hooks.once("dragRuler.ready", (SpeedProvider) => {
 
     dragRuler.registerSystem("ironclaw2e", Ironclaw2ESpeedProvider);
 });
-
-/**
- * Delay an async function for set milliseconds
- * @param {number} ms
- */
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 // ChatCommands integration
 // Using async and delays to ensure the same press of enter does not also automatically close the dialog
@@ -422,15 +507,4 @@ function popupSelect(prechecked = [], tnyes = false, tnnum = 3, extradice = "") 
     if (!actor) return ui.notifications.warn("No actor found to popup macro for: " + speaker);
 
     return actor.popupSelectRolled(prechecked, tnyes, tnnum, extradice);
-}
-
-/**
- * Quick and dirty way to make condition adding and removing wait until the game is fully ready
- * @param {any} resolve
- */
-async function waitUntilReady(resolve) {
-    while (!game.ready) {
-        await sleep(500);
-    }
-    return true;
 }

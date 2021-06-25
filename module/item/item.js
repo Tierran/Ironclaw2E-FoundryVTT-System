@@ -9,6 +9,7 @@ import { CommonSystemInfo } from "../helpers.js";
 
 import { rollTargetNumberOneLine } from "../dicerollers.js";
 import { rollHighestOneLine } from "../dicerollers.js";
+import { copyToRollTNDialog } from "../dicerollers.js"
 
 /**
  * Extend the basic Item for Ironclaw's systems.
@@ -330,18 +331,17 @@ export class Ironclaw2EItem extends Item {
 
     /**
      * After attacking with a weapon, calculate damage from successes and attributes
-     * @param {DiceReturn} info
+     * @param {DiceReturn} info The roll information returned by the system dice rollers
+     * @param {boolean} ignoreresist Whether to ignore the fact that the weapon has a resist roll, used when such a weapon is used in a counter-attack
      */
-    sendAttackToChat(info, resolvedsuccesses = -1) {
+    automaticDamageCalculation(info, ignoreresist = false) {
         if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
             return; // If the system is turned off, return out
         }
-        if (!info || !info.tnData) { // Return out in case the info turns out blank, or is highest mode
+        if (!info) { // Return out in case the info turns out blank
             return;
         }
-        if ((!info.tnData.successes || info.tnData.successes < 1) && (!info.tnData.ties || info.tnData.ties < 1)) {
-            return; // Return out of a complete failure, no need to display anything
-        }
+        console.log(this);
 
         const item = this.data;
         const itemData = item.data;
@@ -352,15 +352,121 @@ export class Ironclaw2EItem extends Item {
         if (itemData.effect.length == 0) {
             return; // If the weapon has no effects listed, return out
         }
-        if (itemData.hasResist && resolvedsuccesses > 0) {
-            return; // Return out of a resisted weapon unless the resisted successes have already been resolved
+        if (!info.tnData) { // If the roll info is in highest mode, assume the attack was a counter-attack, and set the flags accordingly
+            info.message.setFlag("ironclaw2e", "hangingAttack", "counter");
+            info.message.setFlag("ironclaw2e", "hangingWeapon", this.id);
+            info.message.setFlag("ironclaw2e", "hangingActor", this.actor.id);
+            info.update();
+            return; // Return out of a counter-attack
         }
 
-        const successes = resolvedsuccesses > 0 ? resolvedsuccesses : (isNaN(info.tnData.successes) ? 0 : info.tnData.successes);
+        if ((!info.tnData.successes || info.tnData.successes < 1) && (!info.tnData.ties || info.tnData.ties < 1)) {
+            return; // Return out of a complete failure, no need to display anything
+        }
+        const successes = (isNaN(info.tnData.successes) ? 0 : info.tnData.successes);
         const ties = isNaN(info.tnData.ties) ? 0 : info.tnData.ties;
+        const success = successes > 0;
+        const usedsuccesses = success ? successes : ties;
 
-        let success = successes > 0;
-        let used = success ? successes : ties;
+        if (ignoreresist === false && itemData.hasResist && usedsuccesses > 0) { // If the weapon's attack was a successful resist roll, set the flags accordingly and return out
+            info.message.setFlag("ironclaw2e", "hangingAttack", "resist");
+            info.message.setFlag("ironclaw2e", "hangingWeapon", this.id);
+            info.message.setFlag("ironclaw2e", "hangingActor", this.actor.id);
+            if (success) {
+                info.message.setFlag("ironclaw2e", "resistSuccess", true);
+                info.message.setFlag("ironclaw2e", "resistSuccessCount", usedsuccesses);
+            }
+            else {
+                info.message.setFlag("ironclaw2e", "resistSuccess", false);
+                info.message.setFlag("ironclaw2e", "resistSuccessCount", usedsuccesses);
+            }
+            info.update();
+            return; // Return out of a resisted weapon
+        }
+
+        this.successfulAttackToChat(success, usedsuccesses);
+    }
+
+    async resolveCounterAttack(message) {
+        let info = await copyToRollTNDialog(message, "Highest die of opponent's Attack");
+        this.automaticDamageCalculation(info, true); // No separate return in case of null, the calculation function itself checks for null
+    }
+
+    async resolveResistedAttack(message) {
+        let confirmed = false;
+        const success = message.getFlag("ironclaw2e", "resistSuccess");
+        const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
+
+        let resolvedopfor = new Promise((resolve) => {
+            let dlog = new Dialog({
+                title: "How many opposing successes?",
+                content: `
+     <form class="ironclaw2e">
+      <div class="form-group">
+       <span class="small-label">Successes: ${successes}</span>
+       <span class="small-text">${success?"":"Original attack roll was <strong>Tied</strong>, tie needs to be broken in favor of the attacker for the successes to apply."}</span>
+      </div>
+      <div class="form-group">
+       <label class="normal-label" for="opfor">Opposing Successes:</label>
+	   <input id="opfor" name="opfor" value="" onfocus="this.select();"></input>
+      </div>
+     </form>
+     `,
+                buttons: {
+                    one: {
+                        icon: '<i class="fas fa-check"></i>',
+                        label: "Roll!",
+                        callback: () => confirmed = true
+                    },
+                    two: {
+                        icon: '<i class="fas fa-times"></i>',
+                        label: "Cancel",
+                        callback: () => confirmed = false
+                    }
+                },
+                default: "one",
+                render: html => { document.getElementById("tn").focus(); },
+                close: html => {
+                    if (confirmed) {
+                        let OPFOR = html.find('[name=opfor]')[0].value;
+                        let opposing = 0; if (OPFOR.length > 0) opposing = parseInt(OPFOR);
+                        resolve(opposing);
+                    } else {
+                        resolve(null);
+                    }
+                }
+            });
+            dlog.render(true);
+        });
+        let opposingsuccesses = await resolvedopfor;
+        if (!opposingsuccesses) return; // Return out if the user just cancels the prompt
+
+        if (successes > opposingsuccesses) {
+            this.successfulAttackToChat(true, successes - opposingsuccesses);
+        }
+        else {
+            this.failedAttackToChat();
+        }
+    }
+
+    resolveAsNormalAttack(message) {
+        const success = message.getFlag("ironclaw2e", "resistSuccess");
+        const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
+        this.successfulAttackToChat(success, successes);
+    }
+
+    /**
+     * Send the attack damage to chat, calculating damage based on the given successes
+     * @param {boolean} success Whether the attack was a success, or a tie
+     * @param {number} usedsuccesses The number of successes, or ties in case the attack was a tie
+     */
+    successfulAttackToChat(success, usedsuccesses) {
+        if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
+            return; // If the system is turned off, return out
+        }
+        const item = this.data;
+        const itemData = item.data;
+
         let contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
         <img class="item-image" src="${item.img}" title="${item.name}" width="25" height="25"/>
         <h3 class="chat-header-lesser">Damage of ${item.name}</h3>
@@ -374,19 +480,56 @@ export class Ironclaw2EItem extends Item {
         }
 
         if (itemData.effectsSplit.includes("slaying")) {
-            contents += `<p>Slaying Damage: <strong>${itemData.damageEffect + (used * 2)}</strong></p>`;
+            contents += `<p>Slaying Damage: <strong>${itemData.damageEffect + (usedsuccesses * 2)}</strong></p>`;
         } else if (itemData.effectsSplit.includes("critical")) {
-            contents += `<p>Critical Damage: <strong>${itemData.damageEffect + Math.floor(used * 1.5)}</strong></p>`;
+            contents += `<p>Critical Damage: <strong>${itemData.damageEffect + Math.floor(usedsuccesses * 1.5)}</strong></p>`;
         } else {
-            contents += `<p>Normal Damage: <strong>${itemData.damageEffect + used}</strong></p>`;
+            contents += `<p>Normal Damage: <strong>${itemData.damageEffect + usedsuccesses}</strong></p>`;
         }
-
         if (itemData.effectsSplit.includes("impaling")) {
-            contents += `<p>Impaling Damage: <strong>${itemData.damageEffect + (used * 2)}</strong>, unless target retreats</p>`;
+            contents += `<p>Impaling Damage: <strong>${itemData.damageEffect + (usedsuccesses * 2)}</strong>, unless target retreats</p>`;
         }
 
-        contents += `<p>All effects: ${itemData.effect}</p></div></div></div>`;
+        if (itemData.effectsSplit.includes("penetrating")) {
+            contents += `<p>Penetrating Attack, no armor for Soak</p>`;
+        }
+        if (itemData.effectsSplit.includes("weak")) {
+            contents += `<p>Weak Attack, roll Soak twice</p>`;
+        }
+        contents += `<p>All effects: ${itemData.effect}</p>`;
 
+        contents += `</div></div></div>`;
+        let chatData = {
+            content: contents,
+            speaker: getMacroSpeaker(this.actor)
+        };
+        ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
+        CONFIG.ChatMessage.documentClass.create(chatData);
+    }
+
+    /**
+     * Send a message to chat simply to report that the attack failed
+     */
+    failedAttackToChat() { // This function is mostly used for resist rolls to specifically note if the resistance check failed for the attacker
+        if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
+            return; // If the system is turned off, return out
+        }
+        const item = this.data;
+        const itemData = item.data;
+
+        let contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
+        <img class="item-image" src="${item.img}" title="${item.name}" width="25" height="25"/>
+        <h3 class="chat-header-lesser">Damage of ${item.name}</h3>
+        </header>
+        <div class="chat-content"><div class="chat-item">`;
+
+        if (itemData.hasResist) {
+            contents += `<p style="color:${CommonSystemInfo.resultColors.failure}">Attack was resisted completely</p>`;
+        } else {
+            contents += `<p style="color:${CommonSystemInfo.resultColors.failure}">Attack did not hit at all</p>`;
+        }
+
+        contents += `</div></div></div>`;
         let chatData = {
             content: contents,
             speaker: getMacroSpeaker(this.actor)
@@ -466,7 +609,7 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, 2, (x => { this.sendAttackToChat(x); }));
+        this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, 2, (x => { this.automaticDamageCalculation(x); }));
     }
 
     defenseRoll() {
@@ -500,7 +643,7 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, 3);
+        this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, 3, (x => { this.automaticDamageCalculation(x); }));
     }
 
     sparkRoll() {
@@ -517,7 +660,7 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        rollHighestOneLine(data.sparkDie, "Rolling Spark die...", this.actor);
+        rollHighestOneLine(data.sparkDie, "Rolling Spark die...", "Roll Spark die", this.actor);
     }
 
     /**
