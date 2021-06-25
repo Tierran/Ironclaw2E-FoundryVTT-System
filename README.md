@@ -30,7 +30,7 @@ Some aspects are still almost certainly WIP.
 
 By default, certain automation options are turned off, in case they conflict with the way a GM wants to run the system. These can be turned on in the system configuration at their leisure.  
  - **Automated encumbrance system:** Based on carried weight and worn armors, the system will give the actors encumbrance conditions as appropriate. The system is tested and should work fine, but it is potentially slightly unstable due to its implementation.  
- - **Auto-calculate attack damage:** When attacking with a weapon, the system will attempt to check what the potential damage with the weapon would be, based on the successes and effects, then create a chat message with that information. Rolls representing counter-attacks and resisted attacks can be right-clicked to resolve them, triggering a popup to input the needed data to figure out how much damage the attack ultimately causes.  
+ - **Auto-calculate attack damage:** When attacking with a weapon, the system will attempt to check what the potential damage with the weapon would be, based on the successes and effects, then create a chat message with that information. Rolls representing counter-attacks and resisted attacks can be right-clicked to resolve them, triggering a popup to input the needed data to figure out how much damage the attack ultimately causes, or in case of turning a resisted attack into a normal one (for, say, when the enemy tries and fails to counter) it just does it based on the original roll.  
 
 ### How to roll
 

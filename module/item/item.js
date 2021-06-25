@@ -341,7 +341,6 @@ export class Ironclaw2EItem extends Item {
         if (!info) { // Return out in case the info turns out blank
             return;
         }
-        console.log(this);
 
         const item = this.data;
         const itemData = item.data;
@@ -353,10 +352,10 @@ export class Ironclaw2EItem extends Item {
             return; // If the weapon has no effects listed, return out
         }
         if (!info.tnData) { // If the roll info is in highest mode, assume the attack was a counter-attack, and set the flags accordingly
-            info.message.setFlag("ironclaw2e", "hangingAttack", "counter");
-            info.message.setFlag("ironclaw2e", "hangingWeapon", this.id);
-            info.message.setFlag("ironclaw2e", "hangingActor", this.actor.id);
-            info.update();
+            let updatedata = {
+                flags: { "ironclaw2e.hangingAttack": "counter", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor.id, "ironclaw2e.hangingToken": this.actor.token.id }
+            };
+            info.message.update(updatedata);
             return; // Return out of a counter-attack
         }
 
@@ -369,29 +368,30 @@ export class Ironclaw2EItem extends Item {
         const usedsuccesses = success ? successes : ties;
 
         if (ignoreresist === false && itemData.hasResist && usedsuccesses > 0) { // If the weapon's attack was a successful resist roll, set the flags accordingly and return out
-            info.message.setFlag("ironclaw2e", "hangingAttack", "resist");
-            info.message.setFlag("ironclaw2e", "hangingWeapon", this.id);
-            info.message.setFlag("ironclaw2e", "hangingActor", this.actor.id);
-            if (success) {
-                info.message.setFlag("ironclaw2e", "resistSuccess", true);
-                info.message.setFlag("ironclaw2e", "resistSuccessCount", usedsuccesses);
-            }
-            else {
-                info.message.setFlag("ironclaw2e", "resistSuccess", false);
-                info.message.setFlag("ironclaw2e", "resistSuccessCount", usedsuccesses);
-            }
-            info.update();
+            let updatedata = {
+                flags: {
+                    "ironclaw2e.hangingAttack": "resist", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor.id, "ironclaw2e.hangingToken": this.actor.token.id,
+                    "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses
+                }
+            };
+            info.message.update(updatedata);
             return; // Return out of a resisted weapon
         }
 
         this.successfulAttackToChat(success, usedsuccesses);
     }
 
+    /**
+     * Resolve a counter-attack roll by giving it a TN from which to calculate damage
+     */
     async resolveCounterAttack(message) {
         let info = await copyToRollTNDialog(message, "Highest die of opponent's Attack");
         this.automaticDamageCalculation(info, true); // No separate return in case of null, the calculation function itself checks for null
     }
 
+    /**
+     * Resolve a resisted attack by giving it the opposition's resist successes, from which it can calculate damage
+     */
     async resolveResistedAttack(message) {
         let confirmed = false;
         const success = message.getFlag("ironclaw2e", "resistSuccess");
@@ -404,7 +404,9 @@ export class Ironclaw2EItem extends Item {
      <form class="ironclaw2e">
       <div class="form-group">
        <span class="small-label">Successes: ${successes}</span>
-       <span class="small-text">${success?"":"Original attack roll was <strong>Tied</strong>, tie needs to be broken in favor of the attacker for the successes to apply."}</span>
+      </div>
+      <div class="form-group">
+       <span class="small-text">${success ? "" : "Original attack roll was <strong>Tied</strong>, tie needs to be broken in favor of the attacker for the successes to apply."}</span>
       </div>
       <div class="form-group">
        <label class="normal-label" for="opfor">Opposing Successes:</label>
@@ -425,7 +427,7 @@ export class Ironclaw2EItem extends Item {
                     }
                 },
                 default: "one",
-                render: html => { document.getElementById("tn").focus(); },
+                render: html => { document.getElementById("opfor").focus(); },
                 close: html => {
                     if (confirmed) {
                         let OPFOR = html.find('[name=opfor]')[0].value;
@@ -439,7 +441,7 @@ export class Ironclaw2EItem extends Item {
             dlog.render(true);
         });
         let opposingsuccesses = await resolvedopfor;
-        if (!opposingsuccesses) return; // Return out if the user just cancels the prompt
+        if (opposingsuccesses === null) return; // Return out if the user just cancels the prompt
 
         if (successes > opposingsuccesses) {
             this.successfulAttackToChat(true, successes - opposingsuccesses);
@@ -449,6 +451,9 @@ export class Ironclaw2EItem extends Item {
         }
     }
 
+    /**
+     * Resolve a resisted attack as if it were just an ordinary attack roll, in case it was countered and turned into one
+     */
     resolveAsNormalAttack(message) {
         const success = message.getFlag("ironclaw2e", "resistSuccess");
         const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
@@ -496,7 +501,7 @@ export class Ironclaw2EItem extends Item {
         if (itemData.effectsSplit.includes("weak")) {
             contents += `<p>Weak Attack, roll Soak twice</p>`;
         }
-        contents += `<p>All effects: ${itemData.effect}</p>`;
+        contents += `<p class="small-text">All effects: ${itemData.effect}</p>`;
 
         contents += `</div></div></div>`;
         let chatData = {
@@ -524,9 +529,9 @@ export class Ironclaw2EItem extends Item {
         <div class="chat-content"><div class="chat-item">`;
 
         if (itemData.hasResist) {
-            contents += `<p style="color:${CommonSystemInfo.resultColors.failure}">Attack was resisted completely</p>`;
+            contents += `<p style="color:${CommonSystemInfo.resultColors.failure}">Attack was resisted completely!</p>`;
         } else {
-            contents += `<p style="color:${CommonSystemInfo.resultColors.failure}">Attack did not hit at all</p>`;
+            contents += `<p style="color:${CommonSystemInfo.resultColors.failure}">Attack did not hit at all!</p>`;
         }
 
         contents += `</div></div></div>`;

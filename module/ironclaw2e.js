@@ -254,17 +254,17 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const active = game.settings.get("ironclaw2e", "calculateAttackEffects");
                 const type = message.getFlag("ironclaw2e", "hangingAttack");
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
-                const actorid = message.getFlag("ironclaw2e", "hangingActor");
-                // Check whether the attack effect calculation is active, the message has a roll, has a weapon id and actor id, and has explicitly been set to have a hanging counter-attack
-                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && actorid && type === "counter";
+                // Check whether the attack effect calculation is active, the message has a roll, has a weapon id set and has explicitly been set to have a hanging counter-attack
+                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && type === "counter";
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
             },
             callback: li => {
                 const message = game.messages.get(li.data("messageId"));
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
                 const actorid = message.getFlag("ironclaw2e", "hangingActor");
-                const actor = game.actors.get(actorid);
-                const weapon = actor.items.get(weaponid);
+                const tokenid = message.getFlag("ironclaw2e", "hangingToken");
+                const actor = game.scenes.current.tokens.get(tokenid)?.actor || game.actors.get(actorid);
+                const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
                 weapon?.resolveCounterAttack?.(message);
             }
         },
@@ -285,8 +285,9 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const message = game.messages.get(li.data("messageId"));
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
                 const actorid = message.getFlag("ironclaw2e", "hangingActor");
-                const actor = game.actors.get(actorid);
-                const weapon = actor.items.get(weaponid);
+                const tokenid = message.getFlag("ironclaw2e", "hangingToken");
+                const actor = game.scenes.current.tokens.get(tokenid)?.actor || game.actors.get(actorid);
+                const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
                 weapon?.resolveResistedAttack?.(message);
             }
         },
@@ -307,14 +308,9 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const message = game.messages.get(li.data("messageId"));
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
                 const actorid = message.getFlag("ironclaw2e", "hangingActor");
-                const actor = game.actors.get(actorid);
-                const weapon = actor.items.get(weaponid);
-                console.log(message);
-                console.log(actorid);
-                console.log(weaponid);
-                console.log(game.actors);
-                console.log(actor.items);
-                console.log(weapon);
+                const tokenid = message.getFlag("ironclaw2e", "hangingToken");
+                const actor = game.scenes.current.tokens.get(tokenid)?.actor || game.actors.get(actorid);
+                const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
                 weapon?.resolveAsNormalAttack?.(message);
             }
         });
