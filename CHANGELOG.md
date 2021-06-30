@@ -1,3 +1,10 @@
+### 0.3.2 Localized calculation release
+ - Upgraded to FoundryVTT 0.8.8
+ - Damage auto-calculation can now handle counter-attacks and resisted attacks, a "hanging" roll can be resolved through the right-click menu
+ - Added most of the text from scripts to the localization system
+ - Put actual dice amounts on sheets
+ - Added "Hiding" as a status effect
+
 ### 0.3.1 Effect split release
  - Upgraded to FoundryVTT 0.8.7
  - Split off the "Resist with ... vs. 3" weapon effect from other effects into its own field
