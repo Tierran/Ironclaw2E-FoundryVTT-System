@@ -3,7 +3,7 @@
 This is a system for running the second edition version of Ironclaw (the corebook named Ironclaw Omnibus: Squaring the Circle) in Foundry VTT.  
 The system has full sheets for characters and simpler sheets for 'mooks', ie. relatively unimportant / minor NPC's to be mass-copied onto the field, and beasts. The system also has multiple item types to represent gifts and the different gear characters can acquire, plus a general one with no mechanical systems to it.  
 
-For arbitrary rolls and for people that prefer external sheets, there are two sets of ready-made macros included that can be used to roll arbitrary dice pools without creating an actor for them.  
+For arbitrary rolls and for people that prefer external sheets, there are two sets of ready-made macros included that can be used to roll arbitrary dice pools without creating an actor for them. In addition, there is a ready macro to popup the damage dialog for the currently selected actor.  
 
 While the system has compendiums, they **do not** contain characters, gifts, gear or other notable game content from the Ironclaw books. Instead, they include paraphrased basic system information for quick reference as well as the aforementioned macros.
 
