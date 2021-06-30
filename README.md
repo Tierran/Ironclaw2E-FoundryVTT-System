@@ -47,7 +47,7 @@ Currently, the system does not allow dice pools to include items. Instead, the s
 For Chat Commands: The /iroll command will take a one line format input after the command to roll dice as a highest roll type, with a semicolon followed by a number at the end changing it to a TN roll. Eg. "/iroll 3d6,d8" or "/iroll 3d6,d8;5"  
 The /actorroll command takes a dice pool format input, again with an additional semicolon and number changing the default roll type from highest to TN. Eg. "/actorroll dodge,speed;d12" or "/actorroll will,presence;;3"  
 In addition, /actorroll can take a simple "soak" or "defense" as input. In the former case, it will open a standard soak roll popup, while the latter opens a dodge defense popup, since "dodge" would normally refer to a roll of pure dodge skill, rather than the defense.  
-The /itemuse command takes an item name and uses that to activate a normal item use, as if the item was used through a hotbar macro. The *item* in this case refers to all things FoundryVTT considers items, not just the gear type. The name must be an **exact** match.  
+The /itemuse command takes an item name and uses that to activate a normal item use, as if the item was used through a hotbar macro. The *item* in this case refers to all things FoundryVTT considers items (armor, gifts, weapons, illumination...), not just the gear type. The name must be an **exact** match.  
 
 ### Conditions
 
