@@ -406,21 +406,21 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         let confirmed = false;
         let dlog = new Dialog({
-            title: "Confirmation Box",
+            title: game.i18n.localize("ironclaw2e.dialog.statusResetConfirmation.title"),
             content: `
      <form class="ironclaw2e">
-      <span>Are you sure you want to reset all status effects?</span>
+      <span>${game.i18n.localize("ironclaw2e.dialog.statusResetConfirmation.note")}</span>
      </form>
      `,
             buttons: {
                 one: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: "Yes",
+                    label: game.i18n.localize("ironclaw2e.yes"),
                     callback: () => confirmed = true
                 },
                 two: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: "No",
+                    label: game.i18n.localize("ironclaw2e.no"),
                     callback: () => confirmed = false
                 }
             },

@@ -181,39 +181,40 @@ export async function copyToRollHighest(message, sendinchat = true) {
  * @param {number} d6s Number of d6 dice
  * @param {number} d4s Number of d4 dice
  * @param {string} label The label given to the roll function to display in the chat message
- * @param {string} rolltitle The title shown as the dialog's purpose
+ * @param {string} rolltitle The title shown as the dialog's purpose, translated if one is found
  * @param {Actor} rollingactor The actor for which the roll is for
  */
 export async function rollTargetNumberDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0, label = "", rolltitle = "", rollingactor = null) {
     let confirmed = false;
+    const usetranslation = !rolltitle || game.i18n.has(rolltitle); // Use translations if either rolltitle does not exist, or it exists and has a translation equivalent
     let speaker = getMacroSpeaker(rollingactor);
     let resolvedroll = new Promise((resolve) => {
         let dlog = new Dialog({
-            title: (rolltitle ? rolltitle : "Target Number Roll") + " for " + speaker.alias,
+            title: usetranslation ? game.i18n.format(rolltitle || "ironclaw2e.dialog.macroDefault.titleTN", { "name": speaker.alias }) : speaker.alias + ": " + rolltitle,
             content: `
      <form class="ironclaw2e">
       <div class="form-group">
-       <label>Target Number of Roll:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.targetNumber")}:</label>
 	   <input id="tn" name="tn" value="${tn.toString()}" onfocus="this.select();"></input>
       </div>
       <div class="form-group">
-       <label>D12 dice to Roll:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d12Dice")}:</label>
 	   <input id="d12s" name="d12s" value="${d12s != 0 ? d12s.toString() : ""}" onfocus="this.select();"></input>
       </div>
 	  <div class="form-group">
-       <label>D10 dice to Roll:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d10Dice")}:</label>
 	   <input id="d10s" name="d10s" value="${d10s != 0 ? d10s.toString() : ""}" onfocus="this.select();"></input>
       </div>
 	  <div class="form-group">
-       <label>D8 dice to Roll:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d8Dice")}:</label>
 	   <input id="d8s" name="d8s" value="${d8s != 0 ? d8s.toString() : ""}" onfocus="this.select();"></input>
       </div>
 	  <div class="form-group">
-       <label>D6 dice to Roll:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d6Dice")}:</label>
 	   <input id="d6s" name="d6s" value="${d6s != 0 ? d6s.toString() : ""}" onfocus="this.select();"></input>
       </div>
 	  <div class="form-group">
-       <label>D4 dice to Roll:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d4Dice")}:</label>
 	   <input id="d4s" name="d4s" value="${d4s != 0 ? d4s.toString() : ""}" onfocus="this.select();"></input>
       </div>
      </form>
@@ -221,12 +222,12 @@ export async function rollTargetNumberDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0
             buttons: {
                 one: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: "Roll!",
+                    label: game.i18n.localize("ironclaw2e.dialog.roll"),
                     callback: () => confirmed = true
                 },
                 two: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: "Cancel",
+                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
                     callback: () => confirmed = false
                 }
             },
@@ -266,35 +267,36 @@ export async function rollTargetNumberDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0
  * @param {number} d6s Number of d6 dice
  * @param {number} d4s Number of d4 dice
  * @param {string} label The label given to the roll function to display in the chat message
- * @param {string} rolltitle The title shown as the dialog's purpose
+ * @param {string} rolltitle The title shown as the dialog's purpose, translated if one is found
  * @param {Actor} rollingactor The actor for which the roll is for
  */
 export async function rollHighestDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0, label = "", rolltitle = "", rollingactor = null) {
     let confirmed = false;
+    const usetranslation = !rolltitle || game.i18n.has(rolltitle); // Use translations if either rolltitle does not exist, or it exists and has a translation equivalent
     let speaker = getMacroSpeaker(rollingactor);
     let resolvedroll = new Promise((resolve) => {
         let dlog = new Dialog({
-            title: (rolltitle ? rolltitle : "Highest Roll") + " for " + speaker.alias,
+            title: usetranslation ? game.i18n.format(rolltitle || "ironclaw2e.dialog.macroDefault.titleHighest", { "name": speaker.alias }) : speaker.alias + ": " + rolltitle,
             content: `
      <form class="ironclaw2e">
       <div class="form-group">
-       <label>D12 dice to Roll:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d12Dice")}:</label>
 	   <input id="d12s" name="d12s" value="${d12s != 0 ? d12s.toString() : ""}" onfocus="this.select();"></input>
       </div>
 	  <div class="form-group">
-       <label>D10 dice to Roll:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d10Dice")}:</label>
 	   <input id="d10s" name="d10s" value="${d10s != 0 ? d10s.toString() : ""}" onfocus="this.select();"></input>
       </div>
 	  <div class="form-group">
-       <label>D8 dice to Roll:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d8Dice")}:</label>
 	   <input id="d8s" name="d8s" value="${d8s != 0 ? d8s.toString() : ""}" onfocus="this.select();"></input>
       </div>
 	  <div class="form-group">
-       <label>D6 dice to Roll:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d6Dice")}:</label>
 	   <input id="d6s" name="d6s" value="${d6s != 0 ? d6s.toString() : ""}" onfocus="this.select();"></input>
       </div>
 	  <div class="form-group">
-       <label>D4 dice to Roll:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d4Dice")}:</label>
 	   <input id="d4s" name="d4s" value="${d4s != 0 ? d4s.toString() : ""}" onfocus="this.select();"></input>
       </div>
      </form>
@@ -302,12 +304,12 @@ export async function rollHighestDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4
             buttons: {
                 one: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: "Roll!",
+                    label: game.i18n.localize("ironclaw2e.dialog.roll"),
                     callback: () => confirmed = true
                 },
                 two: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: "Cancel",
+                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
                     callback: () => confirmed = false
                 }
             },
@@ -342,23 +344,24 @@ export async function rollHighestDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4
  * @param {number} tnnum The target number for the roll
  * @param {string} readydice The dice for the roll, in standard dice notation to be parsed
  * @param {string} label The label given to the roll function to display in the chat message
- * @param {string} rolltitle The title shown as the dialog's purpose
+ * @param {string} rolltitle The title shown as the dialog's purpose, translated if one is found
  * @param {Actor} rollingactor The actor for which the roll is for
  */
 export async function rollTargetNumberOneLine(tnnum = 3, readydice = "", label = "", rolltitle = "", rollingactor = null) {
     let confirmed = false;
+    const usetranslation = !rolltitle || game.i18n.has(rolltitle); // Use translations if either rolltitle does not exist, or it exists and has a translation equivalent
     let speaker = getMacroSpeaker(rollingactor);
     let resolvedroll = new Promise((resolve) => {
         let dlog = new Dialog({
-            title: (rolltitle ? rolltitle : "Target Number Roll") + " for " + speaker.alias,
+            title: usetranslation ? game.i18n.format(rolltitle || "ironclaw2e.dialog.macroDefault.titleTN", { "name": speaker.alias }) : speaker.alias + ": " + rolltitle,
             content: `
      <form class="ironclaw2e">
       <div class="form-group">
-       <label>Target Number of Roll:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.targetNumber")}:</label>
 	   <input id="tn" name="tn" value="${tnnum}" onfocus="this.select();"></input>
       </div>
       <div class="form-group">
-       <label>Dice to roll:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.oneLineDice")}:</label>
       </div>
 	  <div class="form-group">
 	   <input id="dices" name="dices" value="${readydice}" onfocus="this.select();"></input>
@@ -368,12 +371,12 @@ export async function rollTargetNumberOneLine(tnnum = 3, readydice = "", label =
             buttons: {
                 one: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: "Roll!",
+                    label: game.i18n.localize("ironclaw2e.dialog.roll"),
                     callback: () => confirmed = true
                 },
                 two: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: "Cancel",
+                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
                     callback: () => confirmed = false
                 }
             },
@@ -401,19 +404,20 @@ export async function rollTargetNumberOneLine(tnnum = 3, readydice = "", label =
  * No inputs need to actually be given, but default values can be inputted
  * @param {string} readydice The dice for the roll, in standard dice notation to be parsed
  * @param {string} label The label given to the roll function to display in the chat message
- * @param {string} rolltitle The title shown as the dialog's purpose
+ * @param {string} rolltitle The title shown as the dialog's purpose, translated if one is found
  * @param {Actor} rollingactor The actor for which the roll is for
  */
 export async function rollHighestOneLine(readydice = "", label = "", rolltitle = "", rollingactor = null) {
     let confirmed = false;
+    const usetranslation = !rolltitle || game.i18n.has(rolltitle); // Use translations if either rolltitle does not exist, or it exists and has a translation equivalent
     let speaker = getMacroSpeaker(rollingactor);
     let resolvedroll = new Promise((resolve) => {
         let dlog = new Dialog({
-            title: (rolltitle ? rolltitle : "Highest Roll") + " for " + speaker.alias,
+            title: usetranslation ? game.i18n.format(rolltitle || "ironclaw2e.dialog.macroDefault.titleHighest", { "name": speaker.alias }) : speaker.alias + ": " + rolltitle,
             content: `
      <form class="ironclaw2e">
       <div class="form-group">
-       <label>Dice to roll:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.oneLineDice")}:</label>
       </div>
 	  <div class="form-group">
 	   <input id="dices" name="dices" value="${readydice}" onfocus="this.select();"></input>
@@ -423,12 +427,12 @@ export async function rollHighestOneLine(readydice = "", label = "", rolltitle =
             buttons: {
                 one: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: "Roll!",
+                    label: game.i18n.localize("ironclaw2e.dialog.roll"),
                     callback: () => confirmed = true
                 },
                 two: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: "Cancel",
+                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
                     callback: () => confirmed = false
                 }
             },
@@ -452,17 +456,18 @@ export async function rollHighestOneLine(readydice = "", label = "", rolltitle =
 /**
  * Function that takes a message with a roll and asks for a target number to use in copying the results of the roll to a new one
  * @param {ChatMessage} message The chat message to copy the roll from, assuming it has one
- * @param {string} rolltitle The title shown as the dialog's purpose
+ * @param {string} rolltitle The title shown as the dialog's purpose, translated if one is found
  */
 export async function copyToRollTNDialog(message, rolltitle = "") {
     let confirmed = false;
+    const usetranslation = !rolltitle || game.i18n.has(rolltitle); // Use translations if either rolltitle does not exist, or it exists and has a translation equivalent
     let resolvedroll = new Promise((resolve) => {
         let dlog = new Dialog({
-            title: (rolltitle ? rolltitle : "Change Roll to TN"),
+            title: usetranslation ? game.i18n.format(rolltitle || "ironclaw2e.dialog.macroDefault.titleCopyTN") : rolltitle,
             content: `
      <form class="ironclaw2e">
       <div class="form-group">
-       <label>Target Number:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.targetNumberCopy")}:</label>
       </div>
 	  <div class="form-group">
 	   <input id="tn" name="tn" onfocus="this.select();"></input>
@@ -472,12 +477,12 @@ export async function copyToRollTNDialog(message, rolltitle = "") {
             buttons: {
                 one: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: "Copy",
+                    label: game.i18n.localize("ironclaw2e.dialog.copy"),
                     callback: () => confirmed = true
                 },
                 two: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: "Cancel",
+                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
                     callback: () => confirmed = false
                 }
             },
@@ -544,17 +549,17 @@ export function formRoll(d12, d10, d8, d6, d4) {
  */
 function flavorStringTN(successes, ties, botched, label) {
     if (successes > 0) {
-        return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:20px;color:${CommonSystemInfo.resultColors.success}">Success, with ${successes} successes.</p>`;
+        return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:${CommonSystemInfo.resultFontSize};color:${CommonSystemInfo.resultColors.success}">${game.i18n.format("ironclaw2e.chat.success", { "successes": successes })}</p>`;
     }
     else {
         if (botched) {
-            return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:20px;color:${CommonSystemInfo.resultColors.botch}">Botch! All ones!</p>`;
+            return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:${CommonSystemInfo.resultFontSize};color:${CommonSystemInfo.resultColors.botch}">${game.i18n.localize("ironclaw2e.chat.botch")}</p>`;
         }
         else if (ties > 0) {
-            return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:20px;color:${CommonSystemInfo.resultColors.tie}">Tie, with ${ties} tied dice.</p>`;
+            return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:${CommonSystemInfo.resultFontSize};color:${CommonSystemInfo.resultColors.tie}">${game.i18n.format("ironclaw2e.chat.tie", { "ties": ties })}</p>`;
         }
         else {
-            return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:20px;color:${CommonSystemInfo.resultColors.failure}">Failure. TN not exceeded or met.</p>`;
+            return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:${CommonSystemInfo.resultFontSize};color:${CommonSystemInfo.resultColors.failure}">${game.i18n.localize("ironclaw2e.chat.failure")}</p>`;
         }
     }
 }
@@ -566,7 +571,8 @@ function flavorStringTN(successes, ties, botched, label) {
  * @returns {string} The formed flavor string
  */
 function flavorStringHighest(highest, label) {
-    return (label.length > 0 ? "<p>" + label + "</p>" : "") + "<p style=\"font-size:20px;color:" + (highest > 1 ? CommonSystemInfo.resultColors.normal : CommonSystemInfo.resultColors.botch) + "\">Highest die was " + highest + "</p>";
+    return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:${CommonSystemInfo.resultFontSize};
+    color:${(highest > 1 ? CommonSystemInfo.resultColors.normal : CommonSystemInfo.resultColors.botch)}">${game.i18n.format("ironclaw2e.chat.highest", { "highest": highest })}</p>`;
 }
 
 /**

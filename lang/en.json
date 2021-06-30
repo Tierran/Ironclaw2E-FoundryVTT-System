@@ -11,9 +11,14 @@
   "ITEM.TypeExtracareer": "Extra Career",
   "ITEM.TypeItem": "Item",
 
+
   "ironclaw2e.speeds.stride": "Stride",
   "ironclaw2e.speeds.dash": "Dash + Stride",
   "ironclaw2e.speeds.run": "Run",
+
+  "ironclaw2e.yes": "Yes",
+  "ironclaw2e.no": "No",
+  "ironclaw2e.never": "Never",
 
   "ironclaw2e.copyToTN": "Copy To TN Roll",
   "ironclaw2e.changeTN": "Change TN",
@@ -22,12 +27,36 @@
   "ironclaw2e.resolveResist": "Resolve The Resisted Attack",
   "ironclaw2e.resolveAsNormal": "Resolve As Normal Attack",
 
+
   "ironclaw2e.ui.encumbranceAutoActive": "Auto-Encumbrance management active, condition modification cancelled.",
   "ironclaw2e.ui.removeDefaultConditionsNag": "Combat Utility Belt detected, but default conditions are not removed. The GM should disable them from the Enhanced Conditions settings.",
+  "ironclaw2e.ui.macroOwnedItemsWarning": "You can only create macro buttons for owned Items.",
+  "ironclaw2e.ui.actorDoesNotHaveItem": "Your controlled Actor does not have an item named {itemName}.",
+  "ironclaw2e.ui.actorNotFoundForMacro": "No actor found to popup macro for.",
+  "ironclaw2e.ui.popupNotFoundForMacro": "No specific popup command found for {popup}.",
+  "ironclaw2e.ui.actorNotSelectedActorroll": "No actor selected for /actorroll.",
+  "ironclaw2e.ui.actorNotFoundForSpeaker": "No actor found for speaker: {name}",
 
-  "ironclaw2e.chat.iroll": "Basic Ironclaw roll",
-  "ironclaw2e.chat.actorroll": "Actor dice pool popup",
-  "ironclaw2e.chat.itemuse": "Use an item",
+
+  "ironclaw2e.actor.traits": "Traits",
+  "ironclaw2e.actor.skills": "Skills",
+
+
+  "ironclaw2e.chat.success": "Success, with {successes} successes.",
+  "ironclaw2e.chat.tie": "Tie, with {ties} tied dice.",
+  "ironclaw2e.chat.failure": "Failure. TN not exceeded or met.",
+  "ironclaw2e.chat.botch": "Botch! All ones!",
+  "ironclaw2e.chat.highest": "Highest die was {highest}",
+  "ironclaw2e.chat.rollingHighest": "Rolling highest",
+  "ironclaw2e.chat.rollingTN": "Rolling against TN",
+  "ironclaw2e.chat.rollingForInitiative": "{name} rolling for initiative:",
+  "ironclaw2e.chat.rollingInitiative": "Rolling initiative",
+  "ironclaw2e.chat.rollingInitiativeCheck": "Rolling the initiative check",
+
+  "ironclaw2e.command.iroll": "Basic Ironclaw roll",
+  "ironclaw2e.command.actorroll": "Actor dice pool popup",
+  "ironclaw2e.command.itemuse": "Use an item",
+
 
   "ironclaw2e.combat.sideBasedInitiative": "Use side-based initiative",
   "ironclaw2e.combat.sideBasedInitiativeHint": "Use the default side-based initiative of Ironclaw. If set, select from the dropdown list below for the exact order. If not set, use the alternative, more traditional initiative based on the highest die in the Initiative check and breaking ties on the second highest.",
@@ -41,6 +70,7 @@
   "ironclaw2e.combat.enemiesPcsAllies": "Enemies, Players and Allies",
   "ironclaw2e.combat.manualTN": "Set TN manually",
   "ironclaw2e.combat.manualTNHint": "Set the initiative check TN manually. If set to -1, the system will do its best to automatically determine the appropriate TN based on the distance to the nearest enemy token.",
+
 
   "ironclaw2e.config.preferTokenName": "WORLD: Use token names",
   "ironclaw2e.config.preferTokenNameHint": "If checked, dice rollers will not use actor's own names and will instead use the name and presentation of their tokens, when available. Always works for synthetic actors, whereas linked actors require an active scene.",
@@ -57,6 +87,148 @@
   "ironclaw2e.config.defaultSendDamageHint": "If checked, the damage-applying dialog will have the 'Send to chat' option checked by default.",
   "ironclaw2e.config.confirmItemInfo": "CLIENT: Confirm sending item info",
   "ironclaw2e.config.confirmItemInfoHint": "If checked, the system will pop a confirmation dialog before actually sending information about items to the chat.",
+
+
+  "ironclaw2e.dialog.roll": "Roll!",
+  "ironclaw2e.dialog.resolve": "Resolve",
+  "ironclaw2e.dialog.add": "Add",
+  "ironclaw2e.dialog.send": "Send",
+  "ironclaw2e.dialog.copy": "Copy",
+  "ironclaw2e.dialog.refresh": "Refresh",
+  "ironclaw2e.dialog.exhaust": "Exhaust",
+  "ironclaw2e.dialog.pick": "Pick",
+  "ironclaw2e.dialog.cancel": "Cancel",
+  "ironclaw2e.dialog.sendToChat": "Send to Chat?",
+
+  "ironclaw2e.dialog.macroDefault.titleTN": "Target Number Roll for {name}",
+  "ironclaw2e.dialog.macroDefault.titleCopyTN": "Change Roll to TN",
+  "ironclaw2e.dialog.macroDefault.titleHighest": "Highest Roll for {name}",
+  "ironclaw2e.dialog.macroDefault.targetNumber": "Target Number of Roll",
+  "ironclaw2e.dialog.macroDefault.targetNumberCopy": "Target Number to use",
+  "ironclaw2e.dialog.macroDefault.d12Dice": "D12 dice to Roll",
+  "ironclaw2e.dialog.macroDefault.d10Dice": "D10 dice to Roll",
+  "ironclaw2e.dialog.macroDefault.d8Dice": "D8 dice to Roll",
+  "ironclaw2e.dialog.macroDefault.d6Dice": "D6 dice to Roll",
+  "ironclaw2e.dialog.macroDefault.d4Dice": "D4 dice to Roll",
+  "ironclaw2e.dialog.macroDefault.oneLineDice": "Dice to Roll",
+
+  "ironclaw2e.dialog.dicePool.title": "Choose Pools",
+  "ironclaw2e.dialog.dicePool.header": "Choose dice pools for {name}",
+  "ironclaw2e.dialog.dicePool.showUp": "Showing up in chat as {alias}",
+  "ironclaw2e.dialog.dicePool.useTN": "Check to use TN",
+  "ironclaw2e.dialog.dicePool.applyBurdened": "Apply Burdened Limit automatically",
+  "ironclaw2e.dialog.dicePool.hidingExplanation": "Improved cover and concealment",
+  "ironclaw2e.dialog.dicePool.extraDice": "Extra dice",
+  "ironclaw2e.dialog.dicePool.limitAllLabel": "Limit All Dice Pools",
+  "ironclaw2e.dialog.dicePool.limitAllPlaceholder": "Max die type",
+
+  "ironclaw2e.dialog.dicePool.guardSoak": "Guard soak",
+  "ironclaw2e.dialog.dicePool.guardSoakVeteran": "Veteran guard soak",
+  "ironclaw2e.dialog.dicePool.guarding": "Guarding",
+  "ironclaw2e.dialog.dicePool.guardingVeteran": "Veteran guarding",
+
+  "ironclaw2e.dialog.damageCalc.title": "Damage Calculation for {name}",
+  "ironclaw2e.dialog.damageCalc.header": "Add damage to {name}",
+  "ironclaw2e.dialog.damageCalc.received": "Damage received",
+  "ironclaw2e.dialog.damageCalc.soaked": "Soaked",
+  "ironclaw2e.dialog.damageCalc.conditionDamage": "Condition Damage",
+  "ironclaw2e.dialog.damageCalc.conditionDamageAdded": "Damage added by {conditions}",
+  "ironclaw2e.dialog.damageCalc.conditionDamageNothing": "No damage added by conditions",
+  "ironclaw2e.dialog.damageCalc.knockoutStrike": "Knockout Strike?",
+  "ironclaw2e.dialog.damageCalc.nonLethal": "Non-lethal attack?",
+  "ironclaw2e.dialog.damageCalc.chatMessage": "{name} is {condition}!",
+
+  "ironclaw2e.dialog.addCondition.title": "Adding Condition to {name}",
+  "ironclaw2e.dialog.addCondition.header": "Add condition to {name}?",
+  "ironclaw2e.dialog.addCondition.toAdd": "Condition to add",
+
+  "ironclaw2e.dialog.statusResetConfirmation.title": "Status Condition Reset",
+  "ironclaw2e.dialog.statusResetConfirmation.note": "Are you sure you want to reset all status effects?",
+
+  "ironclaw2e.dialog.itemInfo.title": "Send item info for {name}",
+  "ironclaw2e.dialog.itemInfo.header": "Send {name} info to chat?",
+
+  "ironclaw2e.dialog.counterResolve.title": "Highest die of opponent's Attack",
+
+  "ironclaw2e.dialog.resistResolve.title": "How many opposing successes?",
+  "ironclaw2e.dialog.resistResolve.successes": "Successes",
+  "ironclaw2e.dialog.resistResolve.tiedMessage": "Original attack roll was <strong>Tied</strong>, tie needs to be broken in favor of the attacker for the successes to apply.",
+  "ironclaw2e.dialog.resistResolve.opposing": "Opposing Successes",
+
+  "ironclaw2e.dialog.sparkRoll.title": "Roll Spark die",
+  "ironclaw2e.dialog.sparkRoll.label": "Rolling Spark die...",
+
+  "ironclaw2e.dialog.refreshGift.title": "Refresh Gift for {name}",
+  "ironclaw2e.dialog.refreshGift.header": "Refresh {item} for {actor}?",
+  "ironclaw2e.dialog.refreshGift.chatMessage": "<strong>Refreshed</strong> {name}!",
+
+  "ironclaw2e.dialog.exhaustGift.title": "Exhaust Gift for {name}",
+  "ironclaw2e.dialog.exhaustGift.header": "Exhaust {item} for {actor}?",
+  "ironclaw2e.dialog.exhaustGift.chatMessage": "{name} was <strong>Exhausted</strong>!",
+
+  "ironclaw2e.dialog.weaponRoll.title": "Weapon Roll Type for {name}",
+  "ironclaw2e.dialog.weaponRoll.header": "Choose {item}'s roll type for {actor}",
+  "ironclaw2e.dialog.weaponRoll.attack": "Attack",
+  "ironclaw2e.dialog.weaponRoll.spark": "Spark",
+  "ironclaw2e.dialog.weaponRoll.parry": "Parry",
+  "ironclaw2e.dialog.weaponRoll.counter": "Counter",
+
+
+  "ironclaw2e.chatInfo.itemInfo.tags": "Tags",
+  "ironclaw2e.chatInfo.itemInfo.refresh": "Refresh",
+  "ironclaw2e.chatInfo.itemInfo.exhausted": "Exhausted",
+  "ironclaw2e.chatInfo.itemInfo.gift": "Gift",
+  "ironclaw2e.chatInfo.itemInfo.giftDice": "Gift dice",
+  "ironclaw2e.chatInfo.itemInfo.defaultTN": "Default TN",
+  "ironclaw2e.chatInfo.itemInfo.giftDiceNothing": "No gift dice",
+
+  "ironclaw2e.chatInfo.itemInfo.name": "Name",
+  "ironclaw2e.chatInfo.itemInfo.dice": "Dice",
+  "ironclaw2e.chatInfo.itemInfo.skills": "Skills",
+
+  "ironclaw2e.chatInfo.itemInfo.resistWith": "Resist with",
+  "ironclaw2e.chatInfo.itemInfo.effect": "Effect",
+  "ironclaw2e.chatInfo.itemInfo.descriptors": "Descriptors",
+  "ironclaw2e.chatInfo.itemInfo.equip": "Equip",
+  "ironclaw2e.chatInfo.itemInfo.range": "Range",
+  "ironclaw2e.chatInfo.itemInfo.attackDice": "Attack dice",
+  "ironclaw2e.chatInfo.itemInfo.sparkDice": "Spark die",
+  "ironclaw2e.chatInfo.itemInfo.parryDice": "Parry dice",
+  "ironclaw2e.chatInfo.itemInfo.counterDice": "Counter dice",
+
+  "ironclaw2e.chatInfo.itemInfo.giftRoll": "gift roll",
+  "ironclaw2e.chatInfo.itemInfo.attackRoll": "attack roll",
+  "ironclaw2e.chatInfo.itemInfo.parryRoll": "parry roll",
+  "ironclaw2e.chatInfo.itemInfo.counterRoll": "counter roll",
+
+  "ironclaw2e.chatInfo.itemInfo.dimLight": "Dim Light",
+  "ironclaw2e.chatInfo.itemInfo.brightLight": "Bright Light",
+  "ironclaw2e.chatInfo.itemInfo.angle": "Angle",
+
+  "ironclaw2e.chatInfo.itemInfo.armorDice": "Armor Dice",
+  "ironclaw2e.chatInfo.itemInfo.worn": "Worn",
+
+  "ironclaw2e.chatInfo.itemInfo.coverDie": "Cover Die",
+  "ironclaw2e.chatInfo.itemInfo.held": "Held",
+
+
+  "ironclaw2e.chatInfo.damageCalcInfo.header": "Damage of {name}",
+  "ironclaw2e.chatInfo.damageCalcInfo.attackSuccess": "Attack hits, with damage effect",
+  "ironclaw2e.chatInfo.damageCalcInfo.attackTied": "Tied, if tie is broken favorably",
+  "ironclaw2e.chatInfo.damageCalcInfo.attackResisted": "Attack was resisted completely!",
+  "ironclaw2e.chatInfo.damageCalcInfo.attackFailed": "Attack did not hit at all!",
+
+  "ironclaw2e.chatInfo.damageCalcInfo.slayingDamage": "Slaying Damage",
+  "ironclaw2e.chatInfo.damageCalcInfo.criticalDamage": "Critical Damage",
+  "ironclaw2e.chatInfo.damageCalcInfo.normalDamage": "Normal Damage",
+  "ironclaw2e.chatInfo.damageCalcInfo.impalingDamage": "Impaling Damage",
+  "ironclaw2e.chatInfo.damageCalcInfo.impalingNote": "unless target retreats",
+
+  "ironclaw2e.chatInfo.damageCalcInfo.penetratingAttack": "Penetrating Attack, no armor for Soak",
+  "ironclaw2e.chatInfo.damageCalcInfo.weakAttack": "Weak Attack, roll Soak twice",
+
+  "ironclaw2e.chatInfo.damageCalcInfo.allEffects": "All effects",
+
 
   "ironclaw2e.effect.status.focused": "Focused",
   "ironclaw2e.effect.status.guarding": "Guarding",

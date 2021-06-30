@@ -8,6 +8,10 @@ export class CommonSystemInfo {
      * List of CSS colors to use for different message types
      */
     static resultColors = { success: "green", tie: "darkgoldenrod", normal: "black", failure: "black", botch: "red" };
+    /**
+     * Font size assigned to the dice result message
+     */
+    static resultFontSize = "1.7em";
 }
 
 

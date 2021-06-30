@@ -48,7 +48,7 @@ export function ironclawRollActorChat(inputstring, speaker) {
     }
 
     if (!speaker?.actor || !speaker?.token) {
-        ui.notifications.warn("No actor selected for /actorroll.");
+        ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.actorNotSelectedActorroll"));
         return;
     }
 
@@ -56,7 +56,7 @@ export function ironclawRollActorChat(inputstring, speaker) {
     if (!actor) {
         actor = game.actors.get(speaker.actor);
         if (!actor) {
-            ui.notifications.warn("No actor found for speaker: " + speaker.toString());
+            ui.notifications.warn(game.i18n.format("ironclaw2e.chat.actorNotFoundForSpeaker", { "name": speaker.toString() }));
             return;
         }
     }

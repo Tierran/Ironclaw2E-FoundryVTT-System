@@ -176,7 +176,8 @@ export class Ironclaw2ECombat extends Combat {
                 initiative = initRoll.highest + (decimals / 20);
             }
 
-            let flavorString = initRoll.message.flavor ? [initRoll.message.flavor.slice(0, 3), combatant.token.name + ", ", initRoll.message.flavor.slice(3)].join("") : combatant.token.name + " rolling for initiative:";
+            // See if the initiative roll has a flavor message assigned, if so, split the "<p>" out from it and add the token name after it, otherwise just use a generic "Rolling for initiative" message
+            let flavorString = initRoll.message.flavor ? [initRoll.message.flavor.slice(0, 3), combatant.token.name + ", ", initRoll.message.flavor.slice(3)].join("") : game.i18n.format("ironclaw2e.chat.rollingForInitiative", { "name": combatant.token.name });
             let initResult = "";
             if (initRoll.tnData) {
                 initResult = initRoll.tnData.successes > 0 ? initRoll.tnData.successes.toString() : (initRoll.tnData.ties ? "T" : (initRoll.highest === 1 ? "B" : "F")); // Set the result as either the number of successes, or Ties, Botch, or Fail

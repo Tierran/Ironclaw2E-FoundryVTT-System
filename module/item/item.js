@@ -23,7 +23,7 @@ export class Ironclaw2EItem extends Item {
         super.prepareData();
 
     }
-    
+
     /** @override
      * Augment the basic Item data model with additional dynamic data.
      */
@@ -253,35 +253,40 @@ export class Ironclaw2EItem extends Item {
         contents += `<div class="chat-item">`;
         switch (item.type) {
             case 'gift':
-                contents += `<p><strong>Tags:</strong> ${itemData.giftTags}</p>
-                        <p><strong>Refresh:</strong> ${itemData.refresh}, <strong>Exhausted:</strong> ${itemData.exhaustWhenUsed ? (itemData.exhausted ? "Yes" : "No") : "Never"}</p>`;
-                if (itemData.useDice) contents += `<p><strong>Gift dice:</strong> ${itemData.useDice}, <strong>Default TN:</strong> ${itemData.defaultTN}</p>`;
-                else contents += `<p><strong>No gift dice</strong></p>`;
+                contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.tags")}:</strong> ${itemData.giftTags}</p>
+                        <p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.refresh")}:</strong> ${itemData.refresh}, <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.exhausted")}:</strong> 
+                        ${itemData.exhaustWhenUsed ? (itemData.exhausted ? game.i18n.localize("ironclaw2e.yes") : game.i18n.localize("ironclaw2e.no")) : game.i18n.localize("ironclaw2e.never")}</p>`;
+                if (itemData.useDice) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.giftDice")}:</strong> ${itemData.useDice},
+                                                   <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.defaultTN")}:</strong> ${itemData.defaultTN}</p>`;
+                else contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.giftDiceNothing")}</strong></p>`;
                 break;
             case 'extraCareer':
-                contents += `<p><strong>Name:</strong> ${itemData.careerName}</p>
-                        <p><strong>Dice:</strong> ${itemData.dice}</p>
-                        <p><strong>Skills:</strong> ${itemData.careerSkill1}, ${itemData.careerSkill2}, ${itemData.careerSkill3}</p>`;
+                contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.name")}:</strong> ${itemData.careerName}</p>
+                        <p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.dice")}:</strong> ${itemData.dice}</p>
+                        <p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.skills")}:</strong> ${itemData.careerSkill1}, ${itemData.careerSkill2}, ${itemData.careerSkill3}</p>`;
                 break;
             case 'weapon':
                 if (itemData.hasResist)
-                    contents += `<p><strong>Resist with:</strong> ${itemData.specialResist} vs. 3</p>`;
-                contents += `<p><strong>Effect:</strong> ${itemData.effect}</p>
-                        <p><strong>Descriptors:</strong> ${itemData.descriptors}</p>
-                        <p><strong>Equip:</strong> ${itemData.equip}, <strong>Range:</strong> ${itemData.range}</p>`;
-                if (itemData.attackDice) contents += `<p><strong>Attack dice:</strong> ${itemData.attackDice}</p>`;
-                if (itemData.useSpark) contents += `<p><strong>Spark die:</strong> ${itemData.sparkDie}</p>`;
-                if (itemData.defenseDice) contents += `<p><strong>Parry dice:</strong> ${itemData.defenseDice}</p>`;
-                if (itemData.counterDice) contents += `<p><strong>Counter dice:</strong> ${itemData.counterDice}</p>`;
+                    contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith")}:</strong> ${itemData.specialResist} vs. 3</p>`;
+                contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect")}:</strong> ${itemData.effect}</p>
+                        <p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.descriptors")}:</strong> ${itemData.descriptors}</p>
+                        <p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.equip")}:</strong> ${itemData.equip}, <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.range")}:</strong> ${itemData.range}</p>`;
+                if (itemData.attackDice) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackDice")}:</strong> ${itemData.attackDice}</p>`;
+                if (itemData.useSpark) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.sparkDice")}:</strong> ${itemData.sparkDie}</p>`;
+                if (itemData.defenseDice) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.parryDice")}:</strong> ${itemData.defenseDice}</p>`;
+                if (itemData.counterDice) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.counterDice")}:</strong> ${itemData.counterDice}</p>`;
                 break;
             case 'illumination':
-                contents += `<p><strong>Dim Light:</strong> ${itemData.dimLight}, <strong>Bright Light:</strong> ${itemData.brightLight}, <strong>Angle:</strong> ${itemData.lightAngle}</p>`;
+                contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.dimLight")}:</strong> ${itemData.dimLight}, <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.brightLight")}:</strong> ${itemData.brightLight},
+                            <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.angle")}:</strong> ${itemData.lightAngle}</p>`;
                 break;
             case 'armor':
-                contents += `<p><strong>Armor Dice:</strong> ${itemData.armorDice}, <strong>Worn:</strong> ${itemData.worn ? "Yes" : "No"}</p>`;
+                contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.armorDice")}:</strong> ${itemData.armorDice}, 
+                            <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.worn")}:</strong> ${itemData.worn ? game.i18n.localize("ironclaw2e.yes") : game.i18n.localize("ironclaw2e.no")}</p>`;
                 break;
             case 'shield':
-                contents += `<p><strong>Cover Die:</strong> ${itemData.coverDie}, <strong>Held:</strong> ${itemData.held ? "Yes" : "No"}</p>`;
+                contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.coverDie")}:</strong> ${itemData.coverDie}, 
+                            <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.held")}:</strong> ${itemData.held ? game.i18n.localize("ironclaw2e.yes") : game.i18n.localize("ironclaw2e.no")}</p>`;
                 break;
             default:
                 break;
@@ -297,21 +302,21 @@ export class Ironclaw2EItem extends Item {
         if (confirmSend) {
             let confirmed = false;
             let dlog = new Dialog({
-                title: "Send item info for " + this.data.name,
+                title: game.i18n.format("ironclaw2e.dialog.chatInfo.itemInfo.title", { "name": this.data.name }),
                 content: `
      <form>
-      <h1>Send ${this.data.name} info to chat?</h1>
+      <h1>${game.i18n.format("ironclaw2e.dialog.chatInfo.itemInfo.header", { "name": this.data.name })}</h1>
      </form>
      `,
                 buttons: {
                     one: {
                         icon: '<i class="fas fa-check"></i>',
-                        label: "Send",
+                        label: game.i18n.localize("ironclaw2e.dialog.send"),
                         callback: () => confirmed = true
                     },
                     two: {
                         icon: '<i class="fas fa-times"></i>',
-                        label: "Cancel",
+                        label: game.i18n.localize("ironclaw2e.dialog.cancel"),
                         callback: () => confirmed = false
                     }
                 },
@@ -385,7 +390,7 @@ export class Ironclaw2EItem extends Item {
      * Resolve a counter-attack roll by giving it a TN from which to calculate damage
      */
     async resolveCounterAttack(message) {
-        let info = await copyToRollTNDialog(message, "Highest die of opponent's Attack");
+        let info = await copyToRollTNDialog(message, "ironclaw2e.dialog.counterResolve.title");
         this.automaticDamageCalculation(info, true); // No separate return in case of null, the calculation function itself checks for null
     }
 
@@ -399,17 +404,17 @@ export class Ironclaw2EItem extends Item {
 
         let resolvedopfor = new Promise((resolve) => {
             let dlog = new Dialog({
-                title: "How many opposing successes?",
+                title: game.i18n.localize("ironclaw2e.dialog.resistResolve.title"),
                 content: `
      <form class="ironclaw2e">
       <div class="form-group">
-       <span class="small-label">Successes: ${successes}</span>
+       <span class="small-label">${game.i18n.localize("ironclaw2e.dialog.resistResolve.successes")}: ${successes}</span>
       </div>
       <div class="form-group">
-       <span class="small-text">${success ? "" : "Original attack roll was <strong>Tied</strong>, tie needs to be broken in favor of the attacker for the successes to apply."}</span>
+       <span class="small-text">${success ? "" : game.i18n.localize("ironclaw2e.dialog.resistResolve.tiedMessage")}</span>
       </div>
       <div class="form-group">
-       <label class="normal-label" for="opfor">Opposing Successes:</label>
+       <label class="normal-label" for="opfor">${game.i18n.localize("ironclaw2e.dialog.resistResolve.opposing")}:</label>
 	   <input id="opfor" name="opfor" value="" onfocus="this.select();"></input>
       </div>
      </form>
@@ -417,12 +422,12 @@ export class Ironclaw2EItem extends Item {
                 buttons: {
                     one: {
                         icon: '<i class="fas fa-check"></i>',
-                        label: "Roll!",
+                        label: game.i18n.localize("ironclaw2e.dialog.resolve"),
                         callback: () => confirmed = true
                     },
                     two: {
                         icon: '<i class="fas fa-times"></i>',
-                        label: "Cancel",
+                        label: game.i18n.localize("ironclaw2e.dialog.cancel"),
                         callback: () => confirmed = false
                     }
                 },
@@ -474,34 +479,34 @@ export class Ironclaw2EItem extends Item {
 
         let contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
         <img class="item-image" src="${item.img}" title="${item.name}" width="25" height="25"/>
-        <h3 class="chat-header-lesser">Damage of ${item.name}</h3>
+        <h3 class="chat-header-lesser">${game.i18n.format("ironclaw2e.chatInfo.damageCalcInfo.header", { "name": item.name })}</h3>
         </header>
         <div class="chat-content"><div class="chat-item">`;
 
         if (success) {
-            contents += `<p style="color:${CommonSystemInfo.resultColors.success}">Attack hits, with damage effect:</p>`;
+            contents += `<p style="color:${CommonSystemInfo.resultColors.success}">${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.attackSuccess")}:</p>`;
         } else {
-            contents += `<p style="color:${CommonSystemInfo.resultColors.tie}">Tied, if tie is broken favorably:</p>`;
+            contents += `<p style="color:${CommonSystemInfo.resultColors.tie}">${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.attackTied")}:</p>`;
         }
 
         if (itemData.effectsSplit.includes("slaying")) {
-            contents += `<p>Slaying Damage: <strong>${itemData.damageEffect + (usedsuccesses * 2)}</strong></p>`;
+            contents += `<p>${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.slayingDamage")}: <strong>${itemData.damageEffect + (usedsuccesses * 2)}</strong></p>`;
         } else if (itemData.effectsSplit.includes("critical")) {
-            contents += `<p>Critical Damage: <strong>${itemData.damageEffect + Math.floor(usedsuccesses * 1.5)}</strong></p>`;
+            contents += `<p>${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.criticalDamage")}: <strong>${itemData.damageEffect + Math.floor(usedsuccesses * 1.5)}</strong></p>`;
         } else {
-            contents += `<p>Normal Damage: <strong>${itemData.damageEffect + usedsuccesses}</strong></p>`;
+            contents += `<p>${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.normalDamage")}: <strong>${itemData.damageEffect + usedsuccesses}</strong></p>`;
         }
         if (itemData.effectsSplit.includes("impaling")) {
-            contents += `<p>Impaling Damage: <strong>${itemData.damageEffect + (usedsuccesses * 2)}</strong>, unless target retreats</p>`;
+            contents += `<p>${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.impalingDamage")}: <strong>${itemData.damageEffect + (usedsuccesses * 2)}</strong>, ${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.impalingNote")}</p>`;
         }
 
         if (itemData.effectsSplit.includes("penetrating")) {
-            contents += `<p>Penetrating Attack, no armor for Soak</p>`;
+            contents += `<p>${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.penetratingAttack")}</p>`;
         }
         if (itemData.effectsSplit.includes("weak")) {
-            contents += `<p>Weak Attack, roll Soak twice</p>`;
+            contents += `<p>${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.weakAttack")}</p>`;
         }
-        contents += `<p class="small-text">All effects: ${itemData.effect}</p>`;
+        contents += `<p class="small-text">${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.allEffects")}: ${itemData.effect}</p>`;
 
         contents += `</div></div></div>`;
         let chatData = {
@@ -524,7 +529,7 @@ export class Ironclaw2EItem extends Item {
 
         let contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
         <img class="item-image" src="${item.img}" title="${item.name}" width="25" height="25"/>
-        <h3 class="chat-header-lesser">Damage of ${item.name}</h3>
+        <h3 class="chat-header-lesser">${game.i18n.format("ironclaw2e.chatInfo.damageCalcInfo.header", { "name": item.name })}</h3>
         </header>
         <div class="chat-content"><div class="chat-item">`;
 
@@ -665,7 +670,7 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        rollHighestOneLine(data.sparkDie, "Rolling Spark die...", "Roll Spark die", this.actor);
+        rollHighestOneLine(data.sparkDie, game.i18n.localize("ironclaw2e.dialog.sparkRoll.label"), "ironclaw2e.dialog.sparkRoll.title", this.actor);
     }
 
     /**
@@ -693,16 +698,16 @@ export class Ironclaw2EItem extends Item {
 
             switch (rolltype) {
                 case 0: // Generic gift roll
-                    this.actor.popupSelectRolled(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " gift roll" + (this.data.data.exhaustWhenUsed ? ", gift <strong>Exhausted</strong>" : ": "), callback);
+                    this.actor.popupSelectRolled(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.giftRoll") + (this.data.data.exhaustWhenUsed ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.exhausted") + " <strong>" + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.exhausted") + "</strong>" : ": "), callback);
                     break;
                 case 1: // Parry roll
-                    this.actor.popupDefenseRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " parry roll: ", true, callback);
+                    this.actor.popupDefenseRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.parryRoll") + ": ", true, callback);
                     break;
                 case 2: // Attack roll
-                    this.actor.popupAttackRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " attack roll" + (this.data.data.effect ? ", Effect: " + this.data.data.effect + (this.data.data.hasResist ? ", Resist with " + this.data.data.specialResist + " vs. 3 " : "") : ": "), callback);
+                    this.actor.popupAttackRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect + (this.data.data.hasResist ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith") + " " + this.data.data.specialResist + " vs. 3 " : "") : ": "), callback);
                     break;
                 case 3: // Counter roll
-                    this.actor.popupCounterRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " counter roll" + (this.data.data.effect ? ", Effect: " + this.data.data.effect : ": "), callback);
+                    this.actor.popupCounterRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.counterRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect : ": "), callback);
                     break;
                 default:
                     console.warn("genericItemRoll defaulted when selecting a roll: " + rolltype);
@@ -734,10 +739,10 @@ export class Ironclaw2EItem extends Item {
         let confirmed = false;
         let speaker = getMacroSpeaker(this.actor);
         let dlog = new Dialog({
-            title: "Refresh Gift for " + speaker.alias,
+            title: game.i18n.format("ironclaw2e.dialog.refreshGift.title", { "name": speaker.alias }),
             content: `
      <form>
-      <h1>Refresh ${this.data.name} for ${this.actor?.data.name}?</h1>
+      <h1>${game.i18n.format("ironclaw2e.dialog.refreshGift.header", { "item": this.data.name, "actor": this.actor?.data.name })}</h1>
      <div class="form-group">
        <label class="normal-label">Send to chat?</label>
        <input type="checkbox" id="send" name="send" value="1" checked></input>
@@ -747,12 +752,12 @@ export class Ironclaw2EItem extends Item {
             buttons: {
                 one: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: "Refresh",
+                    label: game.i18n.localize("ironclaw2e.dialog.refresh"),
                     callback: () => confirmed = true
                 },
                 two: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: "Cancel",
+                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
                     callback: () => confirmed = false
                 }
             },
@@ -767,7 +772,7 @@ export class Ironclaw2EItem extends Item {
                     if (sent) {
                         let contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
         <img class="item-image" src="${item.img}" title="${item.name}" width="20" height="20"/>
-        <div class="chat-header-small"><strong>Refreshed</strong> ${item.name}!</div>
+        <div class="chat-header-small">${game.i18n.format("ironclaw2e.dialog.refreshGift.chatMessage", { "name": item.name })}</div>
         </header>
         </div>`;
                         let chatData = {
@@ -793,10 +798,10 @@ export class Ironclaw2EItem extends Item {
         let confirmed = false;
         let speaker = getMacroSpeaker(this.actor);
         let dlog = new Dialog({
-            title: "Exhaust Gift for " + speaker.alias,
+            title: game.i18n.format("ironclaw2e.dialog.exhaustGift.title", { "name": speaker.alias }),
             content: `
      <form>
-      <h1>Exhaust ${this.data.name} for ${this.actor?.data.name}?</h1>
+      <h1>${game.i18n.format("ironclaw2e.dialog.exhaustGift.header", { "item": this.data.name, "actor": this.actor?.data.name })}</h1>
      <div class="form-group">
        <label class="normal-label">Send to chat?</label>
        <input type="checkbox" id="send" name="send" value="1" checked></input>
@@ -806,12 +811,12 @@ export class Ironclaw2EItem extends Item {
             buttons: {
                 one: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: "Exhaust",
+                    label: game.i18n.localize("ironclaw2e.dialog.exhaust"),
                     callback: () => confirmed = true
                 },
                 two: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: "Cancel",
+                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
                     callback: () => confirmed = false
                 }
             },
@@ -826,7 +831,7 @@ export class Ironclaw2EItem extends Item {
                     if (sent) {
                         let contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
         <img class="item-image" src="${item.img}" title="${item.name}" width="20" height="20"/>
-        <div class="chat-header-small">${item.name} was <strong>Exhausted</strong>!</div>
+        <div class="chat-header-small">${game.i18n.format("ironclaw2e.dialog.exhaustGift.chatMessage", { "name": item.name })}</div>
         </header>
         </div>`;
                         let chatData = {
@@ -854,22 +859,22 @@ export class Ironclaw2EItem extends Item {
 	   <div class="form-group">`;
 
         if (itemData.canAttack) {
-            constructionstring += `<label>Attack:</label>
+            constructionstring += `<label>${game.i18n.localize("ironclaw2e.dialog.weaponRoll.attack")}:</label>
 	    <input type="radio" id="attack" name="weapon" value="0" ${first ? "" : "checked"}></input>`;
             first = first || "attack";
         }
         if (itemData.canSpark) {
-            constructionstring += `<label>Spark:</label>
+            constructionstring += `<label>${game.i18n.localize("ironclaw2e.dialog.weaponRoll.spark")}:</label>
 	    <input type="radio" id="spark" name="weapon" value="1" ${first ? "" : "checked"}></input>`;
             first = first || "spark";
         }
         if (itemData.canDefend) {
-            constructionstring += `<label>Defend:</label>
+            constructionstring += `<label>${game.i18n.localize("ironclaw2e.dialog.weaponRoll.parry")}:</label>
 	    <input type="radio" id="defend" name="weapon" value="2" ${first ? "" : "checked"}></input>`;
             first = first || "defend";
         }
         if (itemData.canCounter) {
-            constructionstring += `<label>Counter:</label>
+            constructionstring += `<label>${game.i18n.localize("ironclaw2e.dialog.weaponRoll.counter")}:</label>
 	    <input type="radio" id="counter" name="weapon" value="3" ${first ? "" : "checked"}></input>`;
             first = first || "counter";
         }
@@ -881,22 +886,22 @@ export class Ironclaw2EItem extends Item {
         let confirmed = false;
         let speaker = getMacroSpeaker(this.actor);
         let dlog = new Dialog({
-            title: "Weapon Roll Type for " + speaker.alias,
+            title: game.i18n.format("ironclaw2e.dialog.weaponRoll.title", { "name": speaker.alias }),
             content: `
      <form>
-      <h1>Choose ${this.data.name}'s roll type for ${this.actor?.data.name}</h1>
+      <h1>${game.i18n.format("ironclaw2e.dialog.weaponRoll.header", { "item": this.data.name, "actor": this.actor?.data.name })}</h1>
       ${constructionstring}
      </form>
      `,
             buttons: {
                 one: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: "Pick",
+                    label: game.i18n.localize("ironclaw2e.dialog.pick"),
                     callback: () => confirmed = true
                 },
                 two: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: "Cancel",
+                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
                     callback: () => confirmed = false
                 }
             },

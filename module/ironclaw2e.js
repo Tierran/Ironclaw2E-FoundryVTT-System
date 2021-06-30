@@ -381,7 +381,7 @@ Hooks.on("chatCommandsReady", function (chatCommands) {
         },
         shouldDisplayToChat: false,
         iconClass: "fa-dice-d6",
-        description: game.i18n.localize("ironclaw2e.chat.iroll")
+        description: game.i18n.localize("ironclaw2e.command.iroll")
     }));
 
     // Trigger an actor dice pool popup, with optional preselected stats and dice
@@ -393,7 +393,7 @@ Hooks.on("chatCommandsReady", function (chatCommands) {
         },
         shouldDisplayToChat: false,
         iconClass: "fa-user",
-        description: game.i18n.localize("ironclaw2e.chat.actorroll")
+        description: game.i18n.localize("ironclaw2e.command.actorroll")
     }));
 
     // Use an item as the currently selected actor
@@ -405,7 +405,7 @@ Hooks.on("chatCommandsReady", function (chatCommands) {
         },
         shouldDisplayToChat: false,
         iconClass: "fa-fist-raised",
-        description: game.i18n.localize("ironclaw2e.chat.itemuse")
+        description: game.i18n.localize("ironclaw2e.command.itemuse")
     }));
 });
 
@@ -422,7 +422,7 @@ Hooks.on("chatCommandsReady", function (chatCommands) {
  */
 async function createIronclaw2EMacro(data, slot) {
     if (data.type !== "Item") return;
-    if (!("data" in data)) return ui.notifications.warn("You can only create macro buttons for owned Items");
+    if (!("data" in data)) return ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.macroOwnedItemsWarning"));
     const item = data.data;
 
     // Create the macro command
@@ -452,7 +452,7 @@ function rollItemMacro(itemName) {
     if (speaker.token) actor = game.actors.tokens[speaker.token];
     if (!actor) actor = game.actors.get(speaker.actor);
     const item = actor ? actor.items.find(i => i.name === itemName) : null;
-    if (!item) return ui.notifications.warn(`Your controlled Actor does not have an item named ${itemName}`);
+    if (!item) return ui.notifications.warn(game.i18n.format("ironclaw2e.ui.actorDoesNotHaveItem", { "itemName": itemName }));
 
     // Trigger the item roll
     return item.roll();
@@ -468,7 +468,7 @@ function popupMacro(popup) {
     let actor;
     if (speaker.token) actor = game.actors.tokens[speaker.token];
     if (!actor) actor = game.actors.get(speaker.actor);
-    if (!actor) return ui.notifications.warn("No actor found to popup macro for: " + speaker);
+    if (!actor) return ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.actorNotFoundForMacro"));
 
     // Trigger the popup
     switch (popup) {
@@ -482,7 +482,7 @@ function popupMacro(popup) {
             return actor.popupAddCondition();
             break;
         default:
-            ui.notifications.warn("No specific popup command found for: " + popup);
+            ui.notifications.warn(game.i18n.format("ironclaw2e.ui.popupNotFoundForMacro", { "popup": popup }));
             return actor.popupSelectRolled();
             break;
     }
@@ -500,7 +500,7 @@ function popupSelect(prechecked = [], tnyes = false, tnnum = 3, extradice = "") 
     let actor;
     if (speaker.token) actor = game.actors.tokens[speaker.token];
     if (!actor) actor = game.actors.get(speaker.actor);
-    if (!actor) return ui.notifications.warn("No actor found to popup macro for: " + speaker);
+    if (!actor) return ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.actorNotFoundForMacro"));
 
     return actor.popupSelectRolled(prechecked, tnyes, tnnum, extradice);
 }

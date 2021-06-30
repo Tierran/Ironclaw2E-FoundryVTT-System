@@ -562,12 +562,12 @@ export class Ironclaw2EActor extends Actor {
             case 1:
                 foo = this._getDicePools(prechecked, null, burdened);
                 bar = dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice;
-                return rollHighest(bar[0], bar[1], bar[2], bar[3], bar[4], "Rolling initiative: " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this, false);
+                return rollHighest(bar[0], bar[1], bar[2], bar[3], bar[4], game.i18n.localize("ironclaw2e.chat.rollingInitiative") + ": " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this, false);
                 break;
             case 2:
                 foo = this._getDicePools(prechecked, null, burdened);
                 bar = dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice;
-                return rollTargetNumber(tntouse, bar[0], bar[1], bar[2], bar[3], bar[4], "Rolling the initiative check: " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this, false);
+                return rollTargetNumber(tntouse, bar[0], bar[1], bar[2], bar[3], bar[4], game.i18n.localize("ironclaw2e.chat.rollingInitiativeCheck") + ": " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this, false);
                 break;
             case 3:
                 foo = this._getDicePools(prechecked, null, burdened);
@@ -625,10 +625,10 @@ export class Ironclaw2EActor extends Actor {
             if (hasConditionsIronclaw("guarding", this)) {
                 let veteran = findInItems(this.items, "veteran", "gift");
                 let guardbonus = [0, 0, 1, 0, 0];
-                let guardlabel = "Guard soak";
+                let guardlabel = game.i18n.localize("ironclaw2e.dialog.dicePool.guardSoak");
                 if (veteran) {
                     guardbonus = veteran.data.data.giftArray;
-                    guardlabel = "Veteran guard soak";
+                    guardlabel = game.i18n.localize("ironclaw2e.dialog.dicePool.guardSoakVeteran");
                 }
 
                 constructionkeys.push(guardlabel);
@@ -693,10 +693,10 @@ export class Ironclaw2EActor extends Actor {
         if (hasConditionsIronclaw("guarding", this)) {
             let veteran = findInItems(this.items, "veteran", "gift");
             let guardbonus = [0, 0, 1, 0, 0];
-            let guardlabel = "Guarding";
+            let guardlabel = game.i18n.localize("ironclaw2e.dialog.dicePool.guarding");
             if (veteran) {
                 guardbonus = veteran.data.data.giftArray;
-                guardlabel = "Veteran guarding";
+                guardlabel = game.i18n.localize("ironclaw2e.dialog.dicePool.guardingVeteran");
             }
 
             constructionkeys.push(guardlabel);
@@ -819,32 +819,33 @@ export class Ironclaw2EActor extends Actor {
         const confirmSend = game.settings.get("ironclaw2e", "defaultSendDamage");
 
         let dlog = new Dialog({
-            title: "Damage Calculation for " + speaker.alias,
+            title: game.i18n.format("ironclaw2e.dialog.damageCalc.title", { "name": speaker.alias }),
             content: `
      <form class="ironclaw2e">
-      <h1>Add damage to ${this.data.name}</h1>
+      <h1>${game.i18n.format("ironclaw2e.dialog.damageCalc.header", { "name": this.data.name })}</h1>
       <div class="form-group">
-       <label class="normal-label">Damage received:</label>
+       <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.damageCalc.received")}:</label>
 	   <input id="damage" name="damage" value="${readydamage}" onfocus="this.select();"></input>
       </div>
       <div class="form-group">
-       <label class="normal-label">Soaked:</label>
+       <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.damageCalc.soaked")}:</label>
 	   <input id="soak" name="soak" value="${readysoak}" onfocus="this.select();"></input>
       </div>
       <div class="form-group">
-       <span class="normal-label" title="${addeddamage ? "Damage added by " + addedconditions : "No damage added by conditions"}">Condition Damage: ${addeddamage}</span>
+       <span class="normal-label" title="${addeddamage ? game.i18n.format("ironclaw2e.dialog.damageCalc.conditionDamageAdded", { "conditions": addedconditions }) : game.i18n.localize("ironclaw2e.dialog.damageCalc.conditionDamageNothing")}">
+        ${game.i18n.localize("ironclaw2e.dialog.damageCalc.conditionDamage")}: ${addeddamage}</span>
        <input type="checkbox" id="added" name="added" value="1" checked></input>
       </div>
       <div class="form-group">
-       <label>Knockout Strike?</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.damageCalc.knockoutStrike")}</label>
        <input type="checkbox" id="knockout" name="knockout" value="1"></input>
       </div>
       <div class="form-group">
-       <label>Non-lethal attack?</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.damageCalc.nonLethal")}</label>
        <input type="checkbox" id="nonlethal" name="nonlethal" value="1"></input>
       </div>
       <div class="form-group">
-       <label>Send to Chat?</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.sendToChat")}</label>
        <input type="checkbox" id="send" name="send" value="1" ${confirmSend ? "checked" : ""}></input>
       </div>
      </form>
@@ -852,12 +853,12 @@ export class Ironclaw2EActor extends Actor {
             buttons: {
                 one: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: "Roll!",
+                    label: game.i18n.localize("ironclaw2e.dialog.add"),
                     callback: () => confirmed = true
                 },
                 two: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: "Cancel",
+                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
                     callback: () => confirmed = false
                 }
             },
@@ -883,7 +884,7 @@ export class Ironclaw2EActor extends Actor {
                     if (send) {
                         const reportedStatus = statuses[statuses.length - 1];
                         let chatData = {
-                            "content": `${speaker.alias} is ${game.i18n.localize(CommonConditionInfo.getConditionLabel(reportedStatus))}!`,
+                            "content": game.i18n.format("ironclaw2e.dialog.damageCalc.chatMessage", { "name": speaker.alias, "condition": game.i18n.localize(CommonConditionInfo.getConditionLabel(reportedStatus)) }),
                             "speaker": speaker
                         };
                         ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
@@ -900,12 +901,12 @@ export class Ironclaw2EActor extends Actor {
         let confirmed = false;
         let speaker = getMacroSpeaker(this);
         let dlog = new Dialog({
-            title: "Add Condition to " + speaker.alias,
+            title: game.i18n.format("ironclaw2e.dialog.addCondition.title", { "name": speaker.alias }),
             content: `
      <form>
-      <h1>Add condition for ${this.data.name}</h1>
+      <h1>${game.i18n.format("ironclaw2e.dialog.addCondition.header", { "name": this.data.name })}</h1>
       <div class="form-group">
-       <label>Condition to add:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.addCondition.toAdd")}:</label>
       </div>
 	  <div class="form-group">
 	   <input id="cond" name="cond" value="${readyname}" onfocus="this.select();"></input>
@@ -915,12 +916,12 @@ export class Ironclaw2EActor extends Actor {
             buttons: {
                 one: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: "Add",
+                    label: game.i18n.localize("ironclaw2e.dialog.add"),
                     callback: () => confirmed = true
                 },
                 two: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: "Cancel",
+                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
                     callback: () => confirmed = false
                 }
             },
@@ -968,19 +969,19 @@ export class Ironclaw2EActor extends Actor {
         if (hasConditionsIronclaw("burdened", this)) {
             statuseffectnotes = `
      <div class="form-group">
-       <label class="normal-label">Apply Burdened Limit automatically:</label>
+       <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.dicePool.applyBurdened")}:</label>
        <input type="checkbox" id="burdened" name="burdened" value="1" checked></input>
      </div>`;
         }
         if (hasConditionsIronclaw("hiding", this)) {
             statuseffectnotes = `
      <div class="form-group">
-       <span class="normal-text"><strong>Hiding:</strong> Improved cover and concealment:</span>
+       <span class="normal-text"><strong>${game.i18n.localize("ironclaw2e.effect.status.hiding")}:</strong> ${game.i18n.localize("ironclaw2e.dialog.dicePool.hidingExplanation")}:</span>
      </div>`;
         }
 
         if (hastraits) {
-            formconstruction += `<h2>Traits:</h2>
+            formconstruction += `<h2>${game.i18n.localize("ironclaw2e.actor.traits")}:</h2>
        <div class="grid-2row grid-minimal">` + "\n";;
             for (let [key, trait] of Object.entries(data.traits)) {
                 let lowerkey = makeStatCompareReady(key);
@@ -1008,7 +1009,7 @@ export class Ironclaw2EActor extends Actor {
             formconstruction += `</div>` + "\n";
         }
         if (hasskills) {
-            formconstruction += `<h2>Skills:</h2>
+            formconstruction += `<h2>${game.i18n.localize("ironclaw2e.actor.skills")}:</h2>
        <div class="grid grid-3col grid-minimal">` + "\n";
             for (let [key, skill] of Object.entries(data.skills)) {
                 let lowerkey = makeStatCompareReady(key);
@@ -1030,13 +1031,13 @@ export class Ironclaw2EActor extends Actor {
 
         let confirmed = false;
         let dlog = new Dialog({
-            title: "Choose Pools",
+            title: game.i18n.localize("ironclaw2e.dialog.dicePool.title"),
             content: `
      <form class="ironclaw2e">
-     <h1>Choose dice pools for ${this.data.name}</h1>
-     <span class="small-text">Showing up in chat as ${getMacroSpeaker(this).alias}</span>
+     <h1>${game.i18n.format("ironclaw2e.dialog.dicePool.header", { "name": this.data.name })}</h1>
+     <span class="small-text">${game.i18n.format("ironclaw2e.dialog.dicePool.showUp", { "alias": getMacroSpeaker(this).alias })}</span>
      <div class="form-group">
-       <label class="normal-label">Check to use TN:</label>
+       <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.dicePool.useTN")}:</label>
        <input type="checkbox" id="iftn" name="iftn" value="1" ${tnyes ? "checked" : ""}></input>
 	   <input id="tn" name="tn" value="${tnnum}" onfocus="this.select();"></input>
      </div>
@@ -1044,25 +1045,25 @@ export class Ironclaw2EActor extends Actor {
       ${formconstruction}
       ${otherinputs}
 	  <div class="form-group">
-       <label class="normal-label">Extra dice:</label>
+       <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.dicePool.extraDice")}:</label>
 	   <input id="dices" name="dices" value="${extradice}" onfocus="this.select();"></input>
       </div>
      <div class="form-group">
-       <label class="normal-label">Limit All Dice Pools:</label>
+       <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.dicePool.limitAllLabel")}:</label>
        <input type="checkbox" id="iflimit" name="iflimit" value="1"></input>
-	   <input id="limit" name="limit" value="" placeholder="Max die type" onfocus="this.select();"></input>
+	   <input id="limit" name="limit" value="" placeholder="${game.i18n.localize("ironclaw2e.dialog.dicePool.limitAllPlaceholder")}" onfocus="this.select();"></input>
      </div>
      </form>
      `,
             buttons: {
                 one: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: "Roll!",
+                    label: game.i18n.localize("ironclaw2e.dialog.roll"),
                     callback: () => confirmed = true
                 },
                 two: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: "Cancel",
+                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
                     callback: () => confirmed = false
                 }
             },
@@ -1102,11 +1103,11 @@ export class Ironclaw2EActor extends Actor {
                     let DICE = findTotalDice(DICES);
 
                     let labelgiven = false;
-                    let label = "Rolling ";
+                    let label = "";
                     if (IFTN)
-                        label += "against TN: ";
+                        label = game.i18n.localize("ironclaw2e.chat.rollingTN") + ": ";
                     else
-                        label += "highest: ";
+                        label = game.i18n.localize("ironclaw2e.chat.rollingHighest") + ": ";
 
                     if (hastraits || hasskills) {
                         let statfoobar = this._getDicePools(traitvalues, skillvalues, isburdened, labelgiven);
