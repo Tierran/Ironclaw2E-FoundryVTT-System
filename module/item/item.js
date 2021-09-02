@@ -356,6 +356,8 @@ export class Ironclaw2EItem extends Item {
         if (itemData.effect.length == 0) {
             return; // If the weapon has no effects listed, return out
         }
+
+
         if (!info.tnData) { // If the roll info is in highest mode, assume the attack was a counter-attack, and set the flags accordingly
             let updatedata = {
                 flags: { "ironclaw2e.hangingAttack": "counter", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor.id, "ironclaw2e.hangingToken": this.actor.token.id }
@@ -368,9 +370,9 @@ export class Ironclaw2EItem extends Item {
             return; // Return out of a complete failure, no need to display anything
         }
         const successes = (isNaN(info.tnData.successes) ? 0 : info.tnData.successes);
-        const ties = isNaN(info.tnData.ties) ? 0 : info.tnData.ties;
+        const ties = (isNaN(info.tnData.ties) ? 0 : info.tnData.ties);
         const success = successes > 0;
-        const usedsuccesses = success ? successes : ties;
+        const usedsuccesses = (success ? successes : ties);
 
         if (ignoreresist === false && itemData.hasResist && usedsuccesses > 0) { // If the weapon's attack was a successful resist roll, set the flags accordingly and return out
             let updatedata = {
@@ -698,7 +700,7 @@ export class Ironclaw2EItem extends Item {
 
             switch (rolltype) {
                 case 0: // Generic gift roll
-                    this.actor.popupSelectRolled(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.giftRoll") + (this.data.data.exhaustWhenUsed ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.exhausted") + " <strong>" + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.exhausted") + "</strong>" : ": "), callback);
+                    this.actor.popupSelectRolled(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.giftRoll") + (this.data.data.exhaustWhenUsed ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.gift") + " <strong>" + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.exhausted") + "</strong>" : ": "), callback);
                     break;
                 case 1: // Parry roll
                     this.actor.popupDefenseRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.parryRoll") + ": ", true, callback);

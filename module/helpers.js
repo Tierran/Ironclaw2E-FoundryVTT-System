@@ -182,7 +182,7 @@ export function enforceLimit(dicearray, maxdie) {
 
 /**
  * Helper function to reform a standard notation dice string from a dice array
- * Intended to be used for showing already-parsed dice in the UI
+ * Primarily intended to be used for showing already-parsed dice in the UI
  * @param {number[]} dicearray The array of dice to be parsed, in the same format as findTotalDice returns
  * @param {boolean} humanreadable Whether to put spaces between the dice components
  * @returns {string} The completed string in dice notation

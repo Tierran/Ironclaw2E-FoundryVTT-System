@@ -277,8 +277,8 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const type = message.getFlag("ironclaw2e", "hangingAttack");
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
                 const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
-                // Check whether the attack effect calculation is active, the message has a roll, has a weapon id and successes set and has explicitly been set to have a hanging resist attack
-                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && successes && type === "resist";
+                // Check whether the attack effect calculation is active, the message has a roll, has a weapon id and a positive number of successes set and has explicitly been set to have a hanging resist attack
+                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && successes > 0 && type === "resist";
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
             },
             callback: li => {
@@ -300,8 +300,8 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const type = message.getFlag("ironclaw2e", "hangingAttack");
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
                 const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
-                // Check whether the attack effect calculation is active, the message has a roll, has a weapon id and successes set and has explicitly been set to have a hanging resist attack
-                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && successes && type === "resist";
+                // Check whether the attack effect calculation is active, the message has a roll, has a weapon id and a positive number of successes set and has explicitly been set to have a hanging resist attack
+                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && successes > 0 && type === "resist";
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
             },
             callback: li => {

@@ -530,7 +530,7 @@ export class Ironclaw2EActor extends Actor {
     /* -------------------------------------------- */
 
     /**
-     * Function to call initiative for an actor for the traditional initiative
+     * Function to call initiative for an actor
      * @param {number} returntype The type of return to use: 0 for nothing as it launches a popup, 1 for a traditional initiative roll, 2 for the initiative check on combat start for side-based initiative, 3 to simply return the total initiative dice array
      * @param {number} tntouse The target number to use in case the mode uses target numbers
      * @returns {any} Exact return type depends on the returntype parameter, null if no normal return path
@@ -1140,14 +1140,14 @@ export class Ironclaw2EActor extends Actor {
                         totaldice = enforceLimit(totaldice, limit);
                     }
 
-                    let rollmessage;
+                    let rollreturn;
                     if (IFTN)
-                        rollmessage = await rollTargetNumber(TN, totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
+                        rollreturn = await rollTargetNumber(TN, totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
                     else
-                        rollmessage = await rollHighest(totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
+                        rollreturn = await rollHighest(totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
 
                     if (successfunc && typeof (successfunc) == "function") {
-                        successfunc(rollmessage);
+                        successfunc(rollreturn);
                     }
                 }
             }
