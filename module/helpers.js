@@ -18,6 +18,7 @@ export class CommonSystemInfo {
 /* -------------------------------------------- */
 /*  Dice Helpers                                */
 /* -------------------------------------------- */
+// Note that the dicerollers.js has some of its own helpers, the difference is that these ones could / are also be used elsewhere, whereas the dicerollers.js helpers are purely for its internal use
 
 /**
  * Helper function to split a string of dice into component forms, separated by commas, then parsed into an array, to allow easy rolling

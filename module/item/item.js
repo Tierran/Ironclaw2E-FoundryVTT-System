@@ -338,8 +338,9 @@ export class Ironclaw2EItem extends Item {
      * After attacking with a weapon, calculate damage from successes and attributes
      * @param {DiceReturn} info The roll information returned by the system dice rollers
      * @param {boolean} ignoreresist Whether to ignore the fact that the weapon has a resist roll, used when such a weapon is used in a counter-attack
+     * @param {boolean} onlyupdate If true, only update the roll data, do not send anything to chat yet
      */
-    automaticDamageCalculation(info, ignoreresist = false) {
+    automaticDamageCalculation(info, ignoreresist = false, onlyupdate = false) {
         if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
             return; // If the system is turned off, return out
         }
@@ -366,15 +367,12 @@ export class Ironclaw2EItem extends Item {
             return; // Return out of a counter-attack
         }
 
-        if ((!info.tnData.successes || info.tnData.successes < 1) && (!info.tnData.ties || info.tnData.ties < 1)) {
-            return; // Return out of a complete failure, no need to display anything
-        }
         const successes = (isNaN(info.tnData.successes) ? 0 : info.tnData.successes);
         const ties = (isNaN(info.tnData.ties) ? 0 : info.tnData.ties);
         const success = successes > 0;
         const usedsuccesses = (success ? successes : ties);
 
-        if (ignoreresist === false && itemData.hasResist && usedsuccesses > 0) { // If the weapon's attack was a successful resist roll, set the flags accordingly and return out
+        if (ignoreresist === false && itemData.hasResist) { // If the weapon's attack was a successful resist roll, set the flags accordingly and return out
             let updatedata = {
                 flags: {
                     "ironclaw2e.hangingAttack": "resist", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor.id, "ironclaw2e.hangingToken": this.actor.token.id,
@@ -384,8 +382,27 @@ export class Ironclaw2EItem extends Item {
             info.message.update(updatedata);
             return; // Return out of a resisted weapon
         }
+        else { // Else, treat it as a normal attack and set the flags to store the information for future reference
+            let updatedata = {
+                flags: {
+                    "ironclaw2e.hangingAttack": "attack", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor.id, "ironclaw2e.hangingToken": this.actor.token.id,
+                    "ironclaw2e.attackSuccess": success, "ironclaw2e.attackSuccessCount": usedsuccesses
+                }
+            };
+            info.message.update(updatedata);
+        }
 
-        this.successfulAttackToChat(success, usedsuccesses);
+        if (onlyupdate) {
+            return; // Return out to not send anything in update mode
+        }
+        else if (usedsuccesses <= 0) { // Ignore a complete failure, only display something if the setting is on
+            if (game.settings.get("ironclaw2e", "calculateDisplaysFailed")) {
+                this.failedAttackToChat();
+            }
+        }
+        else {
+            this.successfulAttackToChat(success, usedsuccesses);
+        }
     }
 
     /**
@@ -464,7 +481,28 @@ export class Ironclaw2EItem extends Item {
     resolveAsNormalAttack(message) {
         const success = message.getFlag("ironclaw2e", "resistSuccess");
         const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
-        this.successfulAttackToChat(success, successes);
+
+        if (successes > opposingsuccesses) {
+            this.successfulAttackToChat(success, successes);
+        }
+        else {
+            this.failedAttackToChat();
+        }
+    }
+
+    /**
+     * Resend a normal attack to chat
+     */
+    resendNormalAttack(message) {
+        const success = message.getFlag("ironclaw2e", "attackSuccess");
+        const successes = message.getFlag("ironclaw2e", "attackSuccessCount");
+
+        if (successes > opposingsuccesses) {
+            this.successfulAttackToChat(success, successes);
+        }
+        else {
+            this.failedAttackToChat();
+        }
     }
 
     /**

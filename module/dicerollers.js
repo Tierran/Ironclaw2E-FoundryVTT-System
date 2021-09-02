@@ -42,9 +42,11 @@ export async function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", ro
     const successes = roll.total;
     let highest = 0;
     let ties = 0;
-    roll.dice.forEach(x => {
-        if (x.total == tni) ties++;
-        if (x.total > highest) highest = x.total;
+    let hasOne = false;
+    roll.terms[0].results.forEach(x => {
+        if (x.result == tni) ties++;
+        if (x.result > highest) highest = x.result;
+        if (x.result === 1) hasOne = true;
     });
 
     const flavorstring = flavorStringTN(successes, ties, highest == 1, label);
@@ -55,7 +57,7 @@ export async function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", ro
     let msg = await roll.toMessage({
         speaker: getMacroSpeaker(rollingactor),
         flavor: flavorstring,
-        flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.label": label }
+        flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.label": label, "ironclaw2e.originalRoll": true, "ironclaw2e.hasOne": hasOne }
     }, { create: sendinchat });
 
     return { "roll": roll, "highest": highest, "tnData": tnData, "message": msg, "isSent": sendinchat };
@@ -68,13 +70,13 @@ export async function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", ro
  * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
  * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
  */
-export async function copyToRollTN(tni, message, sendinchat = true) {
+export async function copyToRollTN(tni, message, sendinchat = true, rerollone = false) {
     if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
         console.log("Somehow, a message that isn't a roll got into 'copyToRollTN'.");
         console.log(message);
         return;
     }
-    let rollstring = copyDicePoolResult(message.roll);
+    let rollstring = rerollone ? copyRerollHighestOne(message.roll) : copyDicePoolResult(message.roll);
     if (rollstring.length == 0)
         return;
     let label = message.getFlag("ironclaw2e", "label");
@@ -86,12 +88,15 @@ export async function copyToRollTN(tni, message, sendinchat = true) {
     const successes = roll.total;
     let highest = 0;
     let ties = 0;
+    let hasOne = false;
     roll.terms[0].results.forEach(x => {
         if (x.result == tni) ties++;
-        if (x.total > highest) highest = x.total;
+        if (x.result > highest) highest = x.result;
+        if (x.result === 1) hasOne = true;
     });
 
-    const flavorstring = flavorStringTN(successes, ties, highest == 1, "Copy TN: " + label);
+    const flavorstring = flavorStringTN(successes, ties, highest == 1,
+        `${(rerollone ? game.i18n.localize("ironclaw2e.chatInfo.reroll") : game.i18n.localize("ironclaw2e.chatInfo.copy"))} ${game.i18n.localize("ironclaw2e.chatInfo.tn")}: ` + label);
 
     /** @type TNData */
     let tnData = { "successes": successes, "ties": ties };
@@ -99,7 +104,7 @@ export async function copyToRollTN(tni, message, sendinchat = true) {
     let msg = await roll.toMessage({
         speaker: message.data.speaker,
         flavor: flavorstring,
-        flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.label": label }
+        flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
     }, { create: sendinchat });
 
     return { "roll": roll, "highest": highest, "tnData": tnData, "message": msg, "isSent": sendinchat };
@@ -125,10 +130,12 @@ export async function rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor
     let roll = await new Roll("{" + rollstring + "}kh1").evaluate({ async: true });
     const flavorstring = flavorStringHighest(roll.total, label);
 
+    let hasOne = roll.terms[0].results.some(x => x.result === 1); // Find if one of the dice rolled a "1"
+
     let msg = await roll.toMessage({
         speaker: getMacroSpeaker(rollingactor),
         flavor: flavorstring,
-        flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.label": label }
+        flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.label": label, "ironclaw2e.originalRoll": true, "ironclaw2e.hasOne": hasOne }
     }, { create: sendinchat });
 
     return { "roll": roll, "highest": roll.total, "tnData": null, "message": msg, "isSent": sendinchat };
@@ -141,13 +148,13 @@ export async function rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor
  * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
  * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
  */
-export async function copyToRollHighest(message, sendinchat = true) {
+export async function copyToRollHighest(message, sendinchat = true, rerollone = false) {
     if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
         console.log("Somehow, a message that isn't a roll got into 'copyToRollHighest'.");
         console.log(message);
         return;
     }
-    let rollstring = copyDicePoolResult(message.roll);
+    let rollstring = rerollone ? copyRerollHighestOne(message.roll) : copyDicePoolResult(message.roll);
     if (rollstring.length == 0)
         return;
     let label = message.getFlag("ironclaw2e", "label");
@@ -155,12 +162,15 @@ export async function copyToRollHighest(message, sendinchat = true) {
         return;
 
     let roll = await new Roll("{" + rollstring + "}kh1").evaluate({ async: true });
-    const flavorstring = flavorStringHighest(roll.total, "Copy High: " + label);
+    const flavorstring = flavorStringHighest(roll.total,
+        `${(rerollone ? game.i18n.localize("ironclaw2e.chatInfo.reroll") : game.i18n.localize("ironclaw2e.chatInfo.copy"))} ${game.i18n.localize("ironclaw2e.chatInfo.high")}: ` + label);
+
+    let hasOne = roll.terms[0].results.some(x => x.result === 1); // Find if one of the dice "rolled" a "1"
 
     let msg = await roll.toMessage({
         speaker: message.data.speaker,
         flavor: flavorstring,
-        flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.label": label }
+        flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
     }, { create: sendinchat });
 
     return { "roll": roll, "highest": roll.total, "tnData": null, "message": msg, "isSent": sendinchat };
@@ -583,17 +593,34 @@ function flavorStringHighest(highest, label) {
 function copyDicePoolResult(roll) {
     let formula = "";
 
-    if (roll.dice.length > 0) {
-        roll.dice.forEach(x => {
-            formula += x.total.toString() + ",";
+    if (roll.terms.length > 0) {
+        roll.terms[0].results.forEach(x => {
+            formula += x.result.toString() + ",";
         });
         if (formula.length > 0) {
             formula = formula.slice(0, -1);
         }
     }
-    else if (roll.terms.length > 0) {
-        roll.terms[0].results.forEach(x => {
-            formula += x.result.toString() + ",";
+
+    return formula;
+}
+
+/**
+ * Helper function for the dice roller copy functions to reroll one "1" and copy the rest of the dice results as numbers
+ * @param {Roll} roll
+ * @returns {string} A new formula to use for the new copy roll, with the highest "1" as a die to be rolled
+ */
+function copyRerollHighestOne(roll) {
+    let onefound = false, formula = "";
+
+    if (roll.terms.length > 0) {
+        roll.terms[0].results.forEach((x, i) => {
+            if (!onefound && x.result == 1) {
+                onefound = true;
+                formula += roll.terms[0].terms[i] + ",";
+            } else {
+                formula += x.result.toString() + ",";
+            }
         });
         if (formula.length > 0) {
             formula = formula.slice(0, -1);

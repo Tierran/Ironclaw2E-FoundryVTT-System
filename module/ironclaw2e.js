@@ -12,6 +12,7 @@ import { rollTargetNumberDialog } from "./dicerollers.js";
 import { rollHighestDialog } from "./dicerollers.js";
 import { rollTargetNumberOneLine } from "./dicerollers.js";
 import { rollHighestOneLine } from "./dicerollers.js";
+import { copyToRollTN } from "./dicerollers.js";
 import { copyToRollTNDialog } from "./dicerollers.js";
 import { copyToRollHighest } from "./dicerollers.js";
 
@@ -101,6 +102,14 @@ Hooks.once('init', async function () {
     game.settings.register("ironclaw2e", "calculateAttackEffects", {
         name: "ironclaw2e.config.calculateAttackEffects",
         hint: "ironclaw2e.config.calculateAttackEffectsHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: true
+    });
+    game.settings.register("ironclaw2e", "calculateDisplaysFailed", {
+        name: "ironclaw2e.config.calculateDisplaysFailed",
+        hint: "ironclaw2e.config.calculateDisplaysFailedHint",
         scope: "world",
         type: Boolean,
         default: false,
@@ -244,6 +253,49 @@ function addIronclawChatLogContext(html, entryOptions) {
             callback: li => {
                 const message = game.messages.get(li.data("messageId"));
                 copyToRollHighest(message);
+            }
+        },
+        {
+            name: "ironclaw2e.rerollOne",
+            icon: '<i class="fas fa-redo"></i>',
+            condition: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const original = message.getFlag("ironclaw2e", "originalRoll");
+                const hasOne = message.getFlag("ironclaw2e", "hasOne");
+                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && original && hasOne;
+                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+            },
+            callback: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const type = message.getFlag("ironclaw2e", "rollType");
+                if (type === "TN") {
+                    copyToRollTN(parseInt(message.roll.formula.slice(message.roll.formula.indexOf(">")+1)), message, true, true);
+                } else {
+                    copyToRollHighest(message, true, true);
+                }
+            }
+        },
+        {
+            name: "ironclaw2e.resendAttack",
+            icon: '<i class="fas fa-fist-raised"></i>',
+            condition: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const active = game.settings.get("ironclaw2e", "calculateAttackEffects");
+                const type = message.getFlag("ironclaw2e", "hangingAttack");
+                const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
+                const successes = message.getFlag("ironclaw2e", "attackSuccessCount");
+                // Check whether the attack effect calculation is active, the message has a roll, has a weapon id and a positive number of successes set and has explicitly been set to have a hanging normal attack
+                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && successes > 0 && type === "attack";
+                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+            },
+            callback: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
+                const actorid = message.getFlag("ironclaw2e", "hangingActor");
+                const tokenid = message.getFlag("ironclaw2e", "hangingToken");
+                const actor = game.scenes.current.tokens.get(tokenid)?.actor || game.actors.get(actorid);
+                const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
+                weapon?.resendNormalAttack?.(message);
             }
         },
         {

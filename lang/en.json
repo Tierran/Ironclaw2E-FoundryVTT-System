@@ -23,6 +23,8 @@
   "ironclaw2e.copyToTN": "Copy To TN Roll",
   "ironclaw2e.changeTN": "Change TN",
   "ironclaw2e.copyToHighest": "Copy To Highest Roll",
+  "ironclaw2e.rerollOne": "Reroll a Single One",
+  "ironclaw2e.resendAttack": "Resend The Attack",
   "ironclaw2e.resolveCounter": "Resolve The Counter-Attack",
   "ironclaw2e.resolveResist": "Resolve The Resisted Attack",
   "ironclaw2e.resolveAsNormal": "Resolve As Normal Attack",
@@ -81,7 +83,9 @@
   "ironclaw2e.config.autoPrototypeSetup": "WORLD: Auto-setup prototype tokens",
   "ironclaw2e.config.autoPrototypeSetupHint": "If checked, newly created actors will have their prototype token's attributes use type-specific defaults.",
   "ironclaw2e.config.calculateAttackEffects": "WORLD: Auto-calculate attack effects",
-  "ironclaw2e.config.calculateAttackEffectsHint": "If checked, successful and tied attacks with weapons will also create a chat message that contains the calculated raw damage of the attack based on the effects and successes.",
+  "ironclaw2e.config.calculateAttackEffectsHint": "If checked, successful and tied attacks with weapons will create a second chat message that contains the calculated raw damage of the attack based on the effects and successes.",
+  "ironclaw2e.config.calculateDisplaysFailed": "WORLD: Auto-calculate displays failures",
+  "ironclaw2e.config.calculateDisplaysFailedHint": "If checked, failed attacks with weapons will also create a chat message which simply notes that the attack failed.",
 
   "ironclaw2e.config.defaultSendDamage": "CLIENT: Damage to chat by default",
   "ironclaw2e.config.defaultSendDamageHint": "If checked, the damage-applying dialog will have the 'Send to chat' option checked by default.",
@@ -173,6 +177,11 @@
   "ironclaw2e.dialog.weaponRoll.parry": "Parry",
   "ironclaw2e.dialog.weaponRoll.counter": "Counter",
 
+
+  "ironclaw2e.chatInfo.tn": "TN",
+  "ironclaw2e.chatInfo.high": "High",
+  "ironclaw2e.chatInfo.copy": "Copy",
+  "ironclaw2e.chatInfo.reroll": "Reroll",
 
   "ironclaw2e.chatInfo.itemInfo.tags": "Tags",
   "ironclaw2e.chatInfo.itemInfo.refresh": "Refresh",
