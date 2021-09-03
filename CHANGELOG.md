@@ -1,3 +1,9 @@
+### 0.3.3 Favored release
+ - Upgraded to FoundryVTT 0.8.9
+ - Added a "Reroll One" button to use for Favored Use
+ - Updated the automatic attack effect calculation system to work with copied rolls
+ - Added new settings to the auto-calculation
+
 ### 0.3.2 Localized calculation release
  - Upgraded to FoundryVTT 0.8.8
  - Damage auto-calculation can now handle counter-attacks and resisted attacks, a "hanging" roll can be resolved through the right-click menu
