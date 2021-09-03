@@ -107,6 +107,8 @@ export async function copyToRollTN(tni, message, sendinchat = true, rerollone = 
         flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
     }, { create: sendinchat });
 
+    await copyHangingAttackFlags(message, msg, tnData);
+
     return { "roll": roll, "highest": highest, "tnData": tnData, "message": msg, "isSent": sendinchat };
 }
 
@@ -172,6 +174,8 @@ export async function copyToRollHighest(message, sendinchat = true, rerollone = 
         flavor: flavorstring,
         flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
     }, { create: sendinchat });
+
+    await copyHangingAttackFlags(message, msg);
 
     return { "roll": roll, "highest": roll.total, "tnData": null, "message": msg, "isSent": sendinchat };
 }
@@ -526,7 +530,7 @@ export async function copyToRollTNDialog(message, rolltitle = "") {
  * @param {number} d4 d4's to roll
  * @returns {string} Properly set-up string to give to a Roll
  */
-export function formRoll(d12, d10, d8, d6, d4) {
+function formRoll(d12, d10, d8, d6, d4) {
     let rollstring = "";
     for (var i = 0; i < d12; i++) {
         rollstring += "1d12,";
@@ -628,4 +632,40 @@ function copyRerollHighestOne(roll) {
     }
 
     return formula;
+}
+
+/**
+ * Helper function for the dice roller to copy hanging attack flags to the copied rolls
+ * @param {Message} origin The message to copy the flags from
+ * @param {Message} target The message to copy the flags to
+ * @param {TNData} tndata The TN Data to use to replace the recorded successes and success state for the relevant roll, if empty those will not be copied
+ */
+async function copyHangingAttackFlags(origin, target, tndata = null) {
+    if (!origin || !target) {
+        return;
+    }
+
+    const hangingType = origin.getFlag("ironclaw2e", "hangingAttack");
+    if (hangingType) {
+        let updatedata = {};
+        updatedata.flags = {
+            "ironclaw2e.hangingAttack": hangingType, "ironclaw2e.hangingWeapon": origin.getFlag("ironclaw2e", "hangingWeapon"),
+            "ironclaw2e.hangingActor": origin.getFlag("ironclaw2e", "hangingActor"), "ironclaw2e.hangingToken": origin.getFlag("ironclaw2e", "hangingToken")
+        };
+
+        if (tndata) {
+            const successes = (isNaN(tndata.successes) ? 0 : tndata.successes);
+            const ties = (isNaN(tndata.ties) ? 0 : tndata.ties);
+            const success = successes > 0;
+            const usedsuccesses = (success ? successes : ties);
+
+            if (hangingType === "attack") {
+                updatedata.flags = mergeObject(updatedata.flags, { "ironclaw2e.attackSuccess": success, "ironclaw2e.attackSuccessCount": usedsuccesses });
+            } else if (hangingType === "resist") {
+                updatedata.flags = mergeObject(updatedata.flags, { "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses });
+            }
+        }
+
+        await target.update(updatedata);
+    }
 }
