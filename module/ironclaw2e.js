@@ -115,6 +115,14 @@ Hooks.once('init', async function () {
         default: false,
         config: true
     });
+    game.settings.register("ironclaw2e", "calculateDoesNotDisplay", {
+        name: "ironclaw2e.config.calculateDoesNotDisplay",
+        hint: "ironclaw2e.config.calculateDoesNotDisplayHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: true
+    });
 
     // Register system client settings
     game.settings.register("ironclaw2e", "defaultSendDamage", {
@@ -276,7 +284,7 @@ function addIronclawChatLogContext(html, entryOptions) {
             }
         },
         {
-            name: "ironclaw2e.resendAttack",
+            name: "ironclaw2e.showAttack",
             icon: '<i class="fas fa-fist-raised"></i>',
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));

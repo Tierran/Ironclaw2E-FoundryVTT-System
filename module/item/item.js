@@ -361,7 +361,7 @@ export class Ironclaw2EItem extends Item {
 
         if (!info.tnData) { // If the roll info is in highest mode, assume the attack was a counter-attack, and set the flags accordingly
             let updatedata = {
-                flags: { "ironclaw2e.hangingAttack": "counter", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor.id, "ironclaw2e.hangingToken": this.actor.token.id }
+                flags: { "ironclaw2e.hangingAttack": "counter", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id }
             };
             info.message.update(updatedata);
             return; // Return out of a counter-attack
@@ -375,7 +375,7 @@ export class Ironclaw2EItem extends Item {
         if (ignoreresist === false && itemData.hasResist) { // If the weapon's attack was a successful resist roll, set the flags accordingly and return out
             let updatedata = {
                 flags: {
-                    "ironclaw2e.hangingAttack": "resist", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor.id, "ironclaw2e.hangingToken": this.actor.token.id,
+                    "ironclaw2e.hangingAttack": "resist", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
                     "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses
                 }
             };
@@ -385,7 +385,7 @@ export class Ironclaw2EItem extends Item {
         else { // Else, treat it as a normal attack and set the flags to store the information for future reference
             let updatedata = {
                 flags: {
-                    "ironclaw2e.hangingAttack": "attack", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor.id, "ironclaw2e.hangingToken": this.actor.token.id,
+                    "ironclaw2e.hangingAttack": "attack", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
                     "ironclaw2e.attackSuccess": success, "ironclaw2e.attackSuccessCount": usedsuccesses
                 }
             };
@@ -497,7 +497,7 @@ export class Ironclaw2EItem extends Item {
         const success = message.getFlag("ironclaw2e", "attackSuccess");
         const successes = message.getFlag("ironclaw2e", "attackSuccessCount");
 
-        if (successes > opposingsuccesses) {
+        if (successes > 0) {
             this.successfulAttackToChat(success, successes);
         }
         else {
@@ -659,7 +659,8 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, 2, (x => { this.automaticDamageCalculation(x); }));
+        const donotdisplay = game.settings.get("ironclaw2e", "calculateDoesNotDisplay");
+        this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, 2, (x => { this.automaticDamageCalculation(x, false, donotdisplay); }));
     }
 
     defenseRoll() {

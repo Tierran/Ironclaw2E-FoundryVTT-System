@@ -20,14 +20,14 @@
   "ironclaw2e.no": "No",
   "ironclaw2e.never": "Never",
 
-  "ironclaw2e.copyToTN": "Copy To TN Roll",
+  "ironclaw2e.copyToTN": "Copy to TN Roll",
   "ironclaw2e.changeTN": "Change TN",
-  "ironclaw2e.copyToHighest": "Copy To Highest Roll",
+  "ironclaw2e.copyToHighest": "Copy to Highest Roll",
   "ironclaw2e.rerollOne": "Reroll a Single One",
-  "ironclaw2e.resendAttack": "Resend The Attack",
-  "ironclaw2e.resolveCounter": "Resolve The Counter-Attack",
-  "ironclaw2e.resolveResist": "Resolve The Resisted Attack",
-  "ironclaw2e.resolveAsNormal": "Resolve As Normal Attack",
+  "ironclaw2e.showAttack": "Send the Attack to Chat",
+  "ironclaw2e.resolveCounter": "Resolve the Counter-Attack",
+  "ironclaw2e.resolveResist": "Resolve the Resisted Attack",
+  "ironclaw2e.resolveAsNormal": "Resolve as Normal Attack",
 
 
   "ironclaw2e.ui.encumbranceAutoActive": "Auto-Encumbrance management active, condition modification cancelled.",
@@ -85,7 +85,9 @@
   "ironclaw2e.config.calculateAttackEffects": "WORLD: Auto-calculate attack effects",
   "ironclaw2e.config.calculateAttackEffectsHint": "If checked, successful and tied attacks with weapons will create a second chat message that contains the calculated raw damage of the attack based on the effects and successes.",
   "ironclaw2e.config.calculateDisplaysFailed": "WORLD: Auto-calculate displays failures",
-  "ironclaw2e.config.calculateDisplaysFailedHint": "If checked, failed attacks with weapons will also create a chat message which simply notes that the attack failed.",
+  "ironclaw2e.config.calculateDisplaysFailedHint": "If checked, the attack auto-calculation will also create a chat message for failed attacks with weapons, which simply note that the attack failed.",
+  "ironclaw2e.config.calculateDoesNotDisplay": "WORLD: Auto-calculate does not display effect by default",
+  "ironclaw2e.config.calculateDoesNotDisplayHint": "If checked, the attack auto-calculation will not send messages to chat by default for normal attacks, requiring the user to specifically send it through the context menu. Resolving counter-attacks and resisted attacks still sends a message to chat by default.",
 
   "ironclaw2e.config.defaultSendDamage": "CLIENT: Damage to chat by default",
   "ironclaw2e.config.defaultSendDamageHint": "If checked, the damage-applying dialog will have the 'Send to chat' option checked by default.",
