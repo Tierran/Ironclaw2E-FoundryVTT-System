@@ -574,9 +574,9 @@ export class Ironclaw2EItem extends Item {
         <div class="chat-content"><div class="chat-item">`;
 
         if (itemData.hasResist) {
-            contents += `<p style="color:${CommonSystemInfo.resultColors.failure}">Attack was resisted completely!</p>`;
+            contents += `<p style="color:${CommonSystemInfo.resultColors.failure}">${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.attackResisted")}</p>`;
         } else {
-            contents += `<p style="color:${CommonSystemInfo.resultColors.failure}">Attack did not hit at all!</p>`;
+            contents += `<p style="color:${CommonSystemInfo.resultColors.failure}">${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.attackFailed")}</p>`;
         }
 
         contents += `</div></div></div>`;
