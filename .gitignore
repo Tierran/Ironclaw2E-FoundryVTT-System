@@ -5,3 +5,6 @@
 # Node Modules
 node_modules/
 npm-debug.log
+
+# FoundryVTT instance-specific files
+ironclaw2e.lock
