@@ -181,13 +181,13 @@ export class Ironclaw2EActor extends Actor {
         let runbonus = 0;
 
         // Fast Mover and All Fours bonuses
-        let fastmover = findInItems(this.items, "fastmover", "gift");
+        const fastmover = findInItems(this.items, "fastmover", "gift");
         if (fastmover) {
             stridebonus += 1;
             dashbonus += 2;
             runbonus += 6;
             if (hasConditionsIronclaw("allfours", this)) {
-                let allfours = findInItems(this.items, "allfours", "gift");
+                const allfours = findInItems(this.items, "allfours", "gift");
                 if (allfours) {
                     stridebonus += 1;
                     dashbonus += 2;
@@ -198,9 +198,9 @@ export class Ironclaw2EActor extends Actor {
 
         // Coward and Flight of the Prey bonuses
         if (hasConditionsIronclaw(["afraid", "terrified"], this)) {
-            let coward = findInItems(this.items, "coward", "gift");
+            const coward = findInItems(this.items, "coward", "gift");
             if (coward) {
-                let flightofprey = findInItems(this.items, "flightoftheprey", "gift");
+                const flightofprey = findInItems(this.items, "flightoftheprey", "gift");
                 if (flightofprey && hasConditionsIronclaw("afraid", this)) {
                     stridebonus += 1;
                     dashbonus += 4;
@@ -211,6 +211,19 @@ export class Ironclaw2EActor extends Actor {
                     dashbonus += 3;
                     runbonus += 9;
                 }
+            }
+        }
+
+        // Body type Gift bonuses
+        const ophidian = findInItems(this.items, "ophidian", "gift");
+        if (ophidian) {
+            stridebonus += 2;
+            dashbonus -= 2;
+        }
+        if (hasConditionsIronclaw("flying", this)) {
+            const wings = findInItems(this.items, "wings", "gift");
+            if (wings) {
+                stridebonus += 1;
             }
         }
 
