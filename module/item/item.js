@@ -1,4 +1,5 @@
 import { findTotalDice } from "../helpers.js";
+import { parseSingleDiceString } from "../helpers.js";
 import { makeStatCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
 import { splitStatString } from "../helpers.js";
@@ -54,8 +55,13 @@ export class Ironclaw2EItem extends Item {
 
         if (data.useDice.length > 0) {
             let firstsplit = splitStatsAndBonus(data.useDice);
-            data.giftStats = firstsplit[0];
-            data.giftArray = (firstsplit[1].length > 0 ? findTotalDice(firstsplit[1]) : null);
+            if (firstsplit[0].length > 0 && parseSingleDiceString(firstsplit[0][0])) { // If the would-be gift stat array's first entry turns out to be parseable as dice, treat the entire field as just a one-line dice input
+                data.giftStats = [];
+                data.giftArray = findTotalDice(data.useDice);
+            } else {
+                data.giftStats = firstsplit[0];
+                data.giftArray = (firstsplit[1].length > 0 ? findTotalDice(firstsplit[1]) : null);
+            }
             data.canUse = true;
         }
         else if (data.exhaustWhenUsed) {

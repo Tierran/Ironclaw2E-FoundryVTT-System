@@ -960,6 +960,11 @@ export class Ironclaw2EActor extends Actor {
         let hasskills = data.hasOwnProperty("skills");
         let hashtml = otherinputs.length > 0;
 
+        if (prechecked === null || typeof (prechecked) === "undefined") {
+            console.error("Prechecked stat array turned up null or undefined! This should not happen, correcting:" + prechecked);
+            prechecked = [];
+        }
+
         let extracareers = [];
         if (data.hasExtraCareers) { // Check if the actor has any extra careers to show
             data.extraCareerIds.forEach(x => extracareers.push(this.items.get(x)));
