@@ -55,7 +55,8 @@ export class Ironclaw2EItem extends Item {
 
         if (data.useDice.length > 0) {
             let firstsplit = splitStatsAndBonus(data.useDice);
-            if (firstsplit[0].length > 0 && parseSingleDiceString(firstsplit[0][0])) { // If the would-be gift stat array's first entry turns out to be parseable as dice, treat the entire field as just a one-line dice input
+            if (!firstsplit[1] && firstsplit[0].length > 0 && parseSingleDiceString(firstsplit[0][0])) {
+                // If the would-be gift stat array only has "stats" with no explicit dice added after a semicolon and the first "stat" entry turns out to be parseable as dice, treat the entire field as just a one-line dice input
                 data.giftStats = [];
                 data.giftArray = findTotalDice(data.useDice);
             } else {
