@@ -1,3 +1,7 @@
+### 0.3.4 Jade release
+ - Added an option to set statted Gift dice pools as just one-line-style dice
+ - Added more Gifts to internal tracking
+
 ### 0.3.3 Favored release
  - Upgraded to FoundryVTT 0.8.9
  - Added a "Reroll One" button to use for Favored Use
