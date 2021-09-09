@@ -53,9 +53,9 @@
   "ironclaw2e.chat.rollingHighest": "Rolling highest",
   "ironclaw2e.chat.rollingTN": "Rolling against TN",
   "ironclaw2e.chat.rollingForInitiative": "{name} rolling for initiative:",
-  "ironclaw2e.chat.rollingInitiative": "Rolling initiative...",
-  "ironclaw2e.chat.rollingInitiativeCheck": "Rolling the initiative check...",
-  "ironclaw2e.chat.rollingSprint": "Rolling Sprint...",
+  "ironclaw2e.chat.rollingInitiative": "Rolling initiative",
+  "ironclaw2e.chat.rollingInitiativeCheck": "Rolling the initiative check",
+  "ironclaw2e.chat.rollingSprint": "Rolling Sprint",
 
   "ironclaw2e.command.iroll": "Basic Ironclaw roll",
   "ironclaw2e.command.actorroll": "Actor dice pool popup",
