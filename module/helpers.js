@@ -231,6 +231,35 @@ export function reformDiceString(dicearray, humanreadable = false) {
     return reformedString;
 }
 
+/**
+ * Simple helper function to get the maximized dice pool value from a dice array
+ * @param {number[]} dicearray The array of dice to get the maximized value from
+ * @returns {number} The maximized value of the highest die in the array, effectively the number of sides the highest die has
+ */
+export function getDiceArrayMaxValue(dicearray) {
+    if (!Array.isArray(dicearray)) {
+        console.error("Something that was not an array inputted to dice pool maximizer: " + dicearray);
+        return -1;
+    }
+    if (dicearray.length != 5) {
+        console.error("Something that was not a dice array (based on length) inputted to dice pool maximizer: " + dicearray);
+        return -1;
+    }
+
+    if (dicearray[0] > 0)
+        return 12;
+    else if (dicearray[1] > 0)
+        return 10;
+    else if (dicearray[2] > 0)
+        return 8;
+    else if (dicearray[3] > 0)
+        return 6;
+    else if (dicearray[4] > 0)
+        return 4;
+    else
+        return 0;
+}
+
 
 /* -------------------------------------------- */
 /*  Stat Helpers                                */

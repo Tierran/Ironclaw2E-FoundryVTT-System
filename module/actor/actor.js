@@ -10,6 +10,7 @@ import { checkForPrechecked } from "../helpers.js";
 import { nullCheckConcat } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
 import { checkDiceArrayIndex } from "../helpers.js";
+import { getDiceArrayMaxValue } from "../helpers.js";
 import { CommonConditionInfo } from "../conditions.js";
 // For condition management
 import { hasConditionsIronclaw } from "../conditions.js";
@@ -176,9 +177,28 @@ export class Ironclaw2EActor extends Actor {
      */
     _processBattleData(actorData) {
         const data = actorData.data;
+
+        // Base levels
         let stridebonus = 0;
         let dashbonus = 0;
         let runbonus = 0;
+
+        let speedint = getDiceArrayMaxValue(data.traits.speed.diceArray);
+        let bodyint = getDiceArrayMaxValue(data.traits.body.diceArray);
+        const sprintarray = this.sprintRoll(-1);
+        const sprintint = getDiceArrayMaxValue(sprintarray);
+
+        if (speedint < 0 || bodyint < 0) {
+            console.error("Battle data processing failed, unable to parse dice for " + actorData.name);
+            ui.notifications.error(game.i18n.format("ironclaw2e.ui.battleProcessingFailure", { "name": actorData.name }));
+            data.stride = 0;
+            data.dash = 0;
+            data.run = 0;
+            return;
+        }
+
+        if (speedint > 8 && hasConditionsIronclaw("burdened", this)) speedint = 8;
+
 
         // Fast Mover and All Fours bonuses
         const fastmover = findInItems(this.items, "fastmover", "gift");
@@ -220,26 +240,21 @@ export class Ironclaw2EActor extends Actor {
             stridebonus += 2;
             dashbonus -= 2;
         }
+
+
+        // Flying-related bonuses
         if (hasConditionsIronclaw("flying", this)) {
+            const flight = findInItems(this.items, "flight", "gift");
+            if (flight) {
+                stridebonus += 3;
+                runbonus += 12 + (sprintint - speedint); // Remove the speedint from the Flight run bonus, since the maximized flying sprint in the flying run replaces the maximized Speed in the standard run calculation
+            }
             const wings = findInItems(this.items, "wings", "gift");
             if (wings) {
                 stridebonus += 1;
             }
         }
 
-        let speedarr = parseSingleDiceString(data.traits.speed.dice);
-        let bodyarr = parseSingleDiceString(data.traits.body.dice);
-
-        if (!Array.isArray(speedarr) || !Array.isArray(bodyarr)) {
-            console.error("Battle data process failed, unable to parse dice for " + actorData.name);
-            data.stride = 0;
-            data.dash = 0;
-            data.run = 0;
-        }
-
-        let speedint = speedarr[1];
-        let bodyint = bodyarr[1];
-        if (speedint > 8 && hasConditionsIronclaw("burdened", this)) speedint = 8;
 
         // Stride setup
         data.stride = 1 + stridebonus;
@@ -259,8 +274,10 @@ export class Ironclaw2EActor extends Actor {
         }
 
 
+        // Sprint visual for the sheet
+        data.sprintString = reformDiceString(sprintarray, true);
         // Initiative visual for the sheet
-        data.initiativeString = reformDiceString(this.initiativeRoll(3), true);
+        data.initiativeString = reformDiceString(this.initiativeRoll(-1), true);
     }
 
     /**
@@ -544,7 +561,7 @@ export class Ironclaw2EActor extends Actor {
 
     /**
      * Function to call initiative for an actor
-     * @param {number} returntype The type of return to use: 0 for nothing as it launches a popup, 1 for a traditional initiative roll, 2 for the initiative check on combat start for side-based initiative, 3 to simply return the total initiative dice array
+     * @param {number} returntype The type of return to use: -1 to simply return the total initiative dice array, 0 for nothing as it launches a popup, 1 for a traditional initiative roll, 2 for the initiative check on combat start for side-based initiative
      * @param {number} tntouse The target number to use in case the mode uses target numbers
      * @returns {any} Exact return type depends on the returntype parameter, null if no normal return path
      */
@@ -566,29 +583,67 @@ export class Ironclaw2EActor extends Actor {
 	             <input type="checkbox" id="${makeStatCompareReady(dangersense.data.name)}" name="${makeStatCompareReady(dangersense.data.name)}" checked></input>
                 </div>`+ "\n";
         }
+
         let foo, bar;
         switch (returntype) { // Yes, yes, the breaks are unnecessary
+            case -1:
+                foo = this._getDicePools(prechecked, prechecked, burdened);
+                return (dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice);
+                break;
             case 0:
-                this.popupSelectRolled(prechecked, true, tntouse, "", formconstruction, constructionkeys, constructionarray);
+                this.popupSelectRolled(prechecked, true, tntouse, "", formconstruction, constructionkeys, constructionarray, game.i18n.localize("ironclaw2e.chat.rollingInitiative"));
                 return;
                 break;
             case 1:
-                foo = this._getDicePools(prechecked, null, burdened);
+                foo = this._getDicePools(prechecked, prechecked, burdened);
                 bar = dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice;
                 return rollHighest(bar[0], bar[1], bar[2], bar[3], bar[4], game.i18n.localize("ironclaw2e.chat.rollingInitiative") + ": " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this, false);
                 break;
             case 2:
-                foo = this._getDicePools(prechecked, null, burdened);
+                foo = this._getDicePools(prechecked, prechecked, burdened);
                 bar = dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice;
                 return rollTargetNumber(tntouse, bar[0], bar[1], bar[2], bar[3], bar[4], game.i18n.localize("ironclaw2e.chat.rollingInitiativeCheck") + ": " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this, false);
                 break;
-            case 3:
-                foo = this._getDicePools(prechecked, null, burdened);
-                return (dangersense ? addArrays(foo.totalDice, dangersense.data.data.giftArray) : foo.totalDice);
+        }
+
+        console.error("Initiative roll return type defaulted for actor: " + this.data.name);
+        return null;
+    }
+
+    /**
+     * Function to call Sprint on an actor
+     * @param {number} returntype The type of return to use: -1 to simply return the total Sprint dice array, 0 for nothing as it launches a popup
+     * @returns {any} Exact return type depends on the returntype parameter, null if no normal return path
+     */
+    sprintRoll(returntype) {
+        const data = this.data.data;
+        let formconstruction = ``;
+        let constructionkeys = [];
+        let constructionarray = [];
+        let prechecked = ["speed"];
+        const burdened = hasConditionsIronclaw("burdened", this);
+
+        // Flying Sprint
+        if (hasConditionsIronclaw("flying", this)) {
+            const flight = findInItems(this.items, "flight", "gift");
+            if (flight) {
+                prechecked.push("weathersense");
+            }
+        }
+
+        let foo;
+        switch (returntype) { // Yes, yes, the breaks are unnecessary
+            case -1:
+                foo = this._getDicePools(prechecked, prechecked, burdened);
+                return foo.totalDice;
+                break;
+            case 0:
+                this.popupSelectRolled(prechecked, false, 3, "", formconstruction, constructionkeys, constructionarray, game.i18n.localize("ironclaw2e.chat.rollingSprint"));
+                return;
                 break;
         }
 
-        console.warn("Initiative roll return type defaulted for actor: " + this.data.name);
+        console.error("Sprint roll return type defaulted for actor: " + this.data.name);
         return null;
     }
 

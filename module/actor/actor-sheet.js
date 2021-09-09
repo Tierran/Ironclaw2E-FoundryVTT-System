@@ -204,6 +204,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         html.find('.roll-order').click(this._onOrderRoll.bind(this));
         html.find('.roll-click').click(this._onRoll.bind(this));
         html.find('.roll-init').click(this._onInitRoll.bind(this));
+        html.find('.roll-sprint').click(this._onSprintRoll.bind(this));
         html.find('.roll-item').click(this._onItemRoll.bind(this));
         html.find('.roll-item-change').click(this._onItemChangeStat.bind(this));
         html.find('.roll-soak').click(this._onSoakRoll.bind(this));
@@ -308,6 +309,18 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const element = event.currentTarget;
 
         this.actor.initiativeRoll(0);
+    }
+
+    /**
+     * Handle sheet Sprint rolls.
+     * @param {Event} event   The originating click event
+     * @private
+     */
+    _onSprintRoll(event) {
+        event.preventDefault();
+        const element = event.currentTarget;
+
+        this.actor.sprintRoll(0);
     }
 
     /**

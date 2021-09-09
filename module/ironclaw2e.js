@@ -377,6 +377,10 @@ function addIronclawChatLogContext(html, entryOptions) {
 }
 Hooks.on("getChatLogEntryContext", addIronclawChatLogContext);
 
+/* -------------------------------------------- */
+/*  Functions                                   */
+/* -------------------------------------------- */
+
 /**
  * Delay an async function for set milliseconds
  * @param {number} ms

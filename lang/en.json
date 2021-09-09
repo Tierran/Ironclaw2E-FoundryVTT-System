@@ -38,6 +38,7 @@
   "ironclaw2e.ui.popupNotFoundForMacro": "No specific popup command found for {popup}.",
   "ironclaw2e.ui.actorNotSelectedActorroll": "No actor selected for /actorroll.",
   "ironclaw2e.ui.actorNotFoundForSpeaker": "No actor found for speaker: {name}",
+  "ironclaw2e.ui.battleProcessingFailure": "Battle data processing failed, unable to parse dice for: {name}",
 
 
   "ironclaw2e.actor.traits": "Traits",
@@ -52,8 +53,9 @@
   "ironclaw2e.chat.rollingHighest": "Rolling highest",
   "ironclaw2e.chat.rollingTN": "Rolling against TN",
   "ironclaw2e.chat.rollingForInitiative": "{name} rolling for initiative:",
-  "ironclaw2e.chat.rollingInitiative": "Rolling initiative",
-  "ironclaw2e.chat.rollingInitiativeCheck": "Rolling the initiative check",
+  "ironclaw2e.chat.rollingInitiative": "Rolling initiative...",
+  "ironclaw2e.chat.rollingInitiativeCheck": "Rolling the initiative check...",
+  "ironclaw2e.chat.rollingSprint": "Rolling Sprint...",
 
   "ironclaw2e.command.iroll": "Basic Ironclaw roll",
   "ironclaw2e.command.actorroll": "Actor dice pool popup",
@@ -239,6 +241,34 @@
   "ironclaw2e.chatInfo.damageCalcInfo.weakAttack": "Weak Attack, roll Soak twice",
 
   "ironclaw2e.chatInfo.damageCalcInfo.allEffects": "All effects",
+  
+  
+  "ironclaw2e.sheets.actor.battleStatistics": "Battle Statistics",
+  "ironclaw2e.sheets.actor.initiative": "Initiative",
+  "ironclaw2e.sheets.actor.stride": "Stride",
+  "ironclaw2e.sheets.actor.dash": "Dash",
+  "ironclaw2e.sheets.actor.sprint": "Sprint",
+  "ironclaw2e.sheets.actor.run": "Run",
+  "ironclaw2e.sheets.actor.flyingStride": "Flying Stride",
+  "ironclaw2e.sheets.actor.flyingDash": "Flying Dash",
+  "ironclaw2e.sheets.actor.flyingSprint": "Flying Sprint",
+  "ironclaw2e.sheets.actor.flyingRun": "Flying Run",
+  "ironclaw2e.sheets.actor.dodgeRoll": "Dodge Roll",
+  "ironclaw2e.sheets.actor.soakRoll": "Soak Roll",
+  "ironclaw2e.sheets.actor.attackTitle": "Attack with {name}",
+  "ironclaw2e.sheets.actor.sparkTitle": "Spark Die",
+  "ironclaw2e.sheets.actor.parryTitle": "Parry with {name}",
+  "ironclaw2e.sheets.actor.counterTitle": "Counter with {name}",
+  "ironclaw2e.sheets.actor.giftTitle": "Use Gift",
+  
+  "ironclaw2e.sheets.actor.wear": "Wear",
+  "ironclaw2e.sheets.actor.takeOff": "Take Off",
+  "ironclaw2e.sheets.actor.equip": "Equip",
+  "ironclaw2e.sheets.actor.unequip": "Unequip",
+  "ironclaw2e.sheets.actor.exhaust": "Exhaust",
+  "ironclaw2e.sheets.actor.unexhaust": "Un-exhaust",
+  "ironclaw2e.sheets.actor.light": "Light",
+  "ironclaw2e.sheets.actor.douse": "Douse",
 
 
   "ironclaw2e.effect.status.focused": "Focused",
