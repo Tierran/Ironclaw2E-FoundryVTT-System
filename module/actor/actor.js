@@ -115,6 +115,9 @@ export class Ironclaw2EActor extends Actor {
 
         for (let [key, trait] of Object.entries(data.traits)) {
             trait.diceArray = findTotalDice(trait.dice);
+
+            // Make the name used for a trait more human-readable
+            trait.usedTitle = convertCamelCase(key);
         }
 
         data.traits.species.skills = [makeStatCompareReady(data.traits.species.speciesSkill1), makeStatCompareReady(data.traits.species.speciesSkill2), makeStatCompareReady(data.traits.species.speciesSkill3)];
@@ -149,15 +152,18 @@ export class Ironclaw2EActor extends Actor {
             skill.diceString = "";
             skill.totalDiceString = "";
 
+            // Marks
             if (skill.marks > 0) {
-                let d12s = Math.floor(skill.marks / 5);
-                let remainder = skill.marks % 5;
-                skill.diceArray[0] += d12s;
+                let d12s = Math.floor(skill.marks / 5); // Get the number of d12's for the skill
+                let remainder = skill.marks % 5; // Get whatever the mark count is minus full 5's (d12's)
+                skill.diceArray[0] += d12s; // Add the d12's
                 if (remainder > 0) {
-                    skill.diceArray[5 - remainder] += 1;
+                    skill.diceArray[5 - remainder] += 1; // Based on what the marks are minus full 5's, add a smaller die
                 }
                 skill.diceString = reformDiceString(skill.diceArray, true); // For showing in the sheet how many dice the marks give
             }
+
+            // Species and Career dice
             const comparekey = makeStatCompareReady(key);
             if (data.traits.species.skills.includes(comparekey)) {
                 skill.diceArray = addArrays(skill.diceArray, data.traits.species.diceArray);
@@ -165,7 +171,6 @@ export class Ironclaw2EActor extends Actor {
             if (data.traits.career.skills.includes(comparekey)) {
                 skill.diceArray = addArrays(skill.diceArray, data.traits.career.diceArray);
             }
-
             if (data.hasExtraCareers) {
                 extracareers.forEach(element => {
                     if (element.data.data.skills.includes(comparekey)) {
@@ -175,6 +180,12 @@ export class Ironclaw2EActor extends Actor {
             }
 
             skill.totalDiceString = reformDiceString(skill.diceArray, true); // For showing in the sheet how many dice the skill has in total
+
+            // Make the name used for a skill more human-readable, and add a symbol if the skill can suffer under Burdened condition
+            skill.usedTitle = convertCamelCase(key);
+            if (burdenedLimitedStat(key)) {
+                skill.usedTitle = String.fromCodePoint([9949]) + " " + skill.usedTitle + " " + String.fromCodePoint([9949]);
+            }
         }
     }
 
@@ -1045,7 +1056,8 @@ export class Ironclaw2EActor extends Actor {
         }
 
         let statuseffectnotes = "";
-        if (hasConditionsIronclaw("burdened", this)) {
+        const burdened = hasConditionsIronclaw("burdened", this);
+        if (burdened) {
             statuseffectnotes = `
      <div class="form-group">
        <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.dicePool.applyBurdened")}:</label>
@@ -1094,7 +1106,7 @@ export class Ironclaw2EActor extends Actor {
                 let lowerkey = makeStatCompareReady(key);
                 if (firstelement == "")
                     firstelement = lowerkey;
-                let usedname = convertCamelCase(key) + ": " + reformDiceString(skill.diceArray);
+                let usedname = (burdenedLimitedStat(lowerkey) ? String.fromCodePoint([9949]) : "") + " " + convertCamelCase(key) + ": " + reformDiceString(skill.diceArray);
                 formconstruction += `<div class="form-group flex-group-center flex-tight">
        <label class="${usedname.length > 26 ? "tiny-label" : (usedname.length > 18 ? "small-label" : "normal-label")}">${usedname}</label>
 	   <input type="checkbox" id="${lowerkey}" name="skill" value="${lowerkey}" ${prechecked.includes(lowerkey) ? "checked" : ""}></input>

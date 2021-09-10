@@ -13,7 +13,7 @@
                     <div class="traits grid-2row">
                         {{#each data.traits as |trait key|}}
                         <div class="trait flexrow flex-group-center">
-                            <label for="data.traits.{{key}}.dice" class="resource-label">{{key}}</label>
+                            <label for="data.traits.{{key}}.dice" class="resource-label">{{trait.usedTitle}}</label>
                             <input type="text" name="data.traits.{{key}}.dice" value="{{trait.dice}}" data-dtype="String" onfocus="this.select();" />
                         </div>
                         {{/each}}
@@ -128,7 +128,7 @@
             <div class="skillgrid grid grid-3col">
                 {{#each data.skills as |skill key|}}
                 <div class="skill flexcol flex-group-center flex-tight">
-                    <span class="resource-label">{{key}}</span>
+                    <span class="resource-label">{{skill.usedTitle}}</span>
                     <div class="skill flexrow">
                         <span class="small-label under-header">Total dice: {{skill.totalDiceString}}</span>
                     </div>
