@@ -142,6 +142,7 @@ Hooks.once('init', async function () {
         config: true
     });
 
+
     // Handlebars helper registration
     Handlebars.registerHelper('concat', function () {
         var outStr = '';

@@ -6,10 +6,17 @@
         <div></div>
     </div>
     <div class="flexrow flex-group-center flex-tight">
+        {{#if isFlying}}
+        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.flyingStride"}}: {{data.stride}}</span>
+        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.flyingDash"}}: {{data.dash}}</span>
+        <span class="rollable roll-sprint normal-label">{{localize "ironclaw2e.sheets.actor.flyingSprint"}}: {{data.sprintString}}</span>
+        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.flyingRun"}}: {{data.run}}</span>
+        {{else}}
         <span class="normal-label">{{localize "ironclaw2e.sheets.actor.stride"}}: {{data.stride}}</span>
         <span class="normal-label">{{localize "ironclaw2e.sheets.actor.dash"}}: {{data.dash}}</span>
         <span class="rollable roll-sprint normal-label">{{localize "ironclaw2e.sheets.actor.sprint"}}: {{data.sprintString}}</span>
         <span class="normal-label">{{localize "ironclaw2e.sheets.actor.run"}}: {{data.run}}</span>
+        {{/if}}
     </div>
     <div class="grid grid-2col">
         <div class="rollable roll-soak flex-group-center flex-tight" data-roll="body">

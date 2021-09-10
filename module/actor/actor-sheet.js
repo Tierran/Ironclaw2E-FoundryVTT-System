@@ -4,6 +4,7 @@ import { rollTargetNumberDialog } from "../dicerollers.js";
 import { rollHighestDialog } from "../dicerollers.js";
 import { makeStatCompareReady, splitStatString } from "../helpers.js";
 import { getConditionByNameIronclaw } from "../conditions.js";
+import { hasConditionsIronclaw } from "../conditions.js";
 
 /**
  * Extend the basic ActorSheet
@@ -63,6 +64,10 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         // Grab the actual template data and effects
         sheetData.data = baseData.data.data;
         sheetData.effects = baseData.effects;
+
+        // Get whether the actor is flying for some things
+        sheetData.isFlying = hasConditionsIronclaw("flying", baseData.actor);
+
         //console.log(sheetData);
         return sheetData;
     }

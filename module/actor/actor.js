@@ -76,8 +76,10 @@ export class Ironclaw2EActor extends Actor {
     _prepareCharacterData(actorData) {
         this._processTraits(actorData);
         this._processSkills(actorData);
+
         this._processCoinageData(actorData);
         this._processItemData(actorData);
+
         this._processBattleData(actorData);
     }
 
@@ -87,8 +89,10 @@ export class Ironclaw2EActor extends Actor {
     _prepareMookData(actorData) {
         this._processTraits(actorData);
         this._processSkills(actorData);
+
         this._processCoinageData(actorData);
         this._processItemData(actorData);
+
         this._processBattleData(actorData);
     }
 
@@ -97,7 +101,9 @@ export class Ironclaw2EActor extends Actor {
      */
     _prepareBeastData(actorData) {
         this._processTraits(actorData);
+
         this._processItemData(actorData);
+
         this._processBattleData(actorData);
     }
 
@@ -186,7 +192,6 @@ export class Ironclaw2EActor extends Actor {
         let speedint = getDiceArrayMaxValue(data.traits.speed.diceArray);
         let bodyint = getDiceArrayMaxValue(data.traits.body.diceArray);
         const sprintarray = this.sprintRoll(-1);
-        const sprintint = getDiceArrayMaxValue(sprintarray);
 
         if (speedint < 0 || bodyint < 0) {
             console.error("Battle data processing failed, unable to parse dice for " + actorData.name);
@@ -247,6 +252,7 @@ export class Ironclaw2EActor extends Actor {
             const flight = findInItems(this.items, "flight", "gift");
             if (flight) {
                 stridebonus += 3;
+                const sprintint = getDiceArrayMaxValue(sprintarray);
                 runbonus += 12 + (sprintint - speedint); // Remove the speedint from the Flight run bonus, since the maximized flying sprint in the flying run replaces the maximized Speed in the standard run calculation
             }
             const wings = findInItems(this.items, "wings", "gift");
@@ -542,7 +548,7 @@ export class Ironclaw2EActor extends Actor {
 
     async deleteEffect(condition, isid = false) {
         if (isid) {
-            this.deleteEmbeddedEntity("ActiveEffect", condition);
+            this.deleteEmbeddedDocuments("ActiveEffect", [condition]);
         }
         else {
             removeConditionsIronclaw(condition, this);
