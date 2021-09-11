@@ -23,6 +23,11 @@ import { ironclawRollActorChat } from "./commands.js";
 
 import { CommonConditionInfo } from "./conditions.js";
 
+
+/* -------------------------------------------- */
+/*  Base Hooks                                  */
+/* -------------------------------------------- */
+
 Hooks.once('init', async function () {
 
     game.ironclaw2e = {
@@ -142,6 +147,14 @@ Hooks.once('init', async function () {
         config: true
     });
 
+    // Register a version number that was used last time to allow determining if a new version is being used
+    game.settings.register("ironclaw2e", "lastSystemVersion", {
+        scope: "client",
+        type: String,
+        default: game.system.data.version,
+        config: false
+    });
+
 
     // Handlebars helper registration
     Handlebars.registerHelper('concat', function () {
@@ -200,13 +213,25 @@ Hooks.once("ready", async function () {
         });
     }
 
-    /// CUB remove defaults nag
+    // CUB remove defaults nag
     if (game.ironclaw2e.useCUBConditions && game.settings.get("combat-utility-belt", "removeDefaultEffects") === false) {
         ui.notifications.info(game.i18n.localize("ironclaw2e.ui.removeDefaultConditionsNag"), { permanent: true });
     }
 
+    // Version checks 
+    const lastVersion = game.settings.get("ironclaw2e", "lastSystemVersion");
+    if (checkIfNewerVersion(game.system.data.version, lastVersion)) {
+        // TODO: Insert things like "What's new" and data migration stuff here
+    }
+    game.settings.set("ironclaw2e", "lastSystemVersion", game.system.data.version);
+
     console.log("Ironclaw2E System ready");
 });
+
+
+/* -------------------------------------------- */
+/*  Additional Hooks                            */
+/* -------------------------------------------- */
 
 async function loadHandleBarTemplates() {
     // register templates parts
@@ -399,6 +424,51 @@ async function waitUntilReady(resolve) {
         await sleep(500);
     }
     return true;
+}
+
+/**
+ * Split the version number of the system into its component parts and put them into an array
+ * @param {string} version System version number as a string
+ * @returns {number[]} Array containing the component numbers of the version number
+ */
+function getVersionNumbers(version) {
+    if (typeof (version) !== "string") {
+        console.error("System version spliter given something that was not a string: " + version);
+        return null;
+    }
+
+    let versionarray = [];
+    let versiontest = new RegExp("(\\d+)\\.(\\d+)\\.(\\d+)?"); // Regex to match and split the version number
+
+    if (versiontest.test(version)) {
+        const result = version.match(versiontest);
+        for (let i = 1; i < result.length; ++i) {
+            versionarray.push(result[i]); // Push each separate number in the version to a separate index in the array
+        }
+    } else {
+        console.error("System version splitter given something which could not be split: " + version);
+        return null;
+    }
+
+    return versionarray;
+}
+
+/**
+ * Check if the given version number is newer than the base version number
+ * @param {string} testing The version number to test
+ * @param {string} baseversion The version number to test against
+ * @returns {boolean} If true, the tested version is newer than the base version
+ */
+function checkIfNewerVersion(testing, baseversion) {
+    const oldver = getVersionNumbers(baseversion);
+    const newver = getVersionNumbers(testing);
+
+    for (let i = 0; i < newver.length; ++i) {
+        if (newver[i] != oldver[i])
+            return newver[i] > oldver[i];
+    }
+
+    return false;
 }
 
 /* -------------------------------------------- */
