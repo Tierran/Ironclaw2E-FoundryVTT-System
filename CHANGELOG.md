@@ -1,3 +1,9 @@
+### 0.3.5 Burdened flight release
+ - Added Flight as a tracked Gift
+ - Battle statistics shows when the speeds in it are considered flying speeds
+ - Added symbols to skills that have their max die type limited by Burdened
+ - Battle statistics localization added
+
 ### 0.3.4 Jade release
  - Added an option to set statted Gift dice pools as just one-line-style dice
  - Added more Gifts to internal tracking
