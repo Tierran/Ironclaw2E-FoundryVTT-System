@@ -219,10 +219,12 @@ Hooks.once("ready", async function () {
     }
 
     // Version checks 
+    /*
     const lastVersion = game.settings.get("ironclaw2e", "lastSystemVersion");
     if (checkIfNewerVersion(game.system.data.version, lastVersion)) {
         // TODO: Insert things like "What's new" and data migration stuff here
     }
+    */
     game.settings.set("ironclaw2e", "lastSystemVersion", game.system.data.version);
 
     console.log("Ironclaw2E System ready");
