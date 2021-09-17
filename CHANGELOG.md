@@ -1,3 +1,6 @@
+### 0.3.6 Bug fixing release
+ - Fixed a but that prevented token lights from updated
+
 ### 0.3.5 Burdened flight release
  - Added Flight as a tracked Gift
  - Battle statistics shows when the speeds in it are considered flying speeds
