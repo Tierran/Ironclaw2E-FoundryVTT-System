@@ -1,5 +1,5 @@
 ### 0.3.6 Bug fixing release
- - Fixed a but that prevented token lights from updated
+ - Fixed a bug that prevented token lights from being updated
 
 ### 0.3.5 Burdened flight release
  - Added Flight as a tracked Gift
