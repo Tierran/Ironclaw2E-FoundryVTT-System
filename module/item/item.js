@@ -158,17 +158,6 @@ export class Ironclaw2EItem extends Item {
                 data.resistStats = splitStatString(data.specialResist);
             }
         }
-        // Gift exhaust
-        if (data.exhaustGift && data.exhaustGiftName.length > 0) {
-            data.giftToExhaust = findInItems(this.actor?.items, makeStatCompareReady(data.exhaustGiftName), "gift");
-            if (!data.giftToExhaust) {
-                ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustFailure", { "name": itemData.name, "gift": data.exhaustGiftName, "actor": actorData.name }));
-                data.giftToExhaust = null;
-            }
-        }
-        else {
-            data.giftToExhaust = null;
-        }
     }
 
     /**
@@ -209,6 +198,7 @@ export class Ironclaw2EItem extends Item {
     /**
      * Check whether a gift is usable, ie. not exhausted or does not exhaust at all
      * @param {boolean} countNonExhaust Whether to return true on gifts that are not exhaustible, or only return true for gifts that can be exhausted but aren't
+     * @returns {boolean} Whether the gift is usable, ie. refreshed or doesn't exhaust
      */
     giftUsable(countNonExhaust = true) {
         const itemData = this.data;
@@ -253,9 +243,11 @@ export class Ironclaw2EItem extends Item {
             foo = !data.exhausted;
         }
 
+        const statechanging = (foo !== data.exhausted);
+
         await this.update({ "data.exhausted": foo });
 
-        if (sendToChat) {
+        if (sendToChat && statechanging) {
             let speaker = getMacroSpeaker(this.actor);
             let contents = "";
             if (foo) {
@@ -277,6 +269,31 @@ export class Ironclaw2EItem extends Item {
             };
             ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
             CONFIG.ChatMessage.documentClass.create(chatData);
+        }
+    }
+
+    /**
+     * Get the gift this weapon is supposed to exhaust when used
+     * @returns {Ironclaw2EItem} The gift to exhaust
+     */
+    weaponGetGiftToExhaust() {
+        const itemData = this.data;
+        const data = itemData.data;
+        if (!(itemData.type === 'weapon')) {
+            console.warn("Weapon get exhaust gift attempted on a non-weapon item: " + itemData.name);
+            return;
+        }
+
+        if (data.exhaustGift && data.exhaustGiftName.length > 0) {
+            const giftToExhaust = findInItems(this.actor?.items, makeStatCompareReady(data.exhaustGiftName), "gift");
+            if (!giftToExhaust) {
+                ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustFailure", { "name": itemData.name, "gift": data.exhaustGiftName, "actor": actorData.name }));
+                return null;
+            }
+            return giftToExhaust;
+        }
+        else {
+            return null;
         }
     }
 
@@ -757,9 +774,13 @@ export class Ironclaw2EItem extends Item {
         }
 
         const donotdisplay = game.settings.get("ironclaw2e", "calculateDoesNotDisplay");
-        const exhaust = data.giftToExhaust;
+        const exhaust = this.weaponGetGiftToExhaust();
         const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
-        this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, 2, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x, false, donotdisplay); }));
+        if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
+            exhaust?.popupRefreshGift();
+        } else {
+            this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, 2, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x, false, donotdisplay); }));
+        }
     }
 
     defenseRoll() {
@@ -793,9 +814,13 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        const exhaust = data.giftToExhaust;
+        const exhaust = this.weaponGetGiftToExhaust();
         const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
-        this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, 3, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x); }));
+        if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
+            exhaust?.popupRefreshGift();
+        } else {
+            this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, 3, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x); }));
+        }
     }
 
     sparkRoll() {
@@ -851,12 +876,12 @@ export class Ironclaw2EItem extends Item {
                     break;
                 case 2: // Attack roll
                     label = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect + (this.data.data.hasResist ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith") + " " + this.data.data.specialResist + " vs. 3 " : "") : ": ");
-                    if (this.data.data.giftToExhaust?.giftUsable() === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
+                    if (this.weaponGetGiftToExhaust()?.giftUsable() === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
                     this.actor.popupAttackRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), label, callback);
                     break;
                 case 3: // Counter roll
                     label = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.counterRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect : ": ");
-                    if (this.data.data.giftToExhaust?.giftUsable() === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
+                    if (this.weaponGetGiftToExhaust()?.giftUsable() === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
                     this.actor.popupCounterRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), label, callback);
                     break;
                 default:

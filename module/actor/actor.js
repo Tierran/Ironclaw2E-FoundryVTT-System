@@ -88,8 +88,6 @@ export class Ironclaw2EActor extends Actor {
         }
         else
             data.hasExtraCareers = false;
-
-        console.log("Extra career");
     }
     
     /* -------------------------------------------- */

@@ -246,6 +246,7 @@
       "useSpark": false,
       "sparkDie": "",
 	  "exhaustGift": false,
+	  "exhaustGiftNeedsRefresh": true,
 	  "exhaustGiftName": ""
     },
     "armor": {

@@ -77,8 +77,12 @@
                 </div>
                 {{#if data.exhaustGift}}
                 <div class="resource flexrow flex-group-center">
-                    <label class="resource-label">Auto-Exhaust the Gift Named:</label>
+                    <label class="resource-label">Auto-Exhaust Gift Name:</label>
                     <input type="text" name="data.exhaustGiftName" value="{{data.exhaustGiftName}}" data-dtype="String" />
+                    <div class="resource flexrow flex-center">
+                        <label class="resource-label">Need refreshed Gift:</label>
+                        <input type="checkbox" name="data.exhaustGiftNeedsRefresh" {{checked data.exhaustGiftNeedsRefresh}} data-dtype="Boolean" />
+                    </div>
                 </div>
                 {{/if}}
                 <h3 class="header-label">Dice Pools</h3>
