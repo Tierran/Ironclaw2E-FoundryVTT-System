@@ -31,23 +31,27 @@ import { CommonConditionInfo } from "./conditions.js";
 Hooks.once('init', async function () {
 
     game.ironclaw2e = {
+        // Document claases
         Ironclaw2EActor,
         Ironclaw2EItem,
         Ironclaw2ECombat,
         Ironclaw2ECombatant,
         Ironclaw2ECombatTracker,
+        // Hotbar macros
         rollItemMacro,
         popupMacro,
         popupSelect,
+        // Dice rolling commands
         rollTargetNumberDialog,
         rollHighestDialog,
         rollTargetNumberOneLine,
         rollHighestOneLine,
+        // Misc
         "useCUBConditions": false,
         waitUntilReady
     };
 
-    // Define custom Entity classes
+    // Define custom Document classes
     CONFIG.Actor.documentClass = Ironclaw2EActor;
     CONFIG.Item.documentClass = Ironclaw2EItem;
     CONFIG.Combat.documentClass = Ironclaw2ECombat;
@@ -146,6 +150,14 @@ Hooks.once('init', async function () {
         default: false,
         config: true
     });
+    game.settings.register("ironclaw2e", "sendWeaponExhaustMessage", {
+        name: "ironclaw2e.config.sendWeaponExhaustMessage",
+        hint: "ironclaw2e.config.sendWeaponExhaustMessageHint",
+        scope: "client",
+        type: Boolean,
+        default: false,
+        config: true
+    });
 
     // Register a version number that was used last time to allow determining if a new version is being used
     game.settings.register("ironclaw2e", "lastSystemVersion", {
@@ -219,15 +231,18 @@ Hooks.once("ready", async function () {
     }
 
     // Version checks 
-    /*
     const lastVersion = game.settings.get("ironclaw2e", "lastSystemVersion");
     if (checkIfNewerVersion(game.system.data.version, lastVersion)) {
-        // TODO: Insert things like "What's new" and data migration stuff here
+        if (game.user.isGM) { // GM-specific stuff here
+            if (getVersionNumbers(lastVersion)[0] < 4) {
+                ui.notifications.info(game.i18n.localize("System update requires data migration, please wait..."), { permanent: true });
+            }
+        }
     }
-    */
     game.settings.set("ironclaw2e", "lastSystemVersion", game.system.data.version);
 
     console.log("Ironclaw2E System ready");
+    console.log(game.scenes);
 });
 
 
@@ -456,7 +471,7 @@ function getVersionNumbers(version) {
 }
 
 /**
- * Check if the given version number is newer than the base version number
+ * Check if the testing version number is newer than the base version number
  * @param {string} testing The version number to test
  * @param {string} baseversion The version number to test against
  * @returns {boolean} If true, the tested version is newer than the base version

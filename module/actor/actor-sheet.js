@@ -3,6 +3,7 @@ import { rollHighest } from "../dicerollers.js";
 import { rollTargetNumberDialog } from "../dicerollers.js";
 import { rollHighestDialog } from "../dicerollers.js";
 import { makeStatCompareReady, splitStatString } from "../helpers.js";
+import { CommonSystemInfo } from "../helpers.js";
 import { getConditionByNameIronclaw } from "../conditions.js";
 import { hasConditionsIronclaw } from "../conditions.js";
 
@@ -50,7 +51,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         sheetData.title = baseData.title;
         sheetData.dtypes = baseData.dtypes;
 
-        // Prepare items.
+        // Prepare items
         if (this.actor.data.type == 'character') {
             this._prepareCharacterItems(sheetData);
         }

@@ -75,7 +75,7 @@
                     {{#if (usableGift item)}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.giftTitle"}}" data-roll="0" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/gift-use.svg" width="24" height="24" /></a>{{/if}}
                 </div>
                 <div class="item-controls">
-                    {{#if item.data.exhaustWhenUsed}}<a class="rollable roll-item-change" title="{{#if item.data.exhausted}}{{localize "ironclaw2e.sheets.actor.unexhaust"}}{{else}}{{localize "ironclaw2e.sheets.actor.exhaust"}}{{/if}}" data-roll="1" data-item="{{item._id}}"><span>{{#if item.data.exhausted}}Exhausted{{else}}Refreshed{{/if}}</span></a>{{/if}}
+                    {{#if item.data.exhaustWhenUsed}}<a class="rollable roll-item-change" title="{{#if item.data.exhausted}}{{localize "ironclaw2e.sheets.actor.refresh"}}{{else}}{{localize "ironclaw2e.sheets.actor.exhaust"}}{{/if}}" data-roll="1" data-item="{{item._id}}"><span>{{#if item.data.exhausted}}Exhausted{{else}}Refreshed{{/if}}</span></a>{{/if}}
                 </div>
             </li>
             {{/if}}

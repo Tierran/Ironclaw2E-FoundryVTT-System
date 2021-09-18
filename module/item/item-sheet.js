@@ -1,3 +1,5 @@
+import { CommonSystemInfo } from "../helpers.js";
+
 /**
  * Extend the basic ItemSheet with some very simple modifications
  * @extends {ItemSheet}
@@ -42,6 +44,10 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         sheetData.limited = baseData.limited;
         sheetData.title = baseData.title;
         sheetData.dtypes = baseData.dtypes;
+
+        // Add structural sheet stuff
+        let selectables = { "handedness": CommonSystemInfo.equipHandedness, "range": CommonSystemInfo.rangeBands };
+        sheetData.selectables = selectables;
 
         return sheetData;
     }

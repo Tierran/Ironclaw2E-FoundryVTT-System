@@ -1,4 +1,4 @@
-import { findTotalDice } from "../helpers.js";
+import { findInItems, findTotalDice } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
 import { makeStatCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -158,6 +158,17 @@ export class Ironclaw2EItem extends Item {
                 data.resistStats = splitStatString(data.specialResist);
             }
         }
+        // Gift exhaust
+        if (data.exhaustGift && data.exhaustGiftName.length > 0) {
+            data.giftToExhaust = findInItems(this.actor?.items, makeStatCompareReady(data.exhaustGiftName), "gift");
+            if (!data.giftToExhaust) {
+                ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustFailure", { "name": itemData.name, "gift": data.exhaustGiftName, "actor": actorData.name }));
+                data.giftToExhaust = null;
+            }
+        }
+        else {
+            data.giftToExhaust = null;
+        }
     }
 
     /**
@@ -193,6 +204,85 @@ export class Ironclaw2EItem extends Item {
 
     /* -------------------------------------------- */
     /* End of Data Processing                       */
+    /* -------------------------------------------- */
+
+    /**
+     * Check whether a gift is usable, ie. not exhausted or does not exhaust at all
+     * @param {boolean} countNonExhaust Whether to return true on gifts that are not exhaustible, or only return true for gifts that can be exhausted but aren't
+     */
+    giftUsable(countNonExhaust = true) {
+        const itemData = this.data;
+        const data = itemData.data;
+        if (!(itemData.type === 'gift')) {
+            console.warn("Gift exhaust check attempted on a non-gift item: " + itemData.name);
+            return;
+        }
+
+        if (data.exhaustWhenUsed === false && countNonExhaust === false) {
+            return false; // If the gift does not exhaust when used and the function is set to not count those, return false
+        }
+
+        const exhaustibletest = data.exhaustWhenUsed === false && countNonExhaust === true; // Set the test as true if the gift does not exhaust when used and the function is set to count non-exhaustible gifts
+        return data.exhausted === false || exhaustibletest === true; // Return true if the gift is not exhausted, or if the countnonexhaust is set to true and the gift is not exhaustible
+    }
+
+    /**
+     * Set or toggle exhaustion in a gift, if able
+     * @param {string} mode If given a string of "true" or "false", force-set the exhausted state to that, otherwise toggle it
+     * @param {boolean} sendToChat If true, send a message to chat about the new gift exhaust state
+     */
+    async giftSetExhaust(mode = "", sendToChat = false) {
+        const itemData = this.data;
+        const data = itemData.data;
+        if (!(itemData.type === 'gift')) {
+            console.warn("Gift exhaust toggle attempted on a non-gift item: " + itemData.name);
+            return;
+        }
+
+        // If the gift does not exhaust when used, return out
+        if (data.exhaustWhenUsed === false) {
+            return;
+        }
+
+        let foo = true;
+        if (mode == "true") {
+            foo = true;
+        } else if (mode == "false") {
+            foo = false;
+        } else {
+            foo = !data.exhausted;
+        }
+
+        await this.update({ "data.exhausted": foo });
+
+        if (sendToChat) {
+            let speaker = getMacroSpeaker(this.actor);
+            let contents = "";
+            if (foo) {
+                contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
+                <img class="item-image" src="${itemData.img}" title="${itemData.name}" width="20" height="20"/>
+                <div class="chat-header-small">${game.i18n.format("ironclaw2e.dialog.exhaustGift.chatMessage", { "name": itemData.name })}</div>
+                </header>
+                </div>`;
+            } else {
+                contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
+                <img class="item-image" src="${itemData.img}" title="${itemData.name}" width="20" height="20"/>
+                <div class="chat-header-small">${game.i18n.format("ironclaw2e.dialog.refreshGift.chatMessage", { "name": itemData.name })}</div>
+                </header>
+                </div>`;
+            }
+            let chatData = {
+                "content": contents,
+                "speaker": speaker
+            };
+            ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
+            CONFIG.ChatMessage.documentClass.create(chatData);
+        }
+    }
+
+
+    /* -------------------------------------------- */
+    /* Roll and Chat Functions                      */
     /* -------------------------------------------- */
 
     /**
@@ -616,7 +706,7 @@ export class Ironclaw2EItem extends Item {
         }
         if (data.exhaustWhenUsed == false || data.exhausted == false) {
             if (data.giftStats || data.giftArray)
-                this.genericItemRoll(data.giftStats, data.defaultTN, itemData.name, data.giftArray, 0, (data.exhaustWhenUsed ? (x => theitem.update({ "data.exhausted": true })) : null));
+                this.genericItemRoll(data.giftStats, data.defaultTN, itemData.name, data.giftArray, 0, (data.exhaustWhenUsed ? (x => { this.giftSetExhaust("true"); }) : null));
             else if (data.exhaustWhenUsed) // Check just in case, even though there should never be a situation where canUse is set, but neither rollable stats / dice nor exhaustWhenUsed aren't
                 this.popupExhaustGift();
         }
@@ -667,7 +757,9 @@ export class Ironclaw2EItem extends Item {
         }
 
         const donotdisplay = game.settings.get("ironclaw2e", "calculateDoesNotDisplay");
-        this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, 2, (x => { this.automaticDamageCalculation(x, false, donotdisplay); }));
+        const exhaust = data.giftToExhaust;
+        const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
+        this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, 2, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x, false, donotdisplay); }));
     }
 
     defenseRoll() {
@@ -701,7 +793,9 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, 3, (x => { this.automaticDamageCalculation(x); }));
+        const exhaust = data.giftToExhaust;
+        const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
+        this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, 3, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x); }));
     }
 
     sparkRoll() {
@@ -722,7 +816,7 @@ export class Ironclaw2EItem extends Item {
     }
 
     /**
-     * Common function to process roll data and send it to the actor's popup roll function
+     * Common massive function to process roll data and send it to the actor's popup roll function
      * @param {string[]} stats Skills to autocheck on the dialog
      * @param {number} tn Target number of the roll, -1 if highest
      * @param {string} diceid What to name the item dice
@@ -744,22 +838,30 @@ export class Ironclaw2EItem extends Item {
                 usesmoredice = true;
             }
 
+            let label = "";
+
             switch (rolltype) {
                 case 0: // Generic gift roll
-                    this.actor.popupSelectRolled(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.giftRoll") + (this.data.data.exhaustWhenUsed ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.gift") + " <strong>" + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.exhausted") + "</strong>" : ": "), callback);
+                    label = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.giftRoll") + (this.data.data.exhaustWhenUsed ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.gift") + " <strong>" + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.exhausted") + "</strong>" : ": ");
+                    this.actor.popupSelectRolled(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), label, callback);
                     break;
                 case 1: // Parry roll
-                    this.actor.popupDefenseRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.parryRoll") + ": ", true, callback);
+                    label = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.parryRoll") + ": ";
+                    this.actor.popupDefenseRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), label, true, callback);
                     break;
                 case 2: // Attack roll
-                    this.actor.popupAttackRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect + (this.data.data.hasResist ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith") + " " + this.data.data.specialResist + " vs. 3 " : "") : ": "), callback);
+                    label = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect + (this.data.data.hasResist ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith") + " " + this.data.data.specialResist + " vs. 3 " : "") : ": ");
+                    if (this.data.data.giftToExhaust?.giftUsable() === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
+                    this.actor.popupAttackRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), label, callback);
                     break;
                 case 3: // Counter roll
-                    this.actor.popupCounterRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.counterRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect : ": "), callback);
+                    label = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.counterRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect : ": ");
+                    if (this.data.data.giftToExhaust?.giftUsable() === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
+                    this.actor.popupCounterRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), label, callback);
                     break;
                 default:
                     console.warn("genericItemRoll defaulted when selecting a roll: " + rolltype);
-                    this.actor.popupSelectRolled(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), "", callback);
+                    this.actor.popupSelectRolled(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : null), (usesmoredice ? [dicearray] : null), label, callback);
                     break;
             }
 
@@ -813,23 +915,10 @@ export class Ironclaw2EItem extends Item {
             render: html => { },
             close: html => {
                 if (confirmed) {
-                    this.update({ "data.exhausted": false });
                     let SEND = html.find('[name=send]');
                     let sent = SEND.length > 0 ? SEND[0].checked : false;
 
-                    if (sent) {
-                        let contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
-        <img class="item-image" src="${item.img}" title="${item.name}" width="20" height="20"/>
-        <div class="chat-header-small">${game.i18n.format("ironclaw2e.dialog.refreshGift.chatMessage", { "name": item.name })}</div>
-        </header>
-        </div>`;
-                        let chatData = {
-                            "content": contents,
-                            "speaker": speaker
-                        };
-                        ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
-                        CONFIG.ChatMessage.documentClass.create(chatData);
-                    }
+                    this.giftSetExhaust("false", sent);
                 }
             }
         });
@@ -872,23 +961,10 @@ export class Ironclaw2EItem extends Item {
             render: html => { },
             close: html => {
                 if (confirmed) {
-                    this.update({ "data.exhausted": true });
                     let SEND = html.find('[name=send]');
                     let sent = SEND.length > 0 ? SEND[0].checked : false;
 
-                    if (sent) {
-                        let contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
-        <img class="item-image" src="${item.img}" title="${item.name}" width="20" height="20"/>
-        <div class="chat-header-small">${game.i18n.format("ironclaw2e.dialog.exhaustGift.chatMessage", { "name": item.name })}</div>
-        </header>
-        </div>`;
-                        let chatData = {
-                            "content": contents,
-                            "speaker": speaker
-                        };
-                        ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
-                        CONFIG.ChatMessage.documentClass.create(chatData);
-                    }
+                    this.giftSetExhaust("true", sent);
                 }
             }
         });

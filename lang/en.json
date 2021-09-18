@@ -39,6 +39,8 @@
   "ironclaw2e.ui.actorNotSelectedActorroll": "No actor selected for /actorroll.",
   "ironclaw2e.ui.actorNotFoundForSpeaker": "No actor found for speaker: {name}",
   "ironclaw2e.ui.battleProcessingFailure": "Battle data processing failed, unable to parse dice for: {name}",
+  "ironclaw2e.ui.diceParseFailure": "Parsing {dicetype} failed on: {name}",
+  "ironclaw2e.ui.weaponGiftExhaustFailure": "{name} failed to find a gift named {gift} on: {actor}",
 
 
   "ironclaw2e.actor.traits": "Traits",
@@ -95,6 +97,8 @@
   "ironclaw2e.config.defaultSendDamageHint": "If checked, the damage-applying dialog will have the 'Send to chat' option checked by default.",
   "ironclaw2e.config.confirmItemInfo": "CLIENT: Confirm sending item info",
   "ironclaw2e.config.confirmItemInfoHint": "If checked, the system will pop a confirmation dialog before actually sending information about items to the chat.",
+  "ironclaw2e.config.sendWeaponExhaustMessage": "CLIENT: Send weapon gift exhaustion to chat",
+  "ironclaw2e.config.sendWeaponExhaustMessageHint": "If checked, weapons that have a gift to auto-exhaust when used will also confirm gift exhaustion with a separate chat message.",
 
 
   "ironclaw2e.dialog.roll": "Roll!",
@@ -126,6 +130,7 @@
   "ironclaw2e.dialog.dicePool.useTN": "Check to use TN",
   "ironclaw2e.dialog.dicePool.applyBurdened": "Apply Burdened Limit automatically",
   "ironclaw2e.dialog.dicePool.hidingExplanation": "Improved cover and concealment",
+  "ironclaw2e.dialog.dicePool.giftExhausted": "Gift to auto-exhaust is already exhausted!",
   "ironclaw2e.dialog.dicePool.extraDice": "Extra dice",
   "ironclaw2e.dialog.dicePool.limitAllLabel": "Limit All Dice Pools",
   "ironclaw2e.dialog.dicePool.limitAllPlaceholder": "Max die type",
@@ -266,7 +271,7 @@
   "ironclaw2e.sheets.actor.equip": "Equip",
   "ironclaw2e.sheets.actor.unequip": "Unequip",
   "ironclaw2e.sheets.actor.exhaust": "Exhaust",
-  "ironclaw2e.sheets.actor.unexhaust": "Un-exhaust",
+  "ironclaw2e.sheets.actor.refresh": "Refresh",
   "ironclaw2e.sheets.actor.light": "Light",
   "ironclaw2e.sheets.actor.douse": "Douse",
 

@@ -49,13 +49,52 @@ export class Ironclaw2EActor extends Actor {
      * Perform any last data modifications after super.prepareData has finished executing
      */
     prepareData() {
-        // Performs the following, in order: data reset, prepareBaseData(), prepareEmbeddedDocuments(), prepareDerivedData()
+        // Performs the following, in order: data reset, prepareBaseData(), prepareEmbeddedEntities(), prepareDerivedData()
         super.prepareData();
         const actorData = this.data;
 
         // Automatic Encumbrance Management
         this._encumbranceAutoManagement(actorData);
     }
+    
+    /* -------------------------------------------- */
+    /* Process Embedded                             */
+    /* -------------------------------------------- */
+
+    /** @override
+     * Process the embedded entities data, mostly for lists
+     */
+    prepareEmbeddedEntities() {
+        super.prepareEmbeddedEntities();
+        const actorData = this.data;
+
+        this._prepareExtraCareerData(actorData);
+    }
+
+    /**
+     * Prepare Extra Career item data
+     */
+    _prepareExtraCareerData(actorData) {
+        const data = actorData.data;
+
+        // Extra Career additions
+        const extraCareers = this.items.filter(element => element.data.type === 'extraCareer');
+        if (extraCareers.length > 0) {
+            data.hasExtraCareers = true;
+            extraCareers.sort((a, b) => a.data.sort - b.data.sort);
+            let ids = [];
+            extraCareers.forEach(x => ids.push(x.id));
+            data.extraCareerIds = ids;
+        }
+        else
+            data.hasExtraCareers = false;
+
+        console.log("Extra career");
+    }
+    
+    /* -------------------------------------------- */
+    /* Process Derived                              */
+    /* -------------------------------------------- */
 
     /** @override
      * Augment the basic actor data with additional dynamic data.
@@ -122,18 +161,6 @@ export class Ironclaw2EActor extends Actor {
 
         data.traits.species.skills = [makeStatCompareReady(data.traits.species.speciesSkill1), makeStatCompareReady(data.traits.species.speciesSkill2), makeStatCompareReady(data.traits.species.speciesSkill3)];
         data.traits.career.skills = [makeStatCompareReady(data.traits.career.careerSkill1), makeStatCompareReady(data.traits.career.careerSkill2), makeStatCompareReady(data.traits.career.careerSkill3)];
-
-        // Extra Career additions
-        const extraCareers = this.items.filter(element => element.data.type === 'extraCareer');
-        extraCareers.sort((a, b) => a.data.sort - b.data.sort);
-        if (extraCareers.length > 0) {
-            data.hasExtraCareers = true;
-            let ids = [];
-            extraCareers.forEach(x => ids.push(x.id));
-            data.extraCareerIds = ids;
-        }
-        else
-            data.hasExtraCareers = false;
     }
 
     /**
@@ -1046,7 +1073,7 @@ export class Ironclaw2EActor extends Actor {
         let hashtml = otherinputs.length > 0;
 
         if (prechecked === null || typeof (prechecked) === "undefined") {
-            console.error("Prechecked stat array turned up null or undefined! This should not happen, correcting:" + prechecked);
+            console.error("Prechecked stat array turned up null or undefined! This should not happen, correcting: " + prechecked);
             prechecked = [];
         }
 

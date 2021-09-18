@@ -218,9 +218,10 @@
       "giftTags": "",
       "refresh": "",
       "exhausted": false,
-      "exhaustWhenUsed": true,
+      "exhaustWhenUsed": false,
       "useDice": "",
-      "defaultTN": 3
+      "defaultTN": 3,
+	  "specialSettings": []
     },
     "extraCareer": {
       "templates": [ ],
@@ -237,13 +238,15 @@
 	  "hasResist": false,
 	  "specialResist": "",
       "descriptors": "",
-      "equip": "Good hand",
-      "range": "Close",
+      "equip": "offhand",
+      "range": "close",
       "attackDice": "",
       "defenseDice": "",
       "counterDice": "",
       "useSpark": false,
-      "sparkDie": ""
+      "sparkDie": "",
+	  "exhaustGift": false,
+	  "exhaustGiftName": ""
     },
     "armor": {
       "templates": [ "base", "physical" ],

@@ -16,6 +16,7 @@
     <nav class="sheet-tabs tabs" data-group="primary">
         <a class="item" data-tab="description">Description</a>
         <a class="item" data-tab="attributes">Attributes</a>
+        <a class="item" data-tab="special">Specials</a>
     </nav>
 
     {{!-- Sheet Body --}}
@@ -45,6 +46,16 @@
                     <label class="normal-label">Default TN:</label>
                     <input type="text" name="data.defaultTN" value="{{data.defaultTN}}" data-dtype="Number" />
                 </div>
+            </div>
+        </div>
+
+        {{!-- Bonuses Tab --}}
+        <div class="tab" data-group="primary" data-tab="special">
+            <div class="flexcol">
+                <div class="rollable add-new-special flex-group-center">
+                    <span class="normal-label">Add new Special Setting</span>
+                </div>
+
             </div>
         </div>
     </section>

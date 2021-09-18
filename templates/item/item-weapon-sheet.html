@@ -59,14 +59,28 @@
                 </div>
                 <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Equips to:</label>
-                    <input type="text" name="data.equip" value="{{data.equip}}" data-dtype="String" />
+                    <select name="data.equip">
+                        {{selectOptions selectables.handedness selected=data.equip localize=false}}
+                    </select>
                     <label class="resource-label">Range:</label>
-                    <input type="text" name="data.range" value="{{data.range}}" data-dtype="String" />
+                    <select name="data.range">
+                        {{selectOptions selectables.range selected=data.range localize=false}}
+                    </select>
+                </div>
+                <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Use Spark:</label>
                     <input type="checkbox" name="data.useSpark" {{checked data.useSpark}} data-dtype="Boolean" />
                     <label class="resource-label">Has Resist:</label>
                     <input type="checkbox" name="data.hasResist" {{checked data.hasResist}} data-dtype="Boolean" />
+                    <label class="resource-label">Exhausts a Gift:</label>
+                    <input type="checkbox" name="data.exhaustGift" {{checked data.exhaustGift}} data-dtype="Boolean" />
                 </div>
+                {{#if data.exhaustGift}}
+                <div class="resource flexrow flex-group-center">
+                    <label class="resource-label">Auto-Exhaust the Gift Named:</label>
+                    <input type="text" name="data.exhaustGiftName" value="{{data.exhaustGiftName}}" data-dtype="String" />
+                </div>
+                {{/if}}
                 <h3 class="header-label">Dice Pools</h3>
                 <div class="resource flex-group-center">
                     <label class="resource-label">Attack Pool:</label>
