@@ -209,6 +209,7 @@
   "ironclaw2e.chatInfo.itemInfo.descriptors": "Descriptors",
   "ironclaw2e.chatInfo.itemInfo.equip": "Equip",
   "ironclaw2e.chatInfo.itemInfo.range": "Range",
+  "ironclaw2e.chatInfo.itemInfo.exhaustGift": "Gift to exhaust",
   "ironclaw2e.chatInfo.itemInfo.attackDice": "Attack dice",
   "ironclaw2e.chatInfo.itemInfo.sparkDice": "Spark die",
   "ironclaw2e.chatInfo.itemInfo.parryDice": "Parry dice",

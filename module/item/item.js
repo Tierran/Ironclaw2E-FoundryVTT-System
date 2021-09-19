@@ -384,7 +384,9 @@ export class Ironclaw2EItem extends Item {
                     contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith")}:</strong> ${itemData.specialResist} vs. 3</p>`;
                 contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect")}:</strong> ${itemData.effect}</p>
                         <p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.descriptors")}:</strong> ${itemData.descriptors}</p>
-                        <p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.equip")}:</strong> ${itemData.equip}, <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.range")}:</strong> ${itemData.range}</p>`;
+                        <p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.equip")}:</strong> ${CommonSystemInfo.equipHandedness[itemData.equip]},
+                        <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.range")}:</strong> ${CommonSystemInfo.rangeBands[itemData.range]}</p>`;
+                if (itemData.exhaustGift && itemData.exhaustGiftName) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.exhaustGift")}:</strong> ${itemData.exhaustGiftName}</p>`;
                 if (itemData.attackDice) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackDice")}:</strong> ${itemData.attackDice}</p>`;
                 if (itemData.useSpark) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.sparkDice")}:</strong> ${itemData.sparkDie}</p>`;
                 if (itemData.defenseDice) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.parryDice")}:</strong> ${itemData.defenseDice}</p>`;
@@ -904,6 +906,9 @@ export class Ironclaw2EItem extends Item {
     /*  Item Popup Functions                        */
     /* -------------------------------------------- */
 
+    /**
+     * Pop up a dialog box to confirm refreshing a gift
+     */
     popupRefreshGift() {
         if (this.data.type != "gift")
             return console.warn("Tried to refresh a non-gift item: " + this);
@@ -950,6 +955,9 @@ export class Ironclaw2EItem extends Item {
         dlog.render(true);
     }
 
+    /**
+     * Pop up a dialog box to confirm exhausting a gift
+     */
     popupExhaustGift() {
         if (this.data.type != "gift")
             return console.warn("Tried to exhaust a non-gift item: " + this);
@@ -996,12 +1004,25 @@ export class Ironclaw2EItem extends Item {
         dlog.render(true);
     }
 
+    /**
+     * Pop up a dialog box to pick what way to use a weapon
+     */
     popupWeaponRollType() {
         if (this.data.type != "weapon")
             return console.warn("Tried to popup a weapon roll question a non-weapon item: " + this);
 
         const item = this.data;
         const itemData = item.data;
+        const exhaust = this.weaponGetGiftToExhaust();
+
+        // Check if the weapon has an auto-exhaust gift and whether all possible uses would exhaust the gift
+        if (exhaust && !itemData.canDefend && !itemData.canSpark) {
+            // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
+            if (itemData.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) {
+                exhaust?.popupRefreshGift();
+                return;
+            }
+        }
 
         let first = null;
         let constructionstring = `<div class="form-group">
