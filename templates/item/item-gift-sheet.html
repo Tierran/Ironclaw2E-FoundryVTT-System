@@ -16,7 +16,7 @@
     <nav class="sheet-tabs tabs" data-group="primary">
         <a class="item" data-tab="description">Description</a>
         <a class="item" data-tab="attributes">Attributes</a>
-        <a class="item" data-tab="special">Specials</a>
+        <a class="item" data-tab="special">Advanced Settings</a>
     </nav>
 
     {{!-- Sheet Body --}}
@@ -49,7 +49,7 @@
             </div>
         </div>
 
-        {{!-- Bonuses Tab --}}
+        {{!-- Specials Tab --}}
         <div class="tab" data-group="primary" data-tab="special">
             <div class="flexcol">
                 <div class="rollable add-new-special flex-group-center">
@@ -67,6 +67,7 @@
                         <div class="applicability-configuration flexcol">
                             <h4 class="header-label">Applicability Configuration</h4>
                             <div class="grid-2col grid-minimal flex-group-center flex-tight">
+                                {{#if (propertyExists special "typeField")}}<div class="flexrow flex-center"><label class="normal-label">Type Field</label><input style="min-width: 60%" class="special-change-field" type="text" name="typeField" value="{{special.typeField}}" data-dtype="String" /></div>{{/if}}
                                 {{#if (propertyExists special "nameField")}}<div class="flexrow flex-center"><label class="normal-label">Name Field</label><input style="min-width: 60%" class="special-change-field" type="text" name="nameField" value="{{special.nameField}}" data-dtype="String" /></div>{{/if}}
                                 {{#if (propertyExists special "tagField")}}<div class="flexrow flex-center"><label class="normal-label">Tag Field</label><input style="min-width: 60%" class="special-change-field" type="text" name="tagField" value="{{special.tagField}}" data-dtype="String" /></div>{{/if}}
                                 {{#if (propertyExists special "descriptorField")}}<div class="flexrow flex-center"><label class="normal-label">Descriptor Field</label><input style="min-width: 60%" class="special-change-field" type="text" name="descriptorField" value="{{special.descriptorField}}" data-dtype="String" /></div>{{/if}}
@@ -99,6 +100,7 @@
                                     <label class="normal-label">Change To</label><input style="min-width: 30%" class="special-change-field" type="text" name="changeTo" value="{{special.changeTo}}" data-dtype="String" />
                                 </div>{{/if}}
                                 {{#if (propertyExists special "upgradeSteps")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Upgrade Steps</label><input class="special-change-number" type="number" name="upgradeSteps" value="{{special.upgradeSteps}}" data-dtype="Number" /></div>{{/if}}
+                                {{#if (propertyExists special "nameAddition")}}<div class="flexrow flex-center"><label class="normal-label">Name Addition</label><input style="min-width: 60%" class="special-change-field" type="text" name="nameAddition" value="{{special.nameAddition}}" data-dtype="String" /></div>{{/if}}
                                 {{#if (propertyExists special "replaceName")}}<div class="flexrow flex-center"><label class="normal-label">Replace Name</label><input style="min-width: 60%" class="special-change-field" type="text" name="replaceName" value="{{special.replaceName}}" data-dtype="String" /></div>{{/if}}
                             </div>
                         </div>

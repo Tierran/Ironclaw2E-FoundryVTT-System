@@ -238,7 +238,7 @@
 	  "hasResist": false,
 	  "specialResist": "",
       "descriptors": "",
-      "equip": "offhand",
+      "equip": "goodhand",
       "range": "close",
       "attackDice": "",
       "defenseDice": "",
