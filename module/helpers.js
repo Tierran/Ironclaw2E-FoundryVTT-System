@@ -1,37 +1,4 @@
-/** Common class for common system info that might be used */
-export class CommonSystemInfo {
-    /**
-     * List of stats that are limited by the Burdened condition
-     */
-    static burdenedList = Object.freeze(["speed", "climbing", "dodge", "endurance", "jumping", "stealth", "swimming"]);
-    /**
-     * List of CSS colors to use for different message types
-     */
-    static resultColors = { success: "green", tie: "darkgoldenrod", normal: "black", failure: "black", botch: "red" };
-    /**
-     * Font size assigned to the dice result message
-     */
-    static resultFontSize = "1.7em";
-    /**
-     * The handedness of a weapon
-     */
-    static equipHandedness = { "goodhand": "Good hand", "offhand": "Off hand", "twohands": "2 hands", "other": "Other" };
-    /**
-     * The range of a weapon
-     */
-    static rangeBands = {
-        "close": "Close", "reach": "Reach", "near": "Near", "short": "Short", "medium": "Medium", "long": "Long",
-        "verylong": "Very Long", "extreme": "Extreme", "far": "Far", "horizon": "Horizon"
-    };
-    /**
-     * The amount of paces each range band maps to
-     */
-    static rangePaces = {
-        "close": 1, "reach": 2, "near": 4, "short": 12, "medium": 36, "long": 100,
-        "verylong": 300, "extreme": 1000, "far": 3000, "horizon": 11000
-    };
-}
-
+import { CommonSystemInfo } from "./systeminfo.js";
 
 /* -------------------------------------------- */
 /*  Dice Helpers                                */

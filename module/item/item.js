@@ -6,7 +6,9 @@ import { splitStatString } from "../helpers.js";
 import { splitStatsAndBonus } from "../helpers.js";
 import { getMacroSpeaker } from "../helpers.js";
 import { checkDiceArrayEmpty } from "../helpers.js";
-import { CommonSystemInfo } from "../helpers.js";
+
+import { CommonSystemInfo } from "../systeminfo.js";
+import { getSpecialOptionPrototype } from "../systeminfo.js";
 
 import { rollTargetNumberOneLine } from "../dicerollers.js";
 import { rollHighestOneLine } from "../dicerollers.js";
@@ -204,7 +206,7 @@ export class Ironclaw2EItem extends Item {
         const itemData = this.data;
         const data = itemData.data;
         if (!(itemData.type === 'gift')) {
-            console.warn("Gift exhaust check attempted on a non-gift item: " + itemData.name);
+            console.error("Gift exhaust check attempted on a non-gift item: " + itemData.name);
             return;
         }
 
@@ -225,7 +227,7 @@ export class Ironclaw2EItem extends Item {
         const itemData = this.data;
         const data = itemData.data;
         if (!(itemData.type === 'gift')) {
-            console.warn("Gift exhaust toggle attempted on a non-gift item: " + itemData.name);
+            console.error("Gift exhaust toggle attempted on a non-gift item: " + itemData.name);
             return;
         }
 
@@ -273,6 +275,91 @@ export class Ironclaw2EItem extends Item {
     }
 
     /**
+     * Add a new special setting to a gift
+     */
+    async giftAddSpecialSetting() {
+        const itemData = this.data;
+        const data = itemData.data;
+        if (!(itemData.type === 'gift')) {
+            console.error("Gift special setting adding attempted on a non-gift item: " + itemData.name);
+            return;
+        }
+
+        // Panic escape in case the special settings ever get corrupted
+        if (!Array.isArray(data.specialSettings)) {
+            console.warn("Gift special options are not an array somehow, resetting...: " + data.specialSettings);
+            await this.update({ "data.specialSettings": [] });
+        }
+
+        let specialSettings = data.specialSettings;
+        let setting = getSpecialOptionPrototype("attackBonus");
+        specialSettings.push(setting);
+
+        await this.update({ "data.specialSettings": specialSettings });
+        this.giftChangeSpecialSetting(specialSettings.length - 1, "attackBonus", true);
+    }
+
+    /**
+     * Delete a certain special setting from a gift
+     * @param {number} index Index of the setting
+     */
+    async giftDeleteSpecialSetting(index) {
+        const itemData = this.data;
+        const data = itemData.data;
+        if (!(itemData.type === 'gift')) {
+            console.error("Gift special setting deletion attempted on a non-gift item: " + itemData.name);
+            return;
+        }
+
+        // Panic escape in case the special settings ever get corrupted
+        if (!Array.isArray(data.specialSettings)) {
+            console.warn("Gift special options are not an array somehow, resetting...: " + data.specialSettings);
+            return await this.update({ "data.specialSettings": [] });
+        }
+
+        let specialSettings = data.specialSettings;
+        specialSettings.splice(index, 1);
+
+        await this.update({ "data.specialSettings": specialSettings });
+        this.giftChangeSpecialSetting(specialSettings.length, "attackBonus", true);
+    }
+
+    /**
+     * Change a special setting type in a gift
+     * @param {number} index Index of the setting
+     * @param {string} settingmode Setting type to change into
+     * @param {boolean} force Whether to force a change even into the same type
+     */
+    async giftChangeSpecialSetting(index, settingmode, force = false) {
+        const itemData = this.data;
+        const data = itemData.data;
+        if (!(itemData.type === 'gift')) {
+            console.error("Gift special setting change attempted on a non-gift item: " + itemData.name);
+            return null;
+        }
+
+        // Panic escape in case the special settings ever get corrupted
+        if (!Array.isArray(data.specialSettings)) {
+            console.warn("Gift special options are not an array somehow, resetting...: " + data.specialSettings);
+            return await this.update({ "data.specialSettings": [] });
+        }
+
+        let specialSettings = data.specialSettings;
+        let oldSetting = specialSettings[index];
+
+        // If the setting mode in the setting is the same as the settingmode for the function, and force is not set, return out
+        if (oldSetting.settingMode == settingmode && force === false) {
+            return null;
+        }
+
+        let newSetting = getSpecialOptionPrototype(settingmode);
+        // TODO: If the old and new settings have the same fields, insert the old values to the new setting
+
+        specialSettings[index] = newSetting;
+        return this.update({ "data.specialSettings": specialSettings });
+    }
+
+    /**
      * Get the gift this weapon is supposed to exhaust when used
      * @returns {Ironclaw2EItem} The gift to exhaust
      */
@@ -280,7 +367,7 @@ export class Ironclaw2EItem extends Item {
         const itemData = this.data;
         const data = itemData.data;
         if (!(itemData.type === 'weapon')) {
-            console.warn("Weapon get exhaust gift attempted on a non-weapon item: " + itemData.name);
+            console.error("Weapon get exhaust gift attempted on a non-weapon item: " + itemData.name);
             return;
         }
 
@@ -467,7 +554,7 @@ export class Ironclaw2EItem extends Item {
         const item = this.data;
         const itemData = item.data;
         if (item.type !== 'weapon') {
-            console.warn("A non-weapon type attempted to send Attack Data: " + item.name);
+            console.error("A non-weapon type attempted to send Attack Data: " + item.name);
             return;
         }
         if (itemData.effect.length == 0) {
@@ -716,7 +803,7 @@ export class Ironclaw2EItem extends Item {
         const data = itemData.data;
 
         if (!(itemData.type === 'gift')) {
-            console.warn("Gift roll attempted on a non-gift item: " + itemData.name);
+            console.error("Gift roll attempted on a non-gift item: " + itemData.name);
             return;
         }
 
@@ -756,7 +843,7 @@ export class Ironclaw2EItem extends Item {
                 this.counterRoll();
                 break;
             default:
-                console.warn("Defaulted weapon roll type: " + this);
+                console.error("Defaulted weapon roll type: " + this);
                 break;
         }
     }
@@ -767,7 +854,7 @@ export class Ironclaw2EItem extends Item {
         const data = itemData.data;
 
         if (!(itemData.type === 'weapon')) {
-            console.warn("Attack roll attempted on a non-weapon item: " + itemData.name);
+            console.error("Attack roll attempted on a non-weapon item: " + itemData.name);
             return;
         }
 
@@ -791,7 +878,7 @@ export class Ironclaw2EItem extends Item {
         const data = itemData.data;
 
         if (!(itemData.type === 'weapon')) {
-            console.warn("Defense roll attempted on a non-weapon item: " + itemData.name);
+            console.error("Defense roll attempted on a non-weapon item: " + itemData.name);
             return;
         }
 
@@ -808,7 +895,7 @@ export class Ironclaw2EItem extends Item {
         const data = itemData.data;
 
         if (!(itemData.type === 'weapon')) {
-            console.warn("Counter roll attempted on a non-weapon item: " + itemData.name);
+            console.error("Counter roll attempted on a non-weapon item: " + itemData.name);
             return;
         }
 
@@ -831,7 +918,7 @@ export class Ironclaw2EItem extends Item {
         const data = itemData.data;
 
         if (!(itemData.type === 'weapon')) {
-            console.warn("Spark roll attempted on a non-weapon item: " + itemData.name);
+            console.error("Spark roll attempted on a non-weapon item: " + itemData.name);
             return;
         }
 
@@ -911,7 +998,7 @@ export class Ironclaw2EItem extends Item {
      */
     popupRefreshGift() {
         if (this.data.type != "gift")
-            return console.warn("Tried to refresh a non-gift item: " + this);
+            return console.error("Tried to refresh a non-gift item: " + this);
 
         const item = this.data;
         const itemData = item.data;
@@ -960,7 +1047,7 @@ export class Ironclaw2EItem extends Item {
      */
     popupExhaustGift() {
         if (this.data.type != "gift")
-            return console.warn("Tried to exhaust a non-gift item: " + this);
+            return console.error("Tried to exhaust a non-gift item: " + this);
 
         const item = this.data;
         const itemData = item.data;
@@ -1009,7 +1096,7 @@ export class Ironclaw2EItem extends Item {
      */
     popupWeaponRollType() {
         if (this.data.type != "weapon")
-            return console.warn("Tried to popup a weapon roll question a non-weapon item: " + this);
+            return console.error("Tried to popup a weapon roll question a non-weapon item: " + this);
 
         const item = this.data;
         const itemData = item.data;

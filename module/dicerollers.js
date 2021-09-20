@@ -1,6 +1,7 @@
 import { findTotalDice } from "./helpers.js";
 import { getMacroSpeaker } from "./helpers.js";
-import { CommonSystemInfo } from "./helpers.js";
+
+import { CommonSystemInfo } from "./systeminfo.js";
 
 /**
  * @typedef {{

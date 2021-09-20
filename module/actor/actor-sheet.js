@@ -3,9 +3,10 @@ import { rollHighest } from "../dicerollers.js";
 import { rollTargetNumberDialog } from "../dicerollers.js";
 import { rollHighestDialog } from "../dicerollers.js";
 import { makeStatCompareReady, splitStatString } from "../helpers.js";
-import { CommonSystemInfo } from "../helpers.js";
+import { CommonSystemInfo } from "../systeminfo.js";
 import { getConditionByNameIronclaw } from "../conditions.js";
 import { hasConditionsIronclaw } from "../conditions.js";
+import { Ironclaw2EItem } from "../item/item.js";
 
 /**
  * Extend the basic ActorSheet
@@ -260,6 +261,19 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         // Finally, create the item!
         return await Item.create(itemData, { parent: this.actor });
+    }
+
+    /**
+     * Handle any data transformations for items copied over from item directory
+     * @param {object[]|object} itemData Item data for the new item
+     */
+    async _onDropItemCreate(itemData) {
+        let items = await super._onDropItemCreate(itemData);
+        console.log(items);
+        for (let item of items) {
+            console.log(item);
+        }
+        console.log("_onDropItemCreate");
     }
 
 

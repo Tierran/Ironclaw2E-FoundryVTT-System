@@ -1,4 +1,4 @@
-import { CommonSystemInfo } from "../helpers.js";
+import { CommonSystemInfo } from "../systeminfo.js";
 
 /**
  * Extend the basic ItemSheet with some very simple modifications
@@ -46,7 +46,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         sheetData.dtypes = baseData.dtypes;
 
         // Add structural sheet stuff
-        let selectables = { "handedness": CommonSystemInfo.equipHandedness, "range": CommonSystemInfo.rangeBands };
+        let selectables = { "handedness": CommonSystemInfo.equipHandedness, "range": CommonSystemInfo.rangeBands, "giftOptions": CommonSystemInfo.giftSpecialOptions };
         sheetData.selectables = selectables;
 
         return sheetData;
@@ -72,8 +72,10 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         // Everything below here is only needed if the sheet is editable
         if (!this.options.editable) return;
 
-        // Roll handlers, click handlers, etc.
+        // Roll handlers, click handlers, etc. 
         html.find('.add-new-special').click(this._onAddNewSpecial.bind(this));
+        html.find('.delete-special-option').click(this._onDeleteSpecial.bind(this));
+        html.find('.change-setting-mode').change(this._onChangeSpecialOption.bind(this));
     }
 
     /**
@@ -81,6 +83,29 @@ export class Ironclaw2EItemSheet extends ItemSheet {
      * @param {Event} event Originationg event
      */
     _onAddNewSpecial(event) {
+        this.item.giftAddSpecialSetting();
+    }
 
+    /**
+     * Handle the deletion of a special option
+     * @param {Event} event Originationg event
+     */
+    _onDeleteSpecial(event) {
+        const li = $(event.currentTarget).parents(".special-option");
+        const index = li.data("special-index");
+        this.item.giftDeleteSpecialSetting(index);
+        //li.slideUp(200, () => this.render(false));
+    }
+
+    /**
+     * Handle the change of a setting mode
+     * @param {Event} event Originationg event
+     */
+    _onChangeSpecialOption(event) {
+        event.preventDefault();
+        const li = $(event.currentTarget).parents(".special-option");
+        const index = li.data("special-index");
+        const option = event.currentTarget.value;
+        this.item.giftChangeSpecialSetting(index, option);
     }
 }

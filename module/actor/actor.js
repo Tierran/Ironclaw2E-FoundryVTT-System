@@ -238,6 +238,7 @@ export class Ironclaw2EActor extends Actor {
             return;
         }
 
+        // Apply burdenend limit
         if (speedint > 8 && hasConditionsIronclaw("burdened", this)) speedint = 8;
 
 

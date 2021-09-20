@@ -55,7 +55,21 @@
                 <div class="rollable add-new-special flex-group-center">
                     <span class="normal-label">Add new Special Setting</span>
                 </div>
+                <div class="flexcol">
+                    {{#each data.specialSettings as |special|}}
+                    <div class="special-option flexcol flex-group-center" data-special-index="{{@index}}">
+                        <h3 class="flex-center">
+                            <select style="width: 90%" class="change-setting-mode">
+                                {{selectOptions ../selectables.giftOptions selected=special.settingMode localize=false}}
+                            </select>
+                            <a style="width: 10%" class="rollable delete-special-option" title="Delete Special Option"><i class="fas fa-trash"></i></a>
+                        </h3>
+                        {{#if special.settingMode}}
 
+                        {{/if}}
+                    </div>
+                    {{/each}}
+                </div>
             </div>
         </div>
     </section>
