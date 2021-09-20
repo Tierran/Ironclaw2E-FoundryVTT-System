@@ -11,7 +11,7 @@ import { makeStatCompareReady } from "./helpers.js";
  */
 export function ironclawRollChat(inputstring) {
     if (typeof inputstring !== "string") {
-        console.warn("Something other than a string inputted into ironclawRoll: " + inputstring.toString());
+        console.error("Something other than a string inputted into ironclawRoll: " + inputstring.toString());
         return;
     }
     if (inputstring.length === 0) {
@@ -43,7 +43,7 @@ export function ironclawRollChat(inputstring) {
  */
 export function ironclawRollActorChat(inputstring, speaker) {
     if (typeof inputstring !== "string") {
-        console.warn("Something other than a string inputted into ironclawRollActorChat: " + inputstring.toString());
+        console.error("Something other than a string inputted into ironclawRollActorChat: " + inputstring.toString());
         return;
     }
 

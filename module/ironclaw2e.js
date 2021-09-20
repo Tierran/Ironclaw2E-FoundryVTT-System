@@ -199,6 +199,10 @@ Hooks.once('init', async function () {
         return gift.data.exhaustWhenUsed || gift.data.useDice?.length > 0;
     });
 
+    Handlebars.registerHelper('propertyExists', function (thing, str) {
+        return (str in thing);
+    });
+
     console.log("Ironclaw2E System init complete");
 });
 

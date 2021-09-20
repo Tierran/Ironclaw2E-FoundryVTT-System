@@ -76,6 +76,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         html.find('.add-new-special').click(this._onAddNewSpecial.bind(this));
         html.find('.delete-special-option').click(this._onDeleteSpecial.bind(this));
         html.find('.change-setting-mode').change(this._onChangeSpecialOption.bind(this));
+        html.find('.special-change-field').change(this._onChangeSpecialField.bind(this));
     }
 
     /**
@@ -107,5 +108,18 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         const index = li.data("special-index");
         const option = event.currentTarget.value;
         this.item.giftChangeSpecialSetting(index, option);
+    }
+
+    /**
+     * Handle change in a text field special setting
+     * @param {any} event
+     */
+    _onChangeSpecialField(event) {
+        event.preventDefault();
+        const li = $(event.currentTarget).parents(".special-option");
+        const index = li.data("special-index");
+        const value = event.currentTarget.value;
+        const name = event.currentTarget.name;
+        console.log(name);
     }
 }

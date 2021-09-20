@@ -15,7 +15,7 @@ export class CommonSystemInfo {
     /**
      * The handedness of a weapon
      */
-    static equipHandedness = { "goodhand": "Good hand", "offhand": "Off hand", "twohands": "2 hands", "other": "Other" };
+    static equipHandedness = { "goodhand": "Good hand", "offhand": "Off hand", "twohands": "Two hands", "other": "Other" };
     /**
      * The range of a weapon
      */
@@ -51,63 +51,63 @@ export function getSpecialOptionPrototype(option) {
         case ("attackBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "equipField": "", "rangeField": "", "worksWhenExhausted": true,
-                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceBool": false, "replaceName": ""
+                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceName": ""
             });
             break;
 
         case ("defenseBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "equipField": "", "rangeField": "", "worksWhenExhausted": true,
-                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceBool": false, "replaceName": "", "appliesToDodge": true, "appliesOnlyToDodge": false
+                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceName": "", "appliesToDodge": true, "appliesOnlyToDodge": false
             });
             break;
 
         case ("counterBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "equipField": "", "rangeField": "", "worksWhenExhausted": true,
-                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceBool": false, "replaceName": ""
+                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceName": ""
             });
             break;
 
         case ("soakBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "worksWhenExhausted": true,
-                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceBool": false, "replaceName": ""
+                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceName": ""
             });
             break;
 
         case ("guardBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "worksWhenExhausted": true,
-                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceBool": false, "replaceName": ""
+                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceName": ""
             });
             break;
 
         case ("sprintBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "worksWhenExhausted": true,
-                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceBool": false, "replaceName": ""
+                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceName": ""
             });
             break;
 
         case ("initiativeBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "worksWhenExhausted": true,
-                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceBool": false, "replaceName": ""
+                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceName": ""
             });
             break;
 
         case ("moveBonus"):
             return mergeObject(special, {
                 "conditionField": "", "otherItemField": "", "worksWhenExhausted": true,
-                "bonusStride": 0, "bonusDash": 0, "bonusRun": 0, "replaceBool": false, "replaceName": ""
+                "bonusStride": 0, "bonusDash": 0, "bonusRun": 0, "replaceName": ""
             });
             break;
 
         case ("flyingBonus"):
             return mergeObject(special, {
                 "conditionField": "", "otherItemField": "", "worksWhenExhausted": true,
-                "bonusStride": 0, "bonusDash": 0, "bonusRun": 0, "replaceBool": false, "replaceName": ""
+                "bonusStride": 0, "bonusDash": 0, "bonusRun": 0, "replaceName": ""
             });
             break;
 

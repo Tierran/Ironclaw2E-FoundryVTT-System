@@ -14,7 +14,7 @@ export function findTotalDice(dicestring) {
     let totaldice = [0, 0, 0, 0, 0];
 
     if (typeof (dicestring) !== "string") {
-        console.warn("Something that was not a string inputted to dice parser: " + dicestring);
+        console.error("Something that was not a string inputted to dice parser: " + dicestring);
         return totaldice;
     }
 
@@ -67,7 +67,7 @@ export function parseSingleDiceString(dicestring) {
  */
 export function checkDiceArrayIndex(sides) {
     if (isNaN(sides)) {
-        console.warn("Something that was NaN inputted to dice index checker: " + sides);
+        console.error("Something that was NaN inputted to dice index checker: " + sides);
         return -1;
     }
 
@@ -92,11 +92,11 @@ export function checkDiceArrayIndex(sides) {
  */
 export function checkDiceArrayEmpty(dicearray) {
     if (!Array.isArray(dicearray)) {
-        console.warn("Something that was not an array inputted to dice array checker: " + dicearray);
+        console.error("Something that was not an array inputted to dice array checker: " + dicearray);
         return false;
     }
     if (dicearray.length != 5) {
-        console.warn("Something that was not a dice array (based on length) inputted to dice array checker: " + dicearray);
+        console.error("Something that was not a dice array (based on length) inputted to dice array checker: " + dicearray);
         return false;
     }
 
@@ -149,9 +149,9 @@ export function addArrays(foo, bar, outputLength = -1) {
  */
 export function enforceLimit(dicearray, maxdie) {
     if (!Array.isArray(dicearray) || dicearray.length != 5)
-        return console.warn("Something other than a proper dice array inputted into limit enforcer: " + dicearray);
+        return console.error("Something other than a proper dice array inputted into limit enforcer: " + dicearray);
     if (isNaN(maxdie))
-        return console.warn("Something other than a number inputted into limit enforcer as the limit: " + maxdie);
+        return console.error("Something other than a number inputted into limit enforcer as the limit: " + maxdie);
 
     let limit = maxdie;
     if (!Number.isInteger(limit)) limit = Math.round(limit);
@@ -175,11 +175,11 @@ export function enforceLimit(dicearray, maxdie) {
  */
 export function reformDiceString(dicearray, humanreadable = false) {
     if (!Array.isArray(dicearray)) {
-        console.warn("Something that was not an array inputted to dice string reformer: " + dicearray);
+        console.error("Something that was not an array inputted to dice string reformer: " + dicearray);
         return "";
     }
     if (dicearray.length != 5) {
-        console.warn("Something that was not a dice array (based on length) inputted to dice string reformer: " + dicearray);
+        console.error("Something that was not a dice array (based on length) inputted to dice string reformer: " + dicearray);
         return "";
     }
 
@@ -277,7 +277,7 @@ export function splitStatString(stats) {
     let statarray = [];
 
     if (typeof (stats) != "string") {
-        console.warn("Something that was not a string inputted to skill splitter: " + stats);
+        console.error("Something that was not a string inputted to skill splitter: " + stats);
         return statarray;
     }
 
@@ -298,7 +298,7 @@ export function splitStatsAndBonus(fullset) {
     let dicestring = "";
 
     if (typeof (fullset) != "string") {
-        console.warn("Something that was not a string inputted to stat and bonus splitter: " + fullset);
+        console.error("Something that was not a string inputted to stat and bonus splitter: " + fullset);
         return [statarray, dicestring];
     }
 
@@ -322,7 +322,7 @@ export function splitStatsAndBonus(fullset) {
  */
 export function checkForPrechecked(prechecked, givennames) {
     if (!Array.isArray(prechecked)) {
-        console.warn("Prechecked check failed, not given an array: " + prechecked);
+        console.error("Prechecked check failed, not given an array: " + prechecked);
         return false;
     }
 
@@ -396,7 +396,7 @@ export function findActorToken(actor) {
  */
 export function findInItems(itemlist, itemname, itemtype = null) {
     if (!itemlist || typeof itemlist[Symbol.iterator] !== 'function') {
-        console.warn("Find in items failed, received something not iterable: " + itemlist);
+        console.error("Find in items failed, received something not iterable: " + itemlist);
         return null;
     }
 

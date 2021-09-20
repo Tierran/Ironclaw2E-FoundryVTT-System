@@ -57,16 +57,51 @@
                 </div>
                 <div class="flexcol">
                     {{#each data.specialSettings as |special|}}
-                    <div class="special-option flexcol flex-group-center" data-special-index="{{@index}}">
+                    <div class="special-option flex-group-center" data-special-index="{{@index}}">
                         <h3 class="flex-center">
                             <select style="width: 90%" class="change-setting-mode">
                                 {{selectOptions ../selectables.giftOptions selected=special.settingMode localize=false}}
                             </select>
                             <a style="width: 10%" class="rollable delete-special-option" title="Delete Special Option"><i class="fas fa-trash"></i></a>
                         </h3>
-                        {{#if special.settingMode}}
-
-                        {{/if}}
+                        <div class="applicability-configuration flexcol">
+                            <h4 class="header-label">Applicability Configuration</h4>
+                            <div class="grid-2col grid-minimal flex-group-center flex-tight">
+                                {{#if (propertyExists special "nameField")}}<div class="flexrow flex-center"><label class="normal-label">Name Field</label><input style="min-width: 60%" class="special-change-field" type="text" name="nameField" value="{{special.nameField}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "tagField")}}<div class="flexrow flex-center"><label class="normal-label">Tag Field</label><input style="min-width: 60%" class="special-change-field" type="text" name="tagField" value="{{special.tagField}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "descriptorField")}}<div class="flexrow flex-center"><label class="normal-label">Descriptor Field</label><input style="min-width: 60%" class="special-change-field" type="text" name="descriptorField" value="{{special.descriptorField}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "effectField")}}<div class="flexrow flex-center"><label class="normal-label">Effect Field</label><input style="min-width: 60%" class="special-change-field" type="text" name="effectField" value="{{special.effectField}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "statField")}}<div class="flexrow flex-center"><label class="normal-label">Stat Field</label><input style="min-width: 60%" class="special-change-field" type="text" name="statField" value="{{special.statField}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "conditionField")}}<div class="flexrow flex-center"><label class="normal-label">Condition Field</label><input style="min-width: 60%" class="special-change-field" type="text" name="effectField" value="{{special.conditionField}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "equipField")}}<div class="flexrow flex-center"><label class="normal-label">Equip Field</label><input style="min-width: 60%" class="special-change-field" type="text" name="equipField" value="{{special.equipField}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "rangeField")}}<div class="flexrow flex-center"><label class="normal-label">Range Field</label><input style="min-width: 60%" class="special-change-field" type="text" name="rangeField" value="{{special.rangeField}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "otherItemField")}}<div class="flexrow flex-center"><label class="normal-label">Other Item Field</label><input style="min-width: 60%" class="special-change-field" type="text" name="otherItemField" value="{{special.otherItemField}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "worksWhenExhausted")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Works When Exhausted</label><input class="special-change-boolean" type="checkbox" name="worksWhenExhausted" {{checked special.worksWhenExhausted}} data-dtype="Boolean" /></div>{{/if}}
+                            </div>
+                        </div>
+                        <div class="effect-configuration flexcol">
+                            <h4 class="header-label">Effect Configuration</h4>
+                            <div class="flex-group-center flex-tight">
+                                {{#if (propertyExists special "bonusSource")}}<div class="flexrow flex-center"><label class="normal-label">Bonus Source</label><input style="min-width: 60%" class="special-change-field" type="text" name="bonusSource" value="{{special.bonusSource}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "bonusStats")}}<div class="flexrow flex-center"><label class="normal-label">Bonus Stats</label><input style="min-width: 60%" class="special-change-field" type="text" name="bonusStats" value="{{special.bonusStats}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "bonusDice")}}<div class="flexrow flex-center"><label class="normal-label">Bonus Dice</label><input style="min-width: 60%" class="special-change-field" type="text" name="bonusDice" value="{{special.bonusDice}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "appliesToDodge")}}<div class="flexrow flex-center">
+                                    <label class="normal-label" style="min-width: 40%">Applies To Dodge</label><input class="special-change-boolean" type="checkbox" name="appliesToDodge" {{checked special.appliesToDodge}} data-dtype="Boolean" />
+                                    <label class="normal-label" style="min-width: 40%">Applies Only To Dodge</label><input class="special-change-boolean" type="checkbox" name="appliesOnlyToDodge" {{checked special.appliesOnlyToDodge}} data-dtype="Boolean" />
+                                </div>{{/if}}
+                                {{#if (propertyExists special "bonusStride")}}<div class="flexrow flex-center">
+                                    <label class="normal-label" style="min-width: 25%">Bonus Stride</label><input class="special-change-number" type="number" name="bonusStride" value="{{special.bonusStride}}" data-dtype="Number" />
+                                    <label class="normal-label" style="min-width: 25%">Bonus Dash</label><input class="special-change-number" type="number" name="bonusDash" value="{{special.bonusDash}}" data-dtype="Number" />
+                                    <label class="normal-label" style="min-width: 25%">Bonus Run</label><input class="special-change-number" type="number" name="bonusRun" value="{{special.bonusRun}}" data-dtype="Number" />
+                                </div>{{/if}}
+                                {{#if (propertyExists special "changeFrom")}}<div class="flexrow flex-center">
+                                    <label class="normal-label">Change From</label><input style="min-width: 30%" class="special-change-field" type="text" name="changeFrom" value="{{special.changeFrom}}" data-dtype="String" />
+                                    <label class="normal-label">Change To</label><input style="min-width: 30%" class="special-change-field" type="text" name="changeTo" value="{{special.changeTo}}" data-dtype="String" />
+                                </div>{{/if}}
+                                {{#if (propertyExists special "upgradeSteps")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Upgrade Steps</label><input class="special-change-number" type="number" name="upgradeSteps" value="{{special.upgradeSteps}}" data-dtype="Number" /></div>{{/if}}
+                                {{#if (propertyExists special "replaceName")}}<div class="flexrow flex-center"><label class="normal-label">Replace Name</label><input style="min-width: 60%" class="special-change-field" type="text" name="replaceName" value="{{special.replaceName}}" data-dtype="String" /></div>{{/if}}
+                            </div>
+                        </div>
                     </div>
                     {{/each}}
                 </div>

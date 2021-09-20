@@ -1072,7 +1072,7 @@ export class Ironclaw2EActor extends Actor {
         let hashtml = otherinputs.length > 0;
 
         if (prechecked === null || typeof (prechecked) === "undefined") {
-            console.error("Prechecked stat array turned up null or undefined! This should not happen, correcting: " + prechecked);
+            console.warn("Prechecked stat array turned up null or undefined! This should not happen, correcting: " + prechecked);
             prechecked = [];
         }
 

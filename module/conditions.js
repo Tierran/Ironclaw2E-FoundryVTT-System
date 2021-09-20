@@ -9,7 +9,7 @@ import { makeStatCompareReady } from "./helpers.js";
  */
 export function hasConditionsIronclaw(conditions, target, warn = false) {
     if (!conditions || !target) {
-        console.log("hasConditionsIronclaw was given empty conditions or target: " + conditions.toString() + " " + target.toString());
+        console.warn("hasConditionsIronclaw was given empty conditions or target: " + conditions.toString() + " " + target.toString());
         return false;
     }
 

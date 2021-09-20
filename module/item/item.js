@@ -194,7 +194,7 @@ export class Ironclaw2EItem extends Item {
     }
 
     /* -------------------------------------------- */
-    /* End of Data Processing                       */
+    /* Item Data Modification Functions             */
     /* -------------------------------------------- */
 
     /**
@@ -321,7 +321,6 @@ export class Ironclaw2EItem extends Item {
         specialSettings.splice(index, 1);
 
         await this.update({ "data.specialSettings": specialSettings });
-        this.giftChangeSpecialSetting(specialSettings.length, "attackBonus", true);
     }
 
     /**
