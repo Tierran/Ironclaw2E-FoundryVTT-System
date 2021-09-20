@@ -181,12 +181,12 @@
     "character": {
       "templates": [ "baseTraits", "baseSkills", "baseAttributes", "baseMoney" ],
       "biography": "",
-	  "motto": "",
-	  "goals": {
-		  "goal1": "",
-		  "goal2": "",
-		  "goal3": ""
-	  },
+      "motto": "",
+      "goals": {
+        "goal1": "",
+        "goal2": "",
+        "goal3": ""
+      },
       "experience": 0
     },
     "mook": {
@@ -221,10 +221,10 @@
       "exhaustWhenUsed": false,
       "useDice": "",
       "defaultTN": 3,
-	  "specialSettings": []
+      "specialSettings": []
     },
     "extraCareer": {
-      "templates": [ ],
+      "templates": [],
       "giftTags": "Trait",
       "dice": "d4",
       "careerName": "",
@@ -235,8 +235,8 @@
     "weapon": {
       "templates": [ "base", "physical" ],
       "effect": "",
-	  "hasResist": false,
-	  "specialResist": "",
+      "hasResist": false,
+      "specialResist": "",
       "descriptors": "",
       "equip": "goodhand",
       "range": "close",
@@ -245,9 +245,9 @@
       "counterDice": "",
       "useSpark": false,
       "sparkDie": "",
-	  "exhaustGift": false,
-	  "exhaustGiftNeedsRefresh": true,
-	  "exhaustGiftName": ""
+      "exhaustGift": false,
+      "exhaustGiftNeedsRefresh": true,
+      "exhaustGiftName": ""
     },
     "armor": {
       "templates": [ "base", "physical" ],
