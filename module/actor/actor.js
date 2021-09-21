@@ -69,6 +69,7 @@ export class Ironclaw2EActor extends Actor {
         const actorData = this.data;
 
         this._prepareExtraCareerData(actorData);
+        this._prepareGiftData(actorData);
     }
 
     /**
@@ -88,6 +89,67 @@ export class Ironclaw2EActor extends Actor {
         }
         else
             data.hasExtraCareers = false;
+    }
+
+    _prepareGiftData(actorData) {
+        const data = actorData.data;
+
+        const specialGifts = this.items.filter(element => element.data.type === 'gift' && element.data.data.specialSettings?.length > 0);
+        if (specialGifts.length > 0) {
+            data.processingLists = {}; // If any of the actor's gifts have special settings, add the holding object for the lists
+
+            for (let gift of specialGifts) {
+                for (let setting of gift.data.data.specialSettings) {
+                    if (!(setting.settingMode in data.processingLists)) {
+                        // If the relevant array for a setting mode does not exist, add an empty one
+                        data.processingLists[setting.settingMode] = [];
+                    }
+
+                    switch (setting.settingMode) {
+                        case ("attackBonus"):
+                            break;
+
+                        case ("defenseBonus"):
+                            break;
+
+                        case ("counterBonus"):
+                            break;
+
+                        case ("soakBonus"):
+                            break;
+
+                        case ("guardBonus"):
+                            break;
+
+                        case ("sprintBonus"):
+                            break;
+
+                        case ("initiativeBonus"):
+                            break;
+
+                        case ("moveBonus"):
+                            break;
+
+                        case ("flyingBonus"):
+                            break;
+
+                        case ("statChange"):
+                            break;
+
+                        case ("diceUpgrade"):
+                            break;
+
+                        default:
+                            console.error("Gift special option processing defaulted! " + option);
+                            continue;
+                            break;
+                    }
+
+                    // Add the setting into the list
+                    data.processingLists[setting.settingMode].push(setting);
+                }
+            }
+        }
     }
     
     /* -------------------------------------------- */
@@ -425,7 +487,7 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /* -------------------------------------------- */
-    /* End of Data Processing                       */
+    /* Private Internal Functions                   */
     /* -------------------------------------------- */
 
     /**

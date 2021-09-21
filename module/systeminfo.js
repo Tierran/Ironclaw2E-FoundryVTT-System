@@ -51,77 +51,78 @@ export function getSpecialOptionPrototype(option) {
         case ("attackBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "equipField": "", "rangeField": "", "worksWhenExhausted": true,
-                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceName": ""
+                "bonusSourceField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("defenseBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "equipField": "", "rangeField": "", "worksWhenExhausted": true,
-                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceName": "", "appliesToDodge": true, "appliesOnlyToDodge": false
+                "appliesToDodge": true, "appliesOnlyToDodge": false,
+                "bonusSourceField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("counterBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "equipField": "", "rangeField": "", "worksWhenExhausted": true,
-                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceName": ""
+                "bonusSourceField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("soakBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "worksWhenExhausted": true,
-                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceName": ""
+                "bonusSourceField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("guardBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "worksWhenExhausted": true,
-                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceName": ""
+                "bonusSourceField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("sprintBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "worksWhenExhausted": true,
-                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceName": ""
+                "bonusSourceField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("initiativeBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "worksWhenExhausted": true,
-                "bonusSource": "", "bonusStats": "", "bonusDice": "", "replaceName": ""
+                "bonusSourceField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("moveBonus"):
             return mergeObject(special, {
                 "conditionField": "", "otherItemField": "", "worksWhenExhausted": true,
-                "bonusStride": 0, "bonusDash": 0, "bonusRun": 0, "replaceName": ""
+                "bonusStrideNumber": 0, "bonusDashNumber": 0, "bonusRunNumber": 0, "replaceNameField": ""
             });
             break;
 
         case ("flyingBonus"):
             return mergeObject(special, {
                 "conditionField": "", "otherItemField": "", "worksWhenExhausted": true,
-                "bonusStride": 0, "bonusDash": 0, "bonusRun": 0, "replaceName": ""
+                "bonusStrideNumber": 0, "bonusDashNumber": 0, "bonusRunNumber": 0, "replaceNameField": ""
             });
             break;
 
         case ("statChange"):
             return mergeObject(special, {
                 "typeField": "", "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "",
-                "changeFrom": "", "changeTo": "", "nameAddition": ""
+                "changeFromField": "", "changeToField": "", "nameAdditionField": ""
             });
             break;
 
         case ("diceUpgrade"):
             return mergeObject(special, {
                 "typeField": "", "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "",
-                "upgradeSteps": 0, "nameAddition": ""
+                "upgradeStepsNumber": 0, "nameAdditionField": ""
             });
             break;
 
