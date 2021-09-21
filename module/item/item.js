@@ -77,6 +77,70 @@ export class Ironclaw2EItem extends Item {
             data.giftArray = null;
             data.canUse = false;
         }
+
+        if (data.specialSettings?.length > 0) {
+            for (let i = 0; i < data.specialSettings.length; ++i) {
+                // Applicability settings
+                if (data.specialSettings[i].typeField) {
+                    data.specialSettings[i].typeArray = splitStatString(data.specialSettings[i].typeField);
+                }
+                if (data.specialSettings[i].nameField) {
+                    data.specialSettings[i].nameArray = splitStatString(data.specialSettings[i].nameField);
+                }
+                if (data.specialSettings[i].tagField) {
+                    data.specialSettings[i].tagArray = splitStatString(data.specialSettings[i].tagField);
+                }
+                if (data.specialSettings[i].descriptorField) {
+                    data.specialSettings[i].descriptorArray = splitStatString(data.specialSettings[i].descriptorField);
+                }
+                if (data.specialSettings[i].effectField) {
+                    data.specialSettings[i].effectArray = splitStatString(data.specialSettings[i].effectField);
+                }
+                if (data.specialSettings[i].statField) {
+                    data.specialSettings[i].statArray = splitStatString(data.specialSettings[i].statField);
+                }
+                if (data.specialSettings[i].conditionField) {
+                    data.specialSettings[i].conditionArray = splitStatString(data.specialSettings[i].conditionField);
+                }
+                if (data.specialSettings[i].equipField) {
+                    data.specialSettings[i].equipArray = splitStatString(data.specialSettings[i].equipField);
+                }
+                if (data.specialSettings[i].rangeField) {
+                    data.specialSettings[i].rangeArray = splitStatString(data.specialSettings[i].rangeField);
+                }
+                if (data.specialSettings[i].otherItemField) {
+                    data.specialSettings[i].otherItemArray = splitStatString(data.specialSettings[i].otherItemField);
+                }
+
+                // Effect settings
+                if (data.specialSettings[i].bonusSourceField) {
+                    data.specialSettings[i].bonusSource = makeStatCompareReady(data.specialSettings[i].bonusSourceField);
+                }
+                if (data.specialSettings[i].bonusStatsField) {
+                    data.specialSettings[i].bonusStats = splitStatString(data.specialSettings[i].bonusStatsField);
+                } else { // If the bonus field has stuff, use it, otherwise use the normal gift stuff
+                    data.specialSettings[i].bonusStats = data.giftStats;
+                }
+                if (data.specialSettings[i].bonusDiceField) {
+                    data.specialSettings[i].bonusDice = findTotalDice(data.specialSettings[i].bonusDiceField);
+                } else { // If the bonus field has stuff, use it, otherwise use the normal gift stuff
+                    data.specialSettings[i].bonusDice = data.giftArray;
+                }
+                if (data.specialSettings[i].replaceNameField) {
+                    data.specialSettings[i].replaceName = makeStatCompareReady(data.specialSettings[i].replaceNameField);
+                }
+
+                if (data.specialSettings[i].changeFromField && data.specialSettings[i].changeToField) {
+                    // Check that both from and to fields have stuff, and then ensure that both have the same length before assiging them
+                    const foo = splitStatString(data.specialSettings[i].changeFromField);
+                    const bar = splitStatString(data.specialSettings[i].changeToField);
+                    if (foo.length === bar.length) {
+                        data.specialSettings[i].changeFrom = foo;
+                        data.specialSettings[i].changeTo = bar;
+                    }
+                }
+            }
+        }
     }
 
     /**

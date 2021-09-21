@@ -105,46 +105,6 @@ export class Ironclaw2EActor extends Actor {
                         data.processingLists[setting.settingMode] = [];
                     }
 
-                    switch (setting.settingMode) {
-                        case ("attackBonus"):
-                            break;
-
-                        case ("defenseBonus"):
-                            break;
-
-                        case ("counterBonus"):
-                            break;
-
-                        case ("soakBonus"):
-                            break;
-
-                        case ("guardBonus"):
-                            break;
-
-                        case ("sprintBonus"):
-                            break;
-
-                        case ("initiativeBonus"):
-                            break;
-
-                        case ("moveBonus"):
-                            break;
-
-                        case ("flyingBonus"):
-                            break;
-
-                        case ("statChange"):
-                            break;
-
-                        case ("diceUpgrade"):
-                            break;
-
-                        default:
-                            console.error("Gift special option processing defaulted! " + option);
-                            continue;
-                            break;
-                    }
-
                     // Add the setting into the list
                     data.processingLists[setting.settingMode].push(setting);
                 }

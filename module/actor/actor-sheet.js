@@ -272,6 +272,13 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         console.log(items);
         for (let item of items) {
             console.log(item);
+            if (actor.data.data.processingLists.statChange) {
+
+            }
+            
+            if (actor.data.data.processingLists.diceUpgrade) {
+
+            }
         }
         console.log("_onDropItemCreate");
     }
