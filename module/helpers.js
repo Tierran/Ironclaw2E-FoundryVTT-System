@@ -1,3 +1,4 @@
+import { Ironclaw2EItem } from "./item/item.js";
 import { CommonSystemInfo } from "./systeminfo.js";
 
 /* -------------------------------------------- */
@@ -340,6 +341,20 @@ export function burdenedLimitedStat(name) {
     return CommonSystemInfo.burdenedList.includes(makeStatCompareReady(name));
 }
 
+
+/* -------------------------------------------- */
+/*  Gift Special Bonus Helpers                  */
+/* -------------------------------------------- */
+
+/**
+ * Checks the special's applicability for the target item
+ * @param {object} special
+ * @param {Ironclaw2EItem} target
+ * @returns {boolean} Whether the target is applicable for the special
+ */
+export function checkApplicability(special, target) {
+
+}
 
 /* -------------------------------------------- */
 /*  Misc Helpers                                */

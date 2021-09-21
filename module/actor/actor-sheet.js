@@ -2,7 +2,7 @@ import { rollTargetNumber } from "../dicerollers.js";
 import { rollHighest } from "../dicerollers.js";
 import { rollTargetNumberDialog } from "../dicerollers.js";
 import { rollHighestDialog } from "../dicerollers.js";
-import { makeStatCompareReady, splitStatString } from "../helpers.js";
+import { checkApplicability, makeStatCompareReady, splitStatString } from "../helpers.js";
 import { CommonSystemInfo } from "../systeminfo.js";
 import { getConditionByNameIronclaw } from "../conditions.js";
 import { hasConditionsIronclaw } from "../conditions.js";
@@ -272,12 +272,16 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         console.log(items);
         for (let item of items) {
             console.log(item);
-            if (actor.data.data.processingLists.statChange) {
-
+            for (let foobar of actor.data.data.processingLists.statChange) {
+                if (checkApplicability(foobar, item)) {
+                    // TODO: Add the actual stat change
+                }
             }
-            
-            if (actor.data.data.processingLists.diceUpgrade) {
 
+            for (let foobar of actor.data.data.processingLists.diceUpgrade) {
+                if (checkApplicability(foobar, item)) {
+                    // TODO: Add the actual dice upgrade
+                }
             }
         }
         console.log("_onDropItemCreate");

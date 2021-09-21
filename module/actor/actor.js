@@ -91,6 +91,9 @@ export class Ironclaw2EActor extends Actor {
             data.hasExtraCareers = false;
     }
 
+    /**
+     * Prepare Gift item data
+     */
     _prepareGiftData(actorData) {
         const data = actorData.data;
 
