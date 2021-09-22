@@ -248,7 +248,6 @@ Hooks.once("ready", async function () {
     game.settings.set("ironclaw2e", "lastSystemVersion", game.system.data.version);
 
     console.log("Ironclaw2E System ready");
-    console.log(game.scenes);
 });
 
 

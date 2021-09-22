@@ -77,6 +77,8 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         html.find('.delete-special-option').click(this._onDeleteSpecial.bind(this));
         html.find('.change-setting-mode').change(this._onChangeSpecialOption.bind(this));
         html.find('.special-change-field').change(this._onChangeSpecialField.bind(this));
+        html.find('.special-change-number').change(this._onChangeSpecialNumber.bind(this));
+        html.find('.special-change-boolean').change(this._onChangeSpecialBoolean.bind(this));
     }
 
     /**
@@ -118,8 +120,41 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         event.preventDefault();
         const li = $(event.currentTarget).parents(".special-option");
         const index = li.data("special-index");
-        const value = event.currentTarget.value;
         const name = event.currentTarget.name;
+        const value = event.currentTarget.value;
         console.log(name);
+        console.log(value);
+        this.item.giftChangeSpecialField(index, name, value);
+    }
+
+    /**
+     * Handle change in a text field special setting
+     * @param {any} event
+     */
+    _onChangeSpecialNumber(event) {
+        event.preventDefault();
+        const li = $(event.currentTarget).parents(".special-option");
+        const index = li.data("special-index");
+        const name = event.currentTarget.name;
+        const value = parseInt(event.currentTarget.value);
+        if (typeof value !== "number") return;
+        console.log(name);
+        console.log(value);
+        this.item.giftChangeSpecialField(index, name, value);
+    }
+
+    /**
+     * Handle change in a text field special setting
+     * @param {any} event
+     */
+    _onChangeSpecialBoolean(event) {
+        event.preventDefault();
+        const li = $(event.currentTarget).parents(".special-option");
+        const index = li.data("special-index");
+        const name = event.currentTarget.name;
+        const value = event.currentTarget.checked;
+        console.log(name);
+        console.log(value);
+        this.item.giftChangeSpecialField(index, name, value);
     }
 }

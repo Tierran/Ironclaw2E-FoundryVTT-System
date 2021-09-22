@@ -54,7 +54,7 @@ export class Ironclaw2EItem extends Item {
      */
     _prepareGiftData(itemData, actorData) {
         const data = itemData.data;
-
+        // Dice
         if (data.useDice.length > 0) {
             let firstsplit = splitStatsAndBonus(data.useDice);
             if (!firstsplit[1] && firstsplit[0].length > 0 && parseSingleDiceString(firstsplit[0][0])) {
@@ -77,7 +77,11 @@ export class Ironclaw2EItem extends Item {
             data.giftArray = null;
             data.canUse = false;
         }
-
+        // Tags
+        if (data.giftTags.length > 0) {
+            data.giftTagsSplit = splitStatString(data.giftTags);
+        }
+        // Special settings
         if (data.specialSettings?.length > 0) {
             for (let i = 0; i < data.specialSettings.length; ++i) {
                 // Applicability settings
@@ -111,6 +115,11 @@ export class Ironclaw2EItem extends Item {
                 if (data.specialSettings[i].otherItemField) {
                     data.specialSettings[i].otherItemArray = splitStatString(data.specialSettings[i].otherItemField);
                 }
+                // Gift Exhaust check
+                if (data.specialSettings[i].worksWhenExhausted === false) {
+                    // If the gift does not exhaust when used, or it is _not_ exhausted, then the setting is considered working, otherwise it is not false
+                    data.specialSettings[i].workingState = (data.exhaustWhenUsed === false || !data.exhausted);
+                }
 
                 // Effect settings
                 if (data.specialSettings[i].bonusSourceField) {
@@ -132,8 +141,8 @@ export class Ironclaw2EItem extends Item {
 
                 if (data.specialSettings[i].changeFromField && data.specialSettings[i].changeToField) {
                     // Check that both from and to fields have stuff, and then ensure that both have the same length before assiging them
-                    const foo = splitStatString(data.specialSettings[i].changeFromField);
-                    const bar = splitStatString(data.specialSettings[i].changeToField);
+                    const foo = splitStatString(data.specialSettings[i].changeFromField, false);
+                    const bar = splitStatString(data.specialSettings[i].changeToField, false);
                     if (foo.length === bar.length) {
                         data.specialSettings[i].changeFrom = foo;
                         data.specialSettings[i].changeTo = bar;
@@ -223,6 +232,10 @@ export class Ironclaw2EItem extends Item {
             if (data.hasResist) {
                 data.resistStats = splitStatString(data.specialResist);
             }
+        }
+        // Descriptors
+        if (data.descriptors.length > 0) {
+            data.descriptorsSplit = splitStatString(data.descriptors);
         }
     }
 
@@ -419,6 +432,25 @@ export class Ironclaw2EItem extends Item {
         // TODO: If the old and new settings have the same fields, insert the old values to the new setting
 
         specialSettings[index] = newSetting;
+        return this.update({ "data.specialSettings": specialSettings });
+    }
+
+    /**
+     * Change a field in a special setting
+     * @param {number} index Index of the special setting
+     * @param {string} name The field to change in the special setting
+     * @param {any} value
+     */
+    async giftChangeSpecialField(index, name, value) {
+        const itemData = this.data;
+        const data = itemData.data;
+        if (!(itemData.type === 'gift')) {
+            console.error("Gift special setting change attempted on a non-gift item: " + itemData.name);
+            return null;
+        }
+
+        let specialSettings = data.specialSettings;
+        specialSettings[index][name] = value;
         return this.update({ "data.specialSettings": specialSettings });
     }
 

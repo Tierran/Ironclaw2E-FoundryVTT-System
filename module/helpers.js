@@ -1,4 +1,6 @@
+import { Ironclaw2EActor } from "./actor/actor.js";
 import { Ironclaw2EItem } from "./item/item.js";
+import { hasConditionsIronclaw } from "./conditions.js";
 import { CommonSystemInfo } from "./systeminfo.js";
 
 /* -------------------------------------------- */
@@ -89,7 +91,7 @@ export function checkDiceArrayIndex(sides) {
 /**
  * Simple helper function to quick check whether a dice array actually has any dice
  * @param {number[]} dicearray
- * @returns {boolean}
+ * @returns {boolean} Returns true if there is dice in the array
  */
 export function checkDiceArrayEmpty(dicearray) {
     if (!Array.isArray(dicearray)) {
@@ -272,9 +274,10 @@ export function convertCamelCase(camelCase) {
 /**
  * Helper function to split a string of stat names, separated by commas, into an array containing comparison-ready versions of the component strings, to allow for easy checks
  * @param {string} stats String containing stat names, separated by commas and containing no spaces inside the names
+ * @param {boolean} comparisonready Whether to make the split strings comparison-ready or not, almost always kept at true
  * @returns {string[]} An array of strings containing the stat names
  */
-export function splitStatString(stats) {
+export function splitStatString(stats, comparisonready = true) {
     let statarray = [];
 
     if (typeof (stats) != "string") {
@@ -284,7 +287,7 @@ export function splitStatString(stats) {
 
     let foos = stats.split(",");
     for (let i = 0; i < foos.length; ++i) {
-        statarray.push(makeStatCompareReady(foos[i]));
+        statarray.push((comparisonready ? makeStatCompareReady(foos[i]) : foos[i]));
     }
     return statarray;
 }
@@ -347,13 +350,105 @@ export function burdenedLimitedStat(name) {
 /* -------------------------------------------- */
 
 /**
- * Checks the special's applicability for the target item
+ * Checks the special's applicability in a given situation
  * @param {object} special
+ * @param {Ironclaw2EActor} actor
  * @param {Ironclaw2EItem} target
  * @returns {boolean} Whether the target is applicable for the special
  */
-export function checkApplicability(special, target) {
+export function checkApplicability(special, target = null, actor = null) {
+    console.log(target);
+    // Exhaustion check
+    if (special.worksWhenExhausted === false && special.workingState === false) {
+        return false;
+    }
+    // Item-specific checks
+    if (target) {
+        const itemData = (target instanceof Ironclaw2EItem ? target.data : target);
+        if (special.typeArray && !special.typeArray.includes(makeStatCompareReady(itemData.type))) {
+            return false;
+        }
+        if (special.nameArray && !special.nameArray.some(x => itemData.name.toLowerCase().includes(x))) {
+            return false;
+        }
+        if (special.equipArray && !special.equipArray.includes(makeStatCompareReady(itemData.data.equip))) {
+            return false;
+        }
+        if (special.rangeArray && !special.rangeArray.includes(makeStatCompareReady(itemData.data.range))) {
+            return false;
+        }
 
+        // If the target is an already existing item, take advantage of the preprocessed data
+        if (target instanceof Ironclaw2EItem) {
+            if (special.tagArray && !special.tagArray.some(x => itemData.data.giftTagsSplit?.includes(x))) {
+                return false;
+            }
+            if (special.descriptorArray && !special.descriptorArray.some(x => itemData.data.descriptorsSplit?.includes(x))) {
+                return false;
+            }
+            if (special.effectArray && !special.effectArray.some(x => itemData.data.effectsSplit?.includes(x))) {
+                return false;
+            }
+            if (special.statArray) {
+                if (itemData.data.giftStats && !special.statArray.some(x => itemData.data.giftStats?.includes(x)))
+                    return false;
+                // Complicated check, it sees if it can find anything matching from the stats if they exist, it then inverts that value to mean whether nothing was found
+                if (!((itemData.data.attackStats && special.statArray.some(x => itemData.data.attackStats?.includes(x))) ||
+                    (itemData.data.defenseStats && special.statArray.some(x => itemData.data.defenseStats?.includes(x))) ||
+                    (itemData.data.counterStats && special.statArray.some(x => itemData.data.counterStats?.includes(x)))))
+                    return false; // If nothing was found, return false
+            }
+        } else { // Otherwise, do special versions of checks for the raw data
+            if (special.tagArray && !special.tagArray.some(x => splitStatString(itemData.data.giftTags)?.includes(x))) {
+                return false;
+            }
+            if (special.descriptorArray && !special.descriptorArray.some(x => splitStatString(itemData.data.descriptors)?.includes(x))) {
+                return false;
+            }
+            if (special.effectArray && !special.effectArray.some(x => splitStatString(itemData.data.effectsSplit)?.includes(x))) {
+                return false;
+            }
+            if (special.statArray) {
+                if (itemData.data.useDice && !special.statArray.some(x => splitStatsAndBonus(itemData.data.useDice)[0]?.includes(x)))
+                    return false;
+                if (!((itemData.data.attackDice && special.statArray.some(x => splitStatsAndBonus(itemData.data.attackDice)[0]?.includes(x))) ||
+                    (itemData.data.defenseDice && special.statArray.some(x => splitStatsAndBonus(itemData.data.defenseDice)[0]?.includes(x))) ||
+                    (itemData.data.counterDice && special.statArray.some(x => splitStatsAndBonus(itemData.data.counterDice)[0]?.includes(x)))))
+                    return false;
+            }
+        }
+    }
+    // Actor-specific checks
+    if (actor) {
+        if (special.conditionArray && !hasConditionsIronclaw(special.conditionArray, actor)) {
+            return false;
+        }
+        if (special.otherItemArray && special.otherItemArray.some(x => !findInItems(actor.items, x))) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Upgrade the given dice array dice into higher types
+ * @param {number[]} dicearray The dice array to upgrade
+ * @param {number} upgrade The amount to upgrade
+ * @returns {number[]} The upgraded dice array
+ */
+export function diceFieldUpgrade(dicearray, upgrade) {
+    let upgArray = [0, 0, 0, 0, 0];
+
+    for (let i = 0; i < 5; ++i) {
+        let target = i - upgrade; // Reversed, as the smaller the array index, the bigger the die type, hence upgrade steps subtract target index
+        if (target < 0) target = 0; // Clamp to 0 and 4, in case of overflow
+        if (target > 4) target = 4;
+
+        upgArray[target] += dicearray[i];
+    }
+
+    return upgArray;
 }
 
 /* -------------------------------------------- */

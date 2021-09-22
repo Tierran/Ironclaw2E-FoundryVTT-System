@@ -2,7 +2,7 @@ import { rollTargetNumber } from "../dicerollers.js";
 import { rollHighest } from "../dicerollers.js";
 import { rollTargetNumberDialog } from "../dicerollers.js";
 import { rollHighestDialog } from "../dicerollers.js";
-import { checkApplicability, makeStatCompareReady, splitStatString } from "../helpers.js";
+import { checkApplicability, checkDiceArrayEmpty, diceFieldUpgrade, findTotalDice, makeStatCompareReady, reformDiceString, splitStatString } from "../helpers.js";
 import { CommonSystemInfo } from "../systeminfo.js";
 import { getConditionByNameIronclaw } from "../conditions.js";
 import { hasConditionsIronclaw } from "../conditions.js";
@@ -264,27 +264,153 @@ export class Ironclaw2EActorSheet extends ActorSheet {
     }
 
     /**
-     * Handle any data transformations for items copied over from item directory
+     * Handle the final creation of dropped Item data on the Actor
      * @param {object[]|object} itemData Item data for the new item
+     * @override
      */
     async _onDropItemCreate(itemData) {
-        let items = await super._onDropItemCreate(itemData);
-        console.log(items);
-        for (let item of items) {
-            console.log(item);
-            for (let foobar of actor.data.data.processingLists.statChange) {
-                if (checkApplicability(foobar, item)) {
-                    // TODO: Add the actual stat change
+        itemData = itemData instanceof Array ? itemData : [itemData];
+
+        for (let item of itemData) {
+
+            if (this.actor.data.data.processingLists?.statChange) { // Check if the processing list and stat change list even exist
+                for (let special of this.actor.data.data.processingLists.statChange) { // Loop through the stat change specials
+                    if (checkApplicability(special, item, this.actor)) { // Check if the current special applies
+                        for (let i = 0; i < special.changeFrom.length; ++i) { // Go through all the potential changes
+                            let nameAdded = false;
+
+                            const reg = new RegExp("(" + special.changeFrom[i] + "|" + makeStatCompareReady(special.changeFrom[i]) + ")", "gi"); // Prepare the regex
+                            if (item.data.useDice) { // Check if the item even has anything in the roll field
+                                // Replace the roll field with a case-insensitive regex-replaced version with the from-word changed to to-word, with regex to account both for space and no-space versions
+                                item.data.useDice = item.data.useDice.replace(reg, special.changeTo[i]);
+                                if (nameAdded === false && special.nameAdditionField) { // If the item's name has not been changed yet and there is anything in the addition field
+                                    item.name += " " + special.nameAdditionField; // Append the name
+                                    nameAdded = true; // Set the bool to mark that the item's name has been changed already
+                                }
+                            }
+
+                            if (item.data.attackDice) {
+                                item.data.attackDice = item.data.attackDice.replace(reg, special.changeTo[i]);
+                                if (nameAdded === false && special.nameAdditionField) {
+                                    item.name += " " + special.nameAdditionField;
+                                    nameAdded = true;
+                                }
+                            }
+                            if (item.data.defenseDice) {
+                                item.data.defenseDice = item.data.defenseDice.replace(reg, special.changeTo[i]);
+                                if (nameAdded === false && special.nameAdditionField) {
+                                    item.name += " " + special.nameAdditionField;
+                                    nameAdded = true;
+                                }
+                            }
+                            if (item.data.counterDice) {
+                                item.data.counterDice = item.data.counterDice.replace(reg, special.changeTo[i]);
+                                if (nameAdded === false && special.nameAdditionField) {
+                                    item.name += " " + special.nameAdditionField;
+                                    nameAdded = true;
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
-            for (let foobar of actor.data.data.processingLists.diceUpgrade) {
-                if (checkApplicability(foobar, item)) {
-                    // TODO: Add the actual dice upgrade
+            if (this.actor.data.data.processingLists?.diceUpgrade) { // Check if the processing list and dice upgrade list even exist
+                for (let special of this.actor.data.data.processingLists.diceUpgrade) { // Loop through the dice upgrade specials
+                    if (checkApplicability(special, item, this.actor)) { // Check if the current special applies
+                        let nameAdded = false;
+
+                        if (item.data.useDice) { // Check if the item even has anything in the roll field
+                            const foo = item.data.useDice.split(";"); // Split the roll field into stats and dice
+                            if (foo.length > 1) { // If it has dice
+                                let bar = findTotalDice(foo[1]); // Find the total amount of dice in it
+                                if (checkDiceArrayEmpty(bar)) { // Assuming any dice were found
+                                    item.data.useDice = foo[0] + ";" + reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true); // Replace the roll field with the original stats and a reformed, upgraded dice string
+                                    if (nameAdded === false && special.nameAdditionField) { // If the item's name has not been changed yet and there is anything in the addition field
+                                        item.name += " " + special.nameAdditionField; // Append the name
+                                        nameAdded = true; // Set the bool to mark that the item's name has been changed already
+                                    }
+                                }
+                            }
+                        }
+
+                        if (item.data.attackDice) {
+                            const foo = item.data.attackDice.split(";");
+                            if (foo.length > 1) {
+                                let bar = findTotalDice(foo[1]);
+                                if (checkDiceArrayEmpty(bar)) {
+                                    item.data.attackDice = foo[0] + ";" + reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
+                                    if (nameAdded === false && special.nameAdditionField) {
+                                        item.name += " " + special.nameAdditionField;
+                                        nameAdded = true;
+                                    }
+                                }
+                            }
+                        }
+                        if (item.data.defenseDice) {
+                            const foo = item.data.defenseDice.split(";");
+                            if (foo.length > 1) {
+                                let bar = findTotalDice(foo[1]);
+                                if (checkDiceArrayEmpty(bar)) {
+                                    item.data.defenseDice = foo[0] + ";" + reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
+                                    if (nameAdded === false && special.nameAdditionField) {
+                                        item.name += " " + special.nameAdditionField;
+                                        nameAdded = true;
+                                    }
+                                }
+                            }
+                        }
+                        if (item.data.counterDice) {
+                            const foo = item.data.counterDice.split(";");
+                            if (foo.length > 1) {
+                                let bar = findTotalDice(foo[1]);
+                                if (checkDiceArrayEmpty(bar)) {
+                                    item.data.counterDice = foo[0] + ";" + reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
+                                    if (nameAdded === false && special.nameAdditionField) {
+                                        item.name += " " + special.nameAdditionField;
+                                        nameAdded = true;
+                                    }
+                                }
+                            }
+                        }
+                        if (item.data.sparkDie) {
+                            let bar = findTotalDice(item.data.sparkDie);
+                            if (checkDiceArrayEmpty(bar)) {
+                                item.data.sparkDie = reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
+                                if (nameAdded === false && special.nameAdditionField) {
+                                    item.name += " " + special.nameAdditionField;
+                                    nameAdded = true;
+                                }
+                            }
+                        }
+
+                        if (item.data.armorDice) {
+                            let bar = findTotalDice(item.data.armorDice);
+                            if (checkDiceArrayEmpty(bar)) {
+                                item.data.armorDice = reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
+                                if (nameAdded === false && special.nameAdditionField) {
+                                    item.name += " " + special.nameAdditionField;
+                                    nameAdded = true;
+                                    console.log("Here!");
+                                }
+                            }
+                        }
+
+                        if (item.data.coverDie) {
+                            let bar = findTotalDice(item.data.coverDie);
+                            if (checkDiceArrayEmpty(bar)) {
+                                item.data.coverDie = reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
+                                if (nameAdded === false && special.nameAdditionField) {
+                                    item.name += " " + special.nameAdditionField;
+                                    nameAdded = true;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
-        console.log("_onDropItemCreate");
+        return this.actor.createEmbeddedDocuments("Item", itemData);
     }
 
 

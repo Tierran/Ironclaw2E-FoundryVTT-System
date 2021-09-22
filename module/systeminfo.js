@@ -114,14 +114,14 @@ export function getSpecialOptionPrototype(option) {
 
         case ("statChange"):
             return mergeObject(special, {
-                "typeField": "", "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "",
+                "typeField": "", "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "otherItemField": "", "equipField": "", "rangeField": "",
                 "changeFromField": "", "changeToField": "", "nameAdditionField": ""
             });
             break;
 
         case ("diceUpgrade"):
             return mergeObject(special, {
-                "typeField": "", "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "",
+                "typeField": "", "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "otherItemField": "", "equipField": "", "rangeField": "",
                 "upgradeStepsNumber": 0, "nameAdditionField": ""
             });
             break;
