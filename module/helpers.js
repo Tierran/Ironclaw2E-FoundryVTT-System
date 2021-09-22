@@ -392,11 +392,13 @@ export function checkApplicability(special, target = null, actor = null) {
             if (special.statArray) {
                 if (itemData.data.giftStats && !special.statArray.some(x => itemData.data.giftStats?.includes(x)))
                     return false;
-                // Complicated check, it sees if it can find anything matching from the stats if they exist, it then inverts that value to mean whether nothing was found
-                if (!((itemData.data.attackStats && special.statArray.some(x => itemData.data.attackStats?.includes(x))) ||
-                    (itemData.data.defenseStats && special.statArray.some(x => itemData.data.defenseStats?.includes(x))) ||
-                    (itemData.data.counterStats && special.statArray.some(x => itemData.data.counterStats?.includes(x)))))
-                    return false; // If nothing was found, return false
+                // Complicated check, it checks whether any of the weapon fields exist, then if it can find anything matching from the stats if they exist, it then inverts that value to mean whether nothing was found
+                if (itemData.data.attackStats || itemData.data.defenseStats || itemData.data.counterStats) {
+                    if (!((itemData.data.attackStats && special.statArray.some(x => itemData.data.attackStats?.includes(x))) ||
+                        (itemData.data.defenseStats && special.statArray.some(x => itemData.data.defenseStats?.includes(x))) ||
+                        (itemData.data.counterStats && special.statArray.some(x => itemData.data.counterStats?.includes(x)))))
+                        return false; // If nothing was found, return false
+                }
             }
         } else { // Otherwise, do special versions of checks for the raw data
             if (special.tagArray && !special.tagArray.some(x => splitStatString(itemData.data.giftTags)?.includes(x))) {
@@ -411,10 +413,12 @@ export function checkApplicability(special, target = null, actor = null) {
             if (special.statArray) {
                 if (itemData.data.useDice && !special.statArray.some(x => splitStatsAndBonus(itemData.data.useDice)[0]?.includes(x)))
                     return false;
-                if (!((itemData.data.attackDice && special.statArray.some(x => splitStatsAndBonus(itemData.data.attackDice)[0]?.includes(x))) ||
-                    (itemData.data.defenseDice && special.statArray.some(x => splitStatsAndBonus(itemData.data.defenseDice)[0]?.includes(x))) ||
-                    (itemData.data.counterDice && special.statArray.some(x => splitStatsAndBonus(itemData.data.counterDice)[0]?.includes(x)))))
-                    return false;
+                if (itemData.data.attackDice || itemData.data.defenseDice || itemData.data.counterDice) {
+                    if (!((itemData.data.attackDice && special.statArray.some(x => splitStatsAndBonus(itemData.data.attackDice)[0]?.includes(x))) ||
+                        (itemData.data.defenseDice && special.statArray.some(x => splitStatsAndBonus(itemData.data.defenseDice)[0]?.includes(x))) ||
+                        (itemData.data.counterDice && special.statArray.some(x => splitStatsAndBonus(itemData.data.counterDice)[0]?.includes(x)))))
+                        return false;
+                }
             }
         }
     }
