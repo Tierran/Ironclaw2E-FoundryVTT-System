@@ -68,7 +68,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         sheetData.effects = baseData.effects;
 
         // Get whether the actor is flying for some things
-        sheetData.isFlying = hasConditionsIronclaw("flying", baseData.actor);
+        sheetData.isFlying = baseData.data.data.isFlying === true;
 
         //console.log(sheetData);
         return sheetData;

@@ -352,12 +352,11 @@ export function burdenedLimitedStat(name) {
 /**
  * Checks the special's applicability in a given situation
  * @param {object} special
- * @param {Ironclaw2EActor} actor
  * @param {Ironclaw2EItem} target
+ * @param {Ironclaw2EActor} actor
  * @returns {boolean} Whether the target is applicable for the special
  */
 export function checkApplicability(special, target = null, actor = null) {
-    console.log(target);
     // Exhaustion check
     if (special.worksWhenExhausted === false && special.workingState === false) {
         return false;

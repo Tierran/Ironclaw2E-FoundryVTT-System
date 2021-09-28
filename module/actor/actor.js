@@ -12,6 +12,7 @@ import { parseSingleDiceString } from "../helpers.js";
 import { checkDiceArrayIndex } from "../helpers.js";
 import { getDiceArrayMaxValue } from "../helpers.js";
 import { CommonConditionInfo } from "../conditions.js";
+import { checkApplicability } from "../helpers.js";
 // For condition management
 import { hasConditionsIronclaw } from "../conditions.js";
 import { getConditionNamesIronclaw } from "../conditions.js";
@@ -106,6 +107,14 @@ export class Ironclaw2EActor extends Actor {
                     if (!(setting.settingMode in data.processingLists)) {
                         // If the relevant array for a setting mode does not exist, add an empty one
                         data.processingLists[setting.settingMode] = [];
+                    }
+                    // If the gift has the replacement field set, attempt to find what it replaces and give that setting a link to this one
+                    if (setting.replaceName) {
+                        const replacement = specialGifts.find(x => makeStatCompareReady(x.data.name) === setting.replaceName)?.data.data.specialSettings.find(x => x.settingMode == setting.settingMode);
+                        if (replacement) {
+                            replacement.replacedBy = setting;
+                        }
+                        continue;
                     }
 
                     // Add the setting into the list
@@ -249,10 +258,11 @@ export class Ironclaw2EActor extends Actor {
         let stridebonus = 0;
         let dashbonus = 0;
         let runbonus = 0;
+        const sprintarray = this.sprintRoll(-1);
 
         let speedint = getDiceArrayMaxValue(data.traits.speed.diceArray);
         let bodyint = getDiceArrayMaxValue(data.traits.body.diceArray);
-        const sprintarray = this.sprintRoll(-1);
+        let sprintint = getDiceArrayMaxValue(sprintarray);
 
         if (speedint < 0 || bodyint < 0) {
             console.error("Battle data processing failed, unable to parse dice for " + actorData.name);
@@ -266,63 +276,60 @@ export class Ironclaw2EActor extends Actor {
         // Apply burdenend limit
         if (speedint > 8 && hasConditionsIronclaw("burdened", this)) speedint = 8;
 
-
-        // Fast Mover and All Fours bonuses
-        const fastmover = findInItems(this.items, "fastmover", "gift");
-        if (fastmover) {
-            stridebonus += 1;
-            dashbonus += 2;
-            runbonus += 6;
-            if (hasConditionsIronclaw("allfours", this)) {
-                const allfours = findInItems(this.items, "allfours", "gift");
-                if (allfours) {
-                    stridebonus += 1;
-                    dashbonus += 2;
-                    runbonus += 6;
+        // Apply normal move bonuses
+        if (data.processingLists?.moveBonus) { // Check if they even exist
+            for (let setting of data.processingLists.moveBonus) { // Loop through them
+                if (checkApplicability(setting, null, this)) { // Check initial applicability
+                    let replacement = setting.replacedBy; // Store the replacement for the current one
+                    while (replacement?.replacedBy) { // As long as the replacement could also be replaced by something
+                        if (checkApplicability(replacement, null, this) && checkApplicability(replacement.replacedBy, null, this)) { // Check if both the current replacement and the next one apply
+                            replacement = replacement.replacedBy; // Move up to the next replacement
+                        }
+                    }
+                    if (replacement && checkApplicability(replacement, null, this)) { // Re-check if a replacement exists and whether it applies
+                        // Apply the replacement
+                        stridebonus += replacement.bonusStrideNumber;
+                        dashbonus += replacement.bonusDashNumber;
+                        runbonus += replacement.bonusRunNumber;
+                    } else { // If not, use and apply the current setting
+                        stridebonus += setting.bonusStrideNumber;
+                        dashbonus += setting.bonusDashNumber;
+                        runbonus += setting.bonusRunNumber;
+                    }
                 }
             }
         }
-
-        // Coward and Flight of the Prey bonuses
-        if (hasConditionsIronclaw(["afraid", "terrified"], this)) {
-            const coward = findInItems(this.items, "coward", "gift");
-            if (coward) {
-                const flightofprey = findInItems(this.items, "flightoftheprey", "gift");
-                if (flightofprey && hasConditionsIronclaw("afraid", this)) {
-                    stridebonus += 1;
-                    dashbonus += 4;
-                    runbonus += 16;
-                }
-                else {
-                    stridebonus += 1;
-                    dashbonus += 3;
-                    runbonus += 9;
-                }
-            }
-        }
-
-        // Body type Gift bonuses
-        const ophidian = findInItems(this.items, "ophidian", "gift");
-        if (ophidian) {
-            stridebonus += 2;
-            dashbonus -= 2;
-        }
-
 
         // Flying-related bonuses
         if (hasConditionsIronclaw("flying", this)) {
-            const flight = findInItems(this.items, "flight", "gift");
-            if (flight) {
-                stridebonus += 3;
-                const sprintint = getDiceArrayMaxValue(sprintarray);
-                runbonus += 12 + (sprintint - speedint); // Remove the speedint from the Flight run bonus, since the maximized flying sprint in the flying run replaces the maximized Speed in the standard run calculation
-            }
-            const wings = findInItems(this.items, "wings", "gift");
-            if (wings) {
-                stridebonus += 1;
-            }
-        }
+            data.isFlying = true;
 
+            // Apply the flying move bonuses
+            if (data.processingLists?.flyingBonus) {
+                for (let setting of data.processingLists.flyingBonus) {
+                    if (checkApplicability(setting, null, this)) { // Check initial applicability
+                        let replacement = setting.replacedBy; // Store the replacement for the current one
+                        while (replacement?.replacedBy) { // As long as the replacement could also be replaced by something
+                            if (checkApplicability(replacement, null, this) && checkApplicability(replacement.replacedBy, null, this)) { // Check if both the current replacement and the next one apply
+                                replacement = replacement.replacedBy; // Move up to the next replacement
+                            }
+                        }
+                        if (replacement && checkApplicability(replacement, null, this)) { // Check if a replacement exists and whether it applies
+                            // Apply the replacement
+                            stridebonus += replacement.bonusStrideNumber;
+                            dashbonus += replacement.bonusDashNumber;
+                            runbonus += replacement.bonusRunNumber;
+                        } else { // If not, use and apply the current setting
+                            stridebonus += setting.bonusStrideNumber;
+                            dashbonus += setting.bonusDashNumber;
+                            runbonus += setting.bonusRunNumber;
+                        }
+                    }
+                }
+            }
+        } else {
+            data.isFlying = false;
+        }
 
         // Stride setup
         data.stride = 1 + stridebonus;
@@ -336,7 +343,7 @@ export class Ironclaw2EActor extends Actor {
         }
 
         // Run setup
-        data.run = bodyint + speedint + data.dash + runbonus;
+        data.run = bodyint + (data.isFlying ? sprintint : speedint) + data.dash + runbonus;
         if (hasConditionsIronclaw(["over-burdened", "immobilized", "half-buried", "cannotmove"], this)) {
             data.run = 0;
         }
