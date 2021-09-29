@@ -35,7 +35,7 @@ export class CommonSystemInfo {
      */
     static giftSpecialOptions = {
         "attackBonus": "Attack Bonus", "defenseBonus": "Defense Bonus", "counterBonus": "Counter Bonus", "soakBonus": "Soak Bonus", "guardBonus": "Guard Bonus", "sprintBonus": "Sprint Bonus",
-        "initiativeBonus": "Initiative Bonus", "moveBonus": "Movement Bonus", "flyingBonus": "Flying Move Bonus", "statChange": "Stat Change", "diceUpgrade": "Dice Upgrade"
+        "initiativeBonus": "Initiative Bonus", "moveBonus": "Movement Bonus", "flyingBonus": "Flying Move Bonus", "encumbranceBonus": "Encumbrance Limit Bonus", "statChange": "Stat Change", "diceUpgrade": "Dice Upgrade"
     }
 }
 
