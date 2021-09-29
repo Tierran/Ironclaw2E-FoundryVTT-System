@@ -53,6 +53,7 @@ The /itemuse command takes an item name and uses that to activate a normal item 
 For gifts that should interact with the system by giving situational bonuses, the advanced settings can be used to add special bonuses to gifts. When added, the system will automatically see if a given bonus will be applicable given its configuration and add it in the relevant place.  
 <details>
 <summary>List of possible Advanced Gift Settings</summary>
+
  - **Attack Bonus**: A bonus applied when a weapon is used to attack.  
  - **Defense Bonus**: A bonus applied when defending, either as a parry with a weapon or when dodging.  
  - **Counter Bonus**: A bonus applies when counter-attacking with a weapon.  
@@ -65,11 +66,13 @@ For gifts that should interact with the system by giving situational bonuses, th
  - **Encumbrance Limit Bonus**: A bonus to the carrying capacity of an actor.  
  - **Stat Change**: An automated way to change the stats for an item when it is dragged to the actor from the Items Directory.  
  - **Dice Upgrade**: An automated way to change the dice for an item when it is dragged to the actor from the Items Directory.  
+ 
 </details>
 The system works by first checking whether the special bonus is applicable. This is done by comparing the configuration settings of the special to the actor and/or the item and seeing if they match the configured requirements. Any fields that are empty are ignored, but all fields that have something in them **must match**. If the field allows multiple values, match of *any* of them is enough.  
 <details>
 <summary>List of applicability configuration fields</summary>
 Any of these fields that aren't just checkboxes can include multiple values, separated with commas.
+
  - **Type Field**: List of item types (gift, weapon, armor) that the special can apply to.
  - **Name Field**: List of partial names, one of which must match with the item's name.
  - **Tag Field**: List of tags, one of which must be present in the item's tags.
@@ -83,10 +86,12 @@ Any of these fields that aren't just checkboxes can include multiple values, sep
  - **Works When Exhausted**: Whether the bonus will still be applied when the gift granting it is exhausted.
  - **Applies to Dodges**: Whether a defense bonus applies to dodge defenses.
  - **Applies to Parries**: Whether a defense bonus applies to parry defenses.
+ 
 </details>
 If the special bonus applies, it's applied where relevant, with the bonus depending on the effect configuration.
 <details>
 <summary>List of effect configuration fields</summary>
+
  - **Bonus Sources**: List of special additions on the bonus. "Armor" adds the worn armors with the bonus, "Shield" add the equipped shield, "Guard" adds the guard bonus if the actor is Guarding, and "Guard-always" adds the guard bonus whether or not the actor is Guarding.
  - **Bonus Stats**: List of stats (traits and/or skills) to add with the bonus as pre-checked. If empty, the bonus uses its gift's stats.
  - **Bonus Dice**: Dice to add with the bonus as an extra field. If empty, the bonus uses its gift's dice.
@@ -97,6 +102,7 @@ If the special bonus applies, it's applied where relevant, with the bonus depend
  - **Upgrade Steps**: The number of steps to upgrade the dice. A single "step" would upgrade the dice by one, from d4 to d6, d6 to d8, etc. Negative steps will instead downgrade the dice instead. The upgraded dice cap at *d12* at maximum and *d4* at minimum.
  - **Name Addition**: What to append to the name of items modified by this bonus. If left empty, the name will not change at all. Note that these should not include brackets, as that will cause Foundry's internal system to attempt to parse it as a roll modifier.
  - **Replacing Name**: The name of a gift that this gift would replace. If this field has something, this bonus will not be applied normally. Instead, when the system would apply a same type bonus from the replaced gift, it will check whether this bonus applies and use this one instead if it does apply.
+ 
 </details>
 
 ### Conditions
