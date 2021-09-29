@@ -382,8 +382,7 @@ export class Ironclaw2EActor extends Actor {
 
         let totalweight = 0;
         let totalarmors = 0;
-        let strengthlevel = 0;
-        let hasgiant = 0;
+        let giftbonus = 0;
         for (let item of gear) {
 
             if (item.data.data.totalWeight && !isNaN(item.data.data.totalWeight)) {
@@ -393,16 +392,23 @@ export class Ironclaw2EActor extends Actor {
             if (item.data.type === 'armor' && item.data.data.worn === true) {
                 totalarmors++;
             }
+        }
 
-            // Encumbrance limit gift checks
-            if (item.data.type === 'gift' && makeStatCompareReady(item.data.name) == "strength") {
-                strengthlevel = strengthlevel > 1 ? strengthlevel : 1; // Check if improvedstrength has already been processed, in which case, keep it where it is
-            }
-            if (item.data.type === 'gift' && makeStatCompareReady(item.data.name) == "improvedstrength") {
-                strengthlevel = 2;
-            }
-            if (item.data.type === 'gift' && makeStatCompareReady(item.data.name) == "giant") {
-                hasgiant = 1;
+        // Apply encumbrance bonuses
+        if (data.processingLists?.encumbranceBonus) { // Check if move bonuses even exist
+            for (let setting of data.processingLists.encumbranceBonus) { // Loop through them
+                if (checkApplicability(setting, null, this)) { // Check initial applicability
+                    let used = setting; // Store the setting in a temp variable
+                    while (used.replacedBy && checkApplicability(used.replacedBy, null, this)) { // As long as the currently used one could be replaced by something applicable
+                        used = used.replacedBy; // Move up to the next replacement
+                    }
+                    if (used) { // Sanity check that the used still exists
+                        // Apply the used setting
+                        giftbonus += used.encumbranceBonusNumber;
+                    } else { // If used somehow turns out unsuable, send an error
+                        console.error("Somehow, the used setting came up unusable: " + used);
+                    }
+                }
             }
         }
 
@@ -412,9 +418,9 @@ export class Ironclaw2EActor extends Actor {
             return;
         }
 
-        data.encumbranceNone = Math.round(((bodyarr[1] / 2) - 1) * bodyarr[0] + strengthlevel + hasgiant);
-        data.encumbranceBurdened = Math.round((bodyarr[1] - 1) * bodyarr[0] + strengthlevel * 2 + hasgiant * 2);
-        data.encumbranceOverBurdened = Math.round(((bodyarr[1] / 2) * 3 - 1) * bodyarr[0] + strengthlevel * 3 + hasgiant * 3);
+        data.encumbranceNone = Math.round(((bodyarr[1] / 2) - 1) * bodyarr[0] + giftbonus);
+        data.encumbranceBurdened = Math.round((bodyarr[1] - 1) * bodyarr[0] + giftbonus * 2);
+        data.encumbranceOverBurdened = Math.round(((bodyarr[1] / 2) * 3 - 1) * bodyarr[0] + giftbonus * 3);
 
         const coinshaveweight = game.settings.get("ironclaw2e", "coinsHaveWeight");
         if (coinshaveweight === true && data.coinageWeight) {
@@ -564,10 +570,10 @@ export class Ironclaw2EActor extends Actor {
                                         foobar = this._getShieldConstruction(otherinputs, otherkeys, otherdice);
                                         break;
                                     case ("guard"):
-                                        foobar = this._getGuardingConstruction(otherinputs, otherkeys, otherdice, item, false);
+                                        foobar = this._getGuardingConstruction(otherinputs, otherkeys, otherdice, false);
                                         break;
                                     case ("guard-always"):
-                                        foobar = this._getGuardingConstruction(otherinputs, otherkeys, otherdice, item, true);
+                                        foobar = this._getGuardingConstruction(otherinputs, otherkeys, otherdice, true);
                                         break;
                                 }
                                 if (foobar) {
@@ -658,16 +664,16 @@ export class Ironclaw2EActor extends Actor {
      * @returns {object} Returns a holder object which returns the inputs with the added bonuses
      * @private
      */
-    _getGuardingConstruction(otherinputs, otherkeys, otherdice, item = null, skipcheck = false) {
+    _getGuardingConstruction(otherinputs, otherkeys, otherdice, skipcheck = false) {
         const data = this.data.data;
         let replaceSettings = []; // Guard bonuses that would replace the base bonus
         let guardSettings = []; // Guard bonuses that would add to the base bonus
         if (skipcheck || hasConditionsIronclaw("guarding", this)) { // If the check is skipped or the actor has a "Guarding" condition
             if (data.processingLists?.guardBonus) { // Check if move bonuses even exist
                 for (let setting of data.processingLists.guardBonus) { // Loop through them
-                    if (checkApplicability(setting, item, this)) { // Check initial applicability
+                    if (checkApplicability(setting, null, this)) { // Check initial applicability
                         let used = setting; // Store the setting in a temp variable
-                        while (used.replacedBy && checkApplicability(used.replacedBy, item, this)) { // As long as the currently used one could be replaced by something applicable
+                        while (used.replacedBy && checkApplicability(used.replacedBy, null, this)) { // As long as the currently used one could be replaced by something applicable
                             used = used.replacedBy; // Move up to the next replacement
                         }
                         if (used) { // Sanity check that the used still exists

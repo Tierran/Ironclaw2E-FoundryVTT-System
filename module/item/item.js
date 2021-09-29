@@ -91,7 +91,8 @@ export class Ironclaw2EItem extends Item {
                     data.specialSettings[i].typeArray = splitStatString(data.specialSettings[i].typeField);
                 }
                 if (data.specialSettings[i].nameField) {
-                    data.specialSettings[i].nameArray = splitStatString(data.specialSettings[i].nameField);
+                    data.specialSettings[i].nameArray = splitStatString(data.specialSettings[i].nameField, false);
+                    data.specialSettings[i].nameArray.forEach((val, index) => data.specialSettings[i].nameArray[index] = val.toLowerCase());
                 }
                 if (data.specialSettings[i].tagField) {
                     data.specialSettings[i].tagArray = splitStatString(data.specialSettings[i].tagField);

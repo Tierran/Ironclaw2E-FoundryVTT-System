@@ -79,7 +79,7 @@ export function getSpecialOptionPrototype(option) {
 
         case ("guardBonus"):
             return mergeObject(special, {
-                "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenExhausted": true,
+                "conditionField": "", "otherItemField": "", "worksWhenExhausted": true,
                 "bonusDiceField": "", "replaceNameField": "", "replacesBaseBonus": true
             });
             break;
