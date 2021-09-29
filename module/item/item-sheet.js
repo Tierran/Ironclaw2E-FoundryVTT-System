@@ -122,8 +122,6 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         const index = li.data("special-index");
         const name = event.currentTarget.name;
         const value = event.currentTarget.value;
-        console.log(name);
-        console.log(value);
         this.item.giftChangeSpecialField(index, name, value);
     }
 
@@ -138,8 +136,6 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         const name = event.currentTarget.name;
         const value = parseInt(event.currentTarget.value);
         if (typeof value !== "number") return;
-        console.log(name);
-        console.log(value);
         this.item.giftChangeSpecialField(index, name, value);
     }
 
@@ -153,8 +149,6 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         const index = li.data("special-index");
         const name = event.currentTarget.name;
         const value = event.currentTarget.checked;
-        console.log(name);
-        console.log(value);
         this.item.giftChangeSpecialField(index, name, value);
     }
 }
