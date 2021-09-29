@@ -124,8 +124,8 @@ export class Ironclaw2EItem extends Item {
                 }
 
                 // Effect settings
-                if (data.specialSettings[i].bonusSourceField) {
-                    data.specialSettings[i].bonusSource = makeStatCompareReady(data.specialSettings[i].bonusSourceField);
+                if (data.specialSettings[i].bonusSourcesField) {
+                    data.specialSettings[i].bonusSources = splitStatString(data.specialSettings[i].bonusSourcesField);
                 }
                 if (data.specialSettings[i].bonusStatsField) {
                     data.specialSettings[i].bonusStats = splitStatString(data.specialSettings[i].bonusStatsField);

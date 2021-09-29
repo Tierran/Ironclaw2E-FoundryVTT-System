@@ -51,7 +51,7 @@ export function getSpecialOptionPrototype(option) {
         case ("attackBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "equipField": "", "rangeField": "", "worksWhenExhausted": true,
-                "bonusSourceField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
+                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
@@ -59,42 +59,42 @@ export function getSpecialOptionPrototype(option) {
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "equipField": "", "rangeField": "", "worksWhenExhausted": true,
                 "appliesToDodge": true, "appliesOnlyToDodge": false,
-                "bonusSourceField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
+                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("counterBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "equipField": "", "rangeField": "", "worksWhenExhausted": true,
-                "bonusSourceField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
+                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("soakBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "worksWhenExhausted": true,
-                "bonusSourceField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
+                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("guardBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "worksWhenExhausted": true,
-                "bonusSourceField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
+                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("sprintBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "worksWhenExhausted": true,
-                "bonusSourceField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
+                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("initiativeBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "worksWhenExhausted": true,
-                "bonusSourceField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
+                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
@@ -109,6 +109,13 @@ export function getSpecialOptionPrototype(option) {
             return mergeObject(special, {
                 "conditionField": "", "otherItemField": "", "worksWhenExhausted": true,
                 "bonusStrideNumber": 0, "bonusDashNumber": 0, "bonusRunNumber": 0, "replaceNameField": ""
+            });
+            break;
+
+        case ("encumbranceBonus"):
+            return mergeObject(special, {
+                "conditionField": "", "otherItemField": "", "worksWhenExhausted": true,
+                "encumbranceBonusNumber": 0, "replaceNameField": ""
             });
             break;
 

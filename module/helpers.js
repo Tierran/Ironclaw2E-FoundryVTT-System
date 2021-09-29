@@ -357,6 +357,11 @@ export function burdenedLimitedStat(name) {
  * @returns {boolean} Whether the target is applicable for the special
  */
 export function checkApplicability(special, target = null, actor = null) {
+    if (!special) {
+        // In case the check is given something that doesn't exist
+        return false;
+    }
+
     // Exhaustion check
     if (special.worksWhenExhausted === false && special.workingState === false) {
         return false;

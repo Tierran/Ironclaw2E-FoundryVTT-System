@@ -57,7 +57,7 @@ export class Ironclaw2EActor extends Actor {
         // Automatic Encumbrance Management
         this._encumbranceAutoManagement(actorData);
     }
-    
+
     /* -------------------------------------------- */
     /* Process Embedded                             */
     /* -------------------------------------------- */
@@ -123,7 +123,7 @@ export class Ironclaw2EActor extends Actor {
             }
         }
     }
-    
+
     /* -------------------------------------------- */
     /* Process Derived                              */
     /* -------------------------------------------- */
@@ -277,24 +277,20 @@ export class Ironclaw2EActor extends Actor {
         if (speedint > 8 && hasConditionsIronclaw("burdened", this)) speedint = 8;
 
         // Apply normal move bonuses
-        if (data.processingLists?.moveBonus) { // Check if they even exist
+        if (data.processingLists?.moveBonus) { // Check if move bonuses even exist
             for (let setting of data.processingLists.moveBonus) { // Loop through them
                 if (checkApplicability(setting, null, this)) { // Check initial applicability
-                    let replacement = setting.replacedBy; // Store the replacement for the current one
-                    while (replacement?.replacedBy) { // As long as the replacement could also be replaced by something
-                        if (checkApplicability(replacement, null, this) && checkApplicability(replacement.replacedBy, null, this)) { // Check if both the current replacement and the next one apply
-                            replacement = replacement.replacedBy; // Move up to the next replacement
-                        }
+                    let used = setting; // Store the setting in a temp variable
+                    while (used.replacedBy && checkApplicability(used.replacedBy, null, this)) { // As long as the currently used one could be replaced by something applicable
+                        used = used.replacedBy; // Move up to the next replacement
                     }
-                    if (replacement && checkApplicability(replacement, null, this)) { // Re-check if a replacement exists and whether it applies
-                        // Apply the replacement
-                        stridebonus += replacement.bonusStrideNumber;
-                        dashbonus += replacement.bonusDashNumber;
-                        runbonus += replacement.bonusRunNumber;
-                    } else { // If not, use and apply the current setting
-                        stridebonus += setting.bonusStrideNumber;
-                        dashbonus += setting.bonusDashNumber;
-                        runbonus += setting.bonusRunNumber;
+                    if (used) { // Sanity check that the used still exists
+                        // Apply the used setting
+                        stridebonus += used.bonusStrideNumber;
+                        dashbonus += used.bonusDashNumber;
+                        runbonus += used.bonusRunNumber;
+                    } else { // If used somehow turns out unsuable, send an error
+                        console.error("Somehow, the used setting came up unusable: " + used);
                     }
                 }
             }
@@ -306,23 +302,19 @@ export class Ironclaw2EActor extends Actor {
 
             // Apply the flying move bonuses
             if (data.processingLists?.flyingBonus) {
-                for (let setting of data.processingLists.flyingBonus) {
+                for (let setting of data.processingLists.flyingBonus) { // Loop through them
                     if (checkApplicability(setting, null, this)) { // Check initial applicability
-                        let replacement = setting.replacedBy; // Store the replacement for the current one
-                        while (replacement?.replacedBy) { // As long as the replacement could also be replaced by something
-                            if (checkApplicability(replacement, null, this) && checkApplicability(replacement.replacedBy, null, this)) { // Check if both the current replacement and the next one apply
-                                replacement = replacement.replacedBy; // Move up to the next replacement
-                            }
+                        let used = setting; // Store the setting in a temp variable
+                        while (used.replacedBy && checkApplicability(used.replacedBy, null, this)) { // As long as the currently used one could be replaced by something applicable
+                            used = used.replacedBy; // Move up to the next replacement
                         }
-                        if (replacement && checkApplicability(replacement, null, this)) { // Check if a replacement exists and whether it applies
-                            // Apply the replacement
-                            stridebonus += replacement.bonusStrideNumber;
-                            dashbonus += replacement.bonusDashNumber;
-                            runbonus += replacement.bonusRunNumber;
-                        } else { // If not, use and apply the current setting
-                            stridebonus += setting.bonusStrideNumber;
-                            dashbonus += setting.bonusDashNumber;
-                            runbonus += setting.bonusRunNumber;
+                        if (used) { // Sanity check that the used still exists
+                            // Apply the used setting
+                            stridebonus += used.bonusStrideNumber;
+                            dashbonus += used.bonusDashNumber;
+                            runbonus += used.bonusRunNumber;
+                        } else { // If used somehow turns out unsuable, send an error
+                            console.error("Somehow, the used setting came up unusable: " + used);
                         }
                     }
                 }
@@ -531,6 +523,101 @@ export class Ironclaw2EActor extends Actor {
         }
 
         return { "totalDice": totaldice, "label": label, "labelGiven": labelgiven };
+    }
+
+    // Functions to construct the roll dialog properly
+
+    /**
+     * Apply a certain type of gift special bonus to roll dialog construction
+     * @param {any} specialname
+     * @param {any} prechecked
+     * @param {any} otherinputs
+     * @param {any} otherkeys
+     * @param {any} otherdice
+     * @param {any} item
+     * @returns {object} Returns a holder object which returns the inputs with the added bonuses
+     */
+    _getGiftSpecialConstruction(specialname, prechecked, otherinputs, otherkeys, otherdice, item) {
+        if (data.processingLists?.[specialname]) { // Check if they even exist
+            for (let setting of data.processingLists[specialname]) { // Loop through them
+                if (checkApplicability(setting, item, this)) { // Check initial applicability
+                    let used = setting; // Store the setting in a temp variable
+                    while (used.replacedBy && checkApplicability(used.replacedBy, item, this)) { // As long as the currently used one could be replaced by something applicable
+                        used = used.replacedBy; // Move up to the next replacement
+                    }
+                    if (used) { // Sanity check that the used still exists
+                        // Apply the used setting
+                        // Apply bonus sources to the roll dialog contruction
+                        if (used.bonusSources) {
+                            for (let source of used.bonusSources) {
+                                switch (source) {
+                                    case ("armor"):
+                                        let armors = this.items.filter(element => element.data.data.worn === true);
+                                        for (let i = 0; i < armors.length && i < 3; ++i) {
+                                            otherkeys.push(armors[i].data.name);
+                                            otherdice.push(armors[i].data.data.armorArray);
+                                            otherinputs += `<div class="form-group flexrow">
+                                                <label class="normal-label">${armors[i].data.name}: ${reformDiceString(armors[i].data.data.armorArray, true)}</label>
+	                                            <input type="checkbox" id="${makeStatCompareReady(armors[i].data.name)}" name="${makeStatCompareReady(armors[i].data.name)}" checked></input>
+                                                </div>`+ "\n";
+                                        }
+                                        break;
+                                    case ("shield"):
+                                        let shield = this.items.find(element => element.data.data.held === true);
+                                        if (shield) {
+                                            otherkeys.push(shield.data.name);
+                                            otherdice.push(shield.data.data.coverArray);
+                                            otherinputs += `<div class="form-group flexrow">
+                                                <label class="normal-label">${shield.data.name}: ${reformDiceString(shield.data.data.coverArray, true)}</label>
+	                                            <input type="checkbox" id="${makeStatCompareReady(shield.data.name)}" name="${makeStatCompareReady(shield.data.name)}" checked></input>
+                                                </div>`+ "\n";
+                                        }
+                                        break;
+                                    case ("guard"):
+                                        break;
+                                    case ("guard-always"):
+                                        break;
+                                }
+                            }
+                        }
+                        // Apply the bonus stats to the prechecked stats
+                        if (used.bonusStats) {
+                            for (let stat of used.bonusStats) {
+                                if (!prechecked.includes(stat)) {
+                                    prechecked.push(stat);
+                                }
+                            }
+                        }
+                        // Apply the bonus dice to the roll dialog construction
+                        if (used.bonusDice) {
+                            otherkeys.push(used.name);
+                            otherdice.push(used.bonusDice);
+                            otherinputs += `<div class="form-group flexrow">
+                                <label class="normal-label">${used.name}: ${reformDiceString(used.bonusDice, true)}</label>
+	                            <input type="checkbox" id="${makeStatCompareReady(used.name)}" name="${makeStatCompareReady(used.name)}" checked></input>
+                                </div>`+ "\n";
+                        }
+                    } else { // If used somehow turns out unsuable, send an error
+                        console.error("Somehow, the used setting came up unusable: " + used);
+                    }
+                }
+            }
+        }
+
+        return { "prechecked": prechecked, "otherinputs": otherinputs, "otherkeys": otherkeys, "otherdice": otherdice };
+    }
+
+
+    _getArmorConstruction() {
+
+    }
+
+    _getShieldConstruction() {
+
+    }
+
+    _getGuardConstruction() {
+
     }
 
     /* -------------------------------------------- */
