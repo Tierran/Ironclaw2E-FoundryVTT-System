@@ -248,6 +248,41 @@ export function getDiceArrayMaxValue(dicearray) {
         return 0;
 }
 
+/**
+ * Helper function to get which dice array is bigger
+ * @param {number[]} alpha The first dice array to compare
+ * @param {number[]} beta The second dice array to compare
+ * @returns {number} Whether either of the arrays is bigger, negative value if alpha is bigger, positive if beta is, zero if both are considered equal
+ */
+export function compareDiceArrays(alpha, beta) {
+    if (!Array.isArray(alpha)) {
+        console.error("Something that was not an array inputted to dice pool comparer: " + alpha);
+        return 1;
+    }
+    if (!Array.isArray(beta)) {
+        console.error("Something that was not an array inputted to dice pool comparer: " + beta);
+        return -1;
+    }
+    if (alpha.length != 5) {
+        console.error("Something that was not a dice array (based on length) inputted to dice pool comparer: " + alpha);
+        return 1;
+    }
+    if (beta.length != 5) {
+        console.error("Something that was not a dice array (based on length) inputted to dice pool comparer: " + beta);
+        return -1;
+    }
+
+    for (let i = 0; i < alpha.length; ++i) {
+        if (alpha[i] > beta[i]) {
+            return -1;
+        } else if (beta[i] > alpha[i]) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 
 /* -------------------------------------------- */
 /*  Stat Helpers                                */
@@ -351,12 +386,14 @@ export function burdenedLimitedStat(name) {
 
 /**
  * Checks the special's applicability in a given situation
- * @param {object} special
- * @param {Ironclaw2EItem} target
- * @param {Ironclaw2EActor} actor
+ * @param {object} special The special setting
+ * @param {Ironclaw2EItem} target The target item for the bonus setting or the data for one
+ * @param {Ironclaw2EActor} actor The actor of the check
+ * @param {boolean} defensecheck Special trigger for defense bonus, whether the check is happening for a dodge
+ * @param {boolean} isdodge Special trigger for defense bonus, whether the check is happening for a dodge
  * @returns {boolean} Whether the target is applicable for the special
  */
-export function checkApplicability(special, target = null, actor = null) {
+export function checkApplicability(special, target, actor, defensecheck = false, isdodge = false) {
     if (!special) {
         // In case the check is given something that doesn't exist
         return false;
@@ -365,6 +402,15 @@ export function checkApplicability(special, target = null, actor = null) {
     // Exhaustion check
     if (special.worksWhenExhausted === false && special.workingState === false) {
         return false;
+    }
+    // Special defense bonus check
+    if (defensecheck) {
+        if (!special.appliesToDodges && isdodge) {
+            return false; // Return false if the special does not apply to dodges and this is a dodge
+        }
+        if (!special.appliesToParries && target) {
+            return false; // Return false if the special does not apply to parries and this defense is done with a weapon, AKA it is a parry
+        }
     }
     // Item-specific checks
     if (target) {

@@ -66,7 +66,7 @@ export function ironclawRollActorChat(inputstring, speaker) {
         actor.popupSoakRoll(["body"], true, 3);
         return;
     }
-    if (specialcheck === "defense" || specialcheck === "defence") {
+    if (specialcheck === "dodging" || specialcheck === "defense" || specialcheck === "defence") {
         actor.popupDefenseRoll(["speed", "dodge"], false); // Actually dodge roll, despite being called "defense", in order to avoid confusion with the dodge skill for the system
         return;
     }

@@ -50,50 +50,50 @@ export function getSpecialOptionPrototype(option) {
     switch (option) {
         case ("attackBonus"):
             return mergeObject(special, {
-                "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "equipField": "", "rangeField": "", "worksWhenExhausted": true,
+                "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenExhausted": true,
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("defenseBonus"):
             return mergeObject(special, {
-                "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "equipField": "", "rangeField": "", "worksWhenExhausted": true,
-                "appliesToDodge": true, "appliesOnlyToDodge": false,
+                "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenExhausted": true,
+                "appliesToDodges": true, "appliesToParries": true,
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("counterBonus"):
             return mergeObject(special, {
-                "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "equipField": "", "rangeField": "", "worksWhenExhausted": true,
+                "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenExhausted": true,
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("soakBonus"):
             return mergeObject(special, {
-                "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "worksWhenExhausted": true,
+                "conditionField": "", "otherItemField": "", "worksWhenExhausted": true,
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("guardBonus"):
             return mergeObject(special, {
-                "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "worksWhenExhausted": true,
-                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
+                "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenExhausted": true,
+                "bonusDiceField": "", "replaceNameField": "", "replacesBaseBonus": true
             });
             break;
 
         case ("sprintBonus"):
             return mergeObject(special, {
-                "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "worksWhenExhausted": true,
+                "conditionField": "", "otherItemField": "", "worksWhenExhausted": true,
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("initiativeBonus"):
             return mergeObject(special, {
-                "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "conditionField": "", "worksWhenExhausted": true,
+                "conditionField": "", "otherItemField": "", "worksWhenExhausted": true,
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
@@ -121,14 +121,14 @@ export function getSpecialOptionPrototype(option) {
 
         case ("statChange"):
             return mergeObject(special, {
-                "typeField": "", "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "otherItemField": "", "equipField": "", "rangeField": "",
+                "typeField": "", "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "otherItemField": "",
                 "changeFromField": "", "changeToField": "", "nameAdditionField": ""
             });
             break;
 
         case ("diceUpgrade"):
             return mergeObject(special, {
-                "typeField": "", "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "otherItemField": "", "equipField": "", "rangeField": "",
+                "typeField": "", "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "otherItemField": "",
                 "upgradeStepsNumber": 0, "nameAdditionField": ""
             });
             break;
