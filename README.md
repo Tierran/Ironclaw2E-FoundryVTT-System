@@ -51,6 +51,7 @@ The /itemuse command takes an item name and uses that to activate a normal item 
 #### Advanced Gift Settings
 
 For gifts that should interact with the system by giving situational bonuses, the advanced settings can be used to add special bonuses to gifts. When added, the system will automatically see if a given bonus will be applicable given its configuration and add it in the relevant place.  
+
 <details>
 <summary>List of possible Advanced Gift Settings</summary>
 
@@ -68,7 +69,9 @@ For gifts that should interact with the system by giving situational bonuses, th
  - **Dice Upgrade**: An automated way to change the dice for an item when it is dragged to the actor from the Items Directory.  
  
 </details>
+
 The system works by first checking whether the special bonus is applicable. This is done by comparing the configuration settings of the special to the actor and/or the item and seeing if they match the configured requirements. Any fields that are empty are ignored, but all fields that have something in them **must match**. If the field allows multiple values, match of *any* of them is enough.  
+
 <details>
 <summary>List of applicability configuration fields</summary>
 Any of these fields that aren't just checkboxes can include multiple values, separated with commas.
@@ -88,7 +91,9 @@ Any of these fields that aren't just checkboxes can include multiple values, sep
  - **Applies to Parries**: Whether a defense bonus applies to parry defenses.
  
 </details>
+
 If the special bonus applies, it's applied where relevant, with the bonus depending on the effect configuration.
+
 <details>
 <summary>List of effect configuration fields</summary>
 
