@@ -11,8 +11,8 @@ This system was built from the Boilerplate system found here: https://gitlab.com
 
 ## Usage
 
-For rolling actor dice pools, actor sheets have a button to open a dice poll popup, which allows you to select what pools to use for the roll. The system has some support for specific rolls to automatically pre-select relevant dice pools and add modifiers through hard-coded logic. This does require any added gifts to have the same name as they do in the books to function, but allows easier rolling of dice.  
-Weapons and gifts can be set up to automatically select certain dice pools, as well as giving extra dice for the roll automatically. The system also has internal logic to add relevant modifiers to the rolls. Armor and shields also work, but any added dice from gifts (eg. Armored Fighter) need to be added manually. Extra Career gift is a special case and has its own item type, instead of being a normal gift. The system can handle an arbitrary number of them, but will only show the two top ones as dice pools.  
+For rolling actor dice pools, actor sheets have a button to open a dice poll popup, which allows you to select what pools to use for the roll. Weapons and gifts can also be rolled directly, as well as Soak and Dodge defense from the actor's sheet. The system supports setting up gifts to grant a variety of bonuses to most of the roll types through the gift sheet, which can be set to trigger with specific conditions or when used with weapons that match its configured attributes.  
+Weapons and gifts can be set up to automatically select certain dice pools, as well as giving extra dice for the roll automatically. The system will also use the above-mentioned system to add relevant modifiers to the rolls. Armor and shields also work, and gifts that add dice (eg. Armored Fighter) can be set up through the special bonus system. Extra Career gift is a special case and has its own item type, instead of being a normal gift. The system can handle an arbitrary number of them, but will only show the two top ones as dice pools.  
 The system has support for dragging items to the hotbar to create usable macros for their quick use. The specifics vary by item type, as weapons would ask how it is used (Attack, Spark, Parry, Counter) from its set pools or just pop up a dice pool selection with the only pool set, gifts would pop up either a dice pool, refresh or exhaust dialog, simpler used items would switch whether they are worn/held/lit, and simple gear will just output their info to chat.  
 
 In sheets, things with red outlines signify a clickable function, while blue signifies a double-clickable. Single-clicks are usually some function, like opening the dice pool dialog, whereas double-clickable is usually for outputting info to the chat about the thing.  
@@ -37,15 +37,67 @@ The 'One Line' macros allow the dice pools to be inputted in standard dice notat
 Right-clicking on a roll that has already been rolled will allow you to change the type of roll to another or change the TN of a roll. The copied roll will be shown as a new roll, but tagged as a copy and with static result numbers replacing the dice pools. For Favored Use, there's also a quick button to reroll a single die showing "1", which will copy the roll otherwise but reroll that one die. It will automatically pick the highest die showing a "1". Note that rerolling can't be used on copied rolls.  
 
 Setting up dice pools for items follows this format: "*(trait or skill name)*, *(another name)*;*(any bonus dice in one line format)*", eg. "Body, Melee Combat, dodge,weathersense;d12". The order of skills and traits are arbitrary and can include spaces in the name, but every name must be separated with a comma. The semicolon (;) separates the stat names from bonus dice, which are formatted the same way as one line rolls. If there is no bonus dice, the semicolon can be omitted.  
-For gifts that only grant situational bonuses to certain things without any related skills, like Strength or Veteran, the gift dice pool can be set as either a one line roll "d12" or as a dice pool without stats ";d12". Both work, though if the system doesn't seem to recognize the dice, use the latter. The gift dice are used in some places within the internal system gift tracking.  
+For gifts that only grant situational bonuses to certain things without any related skills, like Strength or Veteran, the gift dice pool can be set as either a one line roll "d12" or as a dice pool without stats ";d12". Both work, though if the system doesn't seem to recognize the dice, use the latter.  
+Gifts that grant situational bonuses can be configured from the "Advanced Settings" tab. More on that below.  
 
 The *Effect* field in weapons should be formatted so that every attribute is separated with a comma, eg. "Damage +2, Slaying, Awkward", for the damage auto-calculation system. Weapons with special resist effects should not add it to the effects field and instead add the resisting stats into the "Resist with" field.  
-Currently, the system does not allow dice pools to include items. Instead, the system tries to track common gifts and items that should be included in dice pools, eg. including worn armor in Soak rolls. This is completely hard-coded though, so I'm afraid it won't be perfect.  
+Currently, the system does not allow dice pools to include items. Instead, the system tries to track what items should be included in which dice pools, eg. including worn armor in Soak rolls, as well as adding the gift special bonuses. Where these bonuses go is hard-coded though, so I'm afraid it won't be perfect.  
 
 For Chat Commands: The /iroll command will take a one line format input after the command to roll dice as a highest roll type, with a semicolon followed by a number at the end changing it to a TN roll. Eg. "/iroll 3d6,d8" or "/iroll 3d6,d8;5"  
 The /actorroll command takes a dice pool format input, again with an additional semicolon and number changing the default roll type from highest to TN. Eg. "/actorroll dodge,speed;d12" or "/actorroll will,presence;;3"  
 In addition, /actorroll can take a simple "soak" or "defense" as input. In the former case, it will open a standard soak roll popup, while the latter opens a dodge defense popup, since "dodge" would normally refer to a roll of pure dodge skill, rather than the defense.  
 The /itemuse command takes an item name and uses that to activate a normal item use, as if the item was used through a hotbar macro. The *item* in this case refers to all things FoundryVTT considers items (armor, gifts, weapons, illumination...), not just the gear type. The name must be an **exact** match.  
+
+#### Advanced Gift Settings
+
+For gifts that should interact with the system by giving situational bonuses, the advanced settings can be used to add special bonuses to gifts. When added, the system will automatically see if a given bonus will be applicable given its configuration and add it in the relevant place.  
+<details>
+<summary>List of possible Advanced Gift Settings</summary>
+ - **Attack Bonus**: A bonus applied when a weapon is used to attack.  
+ - **Defense Bonus**: A bonus applied when defending, either as a parry with a weapon or when dodging.  
+ - **Counter Bonus**: A bonus applies when counter-attacking with a weapon.  
+ - **Soak Bonus**: A bonus applied when rolling for Soak.  
+ - **Guard Bonus**: Either a replacement or a bonus to what the Guarding condition gives. No need to check whether the actor is Guarding when configuring this bonus, it's implicit in its type.  
+ - **Spring Bonus**: A bonus applied to the sprint roll.  
+ - **Initiative Bonus**: A bonus applied to the initiative roll.  
+ - **Movement Bonus**: A bonus that changes the normal movement speed of an actor.  
+ - **Flying Move Bonus**: A bonus that changes the flying speed of an actor.  
+ - **Encumbrance Limit Bonus**: A bonus to the carrying capacity of an actor.  
+ - **Stat Change**: An automated way to change the stats for an item when it is dragged to the actor from the Items Directory.  
+ - **Dice Upgrade**: An automated way to change the dice for an item when it is dragged to the actor from the Items Directory.  
+</details>
+The system works by first checking whether the special bonus is applicable. This is done by comparing the configuration settings of the special to the actor and/or the item and seeing if they match the configured requirements. Any fields that are empty are ignored, but all fields that have something in them **must match**. If the field allows multiple values, match of *any* of them is enough.  
+<details>
+<summary>List of applicability configuration fields</summary>
+Any of these fields that aren't just checkboxes can include multiple values, separated with commas.
+ - **Type Field**: List of item types (gift, weapon, armor) that the special can apply to.
+ - **Name Field**: List of partial names, one of which must match with the item's name.
+ - **Tag Field**: List of tags, one of which must be present in the item's tags.
+ - **Descriptor Field**: List of descriptors, one of which must be present in the item's descriptors.
+ - **Effect Field**: List of effects, one of which must be present in the item's effects.
+ - **Stat Field**: List of stats, one of which must be present in any of the item's dice roll stats.
+ - **Equip Field**: List of weapon equip types, one of which must match the item's equip type.
+ - **Range Field**: List of range bands, one of which must match the item's range band.
+ - **Condition Field**: List of conditions, one of which the actor must have.
+ - **Other Item Field**: List of item names, one of which the actor must have.
+ - **Works When Exhausted**: Whether the bonus will still be applied when the gift granting it is exhausted.
+ - **Applies to Dodges**: Whether a defense bonus applies to dodge defenses.
+ - **Applies to Parries**: Whether a defense bonus applies to parry defenses.
+</details>
+If the special bonus applies, it's applied where relevant, with the bonus depending on the effect configuration.
+<details>
+<summary>List of effect configuration fields</summary>
+ - **Bonus Sources**: List of special additions on the bonus. "Armor" adds the worn armors with the bonus, "Shield" add the equipped shield, "Guard" adds the guard bonus if the actor is Guarding, and "Guard-always" adds the guard bonus whether or not the actor is Guarding.
+ - **Bonus Stats**: List of stats (traits and/or skills) to add with the bonus as pre-checked. If empty, the bonus uses its gift's stats.
+ - **Bonus Dice**: Dice to add with the bonus as an extra field. If empty, the bonus uses its gift's dice.
+ - **Replaces the Base Guarding Bonus**: Whether the bonus to Guarding replaces or adds to the Guarding dice.
+ - **Bonus Stride/Dash/Run**: The amount of respective movement capability to add to the actor.
+ - **Change From/To**: List of stats to change from and what to change them to. Both fields must have the same number of stats or the system will ignore it.
+ - **Encumbrance Bonus**: The bonus added to the carrying capacity of the actor. Note that this bonus should be for the "None" encumbrance limit, the system will multiply it accordingly for the higher limits.
+ - **Upgrade Steps**: The number of steps to upgrade the dice. A single "step" would upgrade the dice by one, from d4 to d6, d6 to d8, etc. Negative steps will instead downgrade the dice instead. The upgraded dice cap at *d12* at maximum and *d4* at minimum.
+ - **Name Addition**: What to append to the name of items modified by this bonus. If left empty, the name will not change at all. Note that these should not include brackets, as that will cause Foundry's internal system to attempt to parse it as a roll modifier.
+ - **Replacing Name**: The name of a gift that this gift would replace. If this field has something, this bonus will not be applied normally. Instead, when the system would apply a same type bonus from the replaced gift, it will check whether this bonus applies and use this one instead if it does apply.
+</details>
 
 ### Conditions
 
