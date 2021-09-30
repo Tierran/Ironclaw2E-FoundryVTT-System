@@ -235,8 +235,8 @@
     "weapon": {
       "templates": [ "base", "physical" ],
       "effect": "",
+      "defendWith": "defense",
       "hasResist": false,
-      "specialResist": "",
       "descriptors": "",
       "equip": "goodhand",
       "range": "close",

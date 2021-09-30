@@ -44,13 +44,12 @@
                 <h3 class="header-label">Attributes</h3>
                 <div class="resource flex-group-center">
                     <label class="resource-label">Effect:</label>
-                    {{#if data.hasResist}}
                     <div class="resource flexrow flex-center">
-                        <label class="resource-label" style="max-width:120px">Resist With:</label>
-                        <input type="text" name="data.specialResist" value="{{data.specialResist}}" data-dtype="String" />
-                        <span class="resource-label" style="max-width:60px">vs. 3</span>
+                        <label class="resource-label" style="max-width:160px">{{#if data.hasResist}}Resist With:{{else}}Opposing Defense:{{/if}}</label>
+                        {{#unless data.hasResist}}<span class="resource-label" style="max-width:120px">Attack vs.</span>{{/unless}}
+                        <input type="text" name="data.defendWith" value="{{data.defendWith}}" data-dtype="String" />
+                        {{#if data.hasResist}}<span class="resource-label" style="max-width:60px">vs. 3</span>{{/if}}
                     </div>
-                    {{/if}}
                     <input type="text" name="data.effect" value="{{data.effect}}" data-dtype="String" />
                 </div>
                 <div class="resource flex-group-center">
@@ -70,7 +69,7 @@
                 <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Use Spark:</label>
                     <input type="checkbox" name="data.useSpark" {{checked data.useSpark}} data-dtype="Boolean" />
-                    <label class="resource-label">Has Resist:</label>
+                    <label class="resource-label">Defense is Resist:</label>
                     <input type="checkbox" name="data.hasResist" {{checked data.hasResist}} data-dtype="Boolean" />
                     <label class="resource-label">Exhausts a Gift:</label>
                     <input type="checkbox" name="data.exhaustGift" {{checked data.exhaustGift}} data-dtype="Boolean" />

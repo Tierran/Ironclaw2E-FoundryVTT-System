@@ -232,9 +232,10 @@ export class Ironclaw2EItem extends Item {
                     data.damageEffect = isNaN(damage) ? 0 : damage;
                 }
             }
-            if (data.hasResist) {
-                data.resistStats = splitStatString(data.specialResist);
-            }
+        }
+        // Defense
+        if (data.defendWith.length > 0) {
+            data.defenseStats = splitStatString(data.defendWith);
         }
         // Descriptors
         if (data.descriptors.length > 0) {
@@ -565,8 +566,6 @@ export class Ironclaw2EItem extends Item {
                         <p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.skills")}:</strong> ${itemData.careerSkill1}, ${itemData.careerSkill2}, ${itemData.careerSkill3}</p>`;
                 break;
             case 'weapon':
-                if (itemData.hasResist)
-                    contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith")}:</strong> ${itemData.specialResist} vs. 3</p>`;
                 contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect")}:</strong> ${itemData.effect}</p>
                         <p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.descriptors")}:</strong> ${itemData.descriptors}</p>
                         <p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.equip")}:</strong> ${CommonSystemInfo.equipHandedness[itemData.equip]},
@@ -576,6 +575,10 @@ export class Ironclaw2EItem extends Item {
                 if (itemData.useSpark) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.sparkDice")}:</strong> ${itemData.sparkDie}</p>`;
                 if (itemData.defenseDice) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.parryDice")}:</strong> ${itemData.defenseDice}</p>`;
                 if (itemData.counterDice) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.counterDice")}:</strong> ${itemData.counterDice}</p>`;
+                if (itemData.hasResist)
+                    contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith")}:</strong> ${itemData.defendWith} vs. 3</p>`;
+                else
+                    contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.opposingDefense")}:</strong> ${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attack")} vs. ${itemData.defendWith}</p>`;
                 break;
             case 'illumination':
                 contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.dimLight")}:</strong> ${itemData.dimLight}, <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.brightLight")}:</strong> ${itemData.brightLight},
@@ -1062,7 +1065,8 @@ export class Ironclaw2EItem extends Item {
                     this.actor.popupDefenseRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : []), (usesmoredice ? [dicearray] : []), label, this, true, callback);
                     break;
                 case 2: // Attack roll
-                    label = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect + (this.data.data.hasResist ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith") + " " + this.data.data.specialResist + " vs. 3 " : "") : ": ");
+                    label = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect +
+                        (this.data.data.defenseStats?.length > 0 ? ", " + (this.data.data.hasResist ? game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith") + " " + this.data.data.defendWith + " vs. 3 " : game.i18n.localize("ironclaw2e.chatInfo.itemInfo.opposingDefense") + ": " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attack") + " vs. " + this.data.data.defendWith) : "") : ": ");
                     if (this.weaponGetGiftToExhaust()?.giftUsable() === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
                     this.actor.popupAttackRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : []), (usesmoredice ? [dicearray] : []), label, this, callback);
                     break;

@@ -205,6 +205,9 @@
   "ironclaw2e.chatInfo.itemInfo.skills": "Skills",
 
   "ironclaw2e.chatInfo.itemInfo.resistWith": "Resist with",
+  "ironclaw2e.chatInfo.itemInfo.defense": "Defense",
+  "ironclaw2e.chatInfo.itemInfo.opposingDefense": "Opposing defense",
+  "ironclaw2e.chatInfo.itemInfo.attack": "Attack",
   "ironclaw2e.chatInfo.itemInfo.effect": "Effect",
   "ironclaw2e.chatInfo.itemInfo.descriptors": "Descriptors",
   "ironclaw2e.chatInfo.itemInfo.equip": "Equip",
