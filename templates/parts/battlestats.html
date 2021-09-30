@@ -32,7 +32,7 @@
             {{#if item.data.showInBattleStats}}
             <li class="item flexrow" data-item-id="{{item._id}}">
                 <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
-                <h4 title="Effects: {{item.data.effect}}&#013;Descriptors: {{item.data.descriptors}}" class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
+                <h4 title="{{localize "ironclaw2e.chatInfo.itemInfo.effect"}}: {{item.data.effect}}&#013;{{localize "ironclaw2e.chatInfo.itemInfo.descriptors"}}: {{item.data.descriptors}}&#013;{{#if item.data.hasResist}}{{localize "ironclaw2e.chatInfo.itemInfo.resistWith"}}{{else}}{{localize "ironclaw2e.chatInfo.itemInfo.opposingDefense"}}{{/if}}: {{item.data.defendWith}}" class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                 <div class="item-controls flexrow">
                     {{#if item.data.attackDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.attackTitle" name=item.name}}" data-roll="1" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-attack.svg" width="24" height="24" /></a>{{/if}}
                     {{#if item.data.useSpark}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.sparkTitle"}}: {{item.data.sparkDie}}" data-roll="4" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-spark.svg" width="24" height="24" /></a>{{/if}}
