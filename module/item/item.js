@@ -36,9 +36,34 @@ export class Ironclaw2EItem extends Item {
         const actorData = this.actor ? this.actor.data : {};
         const data = itemData.data;
 
-        // Check if the item has the weight attribute, then calculate total weight from it and quantity
+        // Check if the item has the weight attribute, then use it and quantity to calculate total weight
         if (data.hasOwnProperty("weight")) {
-            data.totalWeight = data.weight * data.quantity;
+            let usedWeight = 0;
+            if (typeof (data.weight) !== "string") { // Both to ensure that the .includes doesn't fail and for legacy compatability
+                usedWeight = data.weight;
+            } else if (data.weight.includes("/")) {
+                const foobar = data.weight.split("/");
+                if (foobar.length > 1) {
+                    const foo = parseInt(foobar[0]);
+                    const bar = parseInt(foobar[1]);
+                    if (!isNaN(foo) && !isNaN(bar) && bar != 0) {
+                        usedWeight = foo / bar;
+                    } else {
+                        ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": itemData.name, "weight": data.weight }));
+                    }
+                } else {
+                    ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": itemData.name, "weight": data.weight }));
+                }
+            } else {
+                const foobar = parseFloat(data.weight);
+                if (!isNaN(foobar)) {
+                    usedWeight = foobar;
+                } else {
+                    ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": itemData.name, "weight": data.weight }));
+                }
+            }
+
+            data.totalWeight = usedWeight * data.quantity;
         }
 
         if (itemData.type === 'gift') this._prepareGiftData(itemData, actorData);

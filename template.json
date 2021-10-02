@@ -210,7 +210,7 @@
       },
       "physical": {
         "quantity": 1,
-        "weight": 0.0
+        "weight": "0.0"
       }
     },
     "gift": {
