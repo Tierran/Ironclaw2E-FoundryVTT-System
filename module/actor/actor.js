@@ -920,7 +920,8 @@ export class Ironclaw2EActor extends Actor {
                 return bar;
                 break;
             case 0:
-                this.popupSelectRolled(prechecked, false, 3, "", formconstruction, constructionkeys, constructionarray, game.i18n.localize("ironclaw2e.chat.rollingSprint"));
+                this.popupSelectRolled(prechecked, false, 3, "", formconstruction, constructionkeys, constructionarray, game.i18n.localize("ironclaw2e.chat.rollingSprint") + ", " +
+                    game.i18n.format("ironclaw2e.chat.rollingSprintExtra", { "stride": `±${data.stride}` }));
                 return;
                 break;
         }

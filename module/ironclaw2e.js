@@ -27,6 +27,8 @@ import { ironclawRollActorChat } from "./commands.js";
 
 import { CommonConditionInfo } from "./conditions.js";
 
+import { CommonSystemInfo } from "./systeminfo.js";
+
 
 /* -------------------------------------------- */
 /*  Base Hooks                                  */
@@ -50,6 +52,9 @@ Hooks.once('init', async function () {
         rollHighestDialog,
         rollTargetNumberOneLine,
         rollHighestOneLine,
+        // System info
+        CommonSystemInfo,
+        CommonConditionInfo,
         // Misc
         "useCUBConditions": false,
         waitUntilReady
