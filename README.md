@@ -41,7 +41,7 @@ For gifts that only grant situational bonuses to certain things without any rela
 Gifts that grant situational bonuses can be configured from the "Advanced Settings" tab. More on that below. Items that have weight can have their weight value set up as either a fractional value "1/8" or a decimal value "0.125", the system will detect the presence of a slash and treat the value accordingly.  
 
 The *Effect* field in weapons should be formatted so that every attribute is separated with a comma, eg. "Damage +2, Slaying, Awkward", for the damage auto-calculation system. Weapons also have a field to give its opposing defensive pool for informational purposes, normally this is just standard "defense" but some weapons with special defenses may have different pools. Weapons with resisted effects should set the resistance pool in the opposing defense field and toggle the "Defense is Resist" checkbox on.  
-Weapons that would exhaust a gift on use can be set to auto-exhaust the gift in question when used to Attack or Counter. If the weapon is set to *require* an un-exhausted gift instead of simply exhausting one if available, trying to use the weapon when the gift is exhausted will instead pop out a Refresh Gift dialog.
+Weapons that would exhaust a gift on use can be set to auto-exhaust the gift in question when used to Attack or Counter. If the weapon is set to *require* an un-exhausted gift instead of simply exhausting one if available, trying to use the weapon when the gift is exhausted will instead pop out a Refresh Gift dialog.  
 Currently, the system does not allow dice pools to include items. Instead, the system tries to track what items should be included in which dice pools, eg. including worn armor in Soak rolls, as well as adding the gift special bonuses. Where these bonuses go is hard-coded though, so I'm afraid it won't be perfect.  
 
 For Chat Commands: The /iroll command will take a one line format input after the command to roll dice as a highest roll type, with a semicolon followed by a number at the end changing it to a TN roll. Eg. "/iroll 3d6,d8" or "/iroll 3d6,d8;5"  
@@ -98,7 +98,7 @@ If the special bonus applies, it's applied where relevant, with the bonus depend
 <details>
 <summary>List of effect configuration fields</summary>
 
- - **Bonus Sources**: List of special additions on the bonus. "Armor" adds the worn armors with the bonus, "Shield" add the equipped shield, "Guard" adds the guard bonus if the actor is Guarding, and "Guard-always" adds the guard bonus whether or not the actor is Guarding.
+ - **Bonus Sources**: List of special additions on the bonus. "Armor" adds the worn armors with the bonus, "Shield" adds the equipped shield, "Guard" adds the guard bonus if the actor is Guarding, and "Guard-always" adds the guard bonus whether or not the actor is Guarding.
  - **Bonus Stats**: List of stats (traits and/or skills) to add with the bonus as pre-checked. If empty, the bonus uses its gift's stats.
  - **Bonus Dice**: Dice to add with the bonus as an extra field. If empty, the bonus uses its gift's dice.
  - **Replaces the Base Guarding Bonus**: Whether the bonus to Guarding replaces or adds to the Guarding dice.
@@ -114,7 +114,7 @@ If the special bonus applies, it's applied where relevant, with the bonus depend
 ### Conditions
 
 The system has a full set of standard Ironclaw status effect conditions set up and supported, as well as a few extras (the Miscs) purely for GM to differentiate between tokens if they want. Information on them is provided in the status effects compendium pack.  
-Damage calculations have a separate pop-up function for simpler calculation. Just input the raw damage from the attack and the soak successes, even if the value goes negative. Do NOT including any added by standard conditions. The system will automatically add the damage from Hurt and Injured if they apply, as noted in the "Condition Damage" part.  
+Damage calculations have a separate pop-up function for simpler calculation. Just input the raw damage from the attack and the soak successes, even if the value goes negative. Do NOT include any added by standard conditions. The system will automatically add the damage from Hurt and Injured if they apply, as noted in the "Condition Damage" part.  
 
 With Combat Utility Belt's Enhanced Conditions set up, the system has somewhat better support for multiple defeat conditions and built-in chat linking for the Compendium information entries. The CUB is not necessary, but can make some things smoother.  
 <details>
