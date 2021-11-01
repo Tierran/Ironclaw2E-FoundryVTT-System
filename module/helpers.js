@@ -399,8 +399,8 @@ export function checkApplicability(special, target, actor, defensecheck = false,
         return false;
     }
 
-    // Exhaustion check
-    if (special.worksWhenExhausted === false && special.workingState === false) {
+    // Gift state check, if the bonus is applicable only when refreshed and the gift is exhausted, or if applicable only when exhausted and the gift is refreshed, return false
+    if ((special.worksWhenState === "refreshed" && special.refreshedState === false) || (special.worksWhenState === "exhausted" && special.refreshedState === true)) {
         return false;
     }
     // Special defense bonus check
@@ -585,4 +585,57 @@ export function nullCheckConcat(foo, bar) {
     }
 
     return foo.concat(bar);
+}
+
+/**
+ * Loop through all actors that exist in the game world, and return them as a Set
+ * @returns {Set} Set of all actors that exist
+ */
+export function getAllActorsInWorld() {
+    let allActors = new Set();
+
+    for (let actor of game.actors) {
+        allActors.add(actor);
+    }
+    for (let scene of game.scenes) {
+        for (let token of scene.tokens) {
+            if (token.actor) {
+                allActors.add(token.actor);
+            }
+        }
+    }
+
+    return allActors;
+}
+
+/**
+ * Loop through all items that exist in the game world, and return them as a Set
+ * @param {string} itemtype The type of items to get
+ * @returns {Set} Set of all items that exist
+ */
+export function getAllItemsInWorld(itemtype = "") {
+    let allItems = new Set();
+
+    for (let item of game.items) {
+        if (!itemtype || item.type == itemtype)
+            allItems.add(item);
+    }
+    for (let actor of game.actors) {
+        for (let item of actor.items) {
+            if (!itemtype || item.type == itemtype)
+                allItems.add(item);
+        }
+    }
+    for (let scene of game.scenes) {
+        for (let token of scene.tokens) {
+            if (token.actor) {
+                for (let item of token.actor.items) {
+                    if (!itemtype || item.type == itemtype)
+                        allItems.add(item);
+                }
+            }
+        }
+    }
+
+    return allItems;
 }

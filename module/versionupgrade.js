@@ -1,4 +1,4 @@
-import { makeStatCompareReady } from "./helpers.js";
+import { makeStatCompareReady, getAllItemsInWorld } from "./helpers.js";
 import { CommonSystemInfo, getSpecialOptionPrototype } from "./systeminfo.js";
 
 
@@ -52,29 +52,13 @@ export function checkIfNewerVersion(testing, baseversion) {
  * @param {string} lastversion
  */
 export async function upgradeVersion(lastversion) {
-    if (getVersionNumbers(lastVersion)[0] < 4) {
+    if (getVersionNumbers(lastversion)[0] < 4) {
         ui.notifications.info(game.i18n.localize("System update to 0.4 requires data migration, please wait..."), { permanent: true });
 
         // Item changes, first grab all items from everywhere
-        let itemsToChange = [];
+        let itemsToChange = getAllItemsInWorld();
         let problemItems = [];
-        for (let item of game.items) {
-            itemsToChange.push(item);
-        }
-        for (let actor of game.actors) {
-            for (let item of actor.items) {
-                itemsToChange.push(item);
-            }
-        }
-        for (let scene of game.scenes) {
-            for (let token of scene.tokens) {
-                if (token.actor) {
-                    for (let item of token.actor.items) {
-                        itemsToChange.push(item);
-                    }
-                }
-            }
-        }
+
         // The actual item change
         for (let item of itemsToChange) {
             if (item.type == "gift") {
@@ -84,6 +68,33 @@ export async function upgradeVersion(lastversion) {
                     problemItems.push(item);
                 }
             }
+        }
+
+        if (problemItems.length > 0) {
+            ui.notifications.info(game.i18n.localize("System update to 0.4 completed, but some items had importing issues, check the chat for the item list"), { permanent: true });
+            console.log(problemItems);
+
+            let contents = "";
+            for (let item of problemItems) {
+                contents += "<p>";
+                contents += "<strong>" + item.name + "</strong>";
+                if (item.actor) {
+                    contents += ", belonging to character: " + item.actor.name;
+                    if (item.actor.token?.parent) {
+                        contents += ", under the scene: " + item.actor.token.parent.name;
+                    }
+                }
+                contents += "</p>";
+            }
+
+            let chatData = {
+                content: contents
+            };
+
+            ChatMessage.applyRollMode(chatData, "PRIVATE");
+            CONFIG.ChatMessage.documentClass.create(chatData);
+        } else {
+            ui.notifications.info(game.i18n.localize("System update to 0.4 completed"), { permanent: true });
         }
     }
 }
@@ -167,6 +178,11 @@ function giftNameLookup(gift) {
         case ("veteran"):
             settings.push(getSpecialOptionPrototype("guardBonus"));
             break;
+        // Giant
+        case ("giant"):
+            settings.push(getSpecialOptionPrototype("encumbranceBonus"));
+            settings[0].encumbranceBonusNumber = 1;
+            break;
         // Move bonuses
         case ("fastmover"):
             settings.push(getSpecialOptionPrototype("moveBonus"));
@@ -187,6 +203,9 @@ function giftNameLookup(gift) {
             settings[0].bonusDashNumber = 3;
             settings[0].bonusRunNumber = 9;
             settings[0].conditionField = "Afraid, Terrified";
+            settings.push(getSpecialOptionPrototype("defenseBonus"));
+            settings[1].conditionField = "Afraid, Terrified";
+            settings[1].appliesToParries = false;
             break;
         case ("flightoftheprey"):
             settings.push(getSpecialOptionPrototype("moveBonus"));
@@ -195,6 +214,13 @@ function giftNameLookup(gift) {
             settings[0].bonusRunNumber = 16;
             settings[0].conditionField = "Afraid";
             settings[0].replaceNameField = "Coward";
+            settings.push(getSpecialOptionPrototype("defenseBonus"));
+            settings[1].conditionField = "Afraid"; // Separate bonuses for dodge and parry to ensure the replacement system works
+            settings[1].appliesToParries = false;
+            settings[1].replaceNameField = "Coward";
+            settings.push(getSpecialOptionPrototype("defenseBonus"));
+            settings[2].conditionField = "Afraid";
+            settings[2].appliesToDodges = false;
             break;
         case ("ophidian"):
             settings.push(getSpecialOptionPrototype("moveBonus"));
@@ -202,7 +228,7 @@ function giftNameLookup(gift) {
             settings[0].bonusDashNumber = -2;
             break;
         // Flight bonuses
-        case ("fastmover"):
+        case ("flying"):
             settings.push(getSpecialOptionPrototype("flyingBonus"));
             settings[0].bonusStrideNumber = 3;
             settings[0].bonusRunNumber = 12;
@@ -226,10 +252,40 @@ function giftNameLookup(gift) {
             settings[1].encumbranceBonusNumber = 2;
             settings[0].replaceNameField = "Strength";
             break;
-        // Giant
-        case ("giant"):
-            settings.push(getSpecialOptionPrototype("encumbranceBonus"));
-            settings[0].encumbranceBonusNumber = 1;
+        // Counter bonuses
+        case ("focusedfighter"):
+            settings.push(getSpecialOptionPrototype("counterBonus"));
+            settings[0].conditionField = "Focused";
+            settings.push(getSpecialOptionPrototype("defenseBonus"));
+            settings[1].conditionField = "Focused";
+            break;
+        // Defense bonuses
+        case ("fencing"):
+            settings.push(getSpecialOptionPrototype("defenseBonus"));
+            settings[0].descriptorField = "Fencing";
+            settings[0].bonusStatsField = "Dodge";
+            settings[0].appliesToDodges = false;
+            break;
+        // Soak bonuses
+        case ("resolve"):
+            settings.push(getSpecialOptionPrototype("soakBonus"));
+            settings[0].bonusStatsField = "Will";
+            break;
+        case ("shieldsoak"):
+            settings.push(getSpecialOptionPrototype("soakBonus"));
+            settings[0].bonusSourcesField = "Shield";
+            break;
+        case ("guardsoak"):
+            settings.push(getSpecialOptionPrototype("soakBonus"));
+            settings[0].bonusSourcesField = "Guard";
+            break;
+        case ("naturalarmor"):
+            settings.push(getSpecialOptionPrototype("soakBonus"));
+            settings[0].bonusStatsField = "Species";
+            break;
+        // Initiative bonuses
+        case ("dangersense"):
+            settings.push(getSpecialOptionPrototype("initiativeBonus"));
             break;
     }
 

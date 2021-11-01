@@ -716,6 +716,11 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         }
     }
 
+    /**
+     * Handle the double-click info-dump event for items
+     * @param {Event} event   The originating click event
+     * @private
+     */
     _onItemInfo(event) {
         event.preventDefault();
         const element = event.currentTarget;
@@ -725,8 +730,14 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const li = $(event.currentTarget).parents(".item");
         const item = this.actor.items.get(li.data("itemId"));
         item?.sendInfoToChat();
+        console.log(item);
     }
 
+    /**
+     * Handle the double-click info-dump event for conditions
+     * @param {Event} event   The originating click event
+     * @private
+     */
     _onConditionInfo(event) {
         event.preventDefault();
         const element = event.currentTarget;

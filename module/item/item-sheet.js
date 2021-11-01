@@ -1,4 +1,5 @@
 import { CommonSystemInfo } from "../systeminfo.js";
+import { getAllItemsInWorld } from "../helpers.js";
 
 /**
  * Extend the basic ItemSheet with some very simple modifications
@@ -46,8 +47,9 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         sheetData.dtypes = baseData.dtypes;
 
         // Add structural sheet stuff
-        let selectables = { "handedness": CommonSystemInfo.equipHandedness, "range": CommonSystemInfo.rangeBands, "giftOptions": CommonSystemInfo.giftSpecialOptions };
+        let selectables = { "handedness": CommonSystemInfo.equipHandedness, "range": CommonSystemInfo.rangeBands, "giftOptions": CommonSystemInfo.giftSpecialOptions, "giftStates": CommonSystemInfo.giftWorksStates };
         sheetData.selectables = selectables;
+        sheetData.showDirectoryOptions = game.user.isGM && !this.item.parent;
 
         return sheetData;
     }
@@ -72,9 +74,12 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         // Everything below here is only needed if the sheet is editable
         if (!this.options.editable) return;
 
-        // Roll handlers, click handlers, etc. 
+        // Gift special handlers 
         html.find('.add-new-special').click(this._onAddNewSpecial.bind(this));
         html.find('.delete-special-option').click(this._onDeleteSpecial.bind(this));
+        html.find('.copy-special-settings').click(this._onCopySpecialSettings.bind(this));
+        html.find('.copy-all-aspects').click(this._onCopyAllAspects.bind(this));
+
         html.find('.change-setting-mode').change(this._onChangeSpecialOption.bind(this));
         html.find('.special-change-field').change(this._onChangeSpecialField.bind(this));
         html.find('.special-change-number').change(this._onChangeSpecialNumber.bind(this));
@@ -98,6 +103,99 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         const index = li.data("special-index");
         this.item.giftDeleteSpecialSetting(index);
         //li.slideUp(200, () => this.render(false));
+    }
+
+    /**
+     * Handle the copying of Special Settings
+     * @param {Event} event Originationg event
+     */
+    _onCopySpecialSettings(event) {
+        if (game.user.isGM) {
+            // Pop a dialog to confirm
+            let confirmed = false;
+            let dlog = new Dialog({
+                title: game.i18n.localize("ironclaw2e.dialog.copyItem.title"),
+                content: `
+     <form>
+      <h2>${game.i18n.format("ironclaw2e.dialog.copyItem.copySpecial", { "name": this.item.name })}</h2>
+     </form>
+     `,
+                buttons: {
+                    one: {
+                        icon: '<i class="fas fa-check"></i>',
+                        label: game.i18n.localize("ironclaw2e.dialog.copy"),
+                        callback: () => confirmed = true
+                    },
+                    two: {
+                        icon: '<i class="fas fa-times"></i>',
+                        label: game.i18n.localize("ironclaw2e.dialog.cancel"),
+                        callback: () => confirmed = false
+                    }
+                },
+                default: "one",
+                render: html => { },
+                close: html => {
+                    if (confirmed) { // Only copy these settings and replace existing ones when confirmed
+                        const gifts = getAllItemsInWorld("gift");
+                        gifts.delete(this.item);
+                        for (let gift of gifts) {
+                            if (gift.name === this.item.name) {
+                                console.log(gift); // Log all potential changes to console, just in case
+                                gift.update({ "data.specialSettings": this.item.data.data.specialSettings });
+                            }
+                        }
+                    }
+                }
+            });
+            dlog.render(true);
+        }
+    }
+
+    /**
+     * Handle the copying of Special Settings
+     * @param {Event} event Originationg event
+     */
+    _onCopyAllAspects(event) {
+        const data = this.item.data.data;
+        if (game.user.isGM) {
+            // Pop a dialog to confirm
+            let confirmed = false;
+            let dlog = new Dialog({
+                title: game.i18n.localize("ironclaw2e.dialog.copyItem.title"),
+                content: `
+     <form>
+      <h2>${game.i18n.format("ironclaw2e.dialog.copyItem.copyAll", { "name": this.item.name })}</h2>
+     </form>
+     `,
+                buttons: {
+                    one: {
+                        icon: '<i class="fas fa-check"></i>',
+                        label: game.i18n.localize("ironclaw2e.dialog.copy"),
+                        callback: () => confirmed = true
+                    },
+                    two: {
+                        icon: '<i class="fas fa-times"></i>',
+                        label: game.i18n.localize("ironclaw2e.dialog.cancel"),
+                        callback: () => confirmed = false
+                    }
+                },
+                default: "one",
+                render: html => { },
+                close: html => {
+                    if (confirmed) { // Only copy the item data and replace existing ones when confirmed
+                        const items = getAllItemsInWorld(this.item.type);
+                        items.delete(this.item);
+                        for (let item of items) {
+                            if (item.name === this.item.name) {
+                                console.log(item); // Log all potential changes to console, just in case
+                                item.update({ "data": data });
+                            }
+                        }
+                    }
+                }
+            });
+            dlog.render(true);
+        }
     }
 
     /**

@@ -144,9 +144,9 @@ export class Ironclaw2EItem extends Item {
                     data.specialSettings[i].otherItemArray = splitStatString(data.specialSettings[i].otherItemField);
                 }
                 // Gift Exhaust check
-                if (data.specialSettings[i].worksWhenExhausted === false) {
-                    // If the gift does not exhaust when used, or it is _not_ exhausted, then the setting is considered working, otherwise it is not false
-                    data.specialSettings[i].workingState = (data.exhaustWhenUsed === false || !data.exhausted);
+                if (data.specialSettings[i].worksWhenState === false) {
+                    // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored refreshedState as true, otherwise it is false
+                    data.specialSettings[i].refreshedState = (data.exhaustWhenUsed === false || !data.exhausted);
                 }
 
                 // Effect settings
@@ -458,7 +458,15 @@ export class Ironclaw2EItem extends Item {
         }
 
         let newSetting = getSpecialOptionPrototype(settingmode);
-        // TODO: If the old and new settings have the same fields, insert the old values to the new setting
+
+        // Go through the field names of the new setting and check whether the old setting has any same ones, for any that do, copy the data over
+        for (let [key, field] of Object.entries(newSetting)) {
+            if (key == "settingMode") continue; // Special skip to not accidentally copy over the setting type
+
+            if (oldSetting.hasOwnProperty(key)) {
+                newSetting[key] = oldSetting[key];
+            }
+        }
 
         specialSettings[index] = newSetting;
         return this.update({ "data.specialSettings": specialSettings });

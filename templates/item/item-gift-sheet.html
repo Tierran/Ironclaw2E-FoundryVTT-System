@@ -52,6 +52,17 @@
         {{!-- Specials Tab --}}
         <div class="tab" data-group="primary" data-tab="special">
             <div class="flexcol">
+                {{#if showDirectoryOptions}}
+                <div>
+                    <span class="normal-label">GM Directory Settings</span>
+                    <div class="rollable copy-special-settings flex-group-center">
+                        <span class="normal-label">Copy Special Settings to every Gift with same name</span>
+                    </div>
+                    <div class="rollable copy-all-aspects flex-group-center">
+                        <span class="normal-label">Copy entire Gift to every Gift with same name</span>
+                    </div>
+                </div>
+                {{/if}}
                 <div class="rollable add-new-special flex-group-center">
                     <span class="normal-label">Add new Special Setting</span>
                 </div>
@@ -77,7 +88,7 @@
                                 {{#if (propertyExists special "rangeField")}}<div class="flexrow flex-center"><label class="normal-label">Range Field</label><input style="min-width: 65%" class="special-change-field" type="text" name="rangeField" value="{{special.rangeField}}" data-dtype="String" /></div>{{/if}}
                                 {{#if (propertyExists special "conditionField")}}<div class="flexrow flex-center"><label class="normal-label">Condition Field</label><input style="min-width: 65%" class="special-change-field" type="text" name="conditionField" value="{{special.conditionField}}" data-dtype="String" /></div>{{/if}}
                                 {{#if (propertyExists special "otherItemField")}}<div class="flexrow flex-center"><label class="normal-label">Other Item Field</label><input style="min-width: 65%" class="special-change-field" type="text" name="otherItemField" value="{{special.otherItemField}}" data-dtype="String" /></div>{{/if}}
-                                {{#if (propertyExists special "worksWhenExhausted")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Works When Exhausted</label><input class="special-change-boolean" type="checkbox" name="worksWhenExhausted" {{checked special.worksWhenExhausted}} data-dtype="Boolean" /></div>{{/if}}
+                                {{#if (propertyExists special "worksWhenState")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 65%">Works When Gift State Is</label><select class="special-change-field" type="text" name="worksWhenState" data-dtype="String">{{selectOptions ../selectables.giftStates selected=special.worksWhenState localize=false}}</select></div>{{/if}}
                                 {{#if (propertyExists special "appliesToDodges")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Applies To Dodges</label><input class="special-change-boolean" type="checkbox" name="appliesToDodges" {{checked special.appliesToDodges}} data-dtype="Boolean" /></div>{{/if}}
                                 {{#if (propertyExists special "appliesToParries")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Applies To Parries</label><input class="special-change-boolean" type="checkbox" name="appliesToParries" {{checked special.appliesToParries}} data-dtype="Boolean" /></div>{{/if}}
                             </div>
