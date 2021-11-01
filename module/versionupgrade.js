@@ -72,7 +72,7 @@ export async function upgradeVersion(lastversion) {
         }
 
         if (problemItems.length > 0) {
-            ui.notifications.info(game.i18n.localize("System update to 0.4 completed, but some items had importing issues, check the chat for the item list"), { permanent: true });
+            ui.notifications.info(game.i18n.localize("System update to 0.4 completed, but some items had potential migration issues, check the chat for the item list"), { permanent: true });
             console.log(problemItems);
 
             let contents = "<p>Items to check:</p>";
