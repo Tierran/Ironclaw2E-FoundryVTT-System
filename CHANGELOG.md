@@ -1,3 +1,10 @@
+### 0.4.0 Customized bonuses release
+ - Added a system to add free-form bonuses to any Gifts, replacing the previous hard-coded system for Gifts
+ - Added a separate "defend with" field to weapons
+ - Added a system to auto-exhaust a gift when using weapons
+ - Item weights can be set in fractional as well as decimal format
+ - Added two buttons for GM's to force-copy either Gift special settings or the entire Gift data from an Item Directory Gift to every gift with the same name in the campaign world
+
 ### 0.3.6 Bug fixing release
  - Fixed a bug that prevented token lights from being updated
 

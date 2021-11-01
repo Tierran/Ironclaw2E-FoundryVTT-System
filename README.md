@@ -41,6 +41,7 @@ For gifts that only grant situational bonuses to certain things without any rela
 Gifts that grant situational bonuses can be configured from the "Advanced Settings" tab. More on that below. Items that have weight can have their weight value set up as either a fractional value "1/8" or a decimal value "0.125", the system will detect the presence of a slash and treat the value accordingly.  
 
 The *Effect* field in weapons should be formatted so that every attribute is separated with a comma, eg. "Damage +2, Slaying, Awkward", for the damage auto-calculation system. Weapons also have a field to give its opposing defensive pool for informational purposes, normally this is just standard "defense" but some weapons with special defenses may have different pools. Weapons with resisted effects should set the resistance pool in the opposing defense field and toggle the "Defense is Resist" checkbox on.  
+Weapons that would exhaust a gift on use can be set to auto-exhaust the gift in question when used to Attack or Counter. If the weapon is set to *require* an un-exhausted gift instead of simply exhausting one if available, trying to use the weapon when the gift is exhausted will instead pop out a Refresh Gift dialog.
 Currently, the system does not allow dice pools to include items. Instead, the system tries to track what items should be included in which dice pools, eg. including worn armor in Soak rolls, as well as adding the gift special bonuses. Where these bonuses go is hard-coded though, so I'm afraid it won't be perfect.  
 
 For Chat Commands: The /iroll command will take a one line format input after the command to roll dice as a highest roll type, with a semicolon followed by a number at the end changing it to a TN roll. Eg. "/iroll 3d6,d8" or "/iroll 3d6,d8;5"  
@@ -86,7 +87,7 @@ Any of these fields that aren't just checkboxes can include multiple values, sep
  - **Range Field**: List of range bands, one of which must match the item's range band.
  - **Condition Field**: List of conditions, one of which the actor must have.
  - **Other Item Field**: List of item names, one of which the actor must have.
- - **Works When State**: In what Gift states will the bonus apply: any state, when Gift is refreshed, or when Gift is exhausted.
+ - **Works When State**: In what gift states will the bonus apply: any state, when gift is refreshed, or when gift is exhausted.
  - **Applies to Dodges**: Whether a defense bonus applies to dodge defenses.
  - **Applies to Parries**: Whether a defense bonus applies to parry defenses.
  
