@@ -52,7 +52,8 @@ export function checkIfNewerVersion(testing, baseversion) {
  * @param {string} lastversion
  */
 export async function upgradeVersion(lastversion) {
-    if (getVersionNumbers(lastversion)[0] < 4) {
+    const version = getVersionNumbers(lastversion);
+    if (version[0] == 0 && version[1] < 4) { // If the first number of version is zero and the second number is less than 4, do the gift refactor upgrade
         ui.notifications.info(game.i18n.localize("System update to 0.4 requires data migration, please wait..."), { permanent: true });
 
         // Item changes, first grab all items from everywhere
@@ -62,9 +63,9 @@ export async function upgradeVersion(lastversion) {
         // The actual item change
         for (let item of itemsToChange) {
             if (item.type == "gift") {
-                giftNameLookup(item);
+                await giftNameLookup(item);
             } else if (item.type == "weapon") {
-                if (!weaponUpgradePointFour(item)) {
+                if (!(await weaponUpgradePointFour(item))) {
                     problemItems.push(item);
                 }
             }
@@ -96,6 +97,8 @@ export async function upgradeVersion(lastversion) {
         } else {
             ui.notifications.info(game.i18n.localize("System update to 0.4 completed"), { permanent: true });
         }
+
+        console.log("0.4, Gift refactor update, done!");
     }
 }
 
@@ -104,7 +107,7 @@ export async function upgradeVersion(lastversion) {
  * @param {any} weapon
  * @returns {boolean} If the function returns false, there might be an issue with the automatic migration
  */
-function weaponUpgradePointFour(weapon) {
+async function weaponUpgradePointFour(weapon) {
     const weaponData = weapon.data.data;
     let updateData = {};
     let fail = true;
@@ -159,7 +162,7 @@ function weaponUpgradePointFour(weapon) {
         updateData["data.range"] = "close";
     }
 
-    weapon.update(updateData);
+    await weapon.update(updateData);
 
     return fail;
 }
@@ -290,5 +293,5 @@ function giftNameLookup(gift) {
     }
 
     updateData["data.specialSettings"] = settings;
-    gift.update(updateData);
+    return gift.update(updateData);
 }
