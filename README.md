@@ -86,7 +86,7 @@ Any of these fields that aren't just checkboxes can include multiple values, sep
  - **Range Field**: List of range bands, one of which must match the item's range band.
  - **Condition Field**: List of conditions, one of which the actor must have.
  - **Other Item Field**: List of item names, one of which the actor must have.
- - **Works When Exhausted**: Whether the bonus will still be applied when the gift granting it is exhausted.
+ - **Works When State**: In what Gift states will the bonus apply: any state, when Gift is refreshed, or when Gift is exhausted.
  - **Applies to Dodges**: Whether a defense bonus applies to dodge defenses.
  - **Applies to Parries**: Whether a defense bonus applies to parry defenses.
  
