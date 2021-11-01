@@ -74,7 +74,7 @@ export async function upgradeVersion(lastversion) {
             ui.notifications.info(game.i18n.localize("System update to 0.4 completed, but some items had importing issues, check the chat for the item list"), { permanent: true });
             console.log(problemItems);
 
-            let contents = "";
+            let contents = "<p>Items to check:</p>";
             for (let item of problemItems) {
                 contents += "<p>";
                 contents += "<strong>" + item.name + "</strong>";
@@ -91,8 +91,8 @@ export async function upgradeVersion(lastversion) {
                 content: contents
             };
 
-            ChatMessage.applyRollMode(chatData, "PRIVATE");
-            CONFIG.ChatMessage.documentClass.create(chatData);
+            ChatMessage.applyRollMode(chatData, "gmroll");
+            ChatMessage.create(chatData);
         } else {
             ui.notifications.info(game.i18n.localize("System update to 0.4 completed"), { permanent: true });
         }
