@@ -41,6 +41,7 @@
   "ironclaw2e.ui.battleProcessingFailure": "Battle data processing failed, unable to parse dice for: {name}",
   "ironclaw2e.ui.diceParseFailure": "Parsing {dicetype} failed on: {name}",
   "ironclaw2e.ui.weaponGiftExhaustFailure": "{name} failed to find a gift named {gift} on: {actor}",
+  "ironclaw2e.ui.weaponGiftExhaustAbort": "{name} roll aborted, due to missing gift to exhaust",
   "ironclaw2e.ui.itemWeightParseError": "Item weight parsing error for {item}: {weight}",
 
 

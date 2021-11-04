@@ -1,3 +1,8 @@
+### 0.4.1 Readied bug-fixing release
+ - Added a ready-state variable to weapons
+ - Fixed bugs from previous release
+ - Unified the Sheet look a bit
+
 ### 0.4.0 Customized bonuses release
  - Added a system to add free-form bonuses to any Gifts, replacing the previous hard-coded system for Gifts
  - Added a separate "defend with" field to weapons, also used for Resisted weapons with a checkboxed setting

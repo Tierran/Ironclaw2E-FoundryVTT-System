@@ -497,9 +497,10 @@ export class Ironclaw2EItem extends Item {
 
     /**
      * Get the gift this weapon is supposed to exhaust when used
+     * @param {boolean} notifications Set to false to disable the missing gift warning
      * @returns {Ironclaw2EItem} The gift to exhaust
      */
-    weaponGetGiftToExhaust() {
+    weaponGetGiftToExhaust(notifications = true) {
         const itemData = this.data;
         const data = itemData.data;
         if (!(itemData.type === 'weapon')) {
@@ -510,7 +511,7 @@ export class Ironclaw2EItem extends Item {
         if (data.exhaustGift && data.exhaustGiftName.length > 0) {
             const giftToExhaust = findInItems(this.actor?.items, makeStatCompareReady(data.exhaustGiftName), "gift");
             if (!giftToExhaust) {
-                ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustFailure", { "name": itemData.name, "gift": data.exhaustGiftName, "actor": this.actor.name }));
+                if (notifications) ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustFailure", { "name": itemData.name, "gift": data.exhaustGiftName, "actor": this.actor.name }));
                 return null;
             }
             return giftToExhaust;
@@ -1003,7 +1004,9 @@ export class Ironclaw2EItem extends Item {
         const donotdisplay = game.settings.get("ironclaw2e", "calculateDoesNotDisplay");
         const exhaust = this.weaponGetGiftToExhaust();
         const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
-        if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
+        if (data.exhaustGift && !exhaust) {
+            ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
+        } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust?.popupRefreshGift();
         } else {
             this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, 2, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x, false, donotdisplay); }));
@@ -1043,7 +1046,9 @@ export class Ironclaw2EItem extends Item {
 
         const exhaust = this.weaponGetGiftToExhaust();
         const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
-        if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
+        if (data.exhaustGift && !exhaust) {
+            ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
+        } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust?.popupRefreshGift();
         } else {
             this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, 3, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x); }));
@@ -1240,6 +1245,11 @@ export class Ironclaw2EItem extends Item {
         const item = this.data;
         const itemData = item.data;
         const exhaust = this.weaponGetGiftToExhaust();
+
+        // If the weapon has been marked to exhaust a gift, but no such gift is found, pop a warning
+        if (itemData.exhaustGift && !exhaust) {
+            ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustFailure", { "name": itemData.name, "gift": data.exhaustGiftName, "actor": this.actor.name }));
+        }
 
         // Check if the weapon has an auto-exhaust gift and whether all possible uses would exhaust the gift
         if (exhaust && !itemData.canDefend && !itemData.canSpark) {
