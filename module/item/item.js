@@ -510,7 +510,7 @@ export class Ironclaw2EItem extends Item {
         if (data.exhaustGift && data.exhaustGiftName.length > 0) {
             const giftToExhaust = findInItems(this.actor?.items, makeStatCompareReady(data.exhaustGiftName), "gift");
             if (!giftToExhaust) {
-                ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustFailure", { "name": itemData.name, "gift": data.exhaustGiftName, "actor": actorData.name }));
+                ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustFailure", { "name": itemData.name, "gift": data.exhaustGiftName, "actor": this.actor.name }));
                 return null;
             }
             return giftToExhaust;

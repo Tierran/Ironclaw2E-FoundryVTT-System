@@ -846,6 +846,12 @@ export class Ironclaw2EActor extends Actor {
         constructionkeys = bonuses.otherkeys;
         constructionarray = bonuses.otherdice;
 
+        let bonusString = " + ";
+        for (let key of constructionkeys) {
+            bonusString += key + " + ";
+        }
+        bonusString = bonusString.slice(0, -3);
+
         let foo, bar;
         switch (returntype) { // Yes, yes, the breaks are unnecessary
             case -1:
@@ -870,7 +876,7 @@ export class Ironclaw2EActor extends Actor {
                         bar = addArrays(bar, dice);
                     }
                 }
-                return rollHighest(bar[0], bar[1], bar[2], bar[3], bar[4], game.i18n.localize("ironclaw2e.chat.rollingInitiative") + ": " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this, false);
+                return rollHighest(bar[0], bar[1], bar[2], bar[3], bar[4], game.i18n.localize("ironclaw2e.chat.rollingInitiative") + ": " + foo.label + bonusString, this, false);
                 break;
             case 2:
                 foo = this._getDicePools(prechecked, prechecked, burdened);
@@ -880,7 +886,7 @@ export class Ironclaw2EActor extends Actor {
                         bar = addArrays(bar, dice);
                     }
                 }
-                return rollTargetNumber(tntouse, bar[0], bar[1], bar[2], bar[3], bar[4], game.i18n.localize("ironclaw2e.chat.rollingInitiativeCheck") + ": " + foo.label + (dangersense ? " + " + dangersense.data.name : ""), this, false);
+                return rollTargetNumber(tntouse, bar[0], bar[1], bar[2], bar[3], bar[4], game.i18n.localize("ironclaw2e.chat.rollingInitiativeCheck") + ": " + foo.label + bonusString, this, false);
                 break;
         }
 
@@ -921,7 +927,7 @@ export class Ironclaw2EActor extends Actor {
                 break;
             case 0:
                 this.popupSelectRolled(prechecked, false, 3, "", formconstruction, constructionkeys, constructionarray, game.i18n.localize("ironclaw2e.chat.rollingSprint") + ", " +
-                    game.i18n.format("ironclaw2e.chat.rollingSprintExtra", { "stride": `±${data.stride}` }));
+                    game.i18n.format("ironclaw2e.chat.rollingSprintExtra", { "stride": `+-${data.stride}` }));
                 return;
                 break;
         }
