@@ -5,7 +5,7 @@
   "version": "0.4.0",
   "minimumCoreVersion": "0.8.7",
   "compatibleCoreVersion": "0.8.9",
-  "templateVersion": 20,
+  "templateVersion": 21,
   "author": "Hertzila",
   "esmodules": [ "module/ironclaw2e.js" ],
   "styles": [ "css/ironclaw2e.css" ],

@@ -307,6 +307,7 @@
                         {{#if item.data.counterDice}}<a class="rollable roll-item" title="Counter with {{item.name}}" data-roll="3" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-counter.svg" width="24" height="24" /></a>{{/if}}
                     </div>
                     <div class="item-controls">
+                        <a class="rollable roll-item-change" title="{{#if item.data.readied}}Put away {{item.name}}{{else}}Ready {{item.name}}{{/if}}" data-roll="4" data-item="{{item._id}}"><span>{{#if item.data.readied}}Readied{{else}}Stowed{{/if}}</span></a>
                         <a class="rollable roll-item-change" title="{{#if item.data.showInBattleStats}}Hide in Battle Stats{{else}}Show in Battle Stats{{/if}}" data-roll="0" data-item="{{item._id}}"><span>{{#if item.data.showInBattleStats}}Shown{{else}}Hidden{{/if}}</span></a>
                     </div>
                     <div class="item-controls">

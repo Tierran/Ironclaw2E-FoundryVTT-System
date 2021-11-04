@@ -705,6 +705,11 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                         break;
                     foobar = { "_id": item.id, "data.held": !item.data.data.held };
                     break;
+                case 4:
+                    if (!item.data.data.hasOwnProperty("readied"))
+                        break;
+                    foobar = { "_id": item.id, "data.readied": !item.data.data.readied };
+                    break;
                 default:
                     console.warn("_onItemChangeStat got an unknown value: " + dataset.roll);
                     break;

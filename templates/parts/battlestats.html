@@ -34,6 +34,10 @@
                 <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
                 <h4 title="{{localize "ironclaw2e.chatInfo.itemInfo.effect"}}: {{item.data.effect}}&#013;{{localize "ironclaw2e.chatInfo.itemInfo.descriptors"}}: {{item.data.descriptors}}&#013;{{#if item.data.hasResist}}{{localize "ironclaw2e.chatInfo.itemInfo.resistWith"}}{{else}}{{localize "ironclaw2e.chatInfo.itemInfo.opposingDefense"}}{{/if}}: {{item.data.defendWith}}" class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                 <div class="item-controls flexrow">
+                    <a class="rollable roll-item-change" title="{{#if item.data.readied}}Put away {{item.name}}{{else}}Ready {{item.name}}{{/if}}" data-roll="4" data-item="{{item._id}}"><span>{{#if item.data.readied}}Readied{{else}}Stowed{{/if}}</span></a>
+                </div>
+                <div style="max-width: 10%"></div>
+                <div class="item-controls flexrow">
                     {{#if item.data.attackDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.attackTitle" name=item.name}}" data-roll="1" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-attack.svg" width="24" height="24" /></a>{{/if}}
                     {{#if item.data.useSpark}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.sparkTitle"}}: {{item.data.sparkDie}}" data-roll="4" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-spark.svg" width="24" height="24" /></a>{{/if}}
                     <div></div>
@@ -72,10 +76,11 @@
                 <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
                 <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                 <div class="item-controls">
-                    {{#if (usableGift item)}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.giftTitle"}}" data-roll="0" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/gift-use.svg" width="24" height="24" /></a>{{/if}}
-                </div>
-                <div class="item-controls">
                     {{#if item.data.exhaustWhenUsed}}<a class="rollable roll-item-change" title="{{#if item.data.exhausted}}{{localize "ironclaw2e.sheets.actor.refresh"}}{{else}}{{localize "ironclaw2e.sheets.actor.exhaust"}}{{/if}}" data-roll="1" data-item="{{item._id}}"><span>{{#if item.data.exhausted}}Exhausted{{else}}Refreshed{{/if}}</span></a>{{/if}}
+                </div>
+                <div style="max-width: 10%"></div>
+                <div class="item-controls">
+                    {{#if (usableGift item)}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.giftTitle"}}" data-roll="0" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/gift-use.svg" width="24" height="24" /></a>{{/if}}
                 </div>
             </li>
             {{/if}}
