@@ -8,6 +8,8 @@ import { Ironclaw2ECombat } from "./combat.js";
 import { Ironclaw2ECombatant } from "./combat.js";
 import { Ironclaw2ECombatTracker } from "./combat.js";
 
+import { rollTargetNumberArray } from "./dicerollers.js";
+import { rollHighestArray } from "./dicerollers.js";
 import { rollTargetNumberDialog } from "./dicerollers.js";
 import { rollHighestDialog } from "./dicerollers.js";
 import { rollTargetNumberOneLine } from "./dicerollers.js";
@@ -48,6 +50,8 @@ Hooks.once('init', async function () {
         popupMacro,
         popupSelect,
         // Dice rolling commands
+        rollTargetNumberArray,
+        rollHighestArray,
         rollTargetNumberDialog,
         rollHighestDialog,
         rollTargetNumberOneLine,

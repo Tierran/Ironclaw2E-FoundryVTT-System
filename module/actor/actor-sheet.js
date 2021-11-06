@@ -1,7 +1,3 @@
-import { rollTargetNumber } from "../dicerollers.js";
-import { rollHighest } from "../dicerollers.js";
-import { rollTargetNumberDialog } from "../dicerollers.js";
-import { rollHighestDialog } from "../dicerollers.js";
 import { checkApplicability, checkDiceArrayEmpty, diceFieldUpgrade, findTotalDice, makeStatCompareReady, reformDiceString, splitStatString } from "../helpers.js";
 import { CommonSystemInfo } from "../systeminfo.js";
 import { getConditionByNameIronclaw } from "../conditions.js";

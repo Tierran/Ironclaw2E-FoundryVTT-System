@@ -1,5 +1,5 @@
-import { rollHighest } from "./dicerollers.js";
-import { rollTargetNumber } from "./dicerollers.js";
+import { rollHighestArray } from "./dicerollers.js";
+import { rollTargetNumberArray } from "./dicerollers.js";
 
 import { findTotalDice } from "./helpers.js";
 import { splitStatsAndBonus } from "./helpers.js";
@@ -31,9 +31,9 @@ export function ironclawRollChat(inputstring) {
     }
 
     if (tn > 0)
-        rollTargetNumber(tn, dicearray[0], dicearray[1], dicearray[2], dicearray[3], dicearray[4]);
+        rollTargetNumberArray(tn, dicearray);
     else
-        rollHighest(dicearray[0], dicearray[1], dicearray[2], dicearray[3], dicearray[4]);
+        rollHighestArray(dicearray);
 }
 
 /**

@@ -20,8 +20,8 @@ import { getConditionNamesIronclaw } from "../conditions.js";
 import { addConditionsIronclaw } from "../conditions.js";
 import { removeConditionsIronclaw } from "../conditions.js";
 // The rest are for the supermassive function
-import { rollTargetNumber } from "../dicerollers.js";
-import { rollHighest } from "../dicerollers.js";
+import { rollTargetNumberArray } from "../dicerollers.js";
+import { rollHighestArray } from "../dicerollers.js";
 import { enforceLimit } from "../helpers.js";
 import { burdenedLimitedStat } from "../helpers.js";
 
@@ -876,7 +876,7 @@ export class Ironclaw2EActor extends Actor {
                         bar = addArrays(bar, dice);
                     }
                 }
-                return rollHighest(bar[0], bar[1], bar[2], bar[3], bar[4], game.i18n.localize("ironclaw2e.chat.rollingInitiative") + ": " + foo.label + bonusString, this, false);
+                return rollHighestArray(bar, game.i18n.localize("ironclaw2e.chat.rollingInitiative") + ": " + foo.label + bonusString, this, false);
                 break;
             case 2:
                 foo = this._getDicePools(prechecked, prechecked, burdened);
@@ -886,7 +886,7 @@ export class Ironclaw2EActor extends Actor {
                         bar = addArrays(bar, dice);
                     }
                 }
-                return rollTargetNumber(tntouse, bar[0], bar[1], bar[2], bar[3], bar[4], game.i18n.localize("ironclaw2e.chat.rollingInitiativeCheck") + ": " + foo.label + bonusString, this, false);
+                return rollTargetNumberArray(tntouse, bar, game.i18n.localize("ironclaw2e.chat.rollingInitiativeCheck") + ": " + foo.label + bonusString, this, false);
                 break;
         }
 
@@ -1398,9 +1398,9 @@ export class Ironclaw2EActor extends Actor {
 
                     let rollreturn;
                     if (IFTN) // Do and get the actual roll
-                        rollreturn = await rollTargetNumber(TN, totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
+                        rollreturn = await rollTargetNumberArray(TN, totaldice, label, this);
                     else
-                        rollreturn = await rollHighest(totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
+                        rollreturn = await rollHighestArray(totaldice, label, this);
 
                     if (successfunc && typeof (successfunc) == "function") {
                         successfunc(rollreturn); // Then do the special callback function of the roll if it is set

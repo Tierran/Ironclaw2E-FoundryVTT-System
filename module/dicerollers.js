@@ -65,6 +65,19 @@ export async function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", ro
 };
 
 /**
+ * Overload of sorts for the "rollTargetNumber" dice roller function, taking in a dice array instead of raw dice
+ * @param {number} tni Target number
+ * @param {number[]} dicearray The dice array to roll, five numbers corresponding to dice the amount of dice to roll, [0] = d12, [1] = d10 ... [4] = d4
+ * @param {string} label Optional value to display some text before the result text
+ * @param {Actor} rollingactor Optional value to display the roll as from a specific actor
+ * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
+ * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
+ */
+export async function rollTargetNumberArray(tni, dicearray, label = "", rollingactor = null, sendinchat = true) {
+    return await rollTargetNumber(tni, dicearray[0], dicearray[1], dicearray[2], dicearray[3], dicearray[4], label, rollingactor, sendinchat);
+}
+
+/**
  * Copies the results of an older roll into a new one while allowing a change in the evaluation method
  * @param {number} tni Target number
  * @param {Object} message Message containing the roll to copy
@@ -143,6 +156,18 @@ export async function rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor
 
     return { "roll": roll, "highest": roll.total, "tnData": null, "message": msg, "isSent": sendinchat };
 };
+
+/**
+ * Overload of sorts for the "rollHighest" dice roller function, taking in a dice array instead of raw dice
+ * @param {number[]} dicearray The dice array to roll, five numbers corresponding to dice the amount of dice to roll, [0] = d12, [1] = d10 ... [4] = d4
+ * @param {string} label Optional value to display some text before the result text
+ * @param {Actor} rollingactor Optional value to display the roll as from a specific actor
+ * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
+ * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
+ */
+export async function rollHighestArray(dicearray, label = "", rollingactor = null, sendinchat = true) {
+    return await rollHighest(dicearray[0], dicearray[1], dicearray[2], dicearray[3], dicearray[4], label, rollingactor, sendinchat);
+}
 
 /**
  * Copies the results of an older roll into a new one while allowing a change in the evaluation method
@@ -403,7 +428,7 @@ export async function rollTargetNumberOneLine(tnnum = 3, readydice = "", label =
                     let TN = 0; if (TNSS.length > 0) TN = parseInt(TNSS);
                     let DICES = html.find('[name=dices]')[0].value;
                     let DICE = findTotalDice(DICES);
-                    resolve(rollTargetNumber(TN, DICE[0], DICE[1], DICE[2], DICE[3], DICE[4], label, rollingactor));
+                    resolve(rollTargetNumberArray(TN, DICE, label, rollingactor));
                 } else {
                     resolve(null);
                 }
@@ -457,7 +482,7 @@ export async function rollHighestOneLine(readydice = "", label = "", rolltitle =
                 if (confirmed) {
                     let DICES = html.find('[name=dices]')[0].value;
                     let DICE = findTotalDice(DICES);
-                    resolve(rollHighest(DICE[0], DICE[1], DICE[2], DICE[3], DICE[4], label, rollingactor));
+                    resolve(rollHighestArray(DICE, label, rollingactor));
                 } else {
                     resolve(null);
                 }
