@@ -960,6 +960,12 @@ export class Ironclaw2EActor extends Actor {
         constructionkeys = bonuses.otherkeys;
         constructionarray = bonuses.otherdice;
 
+        formconstruction += `
+      <div class="form-group">
+       <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.dicePool.soakWeak")}</label>
+       <input type="checkbox" id="doubledice" name="doubledice" value="1"></input>
+      </div>`;
+
         this.popupSelectRolled(checkedstats, tnyes, tnnum, extradice, formconstruction, constructionkeys, constructionarray, otherlabel, successfunc);
     }
 
@@ -1318,7 +1324,7 @@ export class Ironclaw2EActor extends Actor {
                     let skillvalues = [];
                     let totaldice = [0, 0, 0, 0, 0];
 
-                    for (let i = 0; i < traitchecks.length; ++i) {
+                    for (let i = 0; i < traitchecks.length; ++i) { // Go through all the traits and skills, see which ones are checked and grab those
                         traitvalues.push(traitchecks[i].value);
                     }
                     for (let i = 0; i < skillchecks.length; ++i) {
@@ -1343,6 +1349,9 @@ export class Ironclaw2EActor extends Actor {
                     let DICES = html.find('[name=dices]')[0].value;
                     let DICE = findTotalDice(DICES);
 
+                    let DOUBLE = html.find('[name=doubledice]')?.[0];
+                    let doubleDice = (DOUBLE ? DOUBLE.checked : false);
+
                     let labelgiven = false;
                     let label = "";
                     if (IFTN)
@@ -1350,14 +1359,14 @@ export class Ironclaw2EActor extends Actor {
                     else
                         label = game.i18n.localize("ironclaw2e.chat.rollingHighest") + ": ";
 
-                    if (hastraits || hasskills) {
+                    if (hastraits || hasskills) { // Get the dice pools from the checked traits and skills and add them to the roll
                         let statfoobar = this._getDicePools(traitvalues, skillvalues, isburdened, labelgiven);
                         totaldice = statfoobar.totalDice;
                         label += statfoobar.label;
                         labelgiven = statfoobar.labelGiven;
                     }
                     if (Array.isArray(otherdice) && Array.isArray(otherkeys) && otherdice.length > 0 && otherdice.length == otherkeys.length) {
-                        for (let i = 0; i < otherdice.length; i++) {
+                        for (let i = 0; i < otherdice.length; i++) { // Check whether the listed bonus dice are checked into the roll, then add those to the roll
                             let OTHER = html.find(`[name=${makeStatCompareReady(otherkeys[i])}]`);
                             let otherchecked = (hashtml && OTHER.length > 0 ? OTHER[0].checked : true);
                             if (otherchecked) {
@@ -1369,26 +1378,32 @@ export class Ironclaw2EActor extends Actor {
                             }
                         }
                     }
-                    if (DICE.some(element => element != 0)) {
-                        label += " + extra";
+                    if (DICE.some(element => element != 0)) { // Get the extra dice field and add it to the roll if there is anything in it
+                        label += " + " + game.i18n.localize("ironclaw2e.chat.extraDice");
                         totaldice = addArrays(totaldice, DICE);
+                    }
+                    if (doubleDice) {
+                        label += ", " + game.i18n.localize("ironclaw2e.chat.doubleDice");
                     }
                     label += ".";
                     if (typeof (otherlabel) === 'string' && otherlabel.length > 0)
                         label += `<p style="color:black">${otherlabel}</p>`;
 
-                    if (uselimit) {
+                    if (doubleDice) { // See if the dicepool will be rolled twice (doubled dicepool), like in case of a Weak Soak
+                        totaldice = addArrays(totaldice, totaldice);
+                    }
+                    if (uselimit) { // See if a special limit has been set to all dice
                         totaldice = enforceLimit(totaldice, limit);
                     }
 
                     let rollreturn;
-                    if (IFTN)
+                    if (IFTN) // Do and get the actual roll
                         rollreturn = await rollTargetNumber(TN, totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
                     else
                         rollreturn = await rollHighest(totaldice[0], totaldice[1], totaldice[2], totaldice[3], totaldice[4], label, this);
 
                     if (successfunc && typeof (successfunc) == "function") {
-                        successfunc(rollreturn);
+                        successfunc(rollreturn); // Then do the special callback function of the roll if it is set
                     }
                 }
             }

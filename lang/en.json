@@ -61,6 +61,8 @@
   "ironclaw2e.chat.rollingInitiativeCheck": "Rolling the initiative check",
   "ironclaw2e.chat.rollingSprint": "Rolling Sprint",
   "ironclaw2e.chat.rollingSprintExtra": "Modifiable by Stride ({stride}), plus can Stride afterwards",
+  "ironclaw2e.chat.extraDice": "Extra",
+  "ironclaw2e.chat.doubleDice": "Doubled dicepool",
 
   "ironclaw2e.command.iroll": "Basic Ironclaw roll",
   "ironclaw2e.command.actorroll": "Actor dice pool popup",
@@ -142,6 +144,7 @@
   "ironclaw2e.dialog.dicePool.guardSoakVeteran": "Veteran guard soak",
   "ironclaw2e.dialog.dicePool.guarding": "Guarding",
   "ironclaw2e.dialog.dicePool.guardingVeteran": "Veteran guarding",
+  "ironclaw2e.dialog.dicePool.soakWeak": "Soak against Weak damage, double dice rolled",
 
   "ironclaw2e.dialog.damageCalc.title": "Damage Calculation for {name}",
   "ironclaw2e.dialog.damageCalc.header": "Add damage to {name}",
