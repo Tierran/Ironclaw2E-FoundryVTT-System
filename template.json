@@ -245,7 +245,7 @@
       "counterDice": "",
       "useSpark": false,
       "sparkDie": "",
-	  "readied": "false",
+	  "readied": false,
       "exhaustGift": false,
       "exhaustGiftNeedsRefresh": true,
       "exhaustGiftName": ""
