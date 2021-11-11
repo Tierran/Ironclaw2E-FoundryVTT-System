@@ -1,3 +1,7 @@
+### 0.4.2 Weak damage release
+ - Soak rolls have a new checkbox for Weak damage
+ - Fixed bugs from previous release
+
 ### 0.4.1 Readied bug-fixing release
  - Added a ready-state variable to weapons
  - Fixed bugs from previous release
