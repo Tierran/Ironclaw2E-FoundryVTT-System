@@ -253,7 +253,7 @@ function giftNameLookup(gift) {
             settings[0].replaceNameField = "Strength";
             settings.push(getSpecialOptionPrototype("encumbranceBonus"));
             settings[1].encumbranceBonusNumber = 2;
-            settings[0].replaceNameField = "Strength";
+            settings[1].replaceNameField = "Strength";
             break;
         // Counter bonuses
         case ("focusedfighter"):
