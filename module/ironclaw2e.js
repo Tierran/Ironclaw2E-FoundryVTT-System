@@ -251,7 +251,7 @@ Hooks.once("ready", async function () {
     const lastVersion = game.settings.get("ironclaw2e", "lastSystemVersion");
     if (checkIfNewerVersion(game.system.data.version, lastVersion)) {
         if (game.user.isGM) { // GM-specific stuff here
-            upgradeVersion(lastVersion);
+            await upgradeVersion(lastVersion);
         }
     }
     game.settings.set("ironclaw2e", "lastSystemVersion", game.system.data.version);
