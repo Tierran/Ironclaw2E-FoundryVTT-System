@@ -467,7 +467,7 @@ export class Ironclaw2EActor extends Actor {
     async _updateTokenLighting(lightdata) {
         let foundtoken = findActorToken(this);
         if (foundtoken) {
-            await foundtoken.update(lightdata);
+            await foundtoken.document.update(lightdata);
         }
 
         // Update prototype token, if applicable

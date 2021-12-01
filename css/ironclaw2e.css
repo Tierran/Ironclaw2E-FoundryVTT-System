@@ -154,6 +154,26 @@ input.center-text {
   text-align: center;
 }
 
+.flex-left {
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.flex-right {
+  -webkit-box-align: end;
+  -ms-flex-align: end;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: flex-end;
+  text-align: right;
+}
+
 .flex-between {
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;

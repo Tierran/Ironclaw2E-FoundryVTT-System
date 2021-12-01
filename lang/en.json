@@ -92,7 +92,7 @@
   "ironclaw2e.config.autoPrototypeSetup": "WORLD: Auto-setup prototype tokens",
   "ironclaw2e.config.autoPrototypeSetupHint": "If checked, newly created actors will have their prototype token's attributes use type-specific defaults.",
   "ironclaw2e.config.calculateAttackEffects": "WORLD: Auto-calculate attack effects",
-  "ironclaw2e.config.calculateAttackEffectsHint": "If checked, successful and tied attacks with weapons will create a second chat message that contains the calculated raw damage of the attack based on the effects and successes.",
+  "ironclaw2e.config.calculateAttackEffectsHint": "Activates the attack auto-calculation system, which will calculate damage from weapon attacks and counters based on their effects and the dice rolls involved. Resisted and counter-attacks can be resolved from the context menu, as they require the opponent's roll results to properly resolve. Normal successful attacks will automatically send a chat message with the damage calculations and resolved other attacks will send it when resolved'.",
   "ironclaw2e.config.calculateDisplaysFailed": "WORLD: Auto-calculate displays failures",
   "ironclaw2e.config.calculateDisplaysFailedHint": "If checked, the attack auto-calculation will also create a chat message for failed attacks with weapons, which simply note that the attack failed.",
   "ironclaw2e.config.calculateDoesNotDisplay": "WORLD: Auto-calculate does not display effect by default",
@@ -191,7 +191,7 @@
   "ironclaw2e.dialog.weaponRoll.spark": "Spark",
   "ironclaw2e.dialog.weaponRoll.parry": "Parry",
   "ironclaw2e.dialog.weaponRoll.counter": "Counter",
-  
+
   "ironclaw2e.dialog.copyItem.title": "Confirm Item Data Copy",
   "ironclaw2e.dialog.copyItem.copySpecial": "Confirm copying over these special settings to all other Gifts with the exact same name: '{name}'. WARNING: This will completely replace any existing settings!",
   "ironclaw2e.dialog.copyItem.copyAll": "Confirm copying over all data from this Gift to all other Gifts with the exact same name: '{name}'. WARNING: This will completely replace all existing data!",
@@ -260,8 +260,8 @@
   "ironclaw2e.chatInfo.damageCalcInfo.weakAttack": "Weak Attack, roll Soak twice",
 
   "ironclaw2e.chatInfo.damageCalcInfo.allEffects": "All effects",
-  
-  
+
+
   "ironclaw2e.sheets.actor.battleStatistics": "Battle Statistics",
   "ironclaw2e.sheets.actor.initiative": "Initiative",
   "ironclaw2e.sheets.actor.stride": "Stride",
@@ -279,7 +279,7 @@
   "ironclaw2e.sheets.actor.parryTitle": "Parry with {name}",
   "ironclaw2e.sheets.actor.counterTitle": "Counter with {name}",
   "ironclaw2e.sheets.actor.giftTitle": "Use Gift",
-  
+
   "ironclaw2e.sheets.actor.wear": "Wear",
   "ironclaw2e.sheets.actor.takeOff": "Take Off",
   "ironclaw2e.sheets.actor.equip": "Equip",

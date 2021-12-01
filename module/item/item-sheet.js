@@ -1,4 +1,4 @@
-import { CommonSystemInfo } from "../systeminfo.js";
+import { CommonSystemInfo, getRangeDistanceFromBand } from "../systeminfo.js";
 import { getAllItemsInWorld } from "../helpers.js";
 
 /**
@@ -50,6 +50,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         let selectables = { "handedness": CommonSystemInfo.equipHandedness, "range": CommonSystemInfo.rangeBands, "giftOptions": CommonSystemInfo.giftSpecialOptions, "giftStates": CommonSystemInfo.giftWorksStates };
         sheetData.selectables = selectables;
         sheetData.showDirectoryOptions = game.user.isGM && !this.item.parent;
+        sheetData.rangeDistance = getRangeDistanceFromBand(sheetData.data.range);
 
         return sheetData;
     }
@@ -134,14 +135,14 @@ export class Ironclaw2EItemSheet extends ItemSheet {
                 },
                 default: "one",
                 render: html => { },
-                close: html => {
-                    if (confirmed) { // Only copy these settings and replace existing ones when confirmed
+                close: async html => {
+                    if (confirmed) { // Only copy these settings and replace existing ones if confirmed
                         const gifts = getAllItemsInWorld("gift");
                         gifts.delete(this.item);
                         for (let gift of gifts) {
                             if (gift.name === this.item.name) {
                                 console.log(gift); // Log all potential changes to console, just in case
-                                gift.update({ "data.specialSettings": this.item.data.data.specialSettings });
+                                await gift.update({ "data.specialSettings": this.item.data.data.specialSettings });
                             }
                         }
                     }
@@ -152,7 +153,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
     }
 
     /**
-     * Handle the copying of Special Settings
+     * Handle the copying of item data
      * @param {Event} event Originationg event
      */
     _onCopyAllAspects(event) {
@@ -181,14 +182,14 @@ export class Ironclaw2EItemSheet extends ItemSheet {
                 },
                 default: "one",
                 render: html => { },
-                close: html => {
-                    if (confirmed) { // Only copy the item data and replace existing ones when confirmed
+                close: async html => {
+                    if (confirmed) { // Only copy the item data and replace existing ones if confirmed
                         const items = getAllItemsInWorld(this.item.type);
                         items.delete(this.item);
                         for (let item of items) {
                             if (item.name === this.item.name) {
                                 console.log(item); // Log all potential changes to console, just in case
-                                item.update({ "data": data });
+                                await item.update({ "data": data });
                             }
                         }
                     }

@@ -171,9 +171,9 @@ export async function rollHighestArray(dicearray, label = "", rollingactor = nul
 
 /**
  * Copies the results of an older roll into a new one while allowing a change in the evaluation method
- * @param {number} tni Target number
  * @param {Object} message Message containing the roll to copy
  * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
+ * @param {boolean} rerollone Set to true to make the copy function also reroll a single one-showing die, preferring the largest die type
  * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
  */
 export async function copyToRollHighest(message, sendinchat = true, rerollone = false) {

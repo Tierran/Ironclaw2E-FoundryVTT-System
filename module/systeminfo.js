@@ -145,3 +145,31 @@ export function getSpecialOptionPrototype(option) {
             break;
     }
 }
+
+/**
+ * Get the distance in paces from a range band
+ * @param {string} band The range band
+ * @returns {number} The distance in paces
+ */
+export function getRangeDistanceFromBand(band) {
+    return (CommonSystemInfo.rangePaces.hasOwnProperty(band) ? CommonSystemInfo.rangePaces[band] : -1);
+}
+
+/**
+ * Get the band from a distance in paces, rounding upwards
+ * @param {number} distance The distance in paces
+ * @returns {string | null} The range band, or null if given a NaN
+ */
+export function getRangeBandFromDistance(distance) {
+    if (isNaN(distance)) {
+        console.error("Attempted to get a distance that is not a number: " + distance);
+        return null;
+    }
+    const foobar = Object.entries(CommonSystemInfo.rangePaces).sort((a, b) => a[1] - b[1]);
+    for (const band of foobar) {
+        if (distance <= band[1])
+            return band[0];
+    }
+    console.warn("Attempted to get a distance further away than the max range: " + distance);
+    return foobar[foobar.length - 1][0];
+}

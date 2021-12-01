@@ -1,4 +1,4 @@
-import { checkApplicability, checkDiceArrayEmpty, diceFieldUpgrade, findTotalDice, makeStatCompareReady, reformDiceString, splitStatString } from "../helpers.js";
+import { checkApplicability, checkDiceArrayEmpty, diceFieldUpgrade, findTotalDice, getMacroSpeaker, makeStatCompareReady, reformDiceString, splitStatString } from "../helpers.js";
 import { CommonSystemInfo } from "../systeminfo.js";
 import { getConditionByNameIronclaw } from "../conditions.js";
 import { hasConditionsIronclaw } from "../conditions.js";
@@ -387,7 +387,6 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                                 if (nameAdded === false && special.nameAdditionField) {
                                     item.name += " " + special.nameAdditionField;
                                     nameAdded = true;
-                                    console.log("Here!");
                                 }
                             }
                         }
@@ -745,17 +744,22 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const dataset = element.dataset;
         const data = this.actor.data.data;
 
-        const li = $(event.currentTarget).parents(".item");
-        const cond = this.actor.getEmbeddedDocument("ActiveEffect", li.data("itemId"));
+        const li = $(event.currentTarget).parents(".effect");
+        const cond = this.actor.getEmbeddedDocument("ActiveEffect", li.data("effectId"));
         if (!cond) return;
         const basecondition = getConditionByNameIronclaw(cond);
         if (!basecondition) return;
         let chatdata;
+        const speak = getMacroSpeaker(this.actor);
         if (basecondition?.referenceId) {
-            chatdata = { content: `${basecondition.referenceId}` };
+            chatdata = { speaker: speak, content: `${basecondition.referenceId}` };
         } else {
             let localname = game.i18n.localize(basecondition.label);
-            chatdata = { content: `<img class="item-image" src="${basecondition.icon}" title="${localname}" width="20" height="20"/> ${localname}` };
+            chatdata = {
+                speaker: speak,
+                content: `<div class="ironclaw2e"><div class="flexrow flex-left"><img class="item-image" style="max-width:20px" src="${basecondition.icon}" title="${localname}" width="20" height="20"/>
+                          <span class="normal-label">${localname}</span></div></div>`
+            };
         }
 
         ChatMessage.applyRollMode(chatdata, game.settings.get("core", "rollMode"));

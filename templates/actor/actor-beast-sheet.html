@@ -74,12 +74,12 @@
                         <div class="item-controls">
                         </div>
                     </li>
-                    {{#each actor.effects as |item id|}}
-                    <li class="item flexrow" data-item-id="{{item._id}}">
-                        <div class="item-image"><img src="{{item.icon}}" title="{{item.label}}" width="24" height="24" /></div>
-                        <h4 class="item-name double-clickable roll-double-info-cond">{{item.label}}</h4>
+                    {{#each actor.effects as |effect id|}}
+                    <li class="item effect flexrow" data-effect-id="{{effect._id}}">
+                        <div class="item-image"><img src="{{effect.icon}}" title="{{effect.label}}" width="24" height="24" /></div>
+                        <h4 class="item-name double-clickable roll-double-info-cond">{{effect.label}}</h4>
                         <div class="item-controls">
-                            <a class="rollable roll-effects-delete" title="Delete Effect" data-id="{{item._id}}"><i class="fas fa-trash"></i></a>
+                            <a class="rollable roll-effects-delete" title="Delete Effect" data-id="{{effect._id}}"><i class="fas fa-trash"></i></a>
                         </div>
                     </li>
                     {{/each}}

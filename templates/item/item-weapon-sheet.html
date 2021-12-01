@@ -64,8 +64,8 @@
                     <select name="data.equip">
                         {{selectOptions selectables.handedness selected=data.equip localize=false}}
                     </select>
-                    <label class="resource-label">Range:</label>
-                    <select name="data.range">
+                    <label class="resource-label" title="Range in paces:  {{rangeDistance}}pc">Range:</label>
+                    <select name="data.range" title="Range in paces:  {{rangeDistance}}pc">
                         {{selectOptions selectables.range selected=data.range localize=false}}
                     </select>
                 </div>
