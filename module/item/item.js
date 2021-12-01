@@ -703,7 +703,10 @@ export class Ironclaw2EItem extends Item {
 
         if (!info.tnData) { // If the roll info is in highest mode, assume the attack was a counter-attack, and set the flags accordingly
             let updatedata = {
-                flags: { "ironclaw2e.hangingAttack": "counter", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id }
+                flags: {
+                    "ironclaw2e.hangingAttack": "counter", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
+                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id
+                }
             };
             info.message.update(updatedata);
             return; // Return out of a counter-attack
@@ -718,7 +721,7 @@ export class Ironclaw2EItem extends Item {
             let updatedata = {
                 flags: {
                     "ironclaw2e.hangingAttack": "resist", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
-                    "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses
+                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses
                 }
             };
             info.message.update(updatedata);
@@ -728,7 +731,7 @@ export class Ironclaw2EItem extends Item {
             let updatedata = {
                 flags: {
                     "ironclaw2e.hangingAttack": "attack", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
-                    "ironclaw2e.attackSuccess": success, "ironclaw2e.attackSuccessCount": usedsuccesses
+                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.attackSuccess": success, "ironclaw2e.attackSuccessCount": usedsuccesses
                 }
             };
             info.message.update(updatedata);
@@ -824,7 +827,7 @@ export class Ironclaw2EItem extends Item {
         const success = message.getFlag("ironclaw2e", "resistSuccess");
         const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
 
-        if (successes > opposingsuccesses) {
+        if (successes > 0) {
             this.successfulAttackToChat(success, successes);
         }
         else {
