@@ -522,7 +522,7 @@ export function getMacroSpeaker(rollingactor) {
     if (prefertokens) {
         let chattoken = findActorToken(rollingactor);
         if (chattoken) {
-            return ChatMessage.getSpeaker({ token: chattoken?.document });
+            return ChatMessage.getSpeaker({ token: chattoken });
         }
     }
 
@@ -533,7 +533,7 @@ export function getMacroSpeaker(rollingactor) {
  * Helper function to find the token for a given actor, or return undefined if no token is found
  * On non-synthetic actors, requires the token's actorLink to be TRUE in order to pick them
  * @param {Actor} actor The actor to find a token for
- * @returns {Token} Returns the found token, or undefined
+ * @returns {TokenDocument} Returns the found token, or undefined
  */
 export function findActorToken(actor) {
     if (!actor)
@@ -546,7 +546,7 @@ export function findActorToken(actor) {
     else {
         let tokenarray = actor.getActiveTokens(true);
         if (tokenarray.length > 0 && tokenarray[0]?.data?.actorLink === true)
-            foundtoken = tokenarray[0];
+            foundtoken = tokenarray[0].document;
     }
     return foundtoken;
 }
