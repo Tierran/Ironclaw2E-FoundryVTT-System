@@ -57,8 +57,8 @@ For gifts that should interact with the system by giving situational bonuses, th
  - **Guard Bonus**: Either a replacement or a bonus to what the Guarding condition gives. No need to check whether the actor is Guarding when configuring this bonus, it's implicit in its type.  
  - **Spring Bonus**: A bonus applied to the sprint roll.  
  - **Initiative Bonus**: A bonus applied to the initiative roll.  
- - **Movement Bonus**: A bonus that changes the normal movement speed of an actor.  
- - **Flying Move Bonus**: A bonus that changes the flying speed of an actor.  
+ - **Movement Bonus**: A bonus that changes the movement speed of an actor.  
+ - **Flying Move Bonus**: A bonus that changes the flying speed of an actor. (These stack with normal movement bonuses)  
  - **Encumbrance Limit Bonus**: A bonus to the carrying capacity of an actor.  
  - **Stat Change**: An automated way to change the stats for an item when it is dragged to the actor from the Items Directory.  
  - **Dice Upgrade**: An automated way to change the dice for an item when it is dragged to the actor from the Items Directory.  
