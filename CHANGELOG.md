@@ -1,3 +1,10 @@
+### 0.4.3 Bug fixing release
+ - Fixed resolving resisted attacks as normal attacks
+ - Fixed illumination item updating
+ - Fixed potential glitches with item updating not going through
+ - Corrected a version upgrade typo
+ - Misc fixes
+
 ### 0.4.2 Weak damage release
  - Soak rolls have a new checkbox for Weak damage
  - Fixed bugs from previous release
