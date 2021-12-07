@@ -1,4 +1,4 @@
-import { makeStatCompareReady } from "./helpers.js";
+import { makeCompareReady } from "./helpers.js";
 
 /**
  * Unified function to get whether the target has any of the select conditions for Ironclaw2E
@@ -154,7 +154,7 @@ export async function removeConditionsIronclaw(conditions, target, checkfirst = 
  */
 export function getConditionByNameIronclaw(condition, warn = false) {
     let name = condition?.data?.label || condition;
-    name = makeStatCompareReady(name);
+    name = makeCompareReady(name);
 
     if (game.ironclaw2e.useCUBConditions) {
         name = CommonConditionInfo.convertToCub(name);

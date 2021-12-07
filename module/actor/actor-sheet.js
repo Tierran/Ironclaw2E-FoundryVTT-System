@@ -1,4 +1,4 @@
-import { checkApplicability, checkDiceArrayEmpty, diceFieldUpgrade, findTotalDice, getMacroSpeaker, makeStatCompareReady, reformDiceString, splitStatString } from "../helpers.js";
+import { checkApplicability, checkDiceArrayEmpty, diceFieldUpgrade, findTotalDice, getMacroSpeaker, makeCompareReady, reformDiceString, splitStatString } from "../helpers.js";
 import { CommonSystemInfo } from "../systeminfo.js";
 import { getConditionByNameIronclaw } from "../conditions.js";
 import { hasConditionsIronclaw } from "../conditions.js";
@@ -275,7 +275,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                         for (let i = 0; i < special.changeFrom.length; ++i) { // Go through all the potential changes
                             let nameAdded = false;
 
-                            const reg = new RegExp("(" + special.changeFrom[i] + "|" + makeStatCompareReady(special.changeFrom[i]) + ")", "gi"); // Prepare the regex
+                            const reg = new RegExp("(" + special.changeFrom[i] + "|" + makeCompareReady(special.changeFrom[i]) + ")", "gi"); // Prepare the regex
                             if (item.data.useDice) { // Check if the item even has anything in the roll field
                                 // Replace the roll field with a case-insensitive regex-replaced version with the from-word changed to to-word, with regex to account both for space and no-space versions
                                 item.data.useDice = item.data.useDice.replace(reg, special.changeTo[i]);

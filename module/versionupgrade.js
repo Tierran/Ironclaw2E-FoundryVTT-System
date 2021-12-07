@@ -1,4 +1,4 @@
-import { makeStatCompareReady, getAllItemsInWorld } from "./helpers.js";
+import { makeCompareReady, getAllItemsInWorld } from "./helpers.js";
 import { CommonSystemInfo, getSpecialOptionPrototype } from "./systeminfo.js";
 
 
@@ -147,7 +147,7 @@ async function weaponUpgradePointFour(weapon) {
                 fail = false;
             }
         } else if (typeof (weaponData.range) === "string") {
-            const foobar = makeStatCompareReady(weaponData.range);
+            const foobar = makeCompareReady(weaponData.range);
             if (foobar in CommonSystemInfo.rangeBands) {
                 updateData["data.range"] = foobar;
             } else {
@@ -176,7 +176,7 @@ function giftNameLookup(gift) {
     let updateData = {};
     let settings = [];
 
-    switch (makeStatCompareReady(gift.name)) {
+    switch (makeCompareReady(gift.name)) {
         // Veteran
         case ("veteran"):
             settings.push(getSpecialOptionPrototype("guardBonus"));

@@ -18,7 +18,7 @@ import { copyToRollTN } from "./dicerollers.js";
 import { copyToRollTNDialog } from "./dicerollers.js";
 import { copyToRollHighest } from "./dicerollers.js";
 
-import { makeStatCompareReady } from "./helpers.js";
+import { makeCompareReady } from "./helpers.js";
 
 import { getVersionNumbers } from "./versionupgrade.js";
 import { checkIfNewerVersion } from "./versionupgrade.js";
@@ -197,7 +197,7 @@ Hooks.once('init', async function () {
     });
 
     Handlebars.registerHelper('equalOrNothing', function (str, compare) {
-        return str.length == 0 || makeStatCompareReady(str) == compare;
+        return str.length == 0 || makeCompareReady(str) == compare;
     });
 
     Handlebars.registerHelper('valueRoundTo', function (val, roundto) {

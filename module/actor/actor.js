@@ -1,6 +1,6 @@
 import { findTotalDice } from "../helpers.js";
 import { addArrays } from "../helpers.js";
-import { makeStatCompareReady } from "../helpers.js";
+import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
 import { convertCamelCase } from "../helpers.js";
 import { getMacroSpeaker } from "../helpers.js";
@@ -111,7 +111,7 @@ export class Ironclaw2EActor extends Actor {
                     }
                     // If the gift has the replacement field set, attempt to find what it replaces and give that setting a link to this one
                     if (setting.replaceName) {
-                        const replacement = specialGifts.find(x => makeStatCompareReady(x.data.name) === setting.replaceName)?.data.data.specialSettings.find(x => x.settingMode == setting.settingMode);
+                        const replacement = specialGifts.find(x => makeCompareReady(x.data.name) === setting.replaceName)?.data.data.specialSettings.find(x => x.settingMode == setting.settingMode);
                         if (replacement) {
                             replacement.replacedBy = setting;
                         }
@@ -192,8 +192,8 @@ export class Ironclaw2EActor extends Actor {
             trait.usedTitle = convertCamelCase(key);
         }
 
-        data.traits.species.skills = [makeStatCompareReady(data.traits.species.speciesSkill1), makeStatCompareReady(data.traits.species.speciesSkill2), makeStatCompareReady(data.traits.species.speciesSkill3)];
-        data.traits.career.skills = [makeStatCompareReady(data.traits.career.careerSkill1), makeStatCompareReady(data.traits.career.careerSkill2), makeStatCompareReady(data.traits.career.careerSkill3)];
+        data.traits.species.skills = [makeCompareReady(data.traits.species.speciesSkill1), makeCompareReady(data.traits.species.speciesSkill2), makeCompareReady(data.traits.species.speciesSkill3)];
+        data.traits.career.skills = [makeCompareReady(data.traits.career.careerSkill1), makeCompareReady(data.traits.career.careerSkill2), makeCompareReady(data.traits.career.careerSkill3)];
     }
 
     /**
@@ -224,7 +224,7 @@ export class Ironclaw2EActor extends Actor {
             }
 
             // Species and Career dice
-            const comparekey = makeStatCompareReady(key);
+            const comparekey = makeCompareReady(key);
             if (data.traits.species.skills.includes(comparekey)) {
                 skill.diceArray = addArrays(skill.diceArray, data.traits.species.diceArray);
             }
@@ -494,7 +494,7 @@ export class Ironclaw2EActor extends Actor {
 
         if (data.traits && Array.isArray(traitnames) && traitnames.length > 0) {
             for (let [key, trait] of Object.entries(data.traits)) {
-                if (traitnames.includes(makeStatCompareReady(key))) {
+                if (traitnames.includes(makeCompareReady(key))) {
                     if (labelgiven)
                         label += " + ";
                     totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(trait.diceArray, 2) : trait.diceArray));
@@ -506,7 +506,7 @@ export class Ironclaw2EActor extends Actor {
                 let extracareers = [];
                 data.extraCareerIds.forEach(x => extracareers.push(this.items.get(x)));
                 for (let [index, extra] of extracareers.entries()) {
-                    let key = makeStatCompareReady(extra.data.data.careerName);
+                    let key = makeCompareReady(extra.data.data.careerName);
                     if (traitnames.includes(key)) {
                         if (labelgiven)
                             label += " + ";
@@ -519,7 +519,7 @@ export class Ironclaw2EActor extends Actor {
         }
         if (data.skills && Array.isArray(skillnames) && skillnames.length > 0) {
             for (let [key, skill] of Object.entries(data.skills)) {
-                if (skillnames.includes(makeStatCompareReady(key))) {
+                if (skillnames.includes(makeCompareReady(key))) {
                     if (labelgiven)
                         label += " + ";
                     totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(skill.diceArray, 2) : skill.diceArray));
@@ -597,7 +597,7 @@ export class Ironclaw2EActor extends Actor {
                             otherdice.push(used.bonusDice);
                             otherinputs += `<div class="form-group flexrow">
                                 <label class="normal-label">${used.giftName}: ${reformDiceString(used.bonusDice, true)}</label>
-	                            <input type="checkbox" id="${makeStatCompareReady(used.giftName)}" name="${makeStatCompareReady(used.giftName)}" checked></input>
+	                            <input type="checkbox" id="${makeCompareReady(used.giftName)}" name="${makeCompareReady(used.giftName)}" checked></input>
                                 </div>`+ "\n";
                         }
                     } else { // If used somehow turns out unsuable, send an error
@@ -626,7 +626,7 @@ export class Ironclaw2EActor extends Actor {
             otherdice.push(armors[i].data.data.armorArray);
             otherinputs += `<div class="form-group flexrow">
                 <label class="normal-label">${armors[i].data.name}: ${reformDiceString(armors[i].data.data.armorArray, true)}</label>
-	            <input type="checkbox" id="${makeStatCompareReady(armors[i].data.name)}" name="${makeStatCompareReady(armors[i].data.name)}" checked></input>
+	            <input type="checkbox" id="${makeCompareReady(armors[i].data.name)}" name="${makeCompareReady(armors[i].data.name)}" checked></input>
                 </div>`+ "\n";
         }
         return { "otherinputs": otherinputs, "otherkeys": otherkeys, "otherdice": otherdice };
@@ -648,7 +648,7 @@ export class Ironclaw2EActor extends Actor {
             otherdice.push(shield.data.data.coverArray);
             otherinputs += `<div class="form-group flexrow">
                 <label class="normal-label">${shield.data.name}: ${reformDiceString(shield.data.data.coverArray, true)}</label>
-	            <input type="checkbox" id="${makeStatCompareReady(shield.data.name)}" name="${makeStatCompareReady(shield.data.name)}" checked></input>
+	            <input type="checkbox" id="${makeCompareReady(shield.data.name)}" name="${makeCompareReady(shield.data.name)}" checked></input>
                 </div>`+ "\n";
         }
         return { "otherinputs": otherinputs, "otherkeys": otherkeys, "otherdice": otherdice };
@@ -719,7 +719,7 @@ export class Ironclaw2EActor extends Actor {
         otherdice.push(guardbonus);
         otherinputs += `<div class="form-group flexrow">
                  <label class="normal-label">${guardlabel}: ${reformDiceString(guardbonus, true)}</label>
-	             <input type="checkbox" id="${makeStatCompareReady(guardlabel)}" name="${makeStatCompareReady(guardlabel)}" checked></input>
+	             <input type="checkbox" id="${makeCompareReady(guardlabel)}" name="${makeCompareReady(guardlabel)}" checked></input>
                 </div>`+ "\n";
 
         return { "otherinputs": otherinputs, "otherkeys": otherkeys, "otherdice": otherdice };
@@ -1171,7 +1171,7 @@ export class Ironclaw2EActor extends Actor {
             close: html => {
                 if (confirmed) {
                     let COND = html.find('[name=cond]')[0].value;
-                    if (COND.length > 0) this.addEffect(makeStatCompareReady(COND));
+                    if (COND.length > 0) this.addEffect(makeCompareReady(COND));
                 }
             }
         });
@@ -1231,7 +1231,7 @@ export class Ironclaw2EActor extends Actor {
             formconstruction += `<h2>${game.i18n.localize("ironclaw2e.actor.traits")}:</h2>
        <div class="grid-2row grid-minimal">` + "\n";;
             for (let [key, trait] of Object.entries(data.traits)) {
-                let lowerkey = makeStatCompareReady(key);
+                let lowerkey = makeCompareReady(key);
                 if (firstelement == "")
                     firstelement = lowerkey;
                 formconstruction += `<div class="form-group flex-group-center flex-tight">
@@ -1244,7 +1244,7 @@ export class Ironclaw2EActor extends Actor {
                 for (let [index, extra] of extracareers.entries()) {
                     if (index >= 2)
                         break; // For UI reasons, only show up to two extra careers on dice pool selection, these should select themselves from the top of the list in the sheet
-                    let lowerkey = makeStatCompareReady(extra.data.data.careerName);
+                    let lowerkey = makeCompareReady(extra.data.data.careerName);
                     if (firstelement == "")
                         firstelement = lowerkey;
                     formconstruction += `<div class="form-group flex-group-center flex-tight">
@@ -1259,7 +1259,7 @@ export class Ironclaw2EActor extends Actor {
             formconstruction += `<h2>${game.i18n.localize("ironclaw2e.actor.skills")}:</h2>
        <div class="grid grid-3col grid-minimal">` + "\n";
             for (let [key, skill] of Object.entries(data.skills)) {
-                let lowerkey = makeStatCompareReady(key);
+                let lowerkey = makeCompareReady(key);
                 if (firstelement == "")
                     firstelement = lowerkey;
                 let usedname = (burdenedLimitedStat(lowerkey) ? String.fromCodePoint([9949]) : "") + " " + convertCamelCase(key) + ": " + reformDiceString(skill.diceArray);
@@ -1367,7 +1367,7 @@ export class Ironclaw2EActor extends Actor {
                     }
                     if (Array.isArray(otherdice) && Array.isArray(otherkeys) && otherdice.length > 0 && otherdice.length == otherkeys.length) {
                         for (let i = 0; i < otherdice.length; i++) { // Check whether the listed bonus dice are checked into the roll, then add those to the roll
-                            let OTHER = html.find(`[name=${makeStatCompareReady(otherkeys[i])}]`);
+                            let OTHER = html.find(`[name=${makeCompareReady(otherkeys[i])}]`);
                             let otherchecked = (hashtml && OTHER.length > 0 ? OTHER[0].checked : true);
                             if (otherchecked) {
                                 if (labelgiven)

@@ -289,12 +289,12 @@ export function compareDiceArrays(alpha, beta) {
 /* -------------------------------------------- */
 
 /**
- * A simple helper to ensure every stat string gets treated equally everywhere, rather than risking typos or other weirdness
- * @param {string} stat Stat name to reduce to comparable state
- * @returns {string} The stat name in all lowercase with whitespace trimmed away
+ * A simple helper to ensure every string that is compared gets treated equally everywhere, rather than risking typos or other weirdness
+ * @param {string} text Text to reduce to comparable state
+ * @returns {string} The text in all lowercase with whitespace trimmed away
  */
-export function makeStatCompareReady(stat) {
-    return typeof (stat) === "string" ? stat.trim().replace(/\s/g, '').toLowerCase() : "error";
+export function makeCompareReady(text) {
+    return typeof (text) === "string" ? text.trim().replace(/\s/g, '').toLowerCase() : "error";
 }
 
 /**
@@ -322,7 +322,7 @@ export function splitStatString(stats, comparisonready = true) {
 
     let foos = stats.split(",");
     for (let i = 0; i < foos.length; ++i) {
-        statarray.push((comparisonready ? makeStatCompareReady(foos[i]) : foos[i]));
+        statarray.push((comparisonready ? makeCompareReady(foos[i]) : foos[i]));
     }
     return statarray;
 }
@@ -376,7 +376,7 @@ export function checkForPrechecked(prechecked, givennames) {
  * @returns {boolean} Returns true if the limit applies
  */
 export function burdenedLimitedStat(name) {
-    return CommonSystemInfo.burdenedList.includes(makeStatCompareReady(name));
+    return CommonSystemInfo.burdenedList.includes(makeCompareReady(name));
 }
 
 
@@ -415,16 +415,16 @@ export function checkApplicability(special, target, actor, defensecheck = false,
     // Item-specific checks
     if (target) {
         const itemData = (target instanceof Ironclaw2EItem ? target.data : target);
-        if (special.typeArray && !special.typeArray.includes(makeStatCompareReady(itemData.type))) {
+        if (special.typeArray && !special.typeArray.includes(makeCompareReady(itemData.type))) {
             return false;
         }
         if (special.nameArray && !special.nameArray.some(x => itemData.name.toLowerCase().includes(x))) {
             return false;
         }
-        if (special.equipArray && !special.equipArray.includes(makeStatCompareReady(itemData.data.equip))) {
+        if (special.equipArray && !special.equipArray.includes(makeCompareReady(itemData.data.equip))) {
             return false;
         }
-        if (special.rangeArray && !special.rangeArray.includes(makeStatCompareReady(itemData.data.range))) {
+        if (special.rangeArray && !special.rangeArray.includes(makeCompareReady(itemData.data.range))) {
             return false;
         }
 
@@ -566,7 +566,7 @@ export function findInItems(itemlist, itemname, itemtype = null) {
 
     const useitemtype = itemtype ? true : false;
 
-    return itemlist.find(element => (useitemtype ? element.data.type == itemtype : true) && makeStatCompareReady(element.data.name) == itemname);
+    return itemlist.find(element => (useitemtype ? element.data.type == itemtype : true) && makeCompareReady(element.data.name) == itemname);
 }
 
 /**

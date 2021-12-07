@@ -1,6 +1,6 @@
 import { findInItems, findTotalDice } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
-import { makeStatCompareReady } from "../helpers.js";
+import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
 import { splitStatString } from "../helpers.js";
 import { splitStatsAndBonus } from "../helpers.js";
@@ -164,7 +164,7 @@ export class Ironclaw2EItem extends Item {
                     data.specialSettings[i].bonusDice = data.giftArray;
                 }
                 if (data.specialSettings[i].replaceNameField) {
-                    data.specialSettings[i].replaceName = makeStatCompareReady(data.specialSettings[i].replaceNameField);
+                    data.specialSettings[i].replaceName = makeCompareReady(data.specialSettings[i].replaceNameField);
                 }
 
                 if (data.specialSettings[i].changeFromField && data.specialSettings[i].changeToField) {
@@ -189,7 +189,7 @@ export class Ironclaw2EItem extends Item {
         if (data.dice.length > 0) {
             data.diceArray = findTotalDice(data.dice);
             data.valid = checkDiceArrayEmpty(data.diceArray);
-            data.skills = [makeStatCompareReady(data.careerSkill1), makeStatCompareReady(data.careerSkill2), makeStatCompareReady(data.careerSkill3)];
+            data.skills = [makeCompareReady(data.careerSkill1), makeCompareReady(data.careerSkill2), makeCompareReady(data.careerSkill3)];
         } else {
             data.valid = false;
         }
@@ -509,7 +509,7 @@ export class Ironclaw2EItem extends Item {
         }
 
         if (data.exhaustGift && data.exhaustGiftName.length > 0) {
-            const giftToExhaust = findInItems(this.actor?.items, makeStatCompareReady(data.exhaustGiftName), "gift");
+            const giftToExhaust = findInItems(this.actor?.items, makeCompareReady(data.exhaustGiftName), "gift");
             if (!giftToExhaust) {
                 if (notifications) ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustFailure", { "name": itemData.name, "gift": data.exhaustGiftName, "actor": this.actor.name }));
                 return null;
@@ -1093,7 +1093,7 @@ export class Ironclaw2EItem extends Item {
             if (Array.isArray(dicearray)) {
                 formconstruction += `<div class="form-group flexrow">
                  <label class="normal-label">${diceid}: ${reformDiceString(dicearray, true)}</label>
-	             <input type="checkbox" id="${makeStatCompareReady(diceid)}" name="${makeStatCompareReady(diceid)}" value="${makeStatCompareReady(diceid)}" checked></input>
+	             <input type="checkbox" id="${makeCompareReady(diceid)}" name="${makeCompareReady(diceid)}" value="${makeCompareReady(diceid)}" checked></input>
                 </div>`+ "\n";
                 usesmoredice = true;
             }

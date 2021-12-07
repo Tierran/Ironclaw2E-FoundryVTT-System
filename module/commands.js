@@ -3,7 +3,7 @@ import { rollTargetNumberArray } from "./dicerollers.js";
 
 import { findTotalDice } from "./helpers.js";
 import { splitStatsAndBonus } from "./helpers.js";
-import { makeStatCompareReady } from "./helpers.js";
+import { makeCompareReady } from "./helpers.js";
 
 /**
  * A function intended for the ChatCommands integration, it takes a string and tries to convert it into a sort-of one-line roll
@@ -61,7 +61,7 @@ export function ironclawRollActorChat(inputstring, speaker) {
         }
     }
 
-    let specialcheck = makeStatCompareReady(inputstring); // Special checks to allow certain special quick rolls
+    let specialcheck = makeCompareReady(inputstring); // Special checks to allow certain special quick rolls
     if (specialcheck === "soak") {
         actor.popupSoakRoll(["body"], true, 3);
         return;
