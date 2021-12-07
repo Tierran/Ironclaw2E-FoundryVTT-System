@@ -60,6 +60,31 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /* -------------------------------------------- */
+    /* Static Functions                             */
+    /* -------------------------------------------- */
+
+    static async weaponDefenseDialog(actor, defense, resist, weaponname) {
+        // TODO: Make a dialog to confirm what is to be rolled
+        const standard = (defense === makeStatCompareReady(game.i18n.localize("ironclaw2e.defense"))); // Check whether the defense is standard or special
+        if (resist && standard) {
+            ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.standardDefenseResist", { "name": weaponname }));
+        }
+        // Get the correct heading depending on whether the weapon is resisted, or against standard defense or special defense
+        const heading = game.i18n.localize(resist ? "ironclaw2e.dialog.defense.resist" : (standard ? "ironclaw2e.dialog.defense.standard" : "ironclaw2e.dialog.defense.nonStandard"));
+        let options = "";
+
+        // TODO: Loop through potential defense options here
+
+        let content = `
+        <form class="ironclaw2e">
+        <h2>${heading}</h2>
+        <select name="">
+        ${options}
+        </select>
+        </form>`;
+    }
+
+    /* -------------------------------------------- */
     /* Process Embedded                             */
     /* -------------------------------------------- */
 
@@ -1144,7 +1169,7 @@ export class Ironclaw2EActor extends Actor {
         let dlog = new Dialog({
             title: game.i18n.format("ironclaw2e.dialog.addCondition.title", { "name": speaker.alias }),
             content: `
-     <form>
+     <form class="ironclaw2e">
       <h1>${game.i18n.format("ironclaw2e.dialog.addCondition.header", { "name": this.data.name })}</h1>
       <div class="form-group">
        <label>${game.i18n.localize("ironclaw2e.dialog.addCondition.toAdd")}:</label>

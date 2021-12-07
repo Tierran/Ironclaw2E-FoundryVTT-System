@@ -639,6 +639,11 @@ export class Ironclaw2EItem extends Item {
             content: contents,
             speaker: getMacroSpeaker(this.actor)
         };
+        if (item.type === 'weapon') {
+            chatData.flags = {
+                "ironclaw2e.defenseInfo": (itemData.hasResist ? "resist" : "defense"), "ironclaw2e.defenseField": itemData.defendWith, "ironclaw2e.defenseWeapon": item.name
+            };
+        }
         ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
 
         if (confirmSend) {

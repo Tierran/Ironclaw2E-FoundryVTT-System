@@ -18,7 +18,7 @@ import { copyToRollTN } from "./dicerollers.js";
 import { copyToRollTNDialog } from "./dicerollers.js";
 import { copyToRollHighest } from "./dicerollers.js";
 
-import { makeStatCompareReady } from "./helpers.js";
+import { getSpeakerActor, makeStatCompareReady } from "./helpers.js";
 
 import { getVersionNumbers } from "./versionupgrade.js";
 import { checkIfNewerVersion } from "./versionupgrade.js";
@@ -434,6 +434,50 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
                 weapon?.resolveAsNormalAttack?.(message);
             }
+        },
+        {
+            name: "ironclaw2e.rollDefense",
+            icon: '<i class="fas fa-shield-alt"></i>',
+            condition: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const type = message.getFlag("ironclaw2e", "defenseInfo");
+                const defense = message.getFlag("ironclaw2e", "defenseField");
+                // Check that the message is not a roll, it has a weapon id set and defense info set to "defense"
+                const allowed = defense && type === "defense";
+                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+            },
+            callback: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
+                const actorid = message.getFlag("ironclaw2e", "hangingActor");
+                const tokenid = message.getFlag("ironclaw2e", "hangingToken");
+                const sceneid = message.getFlag("ironclaw2e", "hangingScene");
+                const actor = game.scenes.get(sceneid)?.tokens.get(tokenid)?.actor || game.actors.get(actorid);
+                const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
+                weapon?.resolveAsNormalAttack?.(message);
+            }
+        },
+        {
+            name: "ironclaw2e.rollResist",
+            icon: '<i class="fas fa-shield-alt"></i>',
+            condition: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const type = message.getFlag("ironclaw2e", "defenseInfo");
+                const defense = message.getFlag("ironclaw2e", "defenseField");
+                // Check that the message is not a roll, it has a weapon id set and defense info set to "resist"
+                const allowed = defense && type === "resist";
+                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+            },
+            callback: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const type = message.getFlag("ironclaw2e", "defenseInfo");
+                const defense = message.getFlag("ironclaw2e", "defenseField");
+                const weapon = message.getFlag("ironclaw2e", "defenseWeapon") || "unknown";
+                const speakeractor = getSpeakerActor();
+                if (speakeractor && type && defense) {
+                    Ironclaw2EActor.weaponDefenseDialog(speakeractor, defense, type === "resist", weapon);
+                }
+            }
         });
 }
 Hooks.on("getChatLogEntryContext", addIronclawChatLogContext);
@@ -572,10 +616,7 @@ async function createIronclaw2EMacro(data, slot) {
  * @return {Promise}
  */
 function rollItemMacro(itemName) {
-    const speaker = ChatMessage.getSpeaker();
-    let actor;
-    if (speaker.token) actor = game.actors.tokens[speaker.token];
-    if (!actor) actor = game.actors.get(speaker.actor);
+    const actor = getSpeakerActor();
     const item = actor ? actor.items.find(i => i.name === itemName) : null;
     if (!item) return ui.notifications.warn(game.i18n.format("ironclaw2e.ui.actorDoesNotHaveItem", { "itemName": itemName }));
 
@@ -589,10 +630,7 @@ function rollItemMacro(itemName) {
  * @returns {Promise}
  */
 function popupMacro(popup) {
-    const speaker = ChatMessage.getSpeaker();
-    let actor;
-    if (speaker.token) actor = game.actors.tokens[speaker.token];
-    if (!actor) actor = game.actors.get(speaker.actor);
+    const actor = getSpeakerActor();
     if (!actor) return ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.actorNotFoundForMacro"));
 
     // Trigger the popup
@@ -621,10 +659,7 @@ function popupMacro(popup) {
  * @param {string} extradice Default extra dice to use for the bottom one-line slot
  */
 function popupSelect(prechecked = [], tnyes = false, tnnum = 3, extradice = "") {
-    const speaker = ChatMessage.getSpeaker();
-    let actor;
-    if (speaker.token) actor = game.actors.tokens[speaker.token];
-    if (!actor) actor = game.actors.get(speaker.actor);
+    const actor = getSpeakerActor();
     if (!actor) return ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.actorNotFoundForMacro"));
 
     return actor.popupSelectRolled(prechecked, tnyes, tnnum, extradice);

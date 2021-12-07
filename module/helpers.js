@@ -552,6 +552,18 @@ export function findActorToken(actor) {
 }
 
 /**
+ * Helper function to get the actor of the current speaker, be it the user default or the currently selected actor
+ * @returns {Actor | null} The actor of the current speaker, or null if nothing found
+ */
+export function getSpeakerActor() {
+    const speaker = ChatMessage.getSpeaker();
+    let actor = null;
+    if (speaker.token) actor = game.actors.tokens[speaker.token];
+    if (!actor) actor = game.actors.get(speaker.actor);
+    return actor;
+}
+
+/**
  * Helper function to search through a given item list for any items matching the name given
  * @param {Array} itemlist The actor's item list to be checked
  * @param {string} itemname The item in question to search for
