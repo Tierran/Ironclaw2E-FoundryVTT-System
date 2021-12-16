@@ -19,6 +19,7 @@
   "ironclaw2e.yes": "Yes",
   "ironclaw2e.no": "No",
   "ironclaw2e.never": "Never",
+  "ironclaw2e.defense": "Defense",
 
   "ironclaw2e.copyToTN": "Copy to TN Roll",
   "ironclaw2e.changeTN": "Change TN",
@@ -28,6 +29,8 @@
   "ironclaw2e.resolveCounter": "Resolve the Counter-Attack",
   "ironclaw2e.resolveResist": "Resolve the Resisted Attack",
   "ironclaw2e.resolveAsNormal": "Resolve as Normal Attack",
+  "ironclaw2e.rollDefense": "Roll defense",
+  "ironclaw2e.rollResist": "Roll resist",
 
 
   "ironclaw2e.ui.encumbranceAutoActive": "Auto-Encumbrance management active, condition modification cancelled.",
@@ -43,6 +46,7 @@
   "ironclaw2e.ui.weaponGiftExhaustFailure": "{name} failed to find a gift named {gift} on: {actor}",
   "ironclaw2e.ui.weaponGiftExhaustAbort": "{name} roll aborted, due to missing gift to exhaust",
   "ironclaw2e.ui.itemWeightParseError": "Item weight parsing error for {item}: {weight}",
+  "ironclaw2e.ui.standardDefenseResist": "Weapon '{name}' defense stat pool defined as standard defense, yet the weapon's attack is resisted",
 
 
   "ironclaw2e.actor.traits": "Traits",
@@ -195,6 +199,10 @@
   "ironclaw2e.dialog.copyItem.title": "Confirm Item Data Copy",
   "ironclaw2e.dialog.copyItem.copySpecial": "Confirm copying over these special settings to all other Gifts with the exact same name: '{name}'. WARNING: This will completely replace any existing settings!",
   "ironclaw2e.dialog.copyItem.copyAll": "Confirm copying over all data from this Gift to all other Gifts with the exact same name: '{name}'. WARNING: This will completely replace all existing data!",
+
+  "ironclaw2e.dialog.defense.resist": "Resist roll",
+  "ironclaw2e.dialog.defense.standard": "Standard defense roll",
+  "ironclaw2e.dialog.defense.nonStandard": "Special defense roll",
 
 
   "ironclaw2e.chatInfo.tn": "TN",
