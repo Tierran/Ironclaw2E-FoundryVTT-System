@@ -82,14 +82,8 @@ export class Ironclaw2EItem extends Item {
         // Dice
         if (data.useDice.length > 0) {
             let firstsplit = splitStatsAndBonus(data.useDice);
-            if (!firstsplit[1] && firstsplit[0].length > 0 && parseSingleDiceString(firstsplit[0][0])) {
-                // If the would-be gift stat array only has "stats" with no explicit dice added after a semicolon and the first "stat" entry turns out to be parseable as dice, treat the entire field as just a one-line dice input
-                data.giftStats = [];
-                data.giftArray = findTotalDice(data.useDice);
-            } else {
-                data.giftStats = firstsplit[0];
-                data.giftArray = (firstsplit[1].length > 0 ? findTotalDice(firstsplit[1]) : null);
-            }
+            data.giftStats = firstsplit[0];
+            data.giftArray = (firstsplit[1].length > 0 ? findTotalDice(firstsplit[1]) : null);
             data.canUse = true;
         }
         else if (data.exhaustWhenUsed) {
@@ -106,6 +100,7 @@ export class Ironclaw2EItem extends Item {
         if (data.giftTags.length > 0) {
             data.giftTagsSplit = splitStatString(data.giftTags);
         }
+
         // Special settings
         if (data.specialSettings?.length > 0) {
             for (let i = 0; i < data.specialSettings.length; ++i) {
@@ -1273,22 +1268,22 @@ export class Ironclaw2EItem extends Item {
 	   <div class="form-group">`;
 
         if (itemData.canAttack) {
-            constructionstring += `<label>${game.i18n.localize("ironclaw2e.dialog.weaponRoll.attack")}:</label>
+            constructionstring += `<label>${game.i18n.localize("ironclaw2e.attack")}:</label>
 	    <input type="radio" id="attack" name="weapon" value="0" ${first ? "" : "checked"}></input>`;
             first = first || "attack";
         }
         if (itemData.canSpark) {
-            constructionstring += `<label>${game.i18n.localize("ironclaw2e.dialog.weaponRoll.spark")}:</label>
+            constructionstring += `<label>${game.i18n.localize("ironclaw2e.spark")}:</label>
 	    <input type="radio" id="spark" name="weapon" value="1" ${first ? "" : "checked"}></input>`;
             first = first || "spark";
         }
         if (itemData.canDefend) {
-            constructionstring += `<label>${game.i18n.localize("ironclaw2e.dialog.weaponRoll.parry")}:</label>
+            constructionstring += `<label>${game.i18n.localize("ironclaw2e.parry")}:</label>
 	    <input type="radio" id="defend" name="weapon" value="2" ${first ? "" : "checked"}></input>`;
             first = first || "defend";
         }
         if (itemData.canCounter) {
-            constructionstring += `<label>${game.i18n.localize("ironclaw2e.dialog.weaponRoll.counter")}:</label>
+            constructionstring += `<label>${game.i18n.localize("ironclaw2e.counter")}:</label>
 	    <input type="radio" id="counter" name="weapon" value="3" ${first ? "" : "checked"}></input>`;
             first = first || "counter";
         }

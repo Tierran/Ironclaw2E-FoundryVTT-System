@@ -330,9 +330,10 @@ export function splitStatString(stats, comparisonready = true) {
 /**
  * Helper function to split a string containing stat names, separated by commas, as well as extra non-stat dice in dice notation, which are separated from the stats by a semicolon and from each other by commas
  * @param {string} fullset String containing stat names, separated by commas, and a separate section containing extra dice in dice notation, separated from each other by commas an from the stat names by a semicolon
+ * @param {boolean} ignorecheck If true, ignore the initial check for pure dicestring and force the function to act as if the check didn't pass
  * @returns {[string[], string]} Returns an array first containing the array of split-up stat names, and second the string of the extra dice
  */
-export function splitStatsAndBonus(fullset) {
+export function splitStatsAndBonus(fullset, ignorecheck = false) {
     let statarray = [];
     let dicestring = "";
 
@@ -342,12 +343,17 @@ export function splitStatsAndBonus(fullset) {
     }
 
     let firstsplit = fullset.split(";");
-
-    if (firstsplit[0].length > 0) {
-        statarray = splitStatString(firstsplit[0]);
-    }
-    if (firstsplit.length > 1) {
-        dicestring = firstsplit[1];
+    const test = splitStatString(fullset);
+    // Check if there was no semicolon present and the first index of the test returns as dice, to check whether to treat the entire input as just a dice string
+    if (ignorecheck || (firstsplit.length === 1 && parseSingleDiceString(test[0]))) {
+        dicestring = fullset;
+    } else { // If not, perform the splitting normally
+        if (firstsplit[0].length > 0) {
+            statarray = splitStatString(firstsplit[0]);
+        }
+        if (firstsplit.length > 1) {
+            dicestring = firstsplit[1];
+        }
     }
 
     return [statarray, dicestring];
@@ -552,7 +558,7 @@ export function findActorToken(actor) {
 }
 
 /**
- * Helper function to get the actor of the current speaker, be it the user default or the currently selected actor
+ * Helper function to get the actor of the current speaker, be it the user default or the currently selected actor, or null if no actor is found
  * @returns {Actor | null} The actor of the current speaker, or null if nothing found
  */
 export function getSpeakerActor() {

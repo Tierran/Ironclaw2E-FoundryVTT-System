@@ -121,7 +121,7 @@ export async function copyToRollTN(tni, message, sendinchat = true, rerollone = 
         flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
     }, { create: sendinchat });
 
-    await copyHangingAttackFlags(message, msg, tnData);
+    await copyIronclawRollFlags(message, msg, tnData);
 
     return { "roll": roll, "highest": highest, "tnData": tnData, "message": msg, "isSent": sendinchat };
 }
@@ -201,7 +201,7 @@ export async function copyToRollHighest(message, sendinchat = true, rerollone = 
         flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
     }, { create: sendinchat });
 
-    await copyHangingAttackFlags(message, msg);
+    await copyIronclawRollFlags(message, msg);
 
     return { "roll": roll, "highest": roll.total, "tnData": null, "message": msg, "isSent": sendinchat };
 }
@@ -661,12 +661,12 @@ function copyRerollHighestOne(roll) {
 }
 
 /**
- * Helper function for the dice roller to copy hanging attack flags to the copied rolls
+ * Helper function for the dice roller to copy roll flags to the copied rolls
  * @param {Message} origin The message to copy the flags from
  * @param {Message} target The message to copy the flags to
  * @param {TNData} tndata The TN Data to use to replace the recorded successes and success state for the relevant roll, if empty those will not be copied
  */
-async function copyHangingAttackFlags(origin, target, tndata = null) {
+async function copyIronclawRollFlags(origin, target, tndata = null) {
     if (!origin || !target) {
         return;
     }

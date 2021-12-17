@@ -1,4 +1,4 @@
-import { findTotalDice } from "../helpers.js";
+import { findTotalDice, splitStatsAndBonus } from "../helpers.js";
 import { addArrays } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -63,25 +63,114 @@ export class Ironclaw2EActor extends Actor {
     /* Static Functions                             */
     /* -------------------------------------------- */
 
+    /**
+     * Checks what to roll for defense and pops the correct dialog box through it
+     * @param {Actor} actor The actor to roll the defense for
+     * @param {string} defense The defense rolled
+     * @param {boolean} resist Whether the defense is a resist
+     * @param {string} weaponname The weapon name to roll against
+     */
     static async weaponDefenseDialog(actor, defense, resist, weaponname) {
-        // TODO: Make a dialog to confirm what is to be rolled
         const standard = (defense === makeCompareReady(game.i18n.localize("ironclaw2e.defense"))); // Check whether the defense is standard or special
         if (resist && standard) {
             ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.standardDefenseResist", { "name": weaponname }));
         }
         // Get the correct heading depending on whether the weapon is resisted, or against standard defense or special defense
-        const heading = game.i18n.localize(resist ? "ironclaw2e.dialog.defense.resist" : (standard ? "ironclaw2e.dialog.defense.standard" : "ironclaw2e.dialog.defense.nonStandard"));
+        const heading = game.i18n.format(resist ? "ironclaw2e.dialog.defense.resist" : (standard ? "ironclaw2e.dialog.defense.standard" : "ironclaw2e.dialog.defense.nonStandard"), { "weapon": weaponname });
         let options = "";
 
-        // TODO: Loop through potential defense options here
+        if (actor) {
+            const weapons = actor.items.filter(element => element.data.type === 'weapon');
 
-        let content = `
+            if (standard && !resist) {
+                options += `<option value="Speed, Dodge" data-type="stats">${game.i18n.localize("ironclaw2e.dialog.defense.dodgeRoll")}</option >`;
+                for (let foo of weapons) {
+                    if (foo.data.data.canDefend)
+                        options += `<option value="${foo.id}" data-type="parry">${game.i18n.format("ironclaw2e.dialog.defense.parryRoll", { "name": foo.name })}</option >`;
+                }
+            }
+            else if (!standard && !resist) {
+                options += `<option value="${defense}" data-type="stats">${game.i18n.format("ironclaw2e.dialog.defense.specialRoll", { "stats": defense })}</option >`;
+            }
+            else {
+                options += `<option value="${defense}" data-type="stats">${game.i18n.format("ironclaw2e.dialog.defense.resistRoll", { "stats": defense })}</option >`;
+            }
+
+            for (let foo of weapons) {
+                if (foo.data.data.canCounter)
+                options += `<option value="${foo.id}" data-type="counter">${game.i18n.format("ironclaw2e.dialog.defense.counterRoll", { "name": foo.name })}</option >`;
+            }
+        }
+        options += `<option value="" data-type="extra">${game.i18n.localize("ironclaw2e.dialog.defense.extraOnly")}</option >`;
+
+        let confirmed = false;
+        let speaker = getMacroSpeaker(actor);
+        let dlog = new Dialog({
+            title: heading,
+            content: `
         <form class="ironclaw2e">
-        <h2>${heading}</h2>
-        <select name="">
-        ${options}
-        </select>
-        </form>`;
+        <div class="flexcol">
+         <span class="small-text">${game.i18n.format("ironclaw2e.dialog.dicePool.showUp", { "alias": speaker.alias })}</span>
+         <select name="defensepick" id="defensepick">
+         ${options}
+         </select>
+        </div>
+        <div class="form-group">
+         <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.defense.extraField")}:</label>
+	     <input id="extra" name="extra" value="" onfocus="this.select();"></input>
+        </div>
+        </form>`,
+            buttons: {
+                one: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: game.i18n.localize("ironclaw2e.dialog.pick"),
+                    callback: () => confirmed = true
+                },
+                two: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
+                    callback: () => confirmed = false
+                }
+            },
+            default: "one",
+            render: html => { document.getElementById("defensepick").focus(); },
+            close: html => {
+                if (confirmed) {
+                    let DEFENSE = html.find('[name=defensepick]')[0];
+                    const defensetype = DEFENSE.selectedOptions[0].dataset.type;
+                    const defensevalue = DEFENSE.selectedOptions[0].value;
+                    let EXTRA = html.find('[name=extra]')[0]?.value;
+
+                    if (defensetype === "counter" || defensetype === "parry") {
+                        const weapon = actor?.items.get(defensevalue);
+                        if (defensetype === "counter") weapon?.counterRoll();
+                        if (defensetype === "parry") weapon?.defenseRoll();
+                    } else if (defensetype === "stats") {
+                        let otherkeys = []; let otherdice = []; let otherinputs = "";
+                        let defenseSplit = splitStatsAndBonus(defensevalue);
+
+                        if (defenseSplit[1].length > 0) {
+                            const label = game.i18n.localize("ironclaw2e.dialog.defense.defenseBonus");
+                            const dice = findTotalDice(defenseSplit[1]);
+                            otherkeys.push(label);
+                            otherdice.push(dice);
+                            otherinputs += `<div class="form-group flexrow">
+                             <label class="normal-label">${label}: ${reformDiceString(dice, true)}</label>
+	                         <input type="checkbox" id="${makeCompareReady(label)}" name="${makeCompareReady(label)}" checked></input>
+                            </div>`+ "\n";
+                        }
+
+                        if (resist) actor?.popupSelectRolled(defenseSplit[0], resist, 3, EXTRA || "", otherinputs, otherkeys, otherdice, heading);
+                        else actor?.popupDefenseRoll(defenseSplit[0], resist, 3, EXTRA || "", otherinputs, otherkeys, otherdice, heading);
+                    } else if (defensetype === "extra") {
+                        let extra = findTotalDice(EXTRA);
+                        if (resist) rollTargetNumberArray(3, extra, heading, actor);
+                        else rollHighestArray(extra, heading, actor);
+                    }
+                }
+            }
+        });
+        dlog.render(true);
     }
 
     /* -------------------------------------------- */
@@ -1014,6 +1103,7 @@ export class Ironclaw2EActor extends Actor {
         constructionarray = guard.otherdice;
 
         // Defense bonuses
+        // TODO: Modify to account for special defenses
         const bonuses = this._getGiftSpecialConstruction("defenseBonus", checkedstats, formconstruction, constructionkeys, constructionarray, item, true, !isparry);
         checkedstats = bonuses.prechecked;
         formconstruction = bonuses.otherinputs;
@@ -1407,9 +1497,10 @@ export class Ironclaw2EActor extends Actor {
                         label += " + " + game.i18n.localize("ironclaw2e.chat.extraDice");
                         totaldice = addArrays(totaldice, DICE);
                     }
+
                     if (doubleDice) {
                         label += ", " + game.i18n.localize("ironclaw2e.chat.doubleDice");
-                    }
+                    } // Set the labels
                     label += ".";
                     if (typeof (otherlabel) === 'string' && otherlabel.length > 0)
                         label += `<p style="color:black">${otherlabel}</p>`;

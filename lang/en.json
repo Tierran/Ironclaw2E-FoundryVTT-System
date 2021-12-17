@@ -19,7 +19,11 @@
   "ironclaw2e.yes": "Yes",
   "ironclaw2e.no": "No",
   "ironclaw2e.never": "Never",
+  "ironclaw2e.attack": "Attack",
   "ironclaw2e.defense": "Defense",
+  "ironclaw2e.spark": "Spark",
+  "ironclaw2e.parry": "Parry",
+  "ironclaw2e.counter": "Counter",
 
   "ironclaw2e.copyToTN": "Copy to TN Roll",
   "ironclaw2e.changeTN": "Change TN",
@@ -29,8 +33,8 @@
   "ironclaw2e.resolveCounter": "Resolve the Counter-Attack",
   "ironclaw2e.resolveResist": "Resolve the Resisted Attack",
   "ironclaw2e.resolveAsNormal": "Resolve as Normal Attack",
-  "ironclaw2e.rollDefense": "Roll defense",
-  "ironclaw2e.rollResist": "Roll resist",
+  "ironclaw2e.rollDefense": "Roll Defense",
+  "ironclaw2e.rollResist": "Roll Resist",
 
 
   "ironclaw2e.ui.encumbranceAutoActive": "Auto-Encumbrance management active, condition modification cancelled.",
@@ -191,18 +195,22 @@
 
   "ironclaw2e.dialog.weaponRoll.title": "Weapon Roll Type for {name}",
   "ironclaw2e.dialog.weaponRoll.header": "Choose {item}'s roll type for {actor}",
-  "ironclaw2e.dialog.weaponRoll.attack": "Attack",
-  "ironclaw2e.dialog.weaponRoll.spark": "Spark",
-  "ironclaw2e.dialog.weaponRoll.parry": "Parry",
-  "ironclaw2e.dialog.weaponRoll.counter": "Counter",
 
   "ironclaw2e.dialog.copyItem.title": "Confirm Item Data Copy",
   "ironclaw2e.dialog.copyItem.copySpecial": "Confirm copying over these special settings to all other Gifts with the exact same name: '{name}'. WARNING: This will completely replace any existing settings!",
   "ironclaw2e.dialog.copyItem.copyAll": "Confirm copying over all data from this Gift to all other Gifts with the exact same name: '{name}'. WARNING: This will completely replace all existing data!",
 
-  "ironclaw2e.dialog.defense.resist": "Resist roll",
-  "ironclaw2e.dialog.defense.standard": "Standard defense roll",
-  "ironclaw2e.dialog.defense.nonStandard": "Special defense roll",
+  "ironclaw2e.dialog.defense.resist": "Resist roll against {weapon}",
+  "ironclaw2e.dialog.defense.standard": "Standard defense roll against {weapon}",
+  "ironclaw2e.dialog.defense.nonStandard": "Special defense roll against {weapon}",
+  "ironclaw2e.dialog.defense.dodgeRoll": "Standard Dodge",
+  "ironclaw2e.dialog.defense.specialRoll": "Defend with {stats}",
+  "ironclaw2e.dialog.defense.resistRoll": "Resist with {stats}",
+  "ironclaw2e.dialog.defense.parryRoll": "Parry with {name}",
+  "ironclaw2e.dialog.defense.counterRoll": "Counter with {name}",
+  "ironclaw2e.dialog.defense.extraOnly": "Roll only the Extra Dice",
+  "ironclaw2e.dialog.defense.extraField": "Extra Dice",
+  "ironclaw2e.dialog.defense.defenseBonus": "Defense Bonus",
 
 
   "ironclaw2e.chatInfo.tn": "TN",
