@@ -161,7 +161,7 @@ export class Ironclaw2EActor extends Actor {
                         }
 
                         if (resist) actor?.popupSelectRolled(defenseSplit[0], resist, 3, EXTRA || "", otherinputs, otherkeys, otherdice, heading);
-                        else actor?.popupDefenseRoll(defenseSplit[0], resist, 3, EXTRA || "", otherinputs, otherkeys, otherdice, heading);
+                        else actor?.popupDefenseRoll(defenseSplit[0], resist, 3, EXTRA || "", otherinputs, otherkeys, otherdice, heading, null, false, true);
                     } else if (defensetype === "extra") {
                         let extra = findTotalDice(EXTRA);
                         if (resist) rollTargetNumberArray(3, extra, heading, actor);
@@ -657,17 +657,17 @@ export class Ironclaw2EActor extends Actor {
      * @param {any} otherdice
      * @param {any} item
      * @param {boolean} defensecheck Whether the check is done from a defense 
-     * @param {boolean} isdodge
+     * @param {string} defensetype
      * @returns {object} Returns a holder object which returns the inputs with the added bonuses
      * @private
      */
-    _getGiftSpecialConstruction(specialname, prechecked, otherinputs, otherkeys, otherdice, item, defensecheck = false, isdodge = false) {
+    _getGiftSpecialConstruction(specialname, prechecked, otherinputs, otherkeys, otherdice, item, defensecheck = false, defensetype = "") {
         const data = this.data.data;
         if (data.processingLists?.[specialname]) { // Check if they even exist
             for (let setting of data.processingLists[specialname]) { // Loop through them
-                if (checkApplicability(setting, item, this, defensecheck, isdodge)) { // Check initial applicability
+                if (checkApplicability(setting, item, this, defensecheck, defensetype)) { // Check initial applicability
                     let used = setting; // Store the setting in a temp variable
-                    while (used.replacedBy && checkApplicability(used.replacedBy, item, this, defensecheck, isdodge)) { // As long as the currently used one could be replaced by something applicable
+                    while (used.replacedBy && checkApplicability(used.replacedBy, item, this, defensecheck, defensetype)) { // As long as the currently used one could be replaced by something applicable
                         used = used.replacedBy; // Move up to the next replacement
                     }
                     if (used) { // Sanity check that the used still exists
@@ -1083,7 +1083,7 @@ export class Ironclaw2EActor extends Actor {
         this.popupSelectRolled(checkedstats, tnyes, tnnum, extradice, formconstruction, constructionkeys, constructionarray, otherlabel, successfunc);
     }
 
-    popupDefenseRoll(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", item = null, isparry = false, successfunc = null) {
+    popupDefenseRoll(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", item = null, isparry = false, isspecial = false, successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
         let formconstruction = otherinputs;
@@ -1104,7 +1104,8 @@ export class Ironclaw2EActor extends Actor {
 
         // Defense bonuses
         // TODO: Modify to account for special defenses
-        const bonuses = this._getGiftSpecialConstruction("defenseBonus", checkedstats, formconstruction, constructionkeys, constructionarray, item, true, !isparry);
+        const defensetype = (isparry ? "parry" : (isspecial ? "special" : "dodge"));
+        const bonuses = this._getGiftSpecialConstruction("defenseBonus", checkedstats, formconstruction, constructionkeys, constructionarray, item, true, defensetype);
         checkedstats = bonuses.prechecked;
         formconstruction = bonuses.otherinputs;
         constructionkeys = bonuses.otherkeys;

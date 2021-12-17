@@ -64,7 +64,7 @@ export function getSpecialOptionPrototype(option) {
         case ("defenseBonus"):
             return mergeObject(special, {
                 "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState",
-                "appliesToDodges": true, "appliesToParries": true,
+                "appliesToDodges": true, "appliesToParries": true, "appliesToSpecialDefenses": true,
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;

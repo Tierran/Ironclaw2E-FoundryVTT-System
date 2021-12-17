@@ -393,13 +393,13 @@ export function burdenedLimitedStat(name) {
 /**
  * Checks the special's applicability in a given situation
  * @param {object} special The special setting
- * @param {Ironclaw2EItem} target The target item for the bonus setting or the data for one
+ * @param {Ironclaw2EItem} item The target item for the bonus setting or the data for one
  * @param {Ironclaw2EActor} actor The actor of the check
- * @param {boolean} defensecheck Special trigger for defense bonus, whether the check is happening for a dodge
- * @param {boolean} isdodge Special trigger for defense bonus, whether the check is happening for a dodge
+ * @param {boolean} defensecheck Special trigger for defense bonus, whether the check is for a defense
+ * @param {string} defensetype Special trigger for defense bonus, what type of defense this is
  * @returns {boolean} Whether the target is applicable for the special
  */
-export function checkApplicability(special, target, actor, defensecheck = false, isdodge = false) {
+export function checkApplicability(special, item, actor, defensecheck = false, defensetype = "") {
     if (!special) {
         // In case the check is given something that doesn't exist
         return false;
@@ -411,16 +411,19 @@ export function checkApplicability(special, target, actor, defensecheck = false,
     }
     // Special defense bonus check
     if (defensecheck) {
-        if (!special.appliesToDodges && isdodge) {
+        if (!special.appliesToDodges && defensetype === "dodge") {
             return false; // Return false if the special does not apply to dodges and this is a dodge
         }
-        if (!special.appliesToParries && target) {
-            return false; // Return false if the special does not apply to parries and this defense is done with a weapon, AKA it is a parry
+        if (!special.appliesToParries && defensetype === "parry") {
+            return false; // Return false if the special does not apply to parries and this is a parry
+        }
+        if (!special.appliesToSpecialDefenses && defensetype === "special") {
+            return false; // Return false if the special does not apply to special defenses and this is a special defense
         }
     }
     // Item-specific checks
-    if (target) {
-        const itemData = (target instanceof Ironclaw2EItem ? target.data : target);
+    if (item) {
+        const itemData = (item instanceof Ironclaw2EItem ? item.data : item);
         if (special.typeArray && !special.typeArray.includes(makeCompareReady(itemData.type))) {
             return false;
         }
@@ -435,7 +438,7 @@ export function checkApplicability(special, target, actor, defensecheck = false,
         }
 
         // If the target is an already existing item, take advantage of the preprocessed data
-        if (target instanceof Ironclaw2EItem) {
+        if (item instanceof Ironclaw2EItem) {
             if (special.tagArray && !special.tagArray.some(x => itemData.data.giftTagsSplit?.includes(x))) {
                 return false;
             }

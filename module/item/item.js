@@ -1107,7 +1107,7 @@ export class Ironclaw2EItem extends Item {
                     break;
                 case 1: // Parry roll
                     label = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.parryRoll") + ": ";
-                    this.actor.popupDefenseRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : []), (usesmoredice ? [dicearray] : []), label, this, true, callback);
+                    this.actor.popupDefenseRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : []), (usesmoredice ? [dicearray] : []), label, this, true, false, callback);
                     break;
                 case 2: // Attack roll
                     label = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect +
