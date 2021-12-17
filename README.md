@@ -16,6 +16,7 @@ Weapons and gifts can be set up to automatically select certain dice pools, as w
 The system has support for dragging items to the hotbar to create usable macros for their quick use. The specifics vary by item type, as weapons would ask how it is used (Attack, Spark, Parry, Counter) from its set pools or just pop up a dice pool selection with the only pool set, gifts would pop up either a dice pool, refresh or exhaust dialog, simpler used items would switch whether they are worn/held/lit, and simple gear will just output their info to chat.  
 
 In sheets, things with red outlines signify a clickable function, while blue signifies a double-clickable. Single-clicks are usually some function, like opening the dice pool dialog, whereas double-clickable is usually for outputting info to the chat about the thing.  
+The system has some additional context menu / right-click options for chat messages. Rolls done with the system's own 'dice rollers' have options to change the roll type, the target number or reroll a one, as well as some additional settings while the "Auto-calculate attack damage" option is on. Weapon info messages (done by double-clicking a weapon in an actor's sheet) also have the option to have the currently selected token or the player's default actor roll either defense or resist against the weapon as appropriate, showing a dialog with the valid options (range not considered).  
 
 Ironclaw's initiative system is supported, both the normal side-based and the alternate classic style. Configuring the specifics is done through the combat tracker settings as normal, the system supporting a few different ways to classify sides in a battle. The system also auto-rolls the initiative check for battle participants when 'rolling' initiative.  
 The Combat Tracker will show the result of the initiative check before the initiative itself for the GM, either as the number of successes, or as Tie (T), Failure (F), or Botch (B).  
@@ -84,6 +85,7 @@ Any of these fields that aren't just checkboxes can include multiple values, sep
  - **Works When State**: In what gift states will the bonus apply: any state, when gift is refreshed, or when gift is exhausted.
  - **Applies to Dodges**: Whether a defense bonus applies to dodge defenses.
  - **Applies to Parries**: Whether a defense bonus applies to parry defenses.
+ - **Applies to Special Defenses**: Whether a defense bonus applies to special defenses.
  
 </details>
 
