@@ -1,3 +1,8 @@
+### 0.4.4 Defense context release
+ - Weapon info messages in chat have a context menu option to roll the relevant defense for the selected token or default actor
+ - Added a new toggle for Gift defense bonuses for special defenses 
+ - Item dice pools that are simply one-line-style dice should now parse correctly everywhere
+
 ### 0.4.3 Bug fixing release
  - Fixed resolving resisted attacks as normal attacks
  - Fixed illumination item updating
