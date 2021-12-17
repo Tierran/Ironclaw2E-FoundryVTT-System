@@ -77,6 +77,7 @@ export class Ironclaw2EActor extends Actor {
         }
         // Get the correct heading depending on whether the weapon is resisted, or against standard defense or special defense
         const heading = game.i18n.format(resist ? "ironclaw2e.dialog.defense.resist" : (standard ? "ironclaw2e.dialog.defense.standard" : "ironclaw2e.dialog.defense.nonStandard"), { "weapon": weaponname });
+        const rollLabel = game.i18n.format(resist ? "ironclaw2e.dialog.defense.resist" : (standard ? "ironclaw2e.dialog.defense.dodgeAgainst" : "ironclaw2e.dialog.defense.nonStandard"), { "weapon": weaponname });
         let options = "";
 
         if (actor) {
@@ -160,12 +161,12 @@ export class Ironclaw2EActor extends Actor {
                             </div>`+ "\n";
                         }
 
-                        if (resist) actor?.popupSelectRolled(defenseSplit[0], resist, 3, EXTRA || "", otherinputs, otherkeys, otherdice, heading);
-                        else actor?.popupDefenseRoll(defenseSplit[0], resist, 3, EXTRA || "", otherinputs, otherkeys, otherdice, heading, null, false, true);
+                        if (resist) actor?.popupSelectRolled(defenseSplit[0], resist, 3, EXTRA || "", otherinputs, otherkeys, otherdice, rollLabel);
+                        else actor?.popupDefenseRoll(defenseSplit[0], resist, 3, EXTRA || "", otherinputs, otherkeys, otherdice, rollLabel, null, false, !standard);
                     } else if (defensetype === "extra") {
                         let extra = findTotalDice(EXTRA);
-                        if (resist) rollTargetNumberArray(3, extra, heading, actor);
-                        else rollHighestArray(extra, heading, actor);
+                        if (resist) rollTargetNumberArray(3, extra, rollLabel, actor);
+                        else rollHighestArray(extra, rollLabel, actor);
                     }
                 }
             }

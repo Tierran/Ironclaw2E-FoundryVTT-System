@@ -203,6 +203,7 @@
   "ironclaw2e.dialog.defense.resist": "Resist roll against {weapon}",
   "ironclaw2e.dialog.defense.standard": "Standard defense roll against {weapon}",
   "ironclaw2e.dialog.defense.nonStandard": "Special defense roll against {weapon}",
+  "ironclaw2e.dialog.defense.dodgeAgainst": "Dodge roll against {weapon}",
   "ironclaw2e.dialog.defense.dodgeRoll": "Standard Dodge",
   "ironclaw2e.dialog.defense.specialRoll": "Defend with {stats}",
   "ironclaw2e.dialog.defense.resistRoll": "Resist with {stats}",
