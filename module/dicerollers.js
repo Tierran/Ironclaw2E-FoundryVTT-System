@@ -86,8 +86,8 @@ export async function rollTargetNumberArray(tni, dicearray, label = "", rollinga
  */
 export async function copyToRollTN(tni, message, sendinchat = true, rerollone = false) {
     if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
-        console.log("Somehow, a message that isn't a roll got into 'copyToRollTN'.");
-        console.log(message);
+        console.warn("Somehow, a message that isn't a roll got into 'copyToRollTN'.");
+        console.warn(message);
         return;
     }
     let rollstring = rerollone ? copyRerollHighestOne(message.roll) : copyDicePoolResult(message.roll);
@@ -178,8 +178,8 @@ export async function rollHighestArray(dicearray, label = "", rollingactor = nul
  */
 export async function copyToRollHighest(message, sendinchat = true, rerollone = false) {
     if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
-        console.log("Somehow, a message that isn't a roll got into 'copyToRollHighest'.");
-        console.log(message);
+        console.warn("Somehow, a message that isn't a roll got into 'copyToRollHighest'.");
+        console.warn(message);
         return;
     }
     let rollstring = rerollone ? copyRerollHighestOne(message.roll) : copyDicePoolResult(message.roll);

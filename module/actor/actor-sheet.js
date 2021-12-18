@@ -730,7 +730,6 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const li = $(event.currentTarget).parents(".item");
         const item = this.actor.items.get(li.data("itemId"));
         item?.sendInfoToChat();
-        console.log(item);
     }
 
     /**
