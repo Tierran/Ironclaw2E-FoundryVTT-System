@@ -40,23 +40,23 @@ Setting up dice pools for items follows this format: "*(trait or skill name)*, *
 For gifts that only grant situational bonuses to certain things without any related skills, like Strength or Veteran, the gift dice pool can be set as either a one line roll "d12" or as a dice pool without stats ";d12". Both work, though if the system doesn't seem to recognize the dice, use the latter.  
 Gifts that grant situational bonuses can be configured from the "Advanced Settings" tab. More on that below. Items that have weight can have their weight value set up as either a fractional value "1/8" or a decimal value "0.125", the system will detect the presence of a slash and treat the value accordingly.  
 
-The *Effect* field in weapons should be formatted so that every attribute is separated with a comma, eg. "Damage +2, Slaying, Awkward", for the damage auto-calculation system. Weapons also have a field to give its opposing defensive pool for informational purposes, normally this is just standard "defense" but some weapons with special defenses may have different pools. Weapons with resisted effects should set the resistance pool in the opposing defense field and toggle the "Defense is Resist" checkbox on.  
+The *Effect* field in weapons should be formatted so that every attribute is separated with a comma, eg. "Damage +2, Slaying, Awkward", for the damage auto-calculation system. Weapons also have a field to give its opposing defensive pool for system and quick reference, normally this is just standard "defense" but some weapons with special defenses may have different pools. Weapons with resisted effects should set the resistance pool in the opposing defense field and toggle the "Defense is Resist" checkbox on.  
 Weapons that would exhaust a gift on use can be set to auto-exhaust the gift in question when used to Attack or Counter. If the weapon is set to *require* an un-exhausted gift instead of simply exhausting one if available, trying to use the weapon when the gift is exhausted will instead pop out a Refresh Gift dialog. Technically, some gifts should be exhausted when a weapon is Readied instead of used, but this is not represented.  
 Currently, the system does not allow dice pools to include items. Instead, the system tries to track what items should be included in which dice pools, eg. including worn armor in Soak rolls, as well as adding the gift special bonuses. Where these bonuses go is hard-coded though, so I'm afraid it won't be perfect.  
 
-#### Advanced Gift Settings
+#### Advanced Gift Bonus Settings
 
 For gifts that should interact with the system by giving situational bonuses, the advanced settings can be used to add special bonuses to gifts. When added, the system will automatically see if a given bonus will be applicable given its configuration and add it in the relevant place.  
 
 <details>
-<summary>List of possible Advanced Gift Settings</summary>
+<summary>List of possible Advanced Gift Bonus Settings</summary>
 
  - **Attack Bonus**: A bonus applied when a weapon is used to attack.  
- - **Defense Bonus**: A bonus applied when defending, either as a parry with a weapon or when dodging.  
+ - **Defense Bonus**: A bonus applied when defending, whether as a parry with a weapon, when dodging, or with special defenses.  
  - **Counter Bonus**: A bonus applies when counter-attacking with a weapon.  
  - **Soak Bonus**: A bonus applied when rolling for Soak.  
  - **Guard Bonus**: Either a replacement or a bonus to what the Guarding condition gives. No need to check whether the actor is Guarding when configuring this bonus, it's implicit in its type.  
- - **Spring Bonus**: A bonus applied to the sprint roll.  
+ - **Sprint Bonus**: A bonus applied to the sprint roll.  
  - **Initiative Bonus**: A bonus applied to the initiative roll.  
  - **Movement Bonus**: A bonus that changes the movement speed of an actor.  
  - **Flying Move Bonus**: A bonus that changes the flying speed of an actor. (These stack with normal movement bonuses)  
@@ -103,7 +103,7 @@ If the special bonus applies, it's applied where relevant, with the bonus depend
  - **Encumbrance Bonus**: The bonus added to the carrying capacity of the actor. Note that this bonus should be for the "None" encumbrance limit, the system will multiply it accordingly for the higher limits.
  - **Upgrade Steps**: The number of steps to upgrade the dice. A single "step" would upgrade the dice by one, from d4 to d6, d6 to d8, etc. Negative steps will instead downgrade the dice instead. The upgraded dice cap at *d12* at maximum and *d4* at minimum.
  - **Name Addition**: What to append to the name of items modified by this bonus. If left empty, the name will not change at all. Note that these should not include brackets, as that will cause Foundry's internal system to attempt to parse it as a roll modifier.
- - **Replacing Name**: The name of a gift that this gift would replace. If this field has something, this bonus will not be applied normally. Instead, when the system would apply a same type bonus from the replaced gift, it will check whether this bonus applies and use this one instead if it does apply.
+ - **Replacing Name**: The name of a gift that this gift would replace. If this field has something, this bonus will not be applied normally. Instead, when the system would apply a same type bonus from the replaced gift, it will check whether this bonus applies and use this one instead if it does apply. Note that the system does not support multiple potential replacements and will pop warnings if more than one bonus setting attempts to replace the same one.
  
 </details>
 

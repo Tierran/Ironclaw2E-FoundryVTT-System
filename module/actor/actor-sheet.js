@@ -1,4 +1,4 @@
-import { checkApplicability, checkDiceArrayEmpty, diceFieldUpgrade, findTotalDice, getMacroSpeaker, makeCompareReady, reformDiceString, splitStatString } from "../helpers.js";
+import { checkApplicability, checkDiceArrayEmpty, diceFieldUpgrade, findTotalDice, getMacroSpeaker, makeCompareReady, parseSingleDiceString, reformDiceString, splitStatString } from "../helpers.js";
 import { CommonSystemInfo } from "../systeminfo.js";
 import { getConditionByNameIronclaw } from "../conditions.js";
 import { hasConditionsIronclaw } from "../conditions.js";
@@ -220,6 +220,8 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         html.find('.roll-double-info-item').dblclick(this._onItemInfo.bind(this));
         html.find('.roll-double-info-cond').dblclick(this._onConditionInfo.bind(this));
+
+        html.find('.roll-career-dice-change').change(this._onChangeExtraCareerDice.bind(this));
 
         // Drag events for macros.
         if (this.actor.isOwner) {
@@ -622,6 +624,22 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const dataset = element.dataset;
 
         this.actor.deleteEffect(dataset.id, true);
+    }
+
+    /**
+     * Handle the condition deletion
+     * @param {Event} event   The originating click event
+     * @private
+     */
+    _onChangeExtraCareerDice(event) {
+        event.preventDefault();
+        const element = event.currentTarget;
+        const dataset = element.dataset;
+
+        if (dataset.item) {
+            const item = this.actor.items.get(dataset.item);
+            item.update({ "_id": item.id, "data.dice": element.value });
+        }
     }
 
     /**

@@ -46,7 +46,7 @@ export class Ironclaw2EActor extends Actor {
     static async weaponDefenseDialog(actor, defense, resist, weaponname) {
         const standard = (makeCompareReady(defense) === CommonSystemInfo.defenseStandardName); // Check whether the defense is standard or special
         if (resist && standard) {
-            ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.standardDefenseResist", { "name": weaponname }));
+            ui.notifications.warn(game.i18n.format("ironclaw2e.ui.standardDefenseResist", { "name": weaponname }));
         }
         // Get the correct heading depending on whether the weapon is resisted, or against standard defense or special defense
         const heading = game.i18n.format(resist ? "ironclaw2e.dialog.defense.resist" : (standard ? "ironclaw2e.dialog.defense.standard" : "ironclaw2e.dialog.defense.nonStandard"), { "weapon": weaponname });
@@ -233,6 +233,8 @@ export class Ironclaw2EActor extends Actor {
                     if (setting.replaceName) {
                         const replacement = specialGifts.find(x => makeCompareReady(x.data.name) === setting.replaceName)?.data.data.specialSettings.find(x => x.settingMode == setting.settingMode);
                         if (replacement) {
+                            if (replacement.replacedBy)
+                                ui.notifications.warn(game.i18n.format("ironclaw2e.ui.alreadyReplacedSetting", { "name": gift.name, "replacement": setting.replaceNameField, "actor": actorData.name }));
                             replacement.replacedBy = setting;
                         }
                         continue;

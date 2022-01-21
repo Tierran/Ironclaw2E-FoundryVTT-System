@@ -721,7 +721,8 @@ export class Ironclaw2EItem extends Item {
             let updatedata = {
                 flags: {
                     "ironclaw2e.hangingAttack": "resist", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
-                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses
+                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses,
+                    "ironclaw2e.defenseInfo": "resist", "ironclaw2e.defenseField": itemData.defendWith, "ironclaw2e.defenseWeapon": item.name
                 }
             };
             info.message.update(updatedata);
