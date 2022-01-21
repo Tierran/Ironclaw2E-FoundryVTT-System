@@ -1,4 +1,4 @@
-### 0.4.5 Fixed special release
+### 0.4.5 Extra resist release
  - Final planned FoundryVtt 0.8 release
  - Attacks that are resisted can now roll the resist or counter-attack roll from the attack message context menu
  - Fixed a potential issue with special bonus settings using bad replacement data
