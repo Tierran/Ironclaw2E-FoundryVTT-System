@@ -1,3 +1,10 @@
+### 0.4.5 Fixed special release
+ - Final planned FoundryVtt 0.8 release
+ - Attacks that are resisted can now roll the resist or counter-attack roll from the attack message context menu
+ - Fixed a potential issue with special bonus settings using bad replacement data
+ - Extra Career's die is now editable from the actor sheet directly, and the skills it affects are shown next to it
+ - Misc fixes
+
 ### 0.4.4 Defense context release
  - Weapon info messages in chat have a context menu option to roll the relevant defense for the selected token or default actor
  - Added a new toggle for Gift defense bonuses for special defenses 
