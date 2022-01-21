@@ -147,6 +147,11 @@ export class Ironclaw2EActor extends Actor {
         dlog.render(true);
     }
 
+    /* -------------------------------------------- */
+    /* Overrides                                    */
+    /* -------------------------------------------- */
+
+
     async _preCreate(data, options, user) {
         const autoPrototypeSetup = game.settings.get("ironclaw2e", "autoPrototypeSetup");
         if (!autoPrototypeSetup) // If not enabled, immediately return out of the function
@@ -162,10 +167,6 @@ export class Ironclaw2EActor extends Actor {
 
         this.data.update(data);
     }
-
-    /* -------------------------------------------- */
-    /* Overrides                                    */
-    /* -------------------------------------------- */
 
     /** @override
      * Perform any last data modifications after super.prepareData has finished executing
@@ -222,6 +223,7 @@ export class Ironclaw2EActor extends Actor {
         const specialGifts = this.items.filter(element => element.data.type === 'gift' && element.data.data.specialSettings?.length > 0);
         if (specialGifts.length > 0) {
             data.processingLists = {}; // If any of the actor's gifts have special settings, add the holding object for the lists
+            data.replacementLists = new Map(); // To store any replacement gifts, stored with the actor as derived data to avoid contaminating the actual gifts
 
             for (let gift of specialGifts) {
                 for (let setting of gift.data.data.specialSettings) {
@@ -229,13 +231,18 @@ export class Ironclaw2EActor extends Actor {
                         // If the relevant array for a setting mode does not exist, add an empty one
                         data.processingLists[setting.settingMode] = [];
                     }
-                    // If the gift has the replacement field set, attempt to find what it replaces and give that setting a link to this one
+                    // If the gift has the replacement field set, attempt to find what it replaces
                     if (setting.replaceName) {
-                        const replacement = specialGifts.find(x => makeCompareReady(x.data.name) === setting.replaceName)?.data.data.specialSettings.find(x => x.settingMode == setting.settingMode);
-                        if (replacement) {
-                            if (replacement.replacedBy)
-                                ui.notifications.warn(game.i18n.format("ironclaw2e.ui.alreadyReplacedSetting", { "name": gift.name, "replacement": setting.replaceNameField, "actor": actorData.name }));
-                            replacement.replacedBy = setting;
+                        const replacement = specialGifts.find(x => makeCompareReady(x.name) === setting.replaceName)?.data.data.specialSettings.find(x => x.settingMode == setting.settingMode);
+                        if (replacement) { // If the replacement is found, add it to the map of replacements stored with the actor
+                            if (replacement.giftId === setting.giftId) { // Check for an infinite loop
+                                console.warn("Potential infinite loop detected, bonus attempted to replace something with the same id as it: " + setting.giftName);
+                                continue;
+                            }
+
+                            let stored = (data.replacementLists.has(replacement.giftId) ? data.replacementLists.get(replacement.giftId) : new Map());
+                            stored.set(replacement.settingIndex, setting);
+                            data.replacementLists.set(replacement.giftId, stored);
                         }
                         continue;
                     }
@@ -404,8 +411,10 @@ export class Ironclaw2EActor extends Actor {
             for (let setting of data.processingLists.moveBonus) { // Loop through them
                 if (checkApplicability(setting, null, this)) { // Check initial applicability
                     let used = setting; // Store the setting in a temp variable
-                    while (used.replacedBy && checkApplicability(used.replacedBy, null, this)) { // As long as the currently used one could be replaced by something applicable
-                        used = used.replacedBy; // Move up to the next replacement
+                    let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
+                    while (replacement && checkApplicability(replacement, null, this)) { // As long as the currently used one could be replaced by something applicable
+                        used = replacement; // Store the replacement as the one to be used
+                        replacement = this._checkForReplacement(used); // Check for a new replacement
                     }
                     if (used) { // Sanity check that the used still exists
                         // Apply the used setting
@@ -428,8 +437,10 @@ export class Ironclaw2EActor extends Actor {
                 for (let setting of data.processingLists.flyingBonus) { // Loop through them
                     if (checkApplicability(setting, null, this)) { // Check initial applicability
                         let used = setting; // Store the setting in a temp variable
-                        while (used.replacedBy && checkApplicability(used.replacedBy, null, this)) { // As long as the currently used one could be replaced by something applicable
-                            used = used.replacedBy; // Move up to the next replacement
+                        let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
+                        while (replacement && checkApplicability(replacement, null, this)) { // As long as the currently used one could be replaced by something applicable
+                            used = replacement; // Store the replacement as the one to be used
+                            replacement = this._checkForReplacement(used); // Check for a new replacement
                         }
                         if (used) { // Sanity check that the used still exists
                             // Apply the used setting
@@ -521,8 +532,10 @@ export class Ironclaw2EActor extends Actor {
             for (let setting of data.processingLists.encumbranceBonus) { // Loop through them
                 if (checkApplicability(setting, null, this)) { // Check initial applicability
                     let used = setting; // Store the setting in a temp variable
-                    while (used.replacedBy && checkApplicability(used.replacedBy, null, this)) { // As long as the currently used one could be replaced by something applicable
-                        used = used.replacedBy; // Move up to the next replacement
+                    let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
+                    while (replacement && checkApplicability(replacement, null, this)) { // As long as the currently used one could be replaced by something applicable
+                        used = replacement; // Store the replacement as the one to be used
+                        replacement = this._checkForReplacement(used); // Check for a new replacement
                     }
                     if (used) { // Sanity check that the used still exists
                         // Apply the used setting
@@ -654,6 +667,31 @@ export class Ironclaw2EActor extends Actor {
         return { "totalDice": totaldice, "label": label, "labelGiven": labelgiven };
     }
 
+    /**
+     * Check for a replacement gift for the given setting
+     * @param {any} setting
+     * @returns {any} The replacement setting if it exists
+     */
+    _checkForReplacement(setting) {
+        const data = this.data.data;
+        if (!data.processingLists || !data.replacementLists) {
+            console.warn("Attempted to check for replacements despite the fact that no special settings are present for the actor: " + this.name);
+            return null;
+        }
+
+        if (data.replacementLists.has(setting.giftId)) { // Check for and get the list of replacements for a given gift
+            const foo = data.replacementLists.get(setting.giftId);
+            if (foo.has(setting.settingIndex)) { // Check for and get the actual replacement based on the index of the setting
+                const bar = foo.get(setting.settingIndex)
+                if (setting.settingMode == bar.settingMode) {
+                    return bar; // If a to-be-replaced setting with the correct gift id, setting index and setting mode is found, return the corresponding setting
+                }
+            }
+        }
+
+        return null; // Otherwise return null
+    }
+
     // Functions to construct the roll dialog properly
 
     /**
@@ -675,8 +713,10 @@ export class Ironclaw2EActor extends Actor {
             for (let setting of data.processingLists[specialname]) { // Loop through them
                 if (checkApplicability(setting, item, this, defensecheck, defensetype)) { // Check initial applicability
                     let used = setting; // Store the setting in a temp variable
-                    while (used.replacedBy && checkApplicability(used.replacedBy, item, this, defensecheck, defensetype)) { // As long as the currently used one could be replaced by something applicable
-                        used = used.replacedBy; // Move up to the next replacement
+                    let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
+                    while (replacement && checkApplicability(replacement, item, this, defensecheck, defensetype)) { // As long as the currently used one could be replaced by something applicable
+                        used = replacement; // Store the replacement as the one to be used
+                        replacement = this._checkForReplacement(used); // Check for a new replacement
                     }
                     if (used) { // Sanity check that the used still exists
                         // Apply the used setting
@@ -795,8 +835,10 @@ export class Ironclaw2EActor extends Actor {
                 for (let setting of data.processingLists.guardBonus) { // Loop through them
                     if (checkApplicability(setting, null, this)) { // Check initial applicability
                         let used = setting; // Store the setting in a temp variable
-                        while (used.replacedBy && checkApplicability(used.replacedBy, null, this)) { // As long as the currently used one could be replaced by something applicable
-                            used = used.replacedBy; // Move up to the next replacement
+                        let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
+                        while (replacement && checkApplicability(replacement, null, this)) { // As long as the currently used one could be replaced by something applicable
+                            used = replacement; // Store the replacement as the one to be used
+                            replacement = this._checkForReplacement(used); // Check for a new replacement
                         }
                         if (used) { // Sanity check that the used still exists
                             // Store the used setting to a temp array

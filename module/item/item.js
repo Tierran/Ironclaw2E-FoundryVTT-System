@@ -105,6 +105,8 @@ export class Ironclaw2EItem extends Item {
         if (data.specialSettings?.length > 0) {
             for (let i = 0; i < data.specialSettings.length; ++i) {
                 data.specialSettings[i].giftName = itemData.name;
+                data.specialSettings[i].giftId = itemData._id;
+                data.specialSettings[i].settingIndex = i;
 
                 // Applicability settings
                 if (data.specialSettings[i].typeField) {
