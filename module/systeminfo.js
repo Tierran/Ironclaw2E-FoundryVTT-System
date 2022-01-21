@@ -43,6 +43,11 @@ export class CommonSystemInfo {
     static giftWorksStates = {
         "anyState": "Any State", "refreshed": "Refreshed", "exhausted": "Exhausted"
     };
+    /**
+     * The name to check for in weapon's "defend with" field to use the standard defense against it
+     * Anything that's _not_ this string is assumed to be a special defense, and the field to be traits and skills separated with commas
+     */
+    static defenseStandardName = "defense"
 }
 
 /**

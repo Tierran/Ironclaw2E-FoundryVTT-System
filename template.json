@@ -235,7 +235,7 @@
     "weapon": {
       "templates": [ "base", "physical" ],
       "effect": "",
-      "defendWith": "defense",
+      "defendWith": "Defense",
       "hasResist": false,
       "descriptors": "",
       "equip": "goodhand",

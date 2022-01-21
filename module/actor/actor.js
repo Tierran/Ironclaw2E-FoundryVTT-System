@@ -11,9 +11,10 @@ import { nullCheckConcat } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
 import { checkDiceArrayIndex } from "../helpers.js";
 import { getDiceArrayMaxValue } from "../helpers.js";
-import { CommonConditionInfo } from "../conditions.js";
 import { checkApplicability } from "../helpers.js";
 import { compareDiceArrays } from "../helpers.js";
+import { CommonConditionInfo } from "../conditions.js";
+import { CommonSystemInfo } from "../systeminfo.js";
 // For condition management
 import { hasConditionsIronclaw } from "../conditions.js";
 import { getConditionNamesIronclaw } from "../conditions.js";
@@ -31,34 +32,6 @@ import { burdenedLimitedStat } from "../helpers.js";
  */
 export class Ironclaw2EActor extends Actor {
 
-    async _preCreate(data, options, user) {
-        const autoPrototypeSetup = game.settings.get("ironclaw2e", "autoPrototypeSetup");
-        if (!autoPrototypeSetup) // If not enabled, immediately return out of the function
-            return;
-
-        data.token = {};
-        data.token.displayName = 20;
-
-        if (data.type === 'character') {
-            data.token.actorLink = true;
-            data.token.vision = true;
-        }
-
-        this.data.update(data);
-    }
-
-    /** @override
-     * Perform any last data modifications after super.prepareData has finished executing
-     */
-    prepareData() {
-        // Performs the following, in order: data reset, prepareBaseData(), prepareEmbeddedEntities(), prepareDerivedData()
-        super.prepareData();
-        const actorData = this.data;
-
-        // Automatic Encumbrance Management
-        this._encumbranceAutoManagement(actorData);
-    }
-
     /* -------------------------------------------- */
     /* Static Functions                             */
     /* -------------------------------------------- */
@@ -71,7 +44,7 @@ export class Ironclaw2EActor extends Actor {
      * @param {string} weaponname The weapon name to roll against
      */
     static async weaponDefenseDialog(actor, defense, resist, weaponname) {
-        const standard = (defense === makeCompareReady(game.i18n.localize("ironclaw2e.defense"))); // Check whether the defense is standard or special
+        const standard = (makeCompareReady(defense) === CommonSystemInfo.defenseStandardName); // Check whether the defense is standard or special
         if (resist && standard) {
             ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.standardDefenseResist", { "name": weaponname }));
         }
@@ -99,7 +72,7 @@ export class Ironclaw2EActor extends Actor {
 
             for (let foo of weapons) {
                 if (foo.data.data.canCounter)
-                options += `<option value="${foo.id}" data-type="counter">${game.i18n.format("ironclaw2e.dialog.defense.counterRoll", { "name": foo.name })}</option >`;
+                    options += `<option value="${foo.id}" data-type="counter">${game.i18n.format("ironclaw2e.dialog.defense.counterRoll", { "name": foo.name })}</option >`;
             }
         }
         options += `<option value="" data-type="extra">${game.i18n.localize("ironclaw2e.dialog.defense.extraOnly")}</option >`;
@@ -172,6 +145,38 @@ export class Ironclaw2EActor extends Actor {
             }
         });
         dlog.render(true);
+    }
+
+    async _preCreate(data, options, user) {
+        const autoPrototypeSetup = game.settings.get("ironclaw2e", "autoPrototypeSetup");
+        if (!autoPrototypeSetup) // If not enabled, immediately return out of the function
+            return;
+
+        data.token = {};
+        data.token.displayName = 20;
+
+        if (data.type === 'character') {
+            data.token.actorLink = true;
+            data.token.vision = true;
+        }
+
+        this.data.update(data);
+    }
+
+    /* -------------------------------------------- */
+    /* Overrides                                    */
+    /* -------------------------------------------- */
+
+    /** @override
+     * Perform any last data modifications after super.prepareData has finished executing
+     */
+    prepareData() {
+        // Performs the following, in order: data reset, prepareBaseData(), prepareEmbeddedEntities(), prepareDerivedData()
+        super.prepareData();
+        const actorData = this.data;
+
+        // Automatic Encumbrance Management
+        this._encumbranceAutoManagement(actorData);
     }
 
     /* -------------------------------------------- */
