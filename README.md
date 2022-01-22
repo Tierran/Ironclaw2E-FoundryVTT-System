@@ -22,6 +22,7 @@ Ironclaw's initiative system is supported, both the normal side-based and the al
 The Combat Tracker will show the result of the initiative check before the initiative itself for the GM, either as the number of successes, or as Tie (T), Failure (F), or Botch (B).  
 
 The system has support for the Drag Ruler module (https://github.com/manuelVo/foundryvtt-drag-ruler). The distance colors represent Stride (blue), Stride+Dash (green), Run (yellow) and over max distance (red).  
+The system has support for the Chat Commands module (https://github.com/League-of-Foundry-Developers/Chat-Commands-Lib). If present and active, the system will register "/iroll", "/actorroll" and "/itemuse" commands.  
 The system has support for the Combat Utility Belt module (https://github.com/death-save/combat-utility-belt), specifically for its Enhanced Conditions system. If present and active, the system will try to use the EC for conditions. Proper setup explained below.  
 
 #### Options
@@ -43,6 +44,11 @@ Gifts that grant situational bonuses can be configured from the "Advanced Settin
 The *Effect* field in weapons should be formatted so that every attribute is separated with a comma, eg. "Damage +2, Slaying, Awkward", for the damage auto-calculation system. Weapons also have a field to give its opposing defensive pool for system and quick reference, normally this is just standard "defense" but some weapons with special defenses may have different pools. Weapons with resisted effects should set the resistance pool in the opposing defense field and toggle the "Defense is Resist" checkbox on.  
 Weapons that would exhaust a gift on use can be set to auto-exhaust the gift in question when used to Attack or Counter. If the weapon is set to *require* an un-exhausted gift instead of simply exhausting one if available, trying to use the weapon when the gift is exhausted will instead pop out a Refresh Gift dialog. Technically, some gifts should be exhausted when a weapon is Readied instead of used, but this is not represented.  
 Currently, the system does not allow dice pools to include items. Instead, the system tries to track what items should be included in which dice pools, eg. including worn armor in Soak rolls, as well as adding the gift special bonuses. Where these bonuses go is hard-coded though, so I'm afraid it won't be perfect.  
+
+For Chat Commands: The /iroll command can be used to quickly roll dice with the internal dice roller. It takes a one line format input after the command to roll dice as a highest roll type, with a semicolon followed by a number at the end changing it to a TN roll. Eg. "/iroll 3d6,d8" or "/iroll 3d6,d8;5"  
+The /actorroll command opens a standard roll dialog with the given dice pools already checked and optional extra dice and TN preset. It takes a dice pool format input, again with an additional semicolon and number changing the default roll type from highest to TN. Eg. "/actorroll dodge,speed;d12" or "/actorroll will,presence;;3"  
+In addition, /actorroll can take a simple "soak", "defense" or "dodging" as input. In the former case, it will open a standard soak roll popup, while the latter two open a dodge defense popup, since "dodge" would normally refer to a roll of pure dodge skill, rather than the defense.  
+The /itemuse command simply uses an item; it takes an item name and uses that to activate a normal item use, as if the item was used through a hotbar macro. The *item* in this case refers to all things FoundryVTT considers items (armor, gifts, weapons, illumination...), not just the gear type. The name must be an **exact** match.  
 
 #### Advanced Gift Bonus Settings
 

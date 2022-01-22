@@ -1,5 +1,10 @@
+### 0.5.0 Plan nine release
+ - Upgraded to FoundryVTT 0.9
+ - Fixed upgrade bugs with illumination, gifts and extra careers
+ - Re-added Chat Commands as a supported thing
+
 ### 0.4.5 Extra resist release
- - Final planned FoundryVtt 0.8 release
+ - Final planned FoundryVTT 0.8 release
  - Attacks that are resisted can now roll the resist or counter-attack roll from the attack message context menu
  - Fixed a potential issue with special bonus settings using bad replacement data
  - Extra Career's die is now editable from the actor sheet directly, and the skills it affects are shown next to it
