@@ -12,8 +12,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"WGljaB1SMqPtXDwC\"><i class=\"fas fa-book-open\"></i> Focused</a>",
+      "isChanged": false
     },
     {
       "id": "guarding",
@@ -26,8 +30,30 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"ZzpRbp4XIFV5y8rW\"><i class=\"fas fa-book-open\"></i> Guarding</a>",
+      "isChanged": false
+    },
+    {
+      "id": "aiming",
+      "name": "Aiming",
+      "icon": "icons/svg/target.svg",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.sNhLDTvRmn4LG4Qj]{Aiming}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"sNhLDTvRmn4LG4Qj\"><i class=\"fas fa-book-open\"></i> Aiming</a>",
+      "isChanged": false
     },
     {
       "id": "reeling",
@@ -40,8 +66,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"2RqmHH9RbzJKjdKA\"><i class=\"fas fa-book-open\"></i> Reeling</a>",
+      "isChanged": false
     },
     {
       "id": "hurt",
@@ -54,8 +84,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"7buKwZrZVy8OwPhx\"><i class=\"fas fa-book-open\"></i> Hurt</a>",
+      "isChanged": false
     },
     {
       "id": "afraid",
@@ -68,8 +102,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"krkg0YwKTNyD8BPM\"><i class=\"fas fa-book-open\"></i> Afraid</a>",
+      "isChanged": false
     },
     {
       "id": "injured",
@@ -82,8 +120,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"XZ1nn0BJoBGtHSYt\"><i class=\"fas fa-book-open\"></i> Injured</a>",
+      "isChanged": false
     },
     {
       "id": "dying",
@@ -96,8 +138,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": true
-      }
+        "markDefeated": true,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"1Jg9RzQ24bpHnh7A\"><i class=\"fas fa-book-open\"></i> Dying</a>",
+      "isChanged": false
     },
     {
       "id": "dead",
@@ -110,8 +156,12 @@
       "options": {
         "overlay": true,
         "removeOthers": false,
-        "markDefeated": true
-      }
+        "markDefeated": true,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"JsnatC5y42DGbPP3\"><i class=\"fas fa-book-open\"></i> Dead</a>",
+      "isChanged": false
     },
     {
       "id": "overkilled",
@@ -124,8 +174,12 @@
       "options": {
         "overlay": true,
         "removeOthers": false,
-        "markDefeated": true
-      }
+        "markDefeated": true,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"iL6ssGkLXwHPqRLh\"><i class=\"fas fa-book-open\"></i> Overkilled</a>",
+      "isChanged": false
     },
     {
       "id": "asleep",
@@ -138,8 +192,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": true
-      }
+        "markDefeated": true,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"fy5EtGmfIZbpbqd1\"><i class=\"fas fa-book-open\"></i> Asleep</a>",
+      "isChanged": false
     },
     {
       "id": "unconscious",
@@ -152,8 +210,12 @@
       "options": {
         "overlay": true,
         "removeOthers": false,
-        "markDefeated": true
-      }
+        "markDefeated": true,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"y17nrzjqcBNdnyVo\"><i class=\"fas fa-book-open\"></i> Unconscious</a>",
+      "isChanged": false
     },
     {
       "id": "burdened",
@@ -166,8 +228,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"pJTP7nRDfLCXTAzO\"><i class=\"fas fa-book-open\"></i> Burdened</a>",
+      "isChanged": false
     },
     {
       "id": "over-burdened",
@@ -176,12 +242,30 @@
       "referenceId": "@Compendium[ironclaw2e.statuseffects.Ms6nfCALR2RxiwFc]{Over-Burdened}",
       "applyTrigger": "",
       "removeTrigger": "",
-      "activeEffect": null,
+      "activeEffect": {
+        "label": "Over-Burdened",
+        "icon": "systems/ironclaw2e/icons/status/overburdened.svg",
+        "tint": "",
+        "disabled": false,
+        "duration": {
+          "seconds": null,
+          "startTime": null,
+          "rounds": null,
+          "turns": null,
+          "startRound": null,
+          "startTurn": null
+        },
+        "changes": []
+      },
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"Ms6nfCALR2RxiwFc\"><i class=\"fas fa-book-open\"></i> Over-Burdened</a>",
+      "isChanged": false
     },
     {
       "id": "cannot-move",
@@ -194,8 +278,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"8X3gh1U1g5NQxwbA\"><i class=\"fas fa-book-open\"></i> Cannot Move</a>",
+      "isChanged": false
     },
     {
       "id": "fatigued",
@@ -208,8 +296,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"O8Cf7H1AoijQfdmL\"><i class=\"fas fa-book-open\"></i> Fatigued</a>",
+      "isChanged": false
     },
     {
       "id": "sick",
@@ -222,8 +314,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"HFHtUwuSoZ6wQutn\"><i class=\"fas fa-book-open\"></i> Sick</a>",
+      "isChanged": false
     },
     {
       "id": "confused",
@@ -236,8 +332,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"E156mwoPTBUaagBB\"><i class=\"fas fa-book-open\"></i> Confused</a>",
+      "isChanged": false
     },
     {
       "id": "terrified",
@@ -250,8 +350,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"soFkqUQFGaY3Q8IM\"><i class=\"fas fa-book-open\"></i> Terrified</a>",
+      "isChanged": false
     },
     {
       "id": "enraged",
@@ -264,8 +368,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"2TtNJmDXp79MvLk9\"><i class=\"fas fa-book-open\"></i> Enraged</a>",
+      "isChanged": false
     },
     {
       "id": "knockdown",
@@ -278,8 +386,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"Rs6XYXEEYOIbUVZo\"><i class=\"fas fa-book-open\"></i> Knockdown</a>",
+      "isChanged": false
     },
     {
       "id": "berserk",
@@ -292,8 +404,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"dtpk97W1sWJY68zF\"><i class=\"fas fa-book-open\"></i> Berserk</a>",
+      "isChanged": false
     },
     {
       "id": "blinded",
@@ -306,8 +422,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"XW0PM0eiepT2fqcD\"><i class=\"fas fa-book-open\"></i> Blinded</a>",
+      "isChanged": false
     },
     {
       "id": "silenced",
@@ -320,8 +440,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"8WNaDcPi0IJbaJAk\"><i class=\"fas fa-book-open\"></i> Silenced</a>",
+      "isChanged": false
     },
     {
       "id": "full-tilt",
@@ -334,8 +458,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"C9275OGG3YcLz1cb\"><i class=\"fas fa-book-open\"></i> Full Tilt</a>",
+      "isChanged": false
     },
     {
       "id": "slowed",
@@ -348,8 +476,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"nbQkEI0uPTHdQtPk\"><i class=\"fas fa-book-open\"></i> Slowed</a>",
+      "isChanged": false
     },
     {
       "id": "immobilized",
@@ -362,8 +494,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"lveZKbwsOHC8wg25\"><i class=\"fas fa-book-open\"></i> Immobilized</a>",
+      "isChanged": false
     },
     {
       "id": "half-buried",
@@ -376,8 +512,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"2oqPSchTRfNviHhm\"><i class=\"fas fa-book-open\"></i> Half-Buried</a>",
+      "isChanged": false
     },
     {
       "id": "on-fire",
@@ -390,8 +530,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"9SQeyWG4sy1vaXO4\"><i class=\"fas fa-book-open\"></i> On Fire</a>",
+      "isChanged": false
     },
     {
       "id": "mesmerized",
@@ -404,8 +548,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"EMsCXyLEv1SEXIT4\"><i class=\"fas fa-book-open\"></i> Mesmerized</a>",
+      "isChanged": false
     },
     {
       "id": "marionette",
@@ -418,8 +566,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"QJyebhpwRNfvkFEi\"><i class=\"fas fa-book-open\"></i> Marionette</a>",
+      "isChanged": false
     },
     {
       "id": "controlled",
@@ -432,8 +584,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"rjHftAZgQQTg41ag\"><i class=\"fas fa-book-open\"></i> Controlled</a>",
+      "isChanged": false
     },
     {
       "id": "all-fours",
@@ -446,8 +602,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"MItXHxvNgfSCFenc\"><i class=\"fas fa-book-open\"></i> All Fours</a>",
+      "isChanged": false
     },
     {
       "id": "flying",
@@ -460,8 +620,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"zghrfBq4iiKosTKu\"><i class=\"fas fa-book-open\"></i> Flying</a>",
+      "isChanged": false
     },
     {
       "id": "grappled",
@@ -474,8 +638,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"lQRKvbZYOo7izSdT\"><i class=\"fas fa-book-open\"></i> Grappled</a>",
+      "isChanged": false
     },
     {
       "id": "hiding",
@@ -488,8 +656,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"5J32lLlKCtZhFbuR\"><i class=\"fas fa-book-open\"></i> Hiding</a>",
+      "isChanged": false
     },
     {
       "id": "misc-a",
@@ -502,8 +674,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
     },
     {
       "id": "misc-b",
@@ -516,8 +692,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
     },
     {
       "id": "misc-c",
@@ -530,8 +710,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
     },
     {
       "id": "misc-d",
@@ -544,8 +728,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
     },
     {
       "id": "misc-e",
@@ -558,8 +746,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
     },
     {
       "id": "misc-f",
@@ -572,8 +764,12 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
     }
   ]
 }
