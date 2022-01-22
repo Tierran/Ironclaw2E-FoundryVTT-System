@@ -627,38 +627,39 @@ export class Ironclaw2EActor extends Actor {
         let labelgiven = addplus;
         let totaldice = [];
 
-        if (data.traits && Array.isArray(traitnames) && traitnames.length > 0) {
-            for (let [key, trait] of Object.entries(data.traits)) {
-                if (traitnames.includes(makeCompareReady(key))) {
-                    if (labelgiven)
+        if (data.traits && Array.isArray(traitnames) && traitnames.length > 0) { // If the actor has traits and the list of traits to use is given
+            for (let [key, trait] of Object.entries(data.traits)) { // Loop through the traits
+                if (traitnames.includes(makeCompareReady(key)) || (trait.name && traitnames.includes(makeCompareReady(trait.name)))) { // If the traitnames include either the key or the name of the trait (career / species name)
+                    totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(trait.diceArray, 2) : trait.diceArray)); // Add the trait to the total dice pool, limited by burdened if applicable
+                    if (labelgiven) // Check if the label has been given to add something in between names
                         label += " + ";
-                    totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(trait.diceArray, 2) : trait.diceArray));
-                    label += convertCamelCase(key);
-                    labelgiven = true;
+                    label += (data.hasExtraCareers && key === "career" ? trait.name : convertCamelCase(key)); // Add the name to the label, either a de-camelcased trait name or the career name if extra careers are a thing
+                    labelgiven = true; // Mark the label as given
                 }
             }
-            if (data.hasExtraCareers) {
+            if (data.hasExtraCareers) { // Check if extra careers are a thing
                 let extracareers = [];
-                data.extraCareerIds.forEach(x => extracareers.push(this.items.get(x)));
-                for (let [index, extra] of extracareers.entries()) {
-                    let key = makeCompareReady(extra.data.data.careerName);
+                data.extraCareerIds.forEach(x => extracareers.push(this.items.get(x))); // Grab each extra career from the ids
+                for (let [index, extra] of extracareers.entries()) { // Loop through the careers
+                    let key = makeCompareReady(extra.data.data.careerName); // Make a comparable key out of the career name
                     if (traitnames.includes(key)) {
+                        // Even if extra careers can't be part of the standard burdened lists, check it just in case of a custom burdened list, though usually the extra career die is just added to the total dice pool
+                        totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(extra.data.data.diceArray, 2) : extra.data.data.diceArray));
                         if (labelgiven)
                             label += " + ";
-                        totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(extra.data.data.diceArray, 2) : extra.data.data.diceArray));
-                        label += extra.data.data.careerName;
+                        label += extra.data.data.careerName; // Add the career name as a label
                         labelgiven = true;
                     }
                 }
             }
         }
-        if (data.skills && Array.isArray(skillnames) && skillnames.length > 0) {
-            for (let [key, skill] of Object.entries(data.skills)) {
+        if (data.skills && Array.isArray(skillnames) && skillnames.length > 0) { // If the actor has skills and the lists of skills to use is given
+            for (let [key, skill] of Object.entries(data.skills)) { // Loop through the skills
                 if (skillnames.includes(makeCompareReady(key))) {
+                    totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(skill.diceArray, 2) : skill.diceArray)); // Add the skill to the total dice pool, limited by burdened if applicable
                     if (labelgiven)
                         label += " + ";
-                    totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(skill.diceArray, 2) : skill.diceArray));
-                    label += convertCamelCase(key);
+                    label += convertCamelCase(key); // Add the skill name as a label after being de-camelcased
                     labelgiven = true;
                 }
             }
@@ -1434,12 +1435,13 @@ export class Ironclaw2EActor extends Actor {
             formconstruction += `<h2>${game.i18n.localize("ironclaw2e.actor.traits")}:</h2>
        <div class="grid-2row grid-minimal">` + "\n";;
             for (let [key, trait] of Object.entries(data.traits)) {
-                let lowerkey = makeCompareReady(key);
+                const lowerkey = makeCompareReady(key); // Separate variable for prechecked in traits to account for using the species or career name in the pre-checked
+                const isPrechecked = prechecked.includes(lowerkey) || (trait.name && prechecked.includes(makeCompareReady(trait.name)));
                 if (firstelement == "")
                     firstelement = lowerkey;
                 formconstruction += `<div class="form-group flex-group-center flex-tight">
        <label class="normal-label">${(data.hasExtraCareers && key === "career" ? trait.name : convertCamelCase(key))}: ${reformDiceString(trait.diceArray)}</label>
-	   <input type="checkbox" id="${lowerkey}" name="trait" value="${lowerkey}" ${prechecked.includes(lowerkey) ? "checked" : ""}></input>
+	   <input type="checkbox" id="${lowerkey}" name="trait" value="${lowerkey}" ${isPrechecked ? "checked" : ""}></input>
       </div>`+ "\n";
             }
             // Extra Career additional boxes
@@ -1447,7 +1449,7 @@ export class Ironclaw2EActor extends Actor {
                 for (let [index, extra] of extracareers.entries()) {
                     if (index >= 2)
                         break; // For UI reasons, only show up to two extra careers on dice pool selection, these should select themselves from the top of the list in the sheet
-                    let lowerkey = makeCompareReady(extra.data.data.careerName);
+                    const lowerkey = makeCompareReady(extra.data.data.careerName);
                     if (firstelement == "")
                         firstelement = lowerkey;
                     formconstruction += `<div class="form-group flex-group-center flex-tight">
@@ -1462,7 +1464,7 @@ export class Ironclaw2EActor extends Actor {
             formconstruction += `<h2>${game.i18n.localize("ironclaw2e.actor.skills")}:</h2>
        <div class="grid grid-3col grid-minimal">` + "\n";
             for (let [key, skill] of Object.entries(data.skills)) {
-                let lowerkey = makeCompareReady(key);
+                const lowerkey = makeCompareReady(key);
                 if (firstelement == "")
                     firstelement = lowerkey;
                 let usedname = (burdenedLimitedStat(lowerkey) ? String.fromCodePoint([9949]) : "") + " " + convertCamelCase(key) + ": " + reformDiceString(skill.diceArray);
