@@ -97,6 +97,22 @@ Hooks.once('init', async function () {
         default: true,
         config: true
     });
+    game.settings.register("ironclaw2e", "autoPrototypeSetup", {
+        name: "ironclaw2e.config.autoPrototypeSetup",
+        hint: "ironclaw2e.config.autoPrototypeSetupHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: true
+    });
+    game.settings.register("ironclaw2e", "autoConditionRemoval", {
+        name: "ironclaw2e.config.autoConditionRemoval",
+        hint: "ironclaw2e.config.autoConditionRemovalHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: true
+    });
     game.settings.register("ironclaw2e", "manageEncumbranceAuto", {
         name: "ironclaw2e.config.manageEncumbranceAuto",
         hint: "ironclaw2e.config.manageEncumbranceAutoHint",
@@ -108,14 +124,6 @@ Hooks.once('init', async function () {
     game.settings.register("ironclaw2e", "coinsHaveWeight", {
         name: "ironclaw2e.config.coinsHaveWeight",
         hint: "ironclaw2e.config.coinsHaveWeightHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: true
-    });
-    game.settings.register("ironclaw2e", "autoPrototypeSetup", {
-        name: "ironclaw2e.config.autoPrototypeSetup",
-        hint: "ironclaw2e.config.autoPrototypeSetupHint",
         scope: "world",
         type: Boolean,
         default: true,

@@ -100,6 +100,8 @@
   "ironclaw2e.config.coinsHaveWeightHint": "If checked, the weight of coins will be added to the encumbrance of the actor. Requires a restart to take effect on all actors.",
   "ironclaw2e.config.autoPrototypeSetup": "WORLD: Auto-setup prototype tokens",
   "ironclaw2e.config.autoPrototypeSetupHint": "If checked, newly created actors will have their prototype token's attributes use type-specific defaults.",
+  "ironclaw2e.config.autoConditionRemoval": "WORLD: Auto-remove conditions",
+  "ironclaw2e.config.autoConditionRemovalHint": "If checked, the system will remove conditions from actors when appropriate.",
   "ironclaw2e.config.calculateAttackEffects": "WORLD: Auto-calculate attack effects",
   "ironclaw2e.config.calculateAttackEffectsHint": "Activates the attack auto-calculation system, which will calculate damage from weapon attacks and counters based on their effects and the dice rolls involved. Resisted and counter-attacks can be resolved from the context menu, as they require the opponent's roll results to properly resolve. Normal successful attacks will automatically send a chat message with the damage calculations and resolved other attacks will send it when resolved'.",
   "ironclaw2e.config.calculateDisplaysFailed": "WORLD: Auto-calculate displays failures",

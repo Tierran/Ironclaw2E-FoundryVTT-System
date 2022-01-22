@@ -1209,7 +1209,11 @@ export class Ironclaw2EActor extends Actor {
         constructionkeys = bonuses.otherkeys;
         constructionarray = bonuses.otherdice;
 
-        this.popupSelectRolled(checkedstats, tnyes, tnnum, extradice, formconstruction, constructionkeys, constructionarray, otherlabel, successfunc);
+        // Aiming auto-remove
+        const actor = this;
+        const autoremove = (x => { actor.deleteEffect("aiming"); });
+
+        this.popupSelectRolled(checkedstats, tnyes, tnnum, extradice, formconstruction, constructionkeys, constructionarray, otherlabel, successfunc, autoremove);
     }
 
     popupCounterRoll(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", item = null, successfunc = null) {
@@ -1379,7 +1383,7 @@ export class Ironclaw2EActor extends Actor {
     /* Supermassive Generic Dice Pool Roll Popup    */
     /* -------------------------------------------- */
 
-    /** Supermassive function to make a dynamic popup window asking about which exact dice pools should be included
+    /** Supermassive mega-function to make a dynamic popup window asking about which exact dice pools should be included
      * @param {string[]} prechecked Skills to autocheck on the dialog
      * @param {boolean} tnyes Whether to use a TN, true for yes
      * @param {number} tnnum TN to use
@@ -1389,14 +1393,16 @@ export class Ironclaw2EActor extends Actor {
      * @param {[number[]]} otherdice An array of dice arrays, the items should match exactly with their counterparts at otherkeys
      * @param {string} otherlabel Text to postpend to the label
      * @param successfunc Callback to execute after going through with the macro, will not execute if cancelled out
+     * @param autocondition Callback to a condition auto-removal function, executed if the setting is on, will not execute if cancelled out
      */
-    popupSelectRolled(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", successfunc = null) {
+    popupSelectRolled(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", successfunc = null, autocondition = null) {
         const data = this.data.data;
         let formconstruction = ``;
         let firstelement = "";
         let hastraits = data.hasOwnProperty("traits");
         let hasskills = data.hasOwnProperty("skills");
         let hashtml = otherinputs.length > 0;
+        const conditionRemoval = game.settings.get("ironclaw2e", "autoConditionRemoval");
 
         if (prechecked === null || typeof (prechecked) === "undefined") {
             console.warn("Prechecked stat array turned up null or undefined! This should not happen, correcting: " + prechecked);
@@ -1602,6 +1608,11 @@ export class Ironclaw2EActor extends Actor {
 
                     if (successfunc && typeof (successfunc) == "function") {
                         successfunc(rollreturn); // Then do the special callback function of the roll if it is set
+                    }
+
+                    // The automated condition removal callback
+                    if (conditionRemoval && autocondition && typeof (autocondition) == "function") {
+                        autocondition(); // Automatic condition removal after a successful roll
                     }
                 }
             }
