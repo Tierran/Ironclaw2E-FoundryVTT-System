@@ -125,7 +125,7 @@ export class Ironclaw2ECombat extends Combat {
 
     /** @override */
     async resetAll() {
-        const updates = this.data.combatants.map(c => {
+        const updates = this.combatants.map(c => {
             return {
                 _id: c.id,
                 initiative: null,
@@ -133,7 +133,7 @@ export class Ironclaw2ECombat extends Combat {
             }
         });
         await this.updateEmbeddedDocuments("Combatant", updates);
-        return this.update({ turn: 0 });
+        return this.update({ turn: 0, combatants: this.combatants.toObject() }, { diff: false });
     }
 
     /** @override */
@@ -144,7 +144,7 @@ export class Ironclaw2ECombat extends Combat {
 
         // Structure input data
         ids = typeof ids === "string" ? [ids] : ids;
-        const currentId = this.combatant.id;
+        const currentId = this.combatant?.id;
 
         // Iterate over Combatants, performing an initiative roll for each
         const updates = [];
@@ -187,7 +187,7 @@ export class Ironclaw2ECombat extends Combat {
 
             // Determine the roll mode
             let rollMode = messageOptions.rollMode || game.settings.get("core", "rollMode");
-            if ((combatant.token.hidden || combatant.hidden) && (rollMode === "roll")) rollMode = "gmroll";
+            if ((combatant.token.hidden || combatant.hidden) && (["roll", "publicroll"].includes(rollMode))) rollMode = "gmroll";
 
             // Construct chat message data
             let messageData = mergeObject({
@@ -213,7 +213,7 @@ export class Ironclaw2ECombat extends Combat {
         await this.updateEmbeddedDocuments("Combatant", updates);
 
         // Ensure the turn order remains with the same combatant
-        if (updateTurn) {
+        if (updateTurn && currentId) {
             await this.update({ turn: this.turns.findIndex(t => t.id === currentId) });
         }
 
@@ -258,6 +258,7 @@ export class Ironclaw2ECombatant extends Combatant {
         }
         else {
             const roll = this.getInitiativeRoll();
+            console.warn("A combatant was missing an actor, somehow.")
             return Promise.resolve({ "roll": roll, "highest": roll.total, "tnData": null, "message": {}, "isSent": false });
         }
     }

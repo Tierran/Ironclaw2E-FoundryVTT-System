@@ -187,8 +187,8 @@ export class Ironclaw2EActor extends Actor {
     /** @override
      * Process the embedded entities data, mostly for lists
      */
-    prepareEmbeddedEntities() {
-        super.prepareEmbeddedEntities();
+    prepareEmbeddedDocuments() {
+        super.prepareEmbeddedDocuments();
         const actorData = this.data;
 
         this._prepareExtraCareerData(actorData);
@@ -899,8 +899,10 @@ export class Ironclaw2EActor extends Actor {
             return;
         }
         let updatedlightdata = {
-            "dimLight": 0, "brightLight": 0, "lightAngle": 360, "lightColor": "#ffffff", "lightAlpha": 0.25, "lightAnimation": {
-                "type": "", "speed": 5, "intensity": 5
+            "light": {
+                "dim": 0, "bright": 0, "angle": 360, "color": "#ffffff", "alpha": 0.25, "animation": {
+                    "type": "", "speed": 5, "intensity": 5
+                }
             }
         };
 
@@ -908,9 +910,11 @@ export class Ironclaw2EActor extends Actor {
 
         if (!lightsource.data.data.lighted) { // Light the light source
             updatedlightdata = {
-                "dimLight": lightsource.data.data.dimLight, "brightLight": lightsource.data.data.brightLight, "lightAngle": lightsource.data.data.lightAngle,
-                "lightColor": lightsource.data.data.lightColor, "lightAlpha": lightsource.data.data.lightAlpha, "lightAnimation": {
-                    "type": lightsource.data.data.lightAnimationType, "speed": lightsource.data.data.lightAnimationSpeed, "intensity": lightsource.data.data.lightAnimationIntensity
+                "light": {
+                    "dim": lightsource.data.data.dimLight, "bright": lightsource.data.data.brightLight, "angle": lightsource.data.data.lightAngle,
+                    "color": lightsource.data.data.lightColor, "alpha": lightsource.data.data.lightAlpha, "animation": {
+                        "type": lightsource.data.data.lightAnimationType, "speed": lightsource.data.data.lightAnimationSpeed, "intensity": lightsource.data.data.lightAnimationIntensity
+                    }
                 }
             };
             const index = lightsources.findIndex(element => element.id == lightsource.id);
@@ -924,14 +928,16 @@ export class Ironclaw2EActor extends Actor {
             doused.push({ "_id": l.id, "data.lighted": false });
         }
         this.updateEmbeddedDocuments("Item", doused);
-
+        console.log(updatedlightdata);
         this._updateTokenLighting(updatedlightdata);
     }
 
     refreshLightSource() {
         let updatedlightdata = {
-            "dimLight": 0, "brightLight": 0, "lightAngle": 360, "lightColor": "#ffffff", "lightAlpha": 0.25, "lightAnimation": {
-                "type": "", "speed": 5, "intensity": 5
+            "light": {
+                "dim": 0, "bright": 0, "angle": 360, "color": "#ffffff", "alpha": 0.25, "animation": {
+                    "type": "", "speed": 5, "intensity": 5
+                }
             }
         };
 
@@ -939,9 +945,11 @@ export class Ironclaw2EActor extends Actor {
         let activesource = lightsources.find(element => element.data.data.lighted == true);
         if (activesource) {
             updatedlightdata = {
-                "dimLight": activesource.data.data.dimLight, "brightLight": activesource.data.data.brightLight, "lightAngle": activesource.data.data.lightAngle,
-                "lightColor": activesource.data.data.lightColor, "lightAlpha": activesource.data.data.lightAlpha, "lightAnimation": {
-                    "type": activesource.data.data.lightAnimationType, "speed": activesource.data.data.lightAnimationSpeed, "intensity": activesource.data.data.lightAnimationIntensity
+                "light": {
+                    "dim": lightsource.data.data.dimLight, "bright": lightsource.data.data.brightLight, "angle": lightsource.data.data.lightAngle,
+                    "color": lightsource.data.data.lightColor, "alpha": lightsource.data.data.lightAlpha, "animation": {
+                        "type": lightsource.data.data.lightAnimationType, "speed": lightsource.data.data.lightAnimationSpeed, "intensity": lightsource.data.data.lightAnimationIntensity
+                    }
                 }
             };
         }
