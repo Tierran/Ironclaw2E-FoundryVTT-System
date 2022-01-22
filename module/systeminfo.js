@@ -34,7 +34,7 @@ export class CommonSystemInfo {
      * The special option types that gift items can have
      */
     static giftSpecialOptions = {
-        "attackBonus": "Attack Bonus", "defenseBonus": "Defense Bonus", "counterBonus": "Counter Bonus", "soakBonus": "Soak Bonus", "guardBonus": "Guard Bonus", "sprintBonus": "Sprint Bonus",
+        "attackBonus": "Attack Bonus", "defenseBonus": "Defense Bonus", "counterBonus": "Counter Bonus", "soakBonus": "Soak Bonus", "guardBonus": "Guard Bonus", "aimBonus": "Aim Bonus", "sprintBonus": "Sprint Bonus",
         "initiativeBonus": "Initiative Bonus", "moveBonus": "Movement Bonus", "flyingBonus": "Flying Move Bonus", "encumbranceBonus": "Encumbrance Limit Bonus", "statChange": "Stat Change", "diceUpgrade": "Dice Upgrade"
     };
     /**
@@ -89,6 +89,13 @@ export function getSpecialOptionPrototype(option) {
             break;
 
         case ("guardBonus"):
+            return mergeObject(special, {
+                "conditionField": "", "otherItemField": "", "worksWhenState": "anyState",
+                "bonusDiceField": "", "replaceNameField": "", "replacesBaseBonus": true
+            });
+            break;
+
+        case ("aimBonus"):
             return mergeObject(special, {
                 "conditionField": "", "otherItemField": "", "worksWhenState": "anyState",
                 "bonusDiceField": "", "replaceNameField": "", "replacesBaseBonus": true

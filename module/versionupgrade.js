@@ -180,6 +180,7 @@ function giftNameLookup(gift) {
         // Veteran
         case ("veteran"):
             settings.push(getSpecialOptionPrototype("guardBonus"));
+            settings.push(getSpecialOptionPrototype("aimBonus"));
             break;
         // Giant
         case ("giant"):
@@ -235,6 +236,9 @@ function giftNameLookup(gift) {
             settings.push(getSpecialOptionPrototype("flyingBonus"));
             settings[0].bonusStrideNumber = 3;
             settings[0].bonusRunNumber = 12;
+            settings.push(getSpecialOptionPrototype("sprintBonus"));
+            settings[1].conditionField = "Flying";
+            settings[1].bonusStatsField = "Weather Sense";
             break;
         case ("wings"):
             settings.push(getSpecialOptionPrototype("flyingBonus"));

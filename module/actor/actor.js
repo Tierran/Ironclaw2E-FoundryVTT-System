@@ -732,10 +732,10 @@ export class Ironclaw2EActor extends Actor {
                                         foobar = this._getShieldConstruction(otherinputs, otherkeys, otherdice);
                                         break;
                                     case ("guard"):
-                                        foobar = this._getGuardingConstruction(otherinputs, otherkeys, otherdice, false);
+                                        foobar = this._getStatusBonusConstruction(otherinputs, otherkeys, otherdice, "guard", false);
                                         break;
                                     case ("guard-always"):
-                                        foobar = this._getGuardingConstruction(otherinputs, otherkeys, otherdice, true);
+                                        foobar = this._getStatusBonusConstruction(otherinputs, otherkeys, otherdice, "guard", true);
                                         break;
                                 }
                                 if (foobar) {
@@ -821,18 +821,35 @@ export class Ironclaw2EActor extends Actor {
      * @param {any} otherinputs
      * @param {any} otherkeys
      * @param {any} otherdice
-     * @param {object} item The item to use when checking setting applicability, or null if no item is relevant
+     * @param {object} bonustype Whether the bonus is of "aim" or "guard" type
      * @param {boolean} skipcheck Whether to skip the "Guarding" condition check
      * @returns {object} Returns a holder object which returns the inputs with the added bonuses
      * @private
      */
-    _getGuardingConstruction(otherinputs, otherkeys, otherdice, skipcheck = false) {
+    _getStatusBonusConstruction(otherinputs, otherkeys, otherdice, bonustype, skipcheck = false) {
         const data = this.data.data;
-        let replaceSettings = []; // Guard bonuses that would replace the base bonus
-        let guardSettings = []; // Guard bonuses that would add to the base bonus
-        if (skipcheck || hasConditionsIronclaw("guarding", this)) { // If the check is skipped or the actor has a "Guarding" condition
-            if (data.processingLists?.guardBonus) { // Check if move bonuses even exist
-                for (let setting of data.processingLists.guardBonus) { // Loop through them
+        let replaceSettings = []; // Bonuses that would replace the base bonus
+        let addSettings = []; // Bonuses that would add to the base bonus
+
+        let bonusName = "", bonusList = "";
+        switch (bonustype) { // Depending on the given type, look for the corresponding bonus type
+            case "aim":
+                bonusName = "aiming";
+                bonusList = "aimBonus";
+                break;
+            case "guard":
+                bonusName = "guarding";
+                bonusList = "guardBonus";
+                break;
+            default:
+                console.error("Status bonus construction somehow defaulted on bonus type lookup: " + bonustype);
+                return { "otherinputs": otherinputs, "otherkeys": otherkeys, "otherdice": otherdice };
+                break;
+        }
+
+        if (skipcheck || hasConditionsIronclaw(bonusName, this)) { // If the check is skipped or the actor has a "Guarding" condition
+            if (data.processingLists?.[bonusList]) { // Check if move bonuses even exist
+                for (let setting of data.processingLists[bonusList]) { // Loop through them
                     if (checkApplicability(setting, null, this)) { // Check initial applicability
                         let used = setting; // Store the setting in a temp variable
                         let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
@@ -845,7 +862,7 @@ export class Ironclaw2EActor extends Actor {
                             if (used.replacesBaseBonus) {
                                 replaceSettings.push(used);
                             } else {
-                                guardSettings.push(used);
+                                addSettings.push(used);
                             }
                         } else { // If used somehow turns out unsuable, send an error
                             console.error("Somehow, the used setting came up unusable: " + used);
@@ -853,37 +870,37 @@ export class Ironclaw2EActor extends Actor {
                     }
                 }
             }
-        } else { // If the actor does not have "Guarding", just return the variables like they were
+        } else { // If the actor does not have the proper status condition, just return the variables like they were
             return { "otherinputs": otherinputs, "otherkeys": otherkeys, "otherdice": otherdice };
         }
 
-        let guardbonus = [0, 0, 1, 0, 0];
-        let guardlabel = game.i18n.localize("ironclaw2e.dialog.dicePool.guarding");
-        // Go through the potential guard bonus replacements
+        let bonusArray = [0, 0, 1, 0, 0];
+        let bonusLabel = game.i18n.localize("ironclaw2e.dialog.dicePool." + bonusName);
+        // Go through the potential status bonus replacements
         if (Array.isArray(replaceSettings)) {
             for (let setting of replaceSettings) {
                 if (setting.bonusDice) { // If the setting has bonus dice
-                    if (compareDiceArrays(setting.bonusDice, guardbonus) < 0) { // Check if the bonus dice are bigger than the guard bonus
-                        guardbonus = setting.bonusDice; // Set the guard bonus to be the setting bonus
-                        guardlabel = setting.giftName + " " + game.i18n.localize("ironclaw2e.dialog.dicePool.guarding"); // Name the label after the bonus
+                    if (compareDiceArrays(setting.bonusDice, bonusArray) < 0) { // Check if the bonus dice are bigger than the normal bonus
+                        bonusArray = setting.bonusDice; // Set the bonus to be the setting bonus
+                        bonusLabel = setting.giftName + " " + game.i18n.localize("ironclaw2e.dialog.dicePool." + bonusName); // Name the label after the bonus
                     }
                 }
             }
         }
-        // Go through the potential guard bonus additions
-        if (Array.isArray(guardSettings)) {
-            for (let setting of guardSettings) {
+        // Go through the potential status bonus additions
+        if (Array.isArray(addSettings)) {
+            for (let setting of addSettings) {
                 if (setting.bonusDice) { // If the bonus dice exist
-                    guardbonus = addArrays(guardbonus, setting.bonusDice); // Add them
+                    bonusArray = addArrays(bonusArray, setting.bonusDice); // Add them
                 }
             }
         }
 
-        otherkeys.push(guardlabel);
-        otherdice.push(guardbonus);
+        otherkeys.push(bonusLabel);
+        otherdice.push(bonusArray);
         otherinputs += `<div class="form-group flexrow">
-                 <label class="normal-label">${guardlabel}: ${reformDiceString(guardbonus, true)}</label>
-	             <input type="checkbox" id="${makeCompareReady(guardlabel)}" name="${makeCompareReady(guardlabel)}" checked></input>
+                 <label class="normal-label">${bonusLabel}: ${reformDiceString(bonusArray, true)}</label>
+	             <input type="checkbox" id="${makeCompareReady(bonusLabel)}" name="${makeCompareReady(bonusLabel)}" checked></input>
                 </div>`+ "\n";
 
         return { "otherinputs": otherinputs, "otherkeys": otherkeys, "otherdice": otherdice };
@@ -1155,13 +1172,13 @@ export class Ironclaw2EActor extends Actor {
         constructionarray = shield.otherdice;
 
         // Guarding bonus
-        const guard = this._getGuardingConstruction(formconstruction, constructionkeys, constructionarray);
+        const guard = this._getStatusBonusConstruction(formconstruction, constructionkeys, constructionarray, "guard");
         formconstruction = guard.otherinputs;
         constructionkeys = guard.otherkeys;
         constructionarray = guard.otherdice;
 
         // Defense bonuses
-        // TODO: Modify to account for special defenses
+        // TODO: Properly modify to account for special defenses
         const defensetype = (isparry ? "parry" : (isspecial ? "special" : "dodge"));
         const bonuses = this._getGiftSpecialConstruction("defenseBonus", checkedstats, formconstruction, constructionkeys, constructionarray, item, true, defensetype);
         checkedstats = bonuses.prechecked;
@@ -1178,6 +1195,12 @@ export class Ironclaw2EActor extends Actor {
         let formconstruction = otherinputs;
         let constructionkeys = [...otherkeys];
         let constructionarray = [...otherdice];
+
+        // Aiming bonus
+        const aim = this._getStatusBonusConstruction(formconstruction, constructionkeys, constructionarray, "aim");
+        formconstruction = aim.otherinputs;
+        constructionkeys = aim.otherkeys;
+        constructionarray = aim.otherdice;
 
         // Attack bonuses
         const bonuses = this._getGiftSpecialConstruction("attackBonus", checkedstats, formconstruction, constructionkeys, constructionarray, item);
@@ -1197,7 +1220,7 @@ export class Ironclaw2EActor extends Actor {
         let constructionarray = [...otherdice];
 
         // Guarding bonus
-        const guard = this._getGuardingConstruction(formconstruction, constructionkeys, constructionarray);
+        const guard = this._getStatusBonusConstruction(formconstruction, constructionkeys, constructionarray, "guard");
         formconstruction = guard.otherinputs;
         constructionkeys = guard.otherkeys;
         constructionarray = guard.otherdice;

@@ -153,6 +153,7 @@
   "ironclaw2e.dialog.dicePool.guardSoakVeteran": "Veteran guard soak",
   "ironclaw2e.dialog.dicePool.guarding": "Guarding",
   "ironclaw2e.dialog.dicePool.guardingVeteran": "Veteran guarding",
+  "ironclaw2e.dialog.dicePool.aiming": "Aiming",
   "ironclaw2e.dialog.dicePool.soakWeak": "Soak against Weak damage, double dice rolled",
 
   "ironclaw2e.dialog.damageCalc.title": "Damage Calculation for {name}",
@@ -310,6 +311,7 @@
 
   "ironclaw2e.effect.status.focused": "Focused",
   "ironclaw2e.effect.status.guarding": "Guarding",
+  "ironclaw2e.effect.status.aiming": "Aiming",
   "ironclaw2e.effect.status.reeling": "Reeling",
   "ironclaw2e.effect.status.hurt": "Hurt",
   "ironclaw2e.effect.status.afraid": "Afraid",
