@@ -20,24 +20,6 @@
       "isChanged": false
     },
     {
-      "id": "guarding",
-      "name": "Guarding",
-      "icon": "icons/svg/shield.svg",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.ZzpRbp4XIFV5y8rW]{Guarding}",
-      "applyTrigger": "",
-      "removeTrigger": "",
-      "activeEffect": null,
-      "options": {
-        "overlay": false,
-        "removeOthers": false,
-        "markDefeated": false,
-        "outputChat": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"ZzpRbp4XIFV5y8rW\"><i class=\"fas fa-book-open\"></i> Guarding</a>",
-      "isChanged": false
-    },
-    {
       "id": "aiming",
       "name": "Aiming",
       "icon": "icons/svg/target.svg",
@@ -53,6 +35,24 @@
       },
       "isNew": false,
       "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"sNhLDTvRmn4LG4Qj\"><i class=\"fas fa-book-open\"></i> Aiming</a>",
+      "isChanged": false
+    },
+    {
+      "id": "guarding",
+      "name": "Guarding",
+      "icon": "icons/svg/shield.svg",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.ZzpRbp4XIFV5y8rW]{Guarding}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"ZzpRbp4XIFV5y8rW\"><i class=\"fas fa-book-open\"></i> Guarding</a>",
       "isChanged": false
     },
     {

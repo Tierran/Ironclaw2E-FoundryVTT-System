@@ -25,6 +25,7 @@ import { rollTargetNumberArray } from "../dicerollers.js";
 import { rollHighestArray } from "../dicerollers.js";
 import { enforceLimit } from "../helpers.js";
 import { burdenedLimitedStat } from "../helpers.js";
+import { Ironclaw2EItem } from "../item/item.js";
 
 /**
  * Extend the base Actor entity by defining a custom data necessary for the Ironclaw system
@@ -908,9 +909,13 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /* -------------------------------------------- */
-    /*  Actor Token Change Functions                */
+    /*  Actor Change Functions                      */
     /* -------------------------------------------- */
 
+    /**
+     * Change which illumination item the actor is using, or turn them all off
+     * @param {Ironclaw2EItem} lightsource
+     */
     changeLightSource(lightsource) {
         if (!lightsource) {
             console.error("Attempted to change a light source without providing light source for actor: " + this);
@@ -946,10 +951,12 @@ export class Ironclaw2EActor extends Actor {
             doused.push({ "_id": l.id, "data.lighted": false });
         }
         this.updateEmbeddedDocuments("Item", doused);
-        console.log(updatedlightdata);
         this._updateTokenLighting(updatedlightdata);
     }
 
+    /**
+     * Refresh the token light source based on which illumination item is active, if any
+     */
     refreshLightSource() {
         let updatedlightdata = {
             "light": {
@@ -975,6 +982,12 @@ export class Ironclaw2EActor extends Actor {
         this._updateTokenLighting(updatedlightdata);
     }
 
+    /**
+     * Apply damage conditions to the actor
+     * @param {number} damage
+     * @param {boolean} knockout
+     * @param {boolean} nonlethal
+     */
     applyDamage(damage, knockout, nonlethal = false) {
         let adding = ["reeling"];
         if (damage >= 1) {
@@ -993,10 +1006,19 @@ export class Ironclaw2EActor extends Actor {
         return adding;
     }
 
+    /**
+     * Add a given condition to the actor
+     * @param {string | [string]} condition 
+     */
     async addEffect(condition) {
         addConditionsIronclaw(condition, this);
     }
 
+    /**
+     * Remove a given condition from the actor, either by name or id
+     * @param {string | [string]} condition
+     * @param {boolean} isid
+     */
     async deleteEffect(condition, isid = false) {
         if (isid) {
             this.deleteEmbeddedDocuments("ActiveEffect", [condition]);
@@ -1006,9 +1028,32 @@ export class Ironclaw2EActor extends Actor {
         }
     }
 
+    /**
+     * Remove all conditions from the actor
+     */
     async resetEffects() {
         for (let effect of this.effects) {
             await effect.delete();
+        }
+    }
+
+    /** Start of turn maintenance for the actor
+     */
+    startOfRound() {
+        // Condition auto-removal system, performed only if the system is active and the no-turn-maintenance mode is not
+        const conditionRemoval = game.settings.get("ironclaw2e", "autoConditionRemoval") && !game.settings.get("ironclaw2e", "autoConditionRemovalNoTurns");
+        if (conditionRemoval) {
+            this.deleteEffect("guarding");
+        }
+    }
+
+    /** End of turn maintenance for the actor
+     */
+    endOfRound() {
+        // Condition auto-removal system, performed only if the system is active and the no-turn-maintenance mode is not
+        const conditionRemoval = game.settings.get("ironclaw2e", "autoConditionRemoval") && !game.settings.get("ironclaw2e", "autoConditionRemovalNoTurns");
+        if (conditionRemoval) {
+            this.deleteEffect("aiming");
         }
     }
 

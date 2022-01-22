@@ -542,13 +542,13 @@ export function getMacroSpeaker(rollingactor) {
  * Helper function to find the token for a given actor, or return undefined if no token is found
  * On non-synthetic actors, requires the token's actorLink to be TRUE in order to pick them
  * @param {Actor} actor The actor to find a token for
- * @returns {TokenDocument} Returns the found token, or undefined
+ * @returns {TokenDocument} Returns the found token, or null
  */
 export function findActorToken(actor) {
     if (!actor)
-        return;
+        return null;
 
-    let foundtoken;
+    let foundtoken = null;
     if (actor.token) {
         foundtoken = actor.token;
     }

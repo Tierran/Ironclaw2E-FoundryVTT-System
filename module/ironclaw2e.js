@@ -113,6 +113,14 @@ Hooks.once('init', async function () {
         default: false,
         config: true
     });
+    game.settings.register("ironclaw2e", "autoConditionRemovalNoTurns", {
+        name: "ironclaw2e.config.autoConditionRemovalNoTurns",
+        hint: "ironclaw2e.config.autoConditionRemovalNoTurnsHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: true
+    });
     game.settings.register("ironclaw2e", "manageEncumbranceAuto", {
         name: "ironclaw2e.config.manageEncumbranceAuto",
         hint: "ironclaw2e.config.manageEncumbranceAutoHint",

@@ -210,14 +210,14 @@ export class CommonConditionInfo {
         icon: "icons/svg/upgrade.svg"
     },
     {
-        id: "guarding",
-        label: "ironclaw2e.effect.status.guarding",
-        icon: "icons/svg/shield.svg"
-    },
-    {
         id: "aiming",
         label: "ironclaw2e.effect.status.aiming",
         icon: "icons/svg/target.svg"
+    },
+    {
+        id: "guarding",
+        label: "ironclaw2e.effect.status.guarding",
+        icon: "icons/svg/shield.svg"
     },
     {
         id: "reeling",
@@ -418,7 +418,7 @@ export class CommonConditionInfo {
     /**
      * Map of standard names and their proper names in the CUB-provided condition-map
      */
-    static cubList = Object.freeze(new Map([["focused", "Focused"], ["guarding", "Guarding"], ["aiming", "Aiming"], ["reeling", "Reeling"], ["hurt", "Hurt"], ["afraid", "Afraid"],
+    static cubList = Object.freeze(new Map([["focused", "Focused"], ["aiming", "Aiming"], ["guarding", "Guarding"], ["reeling", "Reeling"], ["hurt", "Hurt"], ["afraid", "Afraid"],
     ["injured", "Injured"], ["dying", "Dying"], ["dead", "Dead"], ["overkilled", "Overkilled"], ["asleep", "Asleep"], ["unconscious", "Unconscious"],
     ["burdened", "Burdened"], ["over-burdened", "Over-Burdened"], ["cannotmove", "Cannot Move"], ["fatigued", "Fatigued"], ["sick", "Sick"],
     ["confused", "Confused"], ["terrified", "Terrified"], ["enraged", "Enraged"], ["knockdown", "Knockdown"], ["berserk", "Berserk"],

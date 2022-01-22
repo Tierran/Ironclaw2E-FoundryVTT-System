@@ -124,6 +124,14 @@ export class Ironclaw2ECombat extends Combat {
     }
 
     /** @override */
+    async nextTurn() {
+        await this.combatant?.endOfTurnMaintenance();
+        await super.nextTurn();
+        await this.combatant?.startOfTurnMaintenance();
+        return this;
+    }
+
+    /** @override */
     async resetAll() {
         const updates = this.combatants.map(c => {
             return {
@@ -248,6 +256,20 @@ export class Ironclaw2ECombatant extends Combatant {
     }
 
     /**
+     * Do things that happen automatically at the start of the combatant's next turn
+     */
+    async startOfTurnMaintenance() {
+        this.actor?.startOfRound(); // Actor SOT function
+    }
+
+    /**
+     * Do things that happen automatically at the end of the combatant's turn
+     */
+    async endOfTurnMaintenance() {
+        this.actor?.endOfRound(); // Actor EOT function
+    }
+
+    /**
      * Get the initiative check for the combatant, with a backup system in case the combatant is missing an actor, somehow
      * @param {number} tn
      * @returns {Promise<DiceReturn>}
@@ -267,8 +289,9 @@ export class Ironclaw2ECombatant extends Combatant {
     rollInitiative(formula) { console.warn("Basic rollInitiative called on Ironclaw2ECombatant. This shouldn't happen."); }
 
     /**
-     * Update the value of the tracked resource for this Combatant.
+     * Update the initiative check result to the combat tracker for quick reference
      * @returns {null|object}
+     * @override
      */
     updateResource() {
         return this.resource = this.getFlag("ironclaw2e", "initiativeResult") || null;
