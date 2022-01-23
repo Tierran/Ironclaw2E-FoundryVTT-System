@@ -222,7 +222,6 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         const name = event.currentTarget.name;
         const value = event.currentTarget.value;
         this.item.giftChangeSpecialField(index, name, value);
-        console.log(this.item);
     }
 
     /**
