@@ -1,3 +1,10 @@
+### 0.5.1 Clean aim release
+ - Added "Aiming" as a condition
+ - Added a system to auto-remove conditions, mostly for combat
+ - Species and career can now be called by their name for a roll, rather than just "species" or "career"
+ - Added a "/directroll" command with ChatCommands
+ - Changed "/actorroll" to "/popuproll" for ChatCommands
+
 ### 0.5.0 Plan nine release
  - Upgraded to FoundryVTT 0.9
  - Fixed upgrade bugs with illumination, gifts and extra careers
