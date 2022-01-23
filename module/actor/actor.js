@@ -785,6 +785,12 @@ export class Ironclaw2EActor extends Actor {
                                     case ("guard-always"):
                                         foobar = this._getStatusBonusConstruction(otherinputs, otherkeys, otherdice, "guard", true);
                                         break;
+                                    case ("aim"):
+                                        foobar = this._getStatusBonusConstruction(otherinputs, otherkeys, otherdice, "aim", false);
+                                        break;
+                                    case ("aim-always"):
+                                        foobar = this._getStatusBonusConstruction(otherinputs, otherkeys, otherdice, "aim", true);
+                                        break;
                                 }
                                 if (foobar) {
                                     otherinputs = foobar.otherinputs;

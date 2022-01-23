@@ -222,10 +222,11 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         const name = event.currentTarget.name;
         const value = event.currentTarget.value;
         this.item.giftChangeSpecialField(index, name, value);
+        console.log(this.item);
     }
 
     /**
-     * Handle change in a text field special setting
+     * Handle change in a number field special setting
      * @param {any} event
      */
     _onChangeSpecialNumber(event) {
@@ -239,7 +240,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
     }
 
     /**
-     * Handle change in a text field special setting
+     * Handle change in a boolean special setting
      * @param {any} event
      */
     _onChangeSpecialBoolean(event) {

@@ -65,6 +65,7 @@ For gifts that should interact with the system by giving situational bonuses, th
  - **Counter Bonus**: A bonus applies when counter-attacking with a weapon.  
  - **Soak Bonus**: A bonus applied when rolling for Soak.  
  - **Guard Bonus**: Either a replacement or a bonus to what the Guarding condition gives. No need to check whether the actor is Guarding when configuring this bonus, it's implicit in its type.  
+ - **Aim Bonus**:  Either a replacement or a bonus to what the Aiming condition gives. No need to check whether the actor is Aiming when configuring this bonus, it's implicit in its type.  
  - **Sprint Bonus**: A bonus applied to the sprint roll.  
  - **Initiative Bonus**: A bonus applied to the initiative roll.  
  - **Movement Bonus**: A bonus that changes the movement speed of an actor.  
@@ -103,7 +104,7 @@ If the special bonus applies, it's applied where relevant, with the bonus depend
 <details>
 <summary>List of effect configuration fields</summary>
 
- - **Bonus Sources**: List of special additions on the bonus. "Armor" adds the worn armors with the bonus, "Shield" adds the equipped shield, "Guard" adds the guard bonus if the actor is Guarding, and "Guard-always" adds the guard bonus whether or not the actor is Guarding.
+ - **Bonus Sources**: List of special additions on the bonus. "Armor" adds the worn armors with the bonus, "Shield" adds the equipped shield, "Guard" or "Aim" adds the guarding or aiming bonus if the actor has the respective condition, and "Guard-always" or "Aim-always" adds the guarding or aiming bonus whether or not the actor has the condition.
  - **Bonus Stats**: List of stats (traits and/or skills) to add with the bonus as pre-checked. If empty, the bonus uses its gift's stats.
  - **Bonus Dice**: Dice to add with the bonus as an extra field. If empty, the bonus uses its gift's dice.
  - **Replaces the Base Guarding Bonus**: Whether the bonus to Guarding replaces or adds to the Guarding dice.
