@@ -124,8 +124,9 @@ Damage calculations have a separate pop-up function for simpler calculation. Jus
 The "Condition auto-removal" system will remove conditions from actors based on internal hard-coded logic. This is mostly for conditions that are necessary to actively manage while in combat.  
 <details>
 <summary>The current logic is as follows:</summary>
+
 *Aiming* will be removed after attacks and at the end of the actor's own turn.  
-*Guarding* will be removed at the start of the actor's next turn.
+*Guarding* will be removed at the start of the actor's next turn.  
 
 </details>
 
