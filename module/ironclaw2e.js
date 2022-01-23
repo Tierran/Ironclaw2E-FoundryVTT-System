@@ -292,6 +292,11 @@ Hooks.once("init", function () {
     loadHandleBarTemplates();
 });
 
+/**
+ * Adds the Ironclaw context menu options to the given menu
+ * @param {any} html
+ * @param {any} entryOptions The menu
+ */
 function addIronclawChatLogContext(html, entryOptions) {
     entryOptions.push(
         {

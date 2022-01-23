@@ -360,23 +360,6 @@ export function splitStatsAndBonus(fullset, ignorecheck = false) {
 }
 
 /**
- * Helper function to see if any of a list of trait and skill names is included in the given names
- * @param {string[]} prechecked List of trait and skill names
- * @param {string | string[]} givennames A name or a list of names to check the prechecked list against, remember to make these comparison ready before using here
- * @returns {boolean} Whether any match was found
- */
-export function checkForPrechecked(prechecked, givennames) {
-    if (!Array.isArray(prechecked)) {
-        console.error("Prechecked check failed, not given an array: " + prechecked);
-        return false;
-    }
-
-    const usednames = typeof givennames == "string" ? [givennames] : givennames;
-
-    return prechecked.some(element => usednames.includes(element));
-}
-
-/**
  * Small helper to check whether a given skill is subject to the burdened limit
  * @param {string} name Name of the skill
  * @returns {boolean} Returns true if the limit applies

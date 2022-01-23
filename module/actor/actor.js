@@ -1,12 +1,12 @@
-import { findTotalDice, splitStatsAndBonus } from "../helpers.js";
+import { checkDiceArrayEmpty } from "../helpers.js";
 import { addArrays } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
 import { convertCamelCase } from "../helpers.js";
 import { getMacroSpeaker } from "../helpers.js";
 import { findActorToken } from "../helpers.js";
-import { findInItems } from "../helpers.js";
-import { checkForPrechecked } from "../helpers.js";
+import { findTotalDice } from "../helpers.js";
+import { splitStatsAndBonus } from "../helpers.js";
 import { nullCheckConcat } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
 import { checkDiceArrayIndex } from "../helpers.js";
@@ -626,7 +626,7 @@ export class Ironclaw2EActor extends Actor {
         const data = this.data.data;
         let label = "";
         let labelgiven = addplus;
-        let totaldice = [];
+        let totaldice = [0, 0, 0, 0, 0];
 
         if (data.traits && Array.isArray(traitnames) && traitnames.length > 0) { // If the actor has traits and the list of traits to use is given
             for (let [key, trait] of Object.entries(data.traits)) { // Loop through the traits
@@ -663,6 +663,52 @@ export class Ironclaw2EActor extends Actor {
                     label += convertCamelCase(key); // Add the skill name as a label after being de-camelcased
                     labelgiven = true;
                 }
+            }
+        }
+
+        return { "totalDice": totaldice, "label": label, "labelGiven": labelgiven };
+    }
+
+    /**
+     * Get the total added dice pool from the checked traits, skills, extra dice and bonus dice
+     * @param {string[]} prechecked Traits and skills to add the dice from
+     * @param {boolean} isburdened Whether to apply the burdened limit to relevant skills
+     * @param {string} extradice Extra dice to add
+     * @param {[string]} otherkeys An array of keys, if empty the function will not add labels for the bonus dice
+     * @param {[number[]]} otherdice An array of dice arrays, the items should match exactly with their counterparts at otherkeys
+     */
+    _getAllDicePools(prechecked, isburdened, extradice = "", otherkeys = [], otherdice = []) {
+        let label = "";
+        let labelgiven = false;
+        let totaldice = [0, 0, 0, 0, 0];
+
+        // Get the trait and skill pools
+        const dicePools = this._getDicePools(prechecked, prechecked, isburdened);
+        label = dicePools.label;
+        labelgiven = dicePools.labelGiven;
+        totaldice = dicePools.totalDice;
+
+        // Get the bonus dice pools
+        if (otherdice?.length > 0) {
+            for (let i = 0; i < otherdice.length; ++i) {
+                totaldice = addArrays(totaldice, otherdice[i]);
+                if (otherkeys?.length > i) { // Only try to add a label if the array has a key to use as a label
+                    if (labelgiven)
+                        label += " + ";
+                    label += otherkeys[i];
+                }
+                labelgiven = true;
+            }
+        }
+
+        // Get the extra dice
+        if (extradice?.length > 0) {
+            const extra = findTotalDice(extradice);
+            if (checkDiceArrayEmpty(extra)) {
+                if (labelgiven)
+                    label += " + ";
+                label += game.i18n.localize("ironclaw2e.chat.extraDice");
+                totaldice = addArrays(totaldice, extra);
             }
         }
 
@@ -1081,22 +1127,11 @@ export class Ironclaw2EActor extends Actor {
         constructionkeys = bonuses.otherkeys;
         constructionarray = bonuses.otherdice;
 
-        let bonusString = " + ";
-        for (let key of constructionkeys) {
-            bonusString += key + " + ";
-        }
-        bonusString = bonusString.slice(0, -3);
-
         let foo, bar;
         switch (returntype) { // Yes, yes, the breaks are unnecessary
             case -1:
-                foo = this._getDicePools(prechecked, prechecked, burdened);
+                foo = this._getAllDicePools(prechecked, burdened, "", constructionkeys, constructionarray);
                 bar = foo.totalDice;
-                if (constructionarray?.length > 0) {
-                    for (let dice of constructionarray) {
-                        bar = addArrays(bar, dice);
-                    }
-                }
                 return bar;
                 break;
             case 0:
@@ -1104,24 +1139,14 @@ export class Ironclaw2EActor extends Actor {
                 return;
                 break;
             case 1:
-                foo = this._getDicePools(prechecked, prechecked, burdened);
+                foo = this._getAllDicePools(prechecked, burdened, "", constructionkeys, constructionarray);
                 bar = foo.totalDice;
-                if (constructionarray?.length > 0) {
-                    for (let dice of constructionarray) {
-                        bar = addArrays(bar, dice);
-                    }
-                }
-                return rollHighestArray(bar, game.i18n.localize("ironclaw2e.chat.rollingInitiative") + ": " + foo.label + bonusString, this, false);
+                return rollHighestArray(bar, game.i18n.localize("ironclaw2e.chat.rollingInitiative") + ": " + foo.label, this, false);
                 break;
             case 2:
-                foo = this._getDicePools(prechecked, prechecked, burdened);
+                foo = this._getAllDicePools(prechecked, burdened, "", constructionkeys, constructionarray);
                 bar = foo.totalDice;
-                if (constructionarray?.length > 0) {
-                    for (let dice of constructionarray) {
-                        bar = addArrays(bar, dice);
-                    }
-                }
-                return rollTargetNumberArray(tntouse, bar, game.i18n.localize("ironclaw2e.chat.rollingInitiativeCheck") + ": " + foo.label + bonusString, this, false);
+                return rollTargetNumberArray(tntouse, bar, game.i18n.localize("ironclaw2e.chat.rollingInitiativeCheck") + ": " + foo.label, this, false);
                 break;
         }
 
@@ -1151,13 +1176,8 @@ export class Ironclaw2EActor extends Actor {
         let foo, bar;
         switch (returntype) { // Yes, yes, the breaks are unnecessary
             case -1:
-                foo = this._getDicePools(prechecked, prechecked, burdened);
+                foo = this._getAllDicePools(prechecked, burdened, "", constructionkeys, constructionarray);
                 bar = foo.totalDice;
-                if (constructionarray?.length > 0) {
-                    for (let dice of constructionarray) {
-                        bar = addArrays(bar, dice);
-                    }
-                }
                 return bar;
                 break;
             case 0:
@@ -1430,7 +1450,7 @@ export class Ironclaw2EActor extends Actor {
     /* -------------------------------------------- */
 
     /** Supermassive mega-function to make a dynamic popup window asking about which exact dice pools should be included
-     * @param {string[]} prechecked Skills to autocheck on the dialog
+     * @param {string[]} prechecked Traits and skills to autocheck on the dialog
      * @param {boolean} tnyes Whether to use a TN, true for yes
      * @param {number} tnnum TN to use
      * @param {string} extradice Default extra dice to use for the bottom one-line slot
@@ -1620,9 +1640,9 @@ export class Ironclaw2EActor extends Actor {
                             let OTHER = html.find(`[name=${makeCompareReady(otherkeys[i])}]`);
                             let otherchecked = (hashtml && OTHER.length > 0 ? OTHER[0].checked : true);
                             if (otherchecked) {
+                                totaldice = addArrays(totaldice, otherdice[i]);
                                 if (labelgiven)
                                     label += " + ";
-                                totaldice = addArrays(totaldice, otherdice[i]);
                                 label += otherkeys[i];
                                 labelgiven = true;
                             }
@@ -1665,5 +1685,20 @@ export class Ironclaw2EActor extends Actor {
             }
         }, { width: 600 });
         dlog.render(true);
+    }
+
+    /** Function to silently roll the given prechecked dice pools and extra dice, instead of popping a dialog for it
+     * @param {string[]} prechecked Traits and skills to roll
+     * @param {boolean} tnyes Whether to use a TN, true for yes
+     * @param {number} tnnum TN to use
+     * @param {string} extradice Extra dice to roll
+     * @param {[string]} otherkeys An array of keys, to be used for UI information
+     * @param {[number[]]} otherdice An array of dice arrays, the items should match exactly with their counterparts at otherkeys
+     * @param {string} otherlabel Text to postpend to the label
+     * @param successfunc Callback to execute after going through with the macro, executed unless an error happens
+     * @param autocondition Callback to a condition auto-removal function, executed if the setting is on, executed unless an error happens
+     */
+    silentSelectRolled(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherlabel = "", successfunc = null, autocondition = null) {
+
     }
 }
