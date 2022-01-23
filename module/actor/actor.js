@@ -1698,7 +1698,32 @@ export class Ironclaw2EActor extends Actor {
      * @param successfunc Callback to execute after going through with the macro, executed unless an error happens
      * @param autocondition Callback to a condition auto-removal function, executed if the setting is on, executed unless an error happens
      */
-    silentSelectRolled(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherlabel = "", successfunc = null, autocondition = null) {
+    async silentSelectRolled(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherlabel = "", successfunc = null, autocondition = null) {
+        const burdened = hasConditionsIronclaw("burdened", this);
+        // Get the total of all the dice pools
+        const all = this._getAllDicePools(prechecked, burdened, extradice, otherkeys, otherdice);
 
+        // Set the label
+        let label = all.label + ".";
+
+        // If it exists, set the separate label
+        if (typeof (otherlabel) === 'string' && otherlabel.length > 0)
+            label += `<p style="color:black">${otherlabel}</p>`;
+
+        let rollreturn;
+        if (tnyes) // Do the actual roll, either TN or Highest based on tnyes
+            rollreturn = await rollTargetNumberArray(tnnum, all.totalDice, label, this);
+        else
+            rollreturn = await rollHighestArray(totaldice, all.totalDice, this);
+
+        // The success callback function
+        if (successfunc && typeof (successfunc) == "function") {
+            successfunc(rollreturn);
+        }
+
+        // The condition callback function
+        if (conditionRemoval && autocondition && typeof (autocondition) == "function") {
+            autocondition();
+        }
     }
 }
