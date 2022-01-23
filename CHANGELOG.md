@@ -1,3 +1,7 @@
+### 0.5.2 Aimed source release
+ - Added aiming as a bonus source
+ - Misc fixes
+
 ### 0.5.1 Clean aim release
  - Added "Aiming" as a condition
  - Added a system to auto-remove conditions, mostly for combat
