@@ -136,7 +136,7 @@ export class Ironclaw2EActor extends Actor {
                         }
 
                         if (resist) actor?.popupSelectRolled(defenseSplit[0], resist, 3, EXTRA || "", otherinputs, otherkeys, otherdice, rollLabel);
-                        else actor?.popupDefenseRoll(defenseSplit[0], resist, 3, EXTRA || "", otherinputs, otherkeys, otherdice, rollLabel, null, false, !standard);
+                        else actor?.popupDefenseRoll(false, defenseSplit[0], resist, 3, EXTRA || "", otherinputs, otherkeys, otherdice, rollLabel, null, false, !standard);
                     } else if (defensetype === "extra") {
                         let extra = findTotalDice(EXTRA);
                         if (resist) rollTargetNumberArray(3, extra, rollLabel, actor);
@@ -1195,7 +1195,7 @@ export class Ironclaw2EActor extends Actor {
     /*  Special Popup Macro Puukko Functions        */
     /* -------------------------------------------- */
 
-    popupSoakRoll(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", successfunc = null) {
+    popupSoakRoll(directroll, prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
         let formconstruction = otherinputs;
@@ -1221,10 +1221,13 @@ export class Ironclaw2EActor extends Actor {
        <input type="checkbox" id="doubledice" name="doubledice" value="1"></input>
       </div>`;
 
-        this.popupSelectRolled(checkedstats, tnyes, tnnum, extradice, formconstruction, constructionkeys, constructionarray, otherlabel, successfunc);
+        if (directroll)
+            this.silentSelectRolled(checkedstats, tnyes, tnnum, extradice, constructionkeys, constructionarray, otherlabel, successfunc);
+        else
+            this.popupSelectRolled(checkedstats, tnyes, tnnum, extradice, formconstruction, constructionkeys, constructionarray, otherlabel, successfunc);
     }
 
-    popupDefenseRoll(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", item = null, isparry = false, isspecial = false, successfunc = null) {
+    popupDefenseRoll(directroll, prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", item = null, isparry = false, isspecial = false, successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
         let formconstruction = otherinputs;
@@ -1252,10 +1255,13 @@ export class Ironclaw2EActor extends Actor {
         constructionkeys = bonuses.otherkeys;
         constructionarray = bonuses.otherdice;
 
-        this.popupSelectRolled(checkedstats, tnyes, tnnum, extradice, formconstruction, constructionkeys, constructionarray, otherlabel, successfunc);
+        if (directroll)
+            this.silentSelectRolled(checkedstats, tnyes, tnnum, extradice, constructionkeys, constructionarray, otherlabel, successfunc);
+        else
+            this.popupSelectRolled(checkedstats, tnyes, tnnum, extradice, formconstruction, constructionkeys, constructionarray, otherlabel, successfunc);
     }
 
-    popupAttackRoll(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", item = null, successfunc = null) {
+    popupAttackRoll(directroll, prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", item = null, successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
         let formconstruction = otherinputs;
@@ -1279,10 +1285,13 @@ export class Ironclaw2EActor extends Actor {
         const actor = this;
         const autoremove = (x => { actor.deleteEffect("aiming"); });
 
-        this.popupSelectRolled(checkedstats, tnyes, tnnum, extradice, formconstruction, constructionkeys, constructionarray, otherlabel, successfunc, autoremove);
+        if (directroll)
+            this.silentSelectRolled(checkedstats, tnyes, tnnum, extradice, constructionkeys, constructionarray, otherlabel, successfunc, autoremove);
+        else
+            this.popupSelectRolled(checkedstats, tnyes, tnnum, extradice, formconstruction, constructionkeys, constructionarray, otherlabel, successfunc, autoremove);
     }
 
-    popupCounterRoll(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", item = null, successfunc = null) {
+    popupCounterRoll(directroll, prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", item = null, successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
         let formconstruction = otherinputs;
@@ -1302,7 +1311,10 @@ export class Ironclaw2EActor extends Actor {
         constructionkeys = bonuses.otherkeys;
         constructionarray = bonuses.otherdice;
 
-        this.popupSelectRolled(checkedstats, tnyes, tnnum, extradice, formconstruction, constructionkeys, constructionarray, otherlabel, successfunc);
+        if (directroll)
+            this.silentSelectRolled(checkedstats, tnyes, tnnum, extradice, constructionkeys, constructionarray, otherlabel, successfunc);
+        else
+            this.popupSelectRolled(checkedstats, tnyes, tnnum, extradice, formconstruction, constructionkeys, constructionarray, otherlabel, successfunc);
     }
 
     /* -------------------------------------------- */

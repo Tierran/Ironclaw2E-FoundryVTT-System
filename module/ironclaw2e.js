@@ -24,8 +24,7 @@ import { getVersionNumbers } from "./versionupgrade.js";
 import { checkIfNewerVersion } from "./versionupgrade.js";
 import { upgradeVersion } from "./versionupgrade.js";
 
-import { ironclawRollChat } from "./commands.js";
-import { ironclawRollActorChat } from "./commands.js";
+import { chatCommandsIntegration } from "./commands.js";
 
 import { CommonConditionInfo } from "./conditions.js";
 
@@ -61,7 +60,8 @@ Hooks.once('init', async function () {
         CommonConditionInfo,
         // Misc
         "useCUBConditions": false,
-        waitUntilReady
+        waitUntilReady,
+        sleep
     };
 
     // Define custom Document classes
@@ -561,43 +561,7 @@ Hooks.once("dragRuler.ready", (SpeedProvider) => {
 
 // ChatCommands integration
 // Using async and delays to ensure the same press of enter does not also automatically close the dialog
-Hooks.on("chatCommandsReady", function (chatCommands) {
-
-    // Basic command to trigger a one-line highest or TN roll from the chat, with the dice included after the command
-    chatCommands.registerCommand(chatCommands.createCommandFromData({
-        commandKey: "/iroll",
-        invokeOnCommand: (chatlog, messageText, chatdata) => {
-            ironclawRollChat(messageText);
-        },
-        shouldDisplayToChat: false,
-        iconClass: "fa-dice-d6",
-        description: game.i18n.localize("ironclaw2e.command.iroll")
-    }));
-
-    // Trigger an actor dice pool popup, with optional preselected stats and dice
-    chatCommands.registerCommand(chatCommands.createCommandFromData({
-        commandKey: "/actorroll",
-        invokeOnCommand: async (chatlog, messageText, chatdata) => {
-            await sleep(100);
-            ironclawRollActorChat(messageText, chatdata?.speaker);
-        },
-        shouldDisplayToChat: false,
-        iconClass: "fa-user",
-        description: game.i18n.localize("ironclaw2e.command.actorroll")
-    }));
-
-    // Use an item as the currently selected actor
-    chatCommands.registerCommand(chatCommands.createCommandFromData({
-        commandKey: "/itemuse",
-        invokeOnCommand: async (chatlog, messageText, chatdata) => {
-            await sleep(100);
-            rollItemMacro(messageText.trim());
-        },
-        shouldDisplayToChat: false,
-        iconClass: "fa-fist-raised",
-        description: game.i18n.localize("ironclaw2e.command.itemuse")
-    }));
-});
+Hooks.on("chatCommandsReady", chatCommandsIntegration);
 
 /* -------------------------------------------- */
 /*  Hotbar Macros                               */

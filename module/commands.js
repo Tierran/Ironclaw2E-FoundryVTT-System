@@ -5,6 +5,56 @@ import { findTotalDice } from "./helpers.js";
 import { splitStatsAndBonus } from "./helpers.js";
 import { makeCompareReady } from "./helpers.js";
 
+export function chatCommandsIntegration(chatCommands) {
+
+    // Basic command to trigger a one-line highest or TN roll from the chat, with the dice included after the command
+    chatCommands.registerCommand(chatCommands.createCommandFromData({
+        commandKey: "/iroll",
+        invokeOnCommand: (chatlog, messageText, chatdata) => {
+            ironclawRollChat(messageText);
+        },
+        shouldDisplayToChat: false,
+        iconClass: "fa-dice-d6",
+        description: game.i18n.localize("ironclaw2e.command.iroll")
+    }));
+
+    // Trigger an actor dice pool popup, with optional preselected stats and dice
+    chatCommands.registerCommand(chatCommands.createCommandFromData({
+        commandKey: "/actorroll",
+        invokeOnCommand: async (chatlog, messageText, chatdata) => {
+            await game.ironclaw2e.sleep(100);
+            ironclawRollActorChat(messageText, chatdata?.speaker);
+        },
+        shouldDisplayToChat: false,
+        iconClass: "fa-user",
+        description: game.i18n.localize("ironclaw2e.command.actorroll")
+    }));
+
+    // Trigger an silent actor dice pool roll
+    chatCommands.registerCommand(chatCommands.createCommandFromData({
+        commandKey: "/directroll",
+        invokeOnCommand: async (chatlog, messageText, chatdata) => {
+            await game.ironclaw2e.sleep(100);
+            ironclawRollActorChat(messageText, chatdata?.speaker, true);
+        },
+        shouldDisplayToChat: false,
+        iconClass: "fa-user",
+        description: game.i18n.localize("ironclaw2e.command.directroll")
+    }));
+
+    // Use an item as the currently selected actor
+    chatCommands.registerCommand(chatCommands.createCommandFromData({
+        commandKey: "/itemuse",
+        invokeOnCommand: async (chatlog, messageText, chatdata) => {
+            await game.ironclaw2e.sleep(100);
+            game.ironclaw2e.rollItemMacro(messageText.trim());
+        },
+        shouldDisplayToChat: false,
+        iconClass: "fa-fist-raised",
+        description: game.i18n.localize("ironclaw2e.command.itemuse")
+    }));
+}
+
 /**
  * A function intended for the ChatCommands integration, it takes a string and tries to convert it into a sort-of one-line roll
  * @param {string} inputstring A one-line style string, with a target number attached to it after a semicolon after the one-line part
@@ -40,8 +90,9 @@ export function ironclawRollChat(inputstring) {
  * A function intended for the ChatCommands integration, it takes a string and tries to use it as a stat string to open the actor's dice popup with pre-checked fields
  * @param {string} inputstring An item roll string, with a target number attached to it after an extra semicolon after the extra dice section
  * @param {any} speaker The caller of the function
+ * @param {boolean} direct Whether the roll pops a dialog or just rolls directly
  */
-export function ironclawRollActorChat(inputstring, speaker) {
+export function ironclawRollActorChat(inputstring, speaker, direct = false) {
     if (typeof inputstring !== "string") {
         console.error("Something other than a string inputted into ironclawRollActorChat: " + inputstring.toString());
         return;
@@ -63,11 +114,11 @@ export function ironclawRollActorChat(inputstring, speaker) {
 
     let specialcheck = makeCompareReady(inputstring); // Special checks to allow certain special quick rolls
     if (specialcheck === "soak") {
-        actor.popupSoakRoll(["body"], true, 3);
+        actor.popupSoakRoll(direct, ["body"], true, 3);
         return;
     }
     if (specialcheck === "dodging" || specialcheck === "defense" || specialcheck === "defence") {
-        actor.popupDefenseRoll(["speed", "dodge"], false); // Actually dodge roll, despite being called "defense", in order to avoid confusion with the dodge skill for the system
+        actor.popupDefenseRoll(direct, ["speed", "dodge"], false); // Actually dodge roll, despite being called "defense", in order to avoid confusion with the dodge skill for the system
         return;
     }
 
@@ -82,5 +133,8 @@ export function ironclawRollActorChat(inputstring, speaker) {
     }
 
     let firstsplit = splitStatsAndBonus(usedstring);
-    actor.popupSelectRolled(firstsplit[0], tn > 0, (tn > 0 ? tn : 3), firstsplit[1]);
+    if (direct)
+        actor.popupSelectRolled(firstsplit[0], tn > 0, (tn > 0 ? tn : 3), firstsplit[1]);
+    else
+        actor.popupSelectRolled(firstsplit[0], tn > 0, (tn > 0 ? tn : 3), firstsplit[1]);
 }

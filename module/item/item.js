@@ -1110,18 +1110,18 @@ export class Ironclaw2EItem extends Item {
                     break;
                 case 1: // Parry roll
                     label = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.parryRoll") + ": ";
-                    this.actor.popupDefenseRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : []), (usesmoredice ? [dicearray] : []), label, this, true, false, callback);
+                    this.actor.popupDefenseRoll(false, stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : []), (usesmoredice ? [dicearray] : []), label, this, true, false, callback);
                     break;
                 case 2: // Attack roll
                     label = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect +
                         (this.data.data.opposingDefenseStats?.length > 0 ? ", " + (this.data.data.hasResist ? game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith") + " " + this.data.data.defendWith + " vs. 3 " : game.i18n.localize("ironclaw2e.chatInfo.itemInfo.opposingDefense") + ": " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attack") + " vs. " + this.data.data.defendWith) : "") : ": ");
                     if (this.weaponGetGiftToExhaust()?.giftUsable() === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
-                    this.actor.popupAttackRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : []), (usesmoredice ? [dicearray] : []), label, this, callback);
+                    this.actor.popupAttackRoll(false, stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : []), (usesmoredice ? [dicearray] : []), label, this, callback);
                     break;
                 case 3: // Counter roll
                     label = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.counterRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect : ": ");
                     if (this.weaponGetGiftToExhaust()?.giftUsable() === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
-                    this.actor.popupCounterRoll(stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : []), (usesmoredice ? [dicearray] : []), label, this, callback);
+                    this.actor.popupCounterRoll(false, stats, tnyes, usedtn, "", formconstruction, (usesmoredice ? [diceid] : []), (usesmoredice ? [dicearray] : []), label, this, callback);
                     break;
                 default:
                     console.warn("genericItemRoll defaulted when selecting a roll: " + rolltype);

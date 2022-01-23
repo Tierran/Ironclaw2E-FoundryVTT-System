@@ -43,7 +43,7 @@
   "ironclaw2e.ui.actorDoesNotHaveItem": "Your controlled Actor does not have an item named {itemName}.",
   "ironclaw2e.ui.actorNotFoundForMacro": "No actor found to popup macro for.",
   "ironclaw2e.ui.popupNotFoundForMacro": "No specific popup command found for {popup}.",
-  "ironclaw2e.ui.actorNotSelectedActorroll": "No actor selected for /actorroll.",
+  "ironclaw2e.ui.actorNotSelectedActorroll": "No actor selected for a chat roll.",
   "ironclaw2e.ui.actorNotFoundForSpeaker": "No actor found for speaker: {name}",
   "ironclaw2e.ui.battleProcessingFailure": "Battle data processing failed, unable to parse dice for: {name}",
   "ironclaw2e.ui.diceParseFailure": "Parsing {dicetype} failed on: {name}",
@@ -75,6 +75,7 @@
 
   "ironclaw2e.command.iroll": "Basic Ironclaw roll",
   "ironclaw2e.command.actorroll": "Actor dice pool popup",
+  "ironclaw2e.command.directroll": "Direct actor dice pool roll",
   "ironclaw2e.command.itemuse": "Use an item",
 
 

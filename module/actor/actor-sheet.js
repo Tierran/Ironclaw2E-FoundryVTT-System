@@ -499,7 +499,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             }
         }
 
-        this.actor.popupSoakRoll(selected, true, 3);
+        this.actor.popupSoakRoll(false, selected, true, 3);
     }
 
     /**
@@ -524,7 +524,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             }
         }
 
-        this.actor.popupDefenseRoll(selected, false);
+        this.actor.popupDefenseRoll(false, selected, false);
     }
 
     /**
