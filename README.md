@@ -28,9 +28,9 @@ The system has support for the Combat Utility Belt module (https://github.com/de
 #### Options
 
 By default, certain automation options are turned off, in case they conflict with the way a GM wants to run the system. These can be turned on in the system configuration at their leisure.  
+ - **Auto-remove conditions:** The system will remove conditions from actors based on hard-coded logic of where they should turn off. More on this under **Conditions**.  
  - **Automated encumbrance system:** Based on carried weight and worn armors, the system will give the actors encumbrance conditions as appropriate. The system is tested and should work fine, but it is potentially slightly unstable due to its implementation.  
  - **Auto-calculate attack damage:** When attacking with a weapon, the system will attempt to check what the potential damage with the weapon would be, based on the successes and effects, then create a chat message with that information. Rolls representing counter-attacks and resisted attacks can be right-clicked to resolve them, triggering a popup to input the needed data to figure out how much damage the attack ultimately causes, or in case of turning a resisted attack into a normal one (for, say, when the enemy tries and fails to counter) it just does it based on the original roll. The auto-calculation system has some further options to also display failed attacks by default, or to never send the effect calculations to chat by default, only when asked through the context menu.  
- - **Auto-remove conditions:** The system will remove conditions from actors based on hard-coded logic of where they should turn off. More on this under **Conditions**.  
 
 ### How to roll
 
@@ -46,7 +46,8 @@ The *Effect* field in weapons should be formatted so that every attribute is sep
 Weapons that would exhaust a gift on use can be set to auto-exhaust the gift in question when used to Attack or Counter. If the weapon is set to *require* an un-exhausted gift instead of simply exhausting one if available, trying to use the weapon when the gift is exhausted will instead pop out a Refresh Gift dialog. Technically, some gifts should be exhausted when a weapon is Readied instead of used, but this is not represented.  
 Currently, the system does not allow dice pools to include items. Instead, the system tries to track what items should be included in which dice pools, eg. including worn armor in Soak rolls, as well as adding the gift special bonuses. Where these bonuses go is hard-coded though, so I'm afraid it won't be perfect.  
 
-**For Chat Commands**: The /iroll command can be used to quickly roll dice with the internal dice roller. It takes a one line format input after the command to roll dice as a highest roll type, with a semicolon followed by a number at the end changing it to a TN roll. Eg. "/iroll 3d6,d8" or "/iroll 3d6,d8;5"  
+**For Chat Commands**:  
+The /iroll command can be used to quickly roll dice with the internal dice roller. It takes a one line format input after the command to roll dice as a highest roll type, with a semicolon followed by a number at the end changing it to a TN roll. Eg. "/iroll 3d6,d8" or "/iroll 3d6,d8;5"  
 The /popuproll command opens a standard roll dialog with the given dice pools already checked and optional extra dice and TN preset. It takes a dice pool format input, again with an additional semicolon and number changing the default roll type from highest to TN. Eg. "/popuproll dodge,speed;d12" or "/popuproll will,presence;;3"  
 In addition, /popuproll can take a simple "soak", "defense" or "dodging" as input. In the former case, it will open a standard soak roll popup, while the latter two open a dodge defense popup, since "dodge" would normally refer to a roll of pure dodge skill, rather than the defense.  
 The /directroll command takes the same parameters as /popuproll, but rather than opening a dice pool dialog, the given dice are rolled directly / "silently" without any dialog opening up.  
