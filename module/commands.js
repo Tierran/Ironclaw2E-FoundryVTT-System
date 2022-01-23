@@ -20,7 +20,7 @@ export function chatCommandsIntegration(chatCommands) {
 
     // Trigger an actor dice pool popup, with optional preselected stats and dice
     chatCommands.registerCommand(chatCommands.createCommandFromData({
-        commandKey: "/actorroll",
+        commandKey: "/popuproll",
         invokeOnCommand: async (chatlog, messageText, chatdata) => {
             await game.ironclaw2e.sleep(100);
             ironclawRollActorChat(messageText, chatdata?.speaker);
@@ -134,7 +134,7 @@ export function ironclawRollActorChat(inputstring, speaker, direct = false) {
 
     let firstsplit = splitStatsAndBonus(usedstring);
     if (direct)
-        actor.popupSelectRolled(firstsplit[0], tn > 0, (tn > 0 ? tn : 3), firstsplit[1]);
+        actor.silentSelectRolled(firstsplit[0], tn > 0, (tn > 0 ? tn : 3), firstsplit[1]);
     else
         actor.popupSelectRolled(firstsplit[0], tn > 0, (tn > 0 ? tn : 3), firstsplit[1]);
 }

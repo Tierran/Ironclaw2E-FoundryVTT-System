@@ -1712,6 +1712,7 @@ export class Ironclaw2EActor extends Actor {
      */
     async silentSelectRolled(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherlabel = "", successfunc = null, autocondition = null) {
         const burdened = hasConditionsIronclaw("burdened", this);
+        const conditionRemoval = game.settings.get("ironclaw2e", "autoConditionRemoval");
         // Get the total of all the dice pools
         const all = this._getAllDicePools(prechecked, burdened, extradice, otherkeys, otherdice);
 
@@ -1726,7 +1727,7 @@ export class Ironclaw2EActor extends Actor {
         if (tnyes) // Do the actual roll, either TN or Highest based on tnyes
             rollreturn = await rollTargetNumberArray(tnnum, all.totalDice, label, this);
         else
-            rollreturn = await rollHighestArray(totaldice, all.totalDice, this);
+            rollreturn = await rollHighestArray(all.totalDice, label, this);
 
         // The success callback function
         if (successfunc && typeof (successfunc) == "function") {
