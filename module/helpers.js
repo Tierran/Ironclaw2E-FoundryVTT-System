@@ -34,7 +34,7 @@ export function findTotalDice(dicestring) {
         let diceindex = checkDiceArrayIndex(sides);
         if (diceindex >= 0)
             totaldice[diceindex] += total;
-        else
+        else if (diceindex < -1) // Special exception to allow a d0 in dice inputs without logging it as unusual
             console.log("Non-standard dice found while totaling up dice: " + dicestring);
     }
     return totaldice;
@@ -84,8 +84,10 @@ export function checkDiceArrayIndex(sides) {
         return 3;
     else if (sides == 4)
         return 4;
-    else
+    else if (sides == 0) // Special case to separate a d0 from other invalid dice, since a d0 can represent a non-existing trait
         return -1;
+    else
+        return -2;
 }
 
 /**
