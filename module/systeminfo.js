@@ -13,6 +13,14 @@ export class CommonSystemInfo {
      */
     static resultFontSize = "1.7em";
     /**
+     * Font size assigned to the highest die result message for target number rolls
+     */
+    static resultSmallFontSize = "1.1em";
+    /**
+     * Font size assigned to the highest die result message for target number rolls
+     */
+    static resultTNMarginSize = "0.3em";
+    /**
      * The handedness of a weapon
      */
     static equipHandedness = { "goodhand": "Good hand", "offhand": "Off hand", "twohands": "Two hands", "other": "Other" };

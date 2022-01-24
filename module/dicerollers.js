@@ -50,7 +50,7 @@ export async function rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", ro
         if (x.result === 1) hasOne = true;
     });
 
-    const flavorstring = flavorStringTN(successes, ties, highest == 1, label);
+    const flavorstring = flavorStringTN(successes, ties, highest, label);
 
     /** @type TNData */
     let tnData = { "successes": successes, "ties": ties };
@@ -109,7 +109,7 @@ export async function copyToRollTN(tni, message, sendinchat = true, rerollone = 
         if (x.result === 1) hasOne = true;
     });
 
-    const flavorstring = flavorStringTN(successes, ties, highest == 1,
+    const flavorstring = flavorStringTN(successes, ties, highest,
         `${(rerollone ? game.i18n.localize("ironclaw2e.chatInfo.reroll") : game.i18n.localize("ironclaw2e.chatInfo.copy"))} ${game.i18n.localize("ironclaw2e.chatInfo.tn")}: ` + label);
 
     /** @type TNData */
@@ -583,23 +583,31 @@ function formRoll(d12, d10, d8, d6, d4) {
  * Helper function for the target number dice rollers to form the chat message flavor text properly
  * @param {number} successes The number of successes for the roll
  * @param {number} ties The number of ties for the roll
- * @param {boolean} botched Whether the roll was botched
+ * @param {number} highest The highest die result for the roll
  * @param {string} label Label to put in front of the dice results
  * @returns {string} The formed flavor string
  */
-function flavorStringTN(successes, ties, botched, label) {
+function flavorStringTN(successes, ties, highest, label) {
+    const botched = highest == 1; // Whether the roll was botched based on whether the highest-showing die is 1
     if (successes > 0) {
-        return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:${CommonSystemInfo.resultFontSize};color:${CommonSystemInfo.resultColors.success}">${game.i18n.format("ironclaw2e.chat.success", { "successes": successes })}</p>`;
+        return (label.length > 0 ? "<p>" + label + "</p>" : "") +
+            `<p style="font-size:${CommonSystemInfo.resultFontSize};margin-bottom:${CommonSystemInfo.resultTNMarginSize};color:${CommonSystemInfo.resultColors.success}">${game.i18n.format("ironclaw2e.chat.success", { "successes": successes })}</p>` +
+            flavorStringHighest(highest, "", true);
     }
     else {
         if (botched) {
-            return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:${CommonSystemInfo.resultFontSize};color:${CommonSystemInfo.resultColors.botch}">${game.i18n.localize("ironclaw2e.chat.botch")}</p>`;
+            return (label.length > 0 ? "<p>" + label + "</p>" : "") +
+                `<p style="font-size:${CommonSystemInfo.resultFontSize};color:${CommonSystemInfo.resultColors.botch}">${game.i18n.localize("ironclaw2e.chat.botch")}</p>`;
         }
         else if (ties > 0) {
-            return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:${CommonSystemInfo.resultFontSize};color:${CommonSystemInfo.resultColors.tie}">${game.i18n.format("ironclaw2e.chat.tie", { "ties": ties })}</p>`;
+            return (label.length > 0 ? "<p>" + label + "</p>" : "") +
+                `<p style="font-size:${CommonSystemInfo.resultFontSize};margin-bottom:${CommonSystemInfo.resultTNMarginSize};color:${CommonSystemInfo.resultColors.tie}">${game.i18n.format("ironclaw2e.chat.tie", { "ties": ties })}</p>` +
+                flavorStringHighest(highest, "", true);
         }
         else {
-            return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:${CommonSystemInfo.resultFontSize};color:${CommonSystemInfo.resultColors.failure}">${game.i18n.localize("ironclaw2e.chat.failure")}</p>`;
+            return (label.length > 0 ? "<p>" + label + "</p>" : "") + 
+                `<p style="font-size:${CommonSystemInfo.resultFontSize};margin-bottom:${CommonSystemInfo.resultTNMarginSize};color:${CommonSystemInfo.resultColors.failure}">${game.i18n.localize("ironclaw2e.chat.failure")}</p>` +
+                flavorStringHighest(highest, "", true);
         }
     }
 }
@@ -608,10 +616,11 @@ function flavorStringTN(successes, ties, botched, label) {
  * Helper function for the highest dice rollers to form the chat message flavor text properly
  * @param {number} highest The highest die result for the roll
  * @param {string} label Label to put in front of the dice results
+ * @param {boolean} small Whether to ask for the small version of the string
  * @returns {string} The formed flavor string
  */
-function flavorStringHighest(highest, label) {
-    return (label.length > 0 ? "<p>" + label + "</p>" : "") + `<p style="font-size:${CommonSystemInfo.resultFontSize};
+function flavorStringHighest(highest, label, small = false) {
+    return (label.length > 0 ? "<p>" + label + "</p>" : "") + (small ? `<p style="font-size:${CommonSystemInfo.resultSmallFontSize};margin-top:0px;` : `<p style="font-size:${CommonSystemInfo.resultFontSize};`) + `
     color:${(highest > 1 ? CommonSystemInfo.resultColors.normal : CommonSystemInfo.resultColors.botch)}">${game.i18n.format("ironclaw2e.chat.highest", { "highest": highest })}</p>`;
 }
 
