@@ -1127,6 +1127,13 @@ export class Ironclaw2EActor extends Actor {
         let prechecked = ["speed", "mind"];
         const burdened = hasConditionsIronclaw("burdened", this);
 
+        if (returntype === 0) {// Special case to roll initiative in an encounter through the sheet
+            const activeCombatant = game.combat?.getCombatantByActor(this.id);
+            if (activeCombatant?.isOwner && !activeCombatant?.initiative) { // If the actor is an active combatant in an encounter and has _not_ yet rolled initiative, roll initiative for it
+                return this.rollInitiative();
+            }
+        }
+
         const bonuses = this._getGiftSpecialConstruction("initiativeBonus", prechecked, formconstruction, constructionkeys, constructionarray, null);
         prechecked = bonuses.prechecked;
         formconstruction = bonuses.otherinputs;
@@ -1142,7 +1149,7 @@ export class Ironclaw2EActor extends Actor {
                 break;
             case 0:
                 this.popupSelectRolled(prechecked, true, tntouse, "", formconstruction, constructionkeys, constructionarray, game.i18n.localize("ironclaw2e.chat.rollingInitiative"));
-                return;
+                return null;
                 break;
             case 1:
                 foo = this._getAllDicePools(prechecked, burdened, "", constructionkeys, constructionarray);

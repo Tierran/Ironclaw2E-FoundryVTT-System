@@ -2,7 +2,7 @@
     <h3 class="header-label flexrow flex-center">{{localize "ironclaw2e.sheets.actor.battleStatistics"}}</h3>
     <div class="flexrow flex-group-center flex-tight">
         <div></div>
-        <span class="rollable roll-init normal-label">{{localize "ironclaw2e.sheets.actor.initiative"}}: {{data.initiativeString}}</span>
+        <span class="rollable roll-init normal-label" {{#if (isCombatantNoInit actor._id)}}style="color:forestgreen" title="{{localize "ironclaw2e.chat.rollingInitiativeCheck"}}"{{/if}}>{{localize "ironclaw2e.sheets.actor.initiative"}}: {{data.initiativeString}}</span>
         <div></div>
     </div>
     <div class="flexrow flex-group-center flex-tight">

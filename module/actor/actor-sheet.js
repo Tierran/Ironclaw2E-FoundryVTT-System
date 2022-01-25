@@ -458,11 +458,14 @@ export class Ironclaw2EActorSheet extends ActorSheet {
      * @param {Event} event   The originating click event
      * @private
      */
-    _onInitRoll(event) {
+    async _onInitRoll(event) {
         event.preventDefault();
         const element = event.currentTarget;
 
-        this.actor.initiativeRoll(0);
+        const foo = this.actor.initiativeRoll(0)
+        if (await foo) {
+            this.render();
+        }
     }
 
     /**

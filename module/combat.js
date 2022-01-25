@@ -309,6 +309,12 @@ export class Ironclaw2ECombatant extends Combatant {
     }
 
     /** @override */
+    getInitiativeRoll(formula) {
+        console.warn("Basic getInitiativeRoll called on Ironclaw2ECombatant. This shouldn't happen.");
+        return super.getInitiativeRoll(formula);
+    }
+
+    /** @override */
     rollInitiative(formula) { console.warn("Basic rollInitiative called on Ironclaw2ECombatant. This shouldn't happen."); }
 
     /**
