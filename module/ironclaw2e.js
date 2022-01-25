@@ -666,5 +666,5 @@ function popupSelect(prechecked = [], tnyes = false, tnnum = 3, extradice = "") 
     const actor = getSpeakerActor();
     if (!actor) return ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.actorNotFoundForMacro"));
 
-    return actor.popupSelectRolled(prechecked, tnyes, tnnum, extradice);
+    return actor.popupSelectRolled({ prechecked, tnyes, tnnum, extradice });
 }

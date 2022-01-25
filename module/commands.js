@@ -114,11 +114,11 @@ export function ironclawRollActorChat(inputstring, speaker, direct = false) {
 
     let specialcheck = makeCompareReady(inputstring); // Special checks to allow certain special quick rolls
     if (specialcheck === "soak") {
-        actor.popupSoakRoll(direct, ["body"], true, 3);
+        actor.popupSoakRoll({ "prechecked": ["body"], "tnyes": true, "tnnum": 3 }, { "directroll": direct });
         return;
     }
     if (specialcheck === "dodging" || specialcheck === "defense" || specialcheck === "defence") {
-        actor.popupDefenseRoll(direct, ["speed", "dodge"], false); // Actually dodge roll, despite being called "defense", in order to avoid confusion with the dodge skill for the system
+        actor.popupDefenseRoll({ "prechecked": ["speed", "dodge"] }, { "directroll": direct }); // Actually dodge roll, despite being called "defense", in order to avoid confusion with the dodge skill for the system
         return;
     }
 
@@ -134,7 +134,7 @@ export function ironclawRollActorChat(inputstring, speaker, direct = false) {
 
     let firstsplit = splitStatsAndBonus(usedstring);
     if (direct)
-        actor.silentSelectRolled(firstsplit[0], tn > 0, (tn > 0 ? tn : 3), firstsplit[1]);
+        actor.silentSelectRolled({ "prechecked": firstsplit[0], "tnyes": tn > 0, "tnnum": (tn > 0 ? tn : 3), "extradice": firstsplit[1] });
     else
-        actor.popupSelectRolled(firstsplit[0], tn > 0, (tn > 0 ? tn : 3), firstsplit[1]);
+        actor.popupSelectRolled({ "prechecked": firstsplit[0], "tnyes": tn > 0, "tnnum": (tn > 0 ? tn : 3), "extradice": firstsplit[1] });
 }

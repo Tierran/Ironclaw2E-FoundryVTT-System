@@ -443,13 +443,13 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             }
             if (dataset.tnyes && dataset.tn) {
                 if (dataset.extradice) {
-                    this.actor.popupSelectRolled(selected, dataset.tnyes, dataset.tn, dataset.extradice);
+                    this.actor.popupSelectRolled({ "tnyes": dataset.tnyes, "tnnum": dataset.tn, "prechecked": selected, "extradice": dataset.extradice });
                 }
                 else
-                    this.actor.popupSelectRolled(selected, dataset.tnyes, dataset.tn);
+                    this.actor.popupSelectRolled({ "tnyes": dataset.tnyes, "tnnum": dataset.tn, "prechecked": selected });
             }
             else
-                this.actor.popupSelectRolled(selected);
+                this.actor.popupSelectRolled({ "tnyes": false, "tnnum": 3, "prechecked": selected });
         }
     }
 
@@ -502,7 +502,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             }
         }
 
-        this.actor.popupSoakRoll(false, selected, true, 3);
+        this.actor.popupSoakRoll({ "prechecked": selected, "tnyes": true, "tnnum": 3 });
     }
 
     /**
@@ -527,7 +527,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             }
         }
 
-        this.actor.popupDefenseRoll(false, selected, false);
+        this.actor.popupDefenseRoll({ "prechecked": selected });
     }
 
     /**

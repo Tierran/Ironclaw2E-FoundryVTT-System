@@ -135,8 +135,8 @@ export class Ironclaw2EActor extends Actor {
                             </div>`+ "\n";
                         }
 
-                        if (resist) actor?.popupSelectRolled(defenseSplit[0], resist, 3, EXTRA || "", otherinputs, otherkeys, otherdice, rollLabel);
-                        else actor?.popupDefenseRoll(false, defenseSplit[0], resist, 3, EXTRA || "", otherinputs, otherkeys, otherdice, rollLabel, null, false, !standard);
+                        if (resist) actor?.popupSelectRolled({ "prechecked": defenseSplit[0], "tnyes": resist, "tnnum": 3, "extradice": EXTRA || "", otherkeys, otherdice, otherinputs, "otherlabel": rollLabel });
+                        else actor?.popupDefenseRoll({ "prechecked": defenseSplit[0], "tnyes": resist, "tnnum": 3, "extradice": EXTRA || "", otherkeys, otherdice, otherinputs, "otherlabel": rollLabel }, { "isspecial": !standard }, null);
                     } else if (defensetype === "extra") {
                         let extra = findTotalDice(EXTRA);
                         if (resist) rollTargetNumberArray(3, extra, rollLabel, actor);
@@ -677,7 +677,7 @@ export class Ironclaw2EActor extends Actor {
      * @param {[string]} otherkeys An array of keys, if empty the function will not add labels for the bonus dice
      * @param {[number[]]} otherdice An array of dice arrays, the items should match exactly with their counterparts at otherkeys
      */
-    _getAllDicePools(prechecked, isburdened, extradice = "", otherkeys = [], otherdice = []) {
+    _getAllDicePools(prechecked, isburdened, otherkeys = [], otherdice = [], extradice = "") {
         let label = "";
         let labelgiven = false;
         let totaldice = [0, 0, 0, 0, 0];
@@ -755,7 +755,7 @@ export class Ironclaw2EActor extends Actor {
      * @returns {object} Returns a holder object which returns the inputs with the added bonuses
      * @private
      */
-    _getGiftSpecialConstruction(specialname, prechecked, otherinputs, otherkeys, otherdice, item, defensecheck = false, defensetype = "") {
+    _getGiftSpecialConstruction(specialname, prechecked, otherkeys, otherdice, otherinputs, item, defensecheck = false, defensetype = "") {
         const data = this.data.data;
         if (data.processingLists?.[specialname]) { // Check if they even exist
             for (let setting of data.processingLists[specialname]) { // Loop through them
@@ -774,22 +774,22 @@ export class Ironclaw2EActor extends Actor {
                                 let foobar = null;
                                 switch (source) {
                                     case ("armor"):
-                                        foobar = this._getArmorConstruction(otherinputs, otherkeys, otherdice);
+                                        foobar = this._getArmorConstruction(otherkeys, otherdice, otherinputs);
                                         break;
                                     case ("shield"):
-                                        foobar = this._getShieldConstruction(otherinputs, otherkeys, otherdice);
+                                        foobar = this._getShieldConstruction(otherkeys, otherdice, otherinputs);
                                         break;
                                     case ("guard"):
-                                        foobar = this._getStatusBonusConstruction(otherinputs, otherkeys, otherdice, "guard", false);
+                                        foobar = this._getStatusBonusConstruction(otherkeys, otherdice, otherinputs, "guard", false);
                                         break;
                                     case ("guard-always"):
-                                        foobar = this._getStatusBonusConstruction(otherinputs, otherkeys, otherdice, "guard", true);
+                                        foobar = this._getStatusBonusConstruction(otherkeys, otherdice, otherinputs, "guard", true);
                                         break;
                                     case ("aim"):
-                                        foobar = this._getStatusBonusConstruction(otherinputs, otherkeys, otherdice, "aim", false);
+                                        foobar = this._getStatusBonusConstruction(otherkeys, otherdice, otherinputs, "aim", false);
                                         break;
                                     case ("aim-always"):
-                                        foobar = this._getStatusBonusConstruction(otherinputs, otherkeys, otherdice, "aim", true);
+                                        foobar = this._getStatusBonusConstruction(otherkeys, otherdice, otherinputs, "aim", true);
                                         break;
                                 }
                                 if (foobar) {
@@ -831,10 +831,11 @@ export class Ironclaw2EActor extends Actor {
      * @param {any} otherinputs
      * @param {any} otherkeys
      * @param {any} otherdice
+     * @param {boolean} autocheck
      * @returns {object} Returns a holder object which returns the inputs with the added bonuses
      * @private
      */
-    _getArmorConstruction(otherinputs, otherkeys, otherdice) {
+    _getArmorConstruction(otherkeys, otherdice, otherinputs, autocheck = true) {
         const data = this.data.data;
         let armors = this.items.filter(element => element.data.data.worn === true);
         for (let i = 0; i < armors.length && i < 3; ++i) {
@@ -842,7 +843,7 @@ export class Ironclaw2EActor extends Actor {
             otherdice.push(armors[i].data.data.armorArray);
             otherinputs += `<div class="form-group flexrow">
                 <label class="normal-label">${armors[i].data.name}: ${reformDiceString(armors[i].data.data.armorArray, true)}</label>
-	            <input type="checkbox" id="${makeCompareReady(armors[i].data.name)}" name="${makeCompareReady(armors[i].data.name)}" checked></input>
+	            <input type="checkbox" id="${makeCompareReady(armors[i].data.name)}" name="${makeCompareReady(armors[i].data.name)}" ${(autocheck ? "checked" : "")}></input >
                 </div>`+ "\n";
         }
         return { "otherinputs": otherinputs, "otherkeys": otherkeys, "otherdice": otherdice };
@@ -853,10 +854,11 @@ export class Ironclaw2EActor extends Actor {
      * @param {any} otherinputs
      * @param {any} otherkeys
      * @param {any} otherdice
+     * @param {boolean} autocheck
      * @returns {object} Returns a holder object which returns the inputs with the added bonuses
      * @private
      */
-    _getShieldConstruction(otherinputs, otherkeys, otherdice) {
+    _getShieldConstruction(otherkeys, otherdice, otherinputs, autocheck = true) {
         const data = this.data.data;
         let shield = this.items.find(element => element.data.data.held === true);
         if (shield) {
@@ -864,7 +866,7 @@ export class Ironclaw2EActor extends Actor {
             otherdice.push(shield.data.data.coverArray);
             otherinputs += `<div class="form-group flexrow">
                 <label class="normal-label">${shield.data.name}: ${reformDiceString(shield.data.data.coverArray, true)}</label>
-	            <input type="checkbox" id="${makeCompareReady(shield.data.name)}" name="${makeCompareReady(shield.data.name)}" checked></input>
+	            <input type="checkbox" id="${makeCompareReady(shield.data.name)}" name="${makeCompareReady(shield.data.name)}" ${(autocheck ? "checked" : "")}></input>
                 </div>`+ "\n";
         }
         return { "otherinputs": otherinputs, "otherkeys": otherkeys, "otherdice": otherdice };
@@ -880,7 +882,7 @@ export class Ironclaw2EActor extends Actor {
      * @returns {object} Returns a holder object which returns the inputs with the added bonuses
      * @private
      */
-    _getStatusBonusConstruction(otherinputs, otherkeys, otherdice, bonustype, skipcheck = false) {
+    _getStatusBonusConstruction(otherkeys, otherdice, otherinputs, bonustype, skipcheck = false) {
         const data = this.data.data;
         let replaceSettings = []; // Bonuses that would replace the base bonus
         let addSettings = []; // Bonuses that would add to the base bonus
@@ -1134,7 +1136,7 @@ export class Ironclaw2EActor extends Actor {
             }
         }
 
-        const bonuses = this._getGiftSpecialConstruction("initiativeBonus", prechecked, formconstruction, constructionkeys, constructionarray, null);
+        const bonuses = this._getGiftSpecialConstruction("initiativeBonus", prechecked, constructionkeys, constructionarray, formconstruction, null);
         prechecked = bonuses.prechecked;
         formconstruction = bonuses.otherinputs;
         constructionkeys = bonuses.otherkeys;
@@ -1143,21 +1145,24 @@ export class Ironclaw2EActor extends Actor {
         let foo, bar;
         switch (returntype) { // Yes, yes, the breaks are unnecessary
             case -1:
-                foo = this._getAllDicePools(prechecked, burdened, "", constructionkeys, constructionarray);
+                foo = this._getAllDicePools(prechecked, burdened, constructionkeys, constructionarray);
                 bar = foo.totalDice;
                 return bar;
                 break;
             case 0:
-                this.popupSelectRolled(prechecked, true, tntouse, "", formconstruction, constructionkeys, constructionarray, game.i18n.localize("ironclaw2e.chat.rollingInitiative"));
+                this.popupSelectRolled({
+                    "prechecked": prechecked, "tnyes": true, "tnnum": tntouse, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction,
+                    "otherlabel": game.i18n.localize("ironclaw2e.chat.rollingInitiative")
+                });
                 return null;
                 break;
             case 1:
-                foo = this._getAllDicePools(prechecked, burdened, "", constructionkeys, constructionarray);
+                foo = this._getAllDicePools(prechecked, burdened, constructionkeys, constructionarray);
                 bar = foo.totalDice;
                 return rollHighestArray(bar, game.i18n.localize("ironclaw2e.chat.rollingInitiative") + ": " + foo.label, this, false);
                 break;
             case 2:
-                foo = this._getAllDicePools(prechecked, burdened, "", constructionkeys, constructionarray);
+                foo = this._getAllDicePools(prechecked, burdened, constructionkeys, constructionarray);
                 bar = foo.totalDice;
                 return rollTargetNumberArray(tntouse, bar, game.i18n.localize("ironclaw2e.chat.rollingInitiativeCheck") + ": " + foo.label, this, false);
                 break;
@@ -1180,7 +1185,7 @@ export class Ironclaw2EActor extends Actor {
         let prechecked = ["speed"];
         const burdened = hasConditionsIronclaw("burdened", this);
 
-        const bonuses = this._getGiftSpecialConstruction("sprintBonus", prechecked, formconstruction, constructionkeys, constructionarray, null);
+        const bonuses = this._getGiftSpecialConstruction("sprintBonus", prechecked, constructionkeys, constructionarray, formconstruction, null);
         prechecked = bonuses.prechecked;
         formconstruction = bonuses.otherinputs;
         constructionkeys = bonuses.otherkeys;
@@ -1189,13 +1194,15 @@ export class Ironclaw2EActor extends Actor {
         let foo, bar;
         switch (returntype) { // Yes, yes, the breaks are unnecessary
             case -1:
-                foo = this._getAllDicePools(prechecked, burdened, "", constructionkeys, constructionarray);
+                foo = this._getAllDicePools(prechecked, burdened, constructionkeys, constructionarray);
                 bar = foo.totalDice;
                 return bar;
                 break;
             case 0:
-                this.popupSelectRolled(prechecked, false, 3, "", formconstruction, constructionkeys, constructionarray, game.i18n.localize("ironclaw2e.chat.rollingSprint") + ", " +
-                    game.i18n.format("ironclaw2e.chat.rollingSprintExtra", { "stride": `+-${data.stride}` }));
+                this.popupSelectRolled({
+                    "prechecked": prechecked, "tnyes": false, "tnnum": 3, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, "otherlabel": game.i18n.localize("ironclaw2e.chat.rollingSprint") + ", " +
+                        game.i18n.format("ironclaw2e.chat.rollingSprintExtra", { "stride": `+-${data.stride}` })
+                });
                 return;
                 break;
         }
@@ -1208,7 +1215,7 @@ export class Ironclaw2EActor extends Actor {
     /*  Special Popup Macro Puukko Functions        */
     /* -------------------------------------------- */
 
-    popupSoakRoll(directroll, prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", successfunc = null) {
+    popupSoakRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "" } = {}, { directroll = false, checkweak = false, checkarmor = true } = {}, successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
         let formconstruction = otherinputs;
@@ -1216,13 +1223,13 @@ export class Ironclaw2EActor extends Actor {
         let constructionarray = [...otherdice];
 
         // Armor dice
-        const armor = this._getArmorConstruction(formconstruction, constructionkeys, constructionarray);
+        const armor = this._getArmorConstruction(constructionkeys, constructionarray, formconstruction, checkarmor);
         formconstruction = armor.otherinputs;
         constructionkeys = armor.otherkeys;
         constructionarray = armor.otherdice;
 
         // Soak bonuses
-        const bonuses = this._getGiftSpecialConstruction("soakBonus", checkedstats, formconstruction, constructionkeys, constructionarray, null);
+        const bonuses = this._getGiftSpecialConstruction("soakBonus", checkedstats, constructionkeys, constructionarray, formconstruction, null);
         checkedstats = bonuses.prechecked;
         formconstruction = bonuses.otherinputs;
         constructionkeys = bonuses.otherkeys;
@@ -1231,16 +1238,17 @@ export class Ironclaw2EActor extends Actor {
         formconstruction += `
       <div class="form-group">
        <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.dicePool.soakWeak")}</label>
-       <input type="checkbox" id="doubledice" name="doubledice" value="1"></input>
+       <input type="checkbox" id="doubledice" name="doubledice" value="1" ${(checkweak ? "checked" : "")}></input>
       </div>`;
 
         if (directroll)
-            this.silentSelectRolled(checkedstats, tnyes, tnnum, extradice, constructionkeys, constructionarray, otherlabel, successfunc);
+            this.silentSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, otherlabel }, successfunc);
         else
-            this.popupSelectRolled(checkedstats, tnyes, tnnum, extradice, formconstruction, constructionkeys, constructionarray, otherlabel, successfunc);
+            this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc);
     }
 
-    popupDefenseRoll(directroll, prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", item = null, isparry = false, isspecial = false, successfunc = null) {
+    popupDefenseRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "" } = {}, { directroll = false, isparry = false, isspecial = false } = {},
+        item = null, successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
         let formconstruction = otherinputs;
@@ -1248,33 +1256,32 @@ export class Ironclaw2EActor extends Actor {
         let constructionarray = [...otherdice];
 
         // Shield cover die
-        const shield = this._getShieldConstruction(formconstruction, constructionkeys, constructionarray);
+        const shield = this._getShieldConstruction(constructionkeys, constructionarray, formconstruction);
         formconstruction = shield.otherinputs;
         constructionkeys = shield.otherkeys;
         constructionarray = shield.otherdice;
 
         // Guarding bonus
-        const guard = this._getStatusBonusConstruction(formconstruction, constructionkeys, constructionarray, "guard");
+        const guard = this._getStatusBonusConstruction(constructionkeys, constructionarray, formconstruction, "guard");
         formconstruction = guard.otherinputs;
         constructionkeys = guard.otherkeys;
         constructionarray = guard.otherdice;
 
         // Defense bonuses
-        // TODO: Properly modify to account for special defenses
         const defensetype = (isparry ? "parry" : (isspecial ? "special" : "dodge"));
-        const bonuses = this._getGiftSpecialConstruction("defenseBonus", checkedstats, formconstruction, constructionkeys, constructionarray, item, true, defensetype);
+        const bonuses = this._getGiftSpecialConstruction("defenseBonus", checkedstats, constructionkeys, constructionarray, formconstruction, item, true, defensetype);
         checkedstats = bonuses.prechecked;
         formconstruction = bonuses.otherinputs;
         constructionkeys = bonuses.otherkeys;
         constructionarray = bonuses.otherdice;
 
         if (directroll)
-            this.silentSelectRolled(checkedstats, tnyes, tnnum, extradice, constructionkeys, constructionarray, otherlabel, successfunc);
+            this.silentSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, otherlabel }, successfunc);
         else
-            this.popupSelectRolled(checkedstats, tnyes, tnnum, extradice, formconstruction, constructionkeys, constructionarray, otherlabel, successfunc);
+            this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc);
     }
 
-    popupAttackRoll(directroll, prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", item = null, successfunc = null) {
+    popupAttackRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "" } = {}, { directroll = false } = {}, item = null, successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
         let formconstruction = otherinputs;
@@ -1282,13 +1289,13 @@ export class Ironclaw2EActor extends Actor {
         let constructionarray = [...otherdice];
 
         // Aiming bonus
-        const aim = this._getStatusBonusConstruction(formconstruction, constructionkeys, constructionarray, "aim");
+        const aim = this._getStatusBonusConstruction(constructionkeys, constructionarray, formconstruction, "aim");
         formconstruction = aim.otherinputs;
         constructionkeys = aim.otherkeys;
         constructionarray = aim.otherdice;
 
         // Attack bonuses
-        const bonuses = this._getGiftSpecialConstruction("attackBonus", checkedstats, formconstruction, constructionkeys, constructionarray, item);
+        const bonuses = this._getGiftSpecialConstruction("attackBonus", checkedstats, constructionkeys, constructionarray, formconstruction, item);
         checkedstats = bonuses.prechecked;
         formconstruction = bonuses.otherinputs;
         constructionkeys = bonuses.otherkeys;
@@ -1299,12 +1306,12 @@ export class Ironclaw2EActor extends Actor {
         const autoremove = (x => { actor.deleteEffect("aiming"); });
 
         if (directroll)
-            this.silentSelectRolled(checkedstats, tnyes, tnnum, extradice, constructionkeys, constructionarray, otherlabel, successfunc, autoremove);
+            this.silentSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, otherlabel }, successfunc, autoremove);
         else
-            this.popupSelectRolled(checkedstats, tnyes, tnnum, extradice, formconstruction, constructionkeys, constructionarray, otherlabel, successfunc, autoremove);
+            this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc, autoremove);
     }
 
-    popupCounterRoll(directroll, prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", item = null, successfunc = null) {
+    popupCounterRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "" } = {}, { directroll = false } = {},item = null, successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
         let formconstruction = otherinputs;
@@ -1312,22 +1319,22 @@ export class Ironclaw2EActor extends Actor {
         let constructionarray = [...otherdice];
 
         // Guarding bonus
-        const guard = this._getStatusBonusConstruction(formconstruction, constructionkeys, constructionarray, "guard");
+        const guard = this._getStatusBonusConstruction(constructionkeys, constructionarray, formconstruction, "guard");
         formconstruction = guard.otherinputs;
         constructionkeys = guard.otherkeys;
         constructionarray = guard.otherdice;
 
         // Counter bonuses
-        const bonuses = this._getGiftSpecialConstruction("counterBonus", checkedstats, formconstruction, constructionkeys, constructionarray, item);
+        const bonuses = this._getGiftSpecialConstruction("counterBonus", checkedstats, constructionkeys, constructionarray, formconstruction, item);
         checkedstats = bonuses.prechecked;
         formconstruction = bonuses.otherinputs;
         constructionkeys = bonuses.otherkeys;
         constructionarray = bonuses.otherdice;
 
         if (directroll)
-            this.silentSelectRolled(checkedstats, tnyes, tnnum, extradice, constructionkeys, constructionarray, otherlabel, successfunc);
+            this.silentSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, otherlabel }, successfunc);
         else
-            this.popupSelectRolled(checkedstats, tnyes, tnnum, extradice, formconstruction, constructionkeys, constructionarray, otherlabel, successfunc);
+            this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc);
     }
 
     /* -------------------------------------------- */
@@ -1475,18 +1482,18 @@ export class Ironclaw2EActor extends Actor {
     /* -------------------------------------------- */
 
     /** Supermassive mega-function to make a dynamic popup window asking about which exact dice pools should be included
-     * @param {string[]} prechecked Traits and skills to autocheck on the dialog
-     * @param {boolean} tnyes Whether to use a TN, true for yes
-     * @param {number} tnnum TN to use
-     * @param {string} extradice Default extra dice to use for the bottom one-line slot
-     * @param {string} otherinputs HTML string to add to the dialog
-     * @param {[string]} otherkeys An array of keys, to be used for UI information and with the added HTML for checkboxes in case the other dice can be switched off
-     * @param {[number[]]} otherdice An array of dice arrays, the items should match exactly with their counterparts at otherkeys
-     * @param {string} otherlabel Text to postpend to the label
+     * @param {boolean} [tnyes] Whether to use a TN, true for yes
+     * @param {number} [tnnum] TN to use
+     * @param {string[]} [prechecked] Traits and skills to autocheck on the dialog
+     * @param {[string]} [otherkeys] An array of keys, to be used for UI information and with the added HTML for checkboxes in case the other dice can be switched off
+     * @param {[number[]]} [otherdice] An array of dice arrays, the items should match exactly with their counterparts at otherkeys
+     * @param {string} [otherinputs] HTML string to add to the dialog
+     * @param {string} [extradice] Default extra dice to use for the bottom one-line slot
+     * @param {string} [otherlabel] Text to postpend to the label
      * @param successfunc Callback to execute after going through with the macro, will not execute if cancelled out
      * @param autocondition Callback to a condition auto-removal function, executed if the setting is on, will not execute if cancelled out
      */
-    popupSelectRolled(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "", successfunc = null, autocondition = null) {
+    popupSelectRolled({ tnyes = false, tnnum = 3, prechecked = [], otherkeys = [], otherdice = [], otherinputs = "", extradice = "", otherlabel = "" } = {}, successfunc = null, autocondition = null) {
         const data = this.data.data;
         let formconstruction = ``;
         let firstelement = "";
@@ -1713,21 +1720,21 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /** Function to silently roll the given prechecked dice pools and extra dice, instead of popping a dialog for it
-     * @param {string[]} prechecked Traits and skills to roll
-     * @param {boolean} tnyes Whether to use a TN, true for yes
-     * @param {number} tnnum TN to use
+     * @param {boolean} [tnyes] Whether to use a TN, true for yes
+     * @param {number} [tnnum] TN to use
+     * @param {string[]} [prechecked] Traits and skills to roll
+     * @param {[string]} [otherkeys] An array of keys, to be used for UI information
+     * @param {[number[]]} [otherdice] An array of dice arrays, the items should match exactly with their counterparts at otherkeys
      * @param {string} extradice Extra dice to roll
-     * @param {[string]} otherkeys An array of keys, to be used for UI information
-     * @param {[number[]]} otherdice An array of dice arrays, the items should match exactly with their counterparts at otherkeys
-     * @param {string} otherlabel Text to postpend to the label
+     * @param {string} [otherlabel] Text to postpend to the label
      * @param successfunc Callback to execute after going through with the macro, executed unless an error happens
      * @param autocondition Callback to a condition auto-removal function, executed if the setting is on, executed unless an error happens
      */
-    async silentSelectRolled(prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherlabel = "", successfunc = null, autocondition = null) {
+    async silentSelectRolled({ tnyes = false, tnnum = 3, prechecked = [], otherkeys = [], otherdice = [], extradice = "", otherlabel = "" } = {}, successfunc = null, autocondition = null) {
         const burdened = hasConditionsIronclaw("burdened", this);
         const conditionRemoval = game.settings.get("ironclaw2e", "autoConditionRemoval");
         // Get the total of all the dice pools
-        const all = this._getAllDicePools(prechecked, burdened, extradice, otherkeys, otherdice);
+        const all = this._getAllDicePools(prechecked, burdened, otherkeys, otherdice, extradice);
 
         // Set the label
         let label = all.label + ".";
