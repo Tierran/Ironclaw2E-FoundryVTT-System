@@ -243,6 +243,10 @@ Hooks.once('init', async function () {
         return foo.initiative == null;
     });
 
+    Handlebars.registerHelper('typeCheck', function (foo, bar) {
+        return foo == bar;
+    });
+
     console.log("Ironclaw2E System init complete");
 });
 

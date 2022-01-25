@@ -571,66 +571,18 @@ export class Ironclaw2EItem extends Item {
      *  Send information about the item to the chat as a message
      */
     async sendInfoToChat() {
-        const token = this.actor.token;
         const item = this.data;
-        const actorData = this.actor ? this.actor.data.data : {};
         const itemData = item.data;
         const confirmSend = game.settings.get("ironclaw2e", "confirmItemInfo");
 
-        let contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
-        <img class="item-image" src="${item.img}" title="${item.name}" width="30" height="30"/>
-        <h3 class="chat-header">${item.name}</h3>
-        </header>
-        <div class="chat-content">`;
-        if (itemData.description)
-            contents += `<div class="chat-item">${itemData.description}</div>`;
+        const templateData = {
+            "item": item,
+            "itemData": itemData,
+            "equipHandedness": (item.type === 'weapon' ? CommonSystemInfo.equipHandedness[itemData.equip] : ""),
+            "equipRange": (item.type === 'weapon' ? CommonSystemInfo.rangeBands[itemData.range]: "")
+        };
 
-        contents += `<div class="chat-item">`;
-        switch (item.type) {
-            case 'gift':
-                contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.tags")}:</strong> ${itemData.giftTags}</p>
-                        <p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.refresh")}:</strong> ${itemData.refresh}, <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.exhausted")}:</strong> 
-                        ${itemData.exhaustWhenUsed ? (itemData.exhausted ? game.i18n.localize("ironclaw2e.yes") : game.i18n.localize("ironclaw2e.no")) : game.i18n.localize("ironclaw2e.never")}</p>`;
-                if (itemData.useDice) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.giftDice")}:</strong> ${itemData.useDice},
-                                                   <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.defaultTN")}:</strong> ${itemData.defaultTN}</p>`;
-                else contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.giftDiceNothing")}</strong></p>`;
-                break;
-            case 'extraCareer':
-                contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.name")}:</strong> ${itemData.careerName}</p>
-                        <p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.dice")}:</strong> ${itemData.dice}</p>
-                        <p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.skills")}:</strong> ${itemData.careerSkill1}, ${itemData.careerSkill2}, ${itemData.careerSkill3}</p>`;
-                break;
-            case 'weapon':
-                contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect")}:</strong> ${itemData.effect}</p>
-                        <p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.descriptors")}:</strong> ${itemData.descriptors}</p>
-                        <p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.equip")}:</strong> ${CommonSystemInfo.equipHandedness[itemData.equip]},
-                        <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.range")}:</strong> ${CommonSystemInfo.rangeBands[itemData.range]}</p>`;
-                if (itemData.exhaustGift && itemData.exhaustGiftName) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.exhaustGift")}:</strong> ${itemData.exhaustGiftName}</p>`;
-                if (itemData.attackDice) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackDice")}:</strong> ${itemData.attackDice}</p>`;
-                if (itemData.useSpark) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.sparkDice")}:</strong> ${itemData.sparkDie}</p>`;
-                if (itemData.defenseDice) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.parryDice")}:</strong> ${itemData.defenseDice}</p>`;
-                if (itemData.counterDice) contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.counterDice")}:</strong> ${itemData.counterDice}</p>`;
-                if (itemData.hasResist)
-                    contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith")}:</strong> ${itemData.defendWith} vs. 3</p>`;
-                else
-                    contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.opposingDefense")}:</strong> ${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attack")} vs. ${itemData.defendWith}</p>`;
-                break;
-            case 'illumination':
-                contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.dimLight")}:</strong> ${itemData.dimLight}, <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.brightLight")}:</strong> ${itemData.brightLight},
-                            <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.angle")}:</strong> ${itemData.lightAngle}</p>`;
-                break;
-            case 'armor':
-                contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.armorDice")}:</strong> ${itemData.armorDice}, 
-                            <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.worn")}:</strong> ${itemData.worn ? game.i18n.localize("ironclaw2e.yes") : game.i18n.localize("ironclaw2e.no")}</p>`;
-                break;
-            case 'shield':
-                contents += `<p><strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.coverDie")}:</strong> ${itemData.coverDie}, 
-                            <strong>${game.i18n.localize("ironclaw2e.chatInfo.itemInfo.held")}:</strong> ${itemData.held ? game.i18n.localize("ironclaw2e.yes") : game.i18n.localize("ironclaw2e.no")}</p>`;
-                break;
-            default:
-                break;
-        }
-        contents += `</div></div></div>`;
+        const contents = await renderTemplate("systems/ironclaw2e/templates/chat/item-info.html", templateData);
 
         let chatData = {
             content: contents,
@@ -858,45 +810,31 @@ export class Ironclaw2EItem extends Item {
      * @param {boolean} success Whether the attack was a success, or a tie
      * @param {number} usedsuccesses The number of successes, or ties in case the attack was a tie
      */
-    successfulAttackToChat(success, usedsuccesses) {
+    async successfulAttackToChat(success, usedsuccesses) {
         if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
             return; // If the system is turned off, return out
         }
         const item = this.data;
         const itemData = item.data;
 
-        let contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
-        <img class="item-image" src="${item.img}" title="${item.name}" width="25" height="25"/>
-        <h3 class="chat-header-lesser">${game.i18n.format("ironclaw2e.chatInfo.damageCalcInfo.header", { "name": item.name })}</h3>
-        </header>
-        <div class="chat-content"><div class="chat-item">`;
+        const templateData = {
+            "item": item,
+            "itemData": itemData,
+            "successfulAttack": true,
+            "hasResist": itemData.hasResist,
+            "success": success,
+            "resultStyle": "color:" + (success ? CommonSystemInfo.resultColors.success : CommonSystemInfo.resultColors.tie),
+            "damageType": (itemData.effectsSplit.includes("slaying") ? "slaying" : (itemData.effectsSplit.includes("critical") ? "critical" : "normal")),
+            "isImpaling": itemData.effectsSplit.includes("impaling"),
+            "isPenetrating": itemData.effectsSplit.includes("penetrating"),
+            "isWeak": itemData.effectsSplit.includes("weak"),
+            "doubleDamage": itemData.damageEffect + (usedsuccesses * 2),
+            "criticalDamage": itemData.damageEffect + Math.floor(usedsuccesses * 1.5),
+            "normalDamage": itemData.damageEffect + usedsuccesses
+        };
 
-        if (success) {
-            contents += `<p style="color:${CommonSystemInfo.resultColors.success}">${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.attackSuccess")}:</p>`;
-        } else {
-            contents += `<p style="color:${CommonSystemInfo.resultColors.tie}">${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.attackTied")}:</p>`;
-        }
+        const contents = await renderTemplate("systems/ironclaw2e/templates/chat/damage-info.html", templateData);
 
-        if (itemData.effectsSplit.includes("slaying")) {
-            contents += `<p>${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.slayingDamage")}: <strong>${itemData.damageEffect + (usedsuccesses * 2)}</strong></p>`;
-        } else if (itemData.effectsSplit.includes("critical")) {
-            contents += `<p>${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.criticalDamage")}: <strong>${itemData.damageEffect + Math.floor(usedsuccesses * 1.5)}</strong></p>`;
-        } else {
-            contents += `<p>${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.normalDamage")}: <strong>${itemData.damageEffect + usedsuccesses}</strong></p>`;
-        }
-        if (itemData.effectsSplit.includes("impaling")) {
-            contents += `<p>${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.impalingDamage")}: <strong>${itemData.damageEffect + (usedsuccesses * 2)}</strong>, ${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.impalingNote")}</p>`;
-        }
-
-        if (itemData.effectsSplit.includes("penetrating")) {
-            contents += `<p>${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.penetratingAttack")}</p>`;
-        }
-        if (itemData.effectsSplit.includes("weak")) {
-            contents += `<p>${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.weakAttack")}</p>`;
-        }
-        contents += `<p class="small-text">${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.allEffects")}: ${itemData.effect}</p>`;
-
-        contents += `</div></div></div>`;
         let chatData = {
             content: contents,
             speaker: getMacroSpeaker(this.actor)
@@ -908,26 +846,31 @@ export class Ironclaw2EItem extends Item {
     /**
      * Send a message to chat simply to report that the attack failed
      */
-    failedAttackToChat() { // This function is mostly used for resist rolls to specifically note if the resistance check failed for the attacker
+    async failedAttackToChat() { // This function is mostly used for resist rolls to specifically note if the resistance check failed for the attacker
         if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
             return; // If the system is turned off, return out
         }
         const item = this.data;
         const itemData = item.data;
 
-        let contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
-        <img class="item-image" src="${item.img}" title="${item.name}" width="25" height="25"/>
-        <h3 class="chat-header-lesser">${game.i18n.format("ironclaw2e.chatInfo.damageCalcInfo.header", { "name": item.name })}</h3>
-        </header>
-        <div class="chat-content"><div class="chat-item">`;
+        const templateData = {
+            "item": item,
+            "itemData": itemData,
+            "successfulAttack": false,
+            "hasResist": itemData.hasResist,
+            "success": false,
+            "resultStyle": "color:" + CommonSystemInfo.resultColors.failure,
+            "damageType": (itemData.effectsSplit.includes("slaying") ? "slaying" : (itemData.effectsSplit.includes("critical") ? "critical" : "normal")),
+            "isImpaling": itemData.effectsSplit.includes("impaling"),
+            "isPenetrating": itemData.effectsSplit.includes("penetrating"),
+            "isWeak": itemData.effectsSplit.includes("weak"),
+            "doubleDamage": 0,
+            "criticalDamage": 0,
+            "normalDamage": 0
+        };
 
-        if (itemData.hasResist) {
-            contents += `<p style="color:${CommonSystemInfo.resultColors.failure}">${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.attackResisted")}</p>`;
-        } else {
-            contents += `<p style="color:${CommonSystemInfo.resultColors.failure}">${game.i18n.localize("ironclaw2e.chatInfo.damageCalcInfo.attackFailed")}</p>`;
-        }
+        const contents = await renderTemplate("systems/ironclaw2e/templates/chat/damage-info.html", templateData);
 
-        contents += `</div></div></div>`;
         let chatData = {
             content: contents,
             speaker: getMacroSpeaker(this.actor)

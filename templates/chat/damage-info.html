@@ -1,0 +1,25 @@
+<div class="ironclaw2e">
+    <header class="chat-item flexrow">
+        <img class="item-image" src="{{item.img}}" title="{{item.name}}" width="25" height="25" />
+        <h3 class="chat-header-lesser">{{localize "ironclaw2e.chatInfo.damageCalcInfo.header" name=item.name}}</h3>
+    </header>
+    <div class="chat-content">
+        <div class="chat-item">
+            {{#if successfulAttack}}
+            {{#if success}}<p style="{{resultStyle}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.attackSuccess"}}:</p>{{else}}
+            <p style="{{resultStyle}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.attackTied"}}:</p>{{/if}}
+            {{#if (typeCheck damageType "slaying")}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.slayingDamage"}}: <strong>{{doubleDamage}}</strong></p>{{/if}}
+            {{#if (typeCheck damageType "critical")}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.criticalDamage"}}: <strong>{{criticalDamage}}</strong></p>{{/if}}
+            {{#if (typeCheck damageType "normal")}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.normalDamage"}}: <strong>{{normalDamage}}</strong></p>{{/if}}
+            {{#if isImpaling}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.normalDamage"}}: <strong>{{doubleDamage}}</strong></p>{{/if}}
+            {{#if isPenetrating}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.penetratingAttack"}}</p>{{/if}}
+            {{#if isWeak}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.weakAttack"}}</p>{{/if}}
+            {{else}}
+            {{#if hasResist}}<p style="{{resultStyle}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.attackResisted"}}</p>{{else}}
+            <p style="{{resultStyle}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.attackFailed"}}</p>{{/if}}
+            {{/if}}
+
+            <p class="small-text">{{localize "ironclaw2e.chatInfo.damageCalcInfo.allEffects"}}: {{itemData.effect}}</p>
+        </div>
+    </div>
+</div>
