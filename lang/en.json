@@ -97,6 +97,8 @@
   "ironclaw2e.config.preferTokenNameHint": "If checked, dice rollers will not use actor's own names and will instead use the name and presentation of their tokens, when available. Always works for synthetic actors, whereas linked actors require an active scene.",
   "ironclaw2e.config.manageEncumbranceAuto": "WORLD: Auto-manage encumbrance",
   "ironclaw2e.config.manageEncumbranceAutoHint": "If checked, the system will automatically manage Burdened, Over-Burdened and Cannot Move statuses for actors, based on their carried weight and worn armors. Do not try to change them manually when active, doing so is likely to cause errors. Requires a restart to take effect on all actors.",
+  "ironclaw2e.config.autoInitiativeConditions": "WORLD: Auto-set initiative conditions",
+  "ironclaw2e.config.autoInitiativeConditionsHint": "If checked, the system will automatically set the Focused and Reeling conditions to combatants based on their initiative check. Note that the Reeling from a Tie check won't be set, as that is an active choice from the player.",
   "ironclaw2e.config.coinsHaveWeight": "WORLD: Make coins have weight",
   "ironclaw2e.config.coinsHaveWeightHint": "If checked, the weight of coins will be added to the encumbrance of the actor. Requires a restart to take effect on all actors.",
   "ironclaw2e.config.autoPrototypeSetup": "WORLD: Auto-setup prototype tokens",

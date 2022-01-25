@@ -105,6 +105,14 @@ Hooks.once('init', async function () {
         default: true,
         config: true
     });
+    game.settings.register("ironclaw2e", "autoInitiativeConditions", {
+        name: "ironclaw2e.config.autoInitiativeConditions",
+        hint: "ironclaw2e.config.autoInitiativeConditionsHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: true
+    });
     game.settings.register("ironclaw2e", "autoConditionRemoval", {
         name: "ironclaw2e.config.autoConditionRemoval",
         hint: "ironclaw2e.config.autoConditionRemovalHint",

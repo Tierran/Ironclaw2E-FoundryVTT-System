@@ -154,9 +154,11 @@ export class Ironclaw2ECombat extends Combat {
         ids = typeof ids === "string" ? [ids] : ids;
         const currentId = this.combatant?.id;
 
-        // Iterate over Combatants, performing an initiative roll for each
+        // Array for stuff to do after all the initiatives have been rolled
         const updates = [];
         const messages = [];
+        const conditions = []; // For setting conditions based on the initiative rolls
+
         // Iterate over Combatants, performing an initiative roll for each
         for (let [i, id] of ids.entries()) {
 
@@ -189,6 +191,7 @@ export class Ironclaw2ECombat extends Combat {
             let initResult = "";
             if (initRoll.tnData) {
                 initResult = initRoll.tnData.successes > 0 ? initRoll.tnData.successes.toString() : (initRoll.tnData.ties ? "T" : (initRoll.highest === 1 ? "B" : "F")); // Set the result as either the number of successes, or Ties, Botch, or Fail
+                conditions.push({ "combatant": combatant, "result": initRoll });
             }
 
             updates.push({ _id: id, initiative: initiative, flags: { "ironclaw2e.initiativeResult": initResult } });
@@ -227,6 +230,14 @@ export class Ironclaw2ECombat extends Combat {
 
         // Create multiple chat messages
         await ChatMessage.implementation.create(messages);
+
+        // Give actor the conditions based on their initiative rolls, if the setting is on
+        const autoConditions = game.settings.get("ironclaw2e", "autoInitiativeConditions");
+        if (autoConditions) {
+            for (let cond of conditions) {
+                cond.combatant?.initiativeConditions(cond.result);
+            }
+        }
 
         // Return the updated Combat
         return this;
@@ -267,6 +278,18 @@ export class Ironclaw2ECombatant extends Combatant {
      */
     async endOfTurnMaintenance() {
         this.actor?.endOfRound(); // Actor EOT function
+    }
+
+    /**
+     * Set the conditions for the actor based on the initiative check result
+     * @param {import("./dicerollers").DiceReturn} result
+     */
+    async initiativeConditions(result) {
+        if (result.highest == 1) {
+            this.actor?.addEffect("reeling");
+        } else if (result?.tnData.successes >= 2) {
+            this.actor?.addEffect("focused");
+        }
     }
 
     /**
