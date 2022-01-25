@@ -285,7 +285,7 @@ export class Ironclaw2ECombatant extends Combatant {
      * @param {import("./dicerollers").DiceReturn} result
      */
     async initiativeConditions(result) {
-        if (result.highest == 1) {
+        if (result?.highest == 1) {
             this.actor?.addEffect("reeling");
         } else if (result?.tnData?.successes >= 2) {
             this.actor?.addEffect("focused");
