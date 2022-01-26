@@ -97,6 +97,8 @@
   "ironclaw2e.config.preferTokenNameHint": "If checked, dice rollers will not use actor's own names and will instead use the name and presentation of their tokens, when available. Always works for synthetic actors, whereas linked actors require an active scene.",
   "ironclaw2e.config.manageEncumbranceAuto": "WORLD: Auto-manage encumbrance",
   "ironclaw2e.config.manageEncumbranceAutoHint": "If checked, the system will automatically manage Burdened, Over-Burdened and Cannot Move statuses for actors, based on their carried weight and worn armors. Do not try to change them manually when active, doing so is likely to cause errors. Requires a restart to take effect on all actors.",
+  "ironclaw2e.config.noChatButtons": "WORLD: No chat buttons",
+  "ironclaw2e.config.noChatButtonsHint": "If checked, system chat messages like weapon info messages will not have quick buttons to attack with or defend against them.",
   "ironclaw2e.config.autoInitiativeConditions": "WORLD: Auto-set initiative conditions",
   "ironclaw2e.config.autoInitiativeConditionsHint": "If checked, the system will automatically set the Focused and Reeling conditions to combatants based on their initiative check. Note that the Reeling from a Tie check won't be set, as that is an active choice from the player.",
   "ironclaw2e.config.coinsHaveWeight": "WORLD: Make coins have weight",
@@ -209,6 +211,8 @@
   "ironclaw2e.dialog.copyItem.copySpecial": "Confirm copying over these special settings to all other Gifts with the exact same name: '{name}'. WARNING: This will completely replace any existing settings!",
   "ironclaw2e.dialog.copyItem.copyAll": "Confirm copying over all data from this Gift to all other Gifts with the exact same name: '{name}'. WARNING: This will completely replace all existing data!",
 
+  "ironclaw2e.dialog.defense.heading": "Choose defensive option against {weapon}",
+  "ironclaw2e.dialog.defense.label": "Defense against {weapon}",
   "ironclaw2e.dialog.defense.resist": "Resist roll against {weapon}",
   "ironclaw2e.dialog.defense.standard": "Standard defense roll against {weapon}",
   "ironclaw2e.dialog.defense.nonStandard": "Special defense roll against {weapon}",
@@ -268,6 +272,16 @@
 
   "ironclaw2e.chatInfo.itemInfo.coverDie": "Cover Die",
   "ironclaw2e.chatInfo.itemInfo.held": "Held",
+
+  "ironclaw2e.chatInfo.itemInfo.attackWith": "Attack with {name}",
+  "ironclaw2e.chatInfo.itemInfo.attackBasic": "Basic",
+  "ironclaw2e.chatInfo.itemInfo.attackBasicHint": "Attack with {name} while skipping the Resistance step",
+
+  "ironclaw2e.chatInfo.itemInfo.dodgeDefense": "Dodge",
+  "ironclaw2e.chatInfo.itemInfo.parryDefense": "Parry with...",
+  "ironclaw2e.chatInfo.itemInfo.counterDefense": "Counter with...",
+  "ironclaw2e.chatInfo.itemInfo.specialDefense": "Special Defend",
+  "ironclaw2e.chatInfo.itemInfo.resistAgainst": "Resist Against",
 
 
   "ironclaw2e.chatInfo.damageCalcInfo.header": "Damage of {name}",

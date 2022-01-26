@@ -11,7 +11,7 @@
             {{#if (typeCheck damageType "slaying")}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.slayingDamage"}}: <strong>{{doubleDamage}}</strong></p>{{/if}}
             {{#if (typeCheck damageType "critical")}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.criticalDamage"}}: <strong>{{criticalDamage}}</strong></p>{{/if}}
             {{#if (typeCheck damageType "normal")}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.normalDamage"}}: <strong>{{normalDamage}}</strong></p>{{/if}}
-            {{#if isImpaling}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.normalDamage"}}: <strong>{{doubleDamage}}</strong></p>{{/if}}
+            {{#if isImpaling}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.impalingDamage"}}: <strong>{{doubleDamage}}</strong></p>{{/if}}
             {{#if isPenetrating}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.penetratingAttack"}}</p>{{/if}}
             {{#if isWeak}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.weakAttack"}}</p>{{/if}}
             {{else}}

@@ -1,3 +1,5 @@
+import { makeCompareReady } from "./helpers.js";
+
 /** Common class for common system info that might be used */
 export class CommonSystemInfo {
     /**
@@ -192,4 +194,13 @@ export function getRangeBandFromDistance(distance) {
     }
     console.warn("Attempted to get a distance further away than the max range: " + distance);
     return foobar[foobar.length - 1][0];
+}
+
+/**
+ * Simple function to check whether the defense field is for the standard defense or not
+ * @param {string} defense
+ * @returns {boolean} Returns true if the defense is standard, false if not
+ */
+export function checkStandardDefense(defense) {
+    return (makeCompareReady(defense) === CommonSystemInfo.defenseStandardName);
 }

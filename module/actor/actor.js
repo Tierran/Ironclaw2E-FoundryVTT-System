@@ -1,4 +1,4 @@
-import { checkDiceArrayEmpty } from "../helpers.js";
+import { checkDiceArrayEmpty, splitStatString } from "../helpers.js";
 import { addArrays } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -13,8 +13,9 @@ import { checkDiceArrayIndex } from "../helpers.js";
 import { getDiceArrayMaxValue } from "../helpers.js";
 import { checkApplicability } from "../helpers.js";
 import { compareDiceArrays } from "../helpers.js";
+import { getSpeakerActor } from "../helpers.js";
 import { CommonConditionInfo } from "../conditions.js";
-import { CommonSystemInfo } from "../systeminfo.js";
+import { checkStandardDefense, CommonSystemInfo } from "../systeminfo.js";
 // For condition management
 import { hasConditionsIronclaw } from "../conditions.js";
 import { getConditionNamesIronclaw } from "../conditions.js";
@@ -26,6 +27,41 @@ import { rollHighestArray } from "../dicerollers.js";
 import { enforceLimit } from "../helpers.js";
 import { burdenedLimitedStat } from "../helpers.js";
 import { Ironclaw2EItem } from "../item/item.js";
+
+Hooks.on("renderChatMessage", function (message, html, data) {
+    const noButtons = game.settings.get("ironclaw2e", "noChatButtons");
+    const itemInfo = message.getFlag("ironclaw2e", "itemInfo");
+    const attackInfo = message.getFlag("ironclaw2e", "attackInfo");
+    if (noButtons) {
+        html.find('.button-holder').remove();
+    } else {
+        const buttons = html.find('.button-holder');
+        const showAuthor = game.user.isGM || message.isAuthor;
+        const showOthers = game.user.isGM || !message.isAuthor;
+        if (itemInfo) {
+            if (showAuthor) {
+                const attackHolder = buttons.find('.attack-buttons');
+                attackHolder.find('.default-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
+                attackHolder.find('.skip-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
+            } else {
+                buttons.find('.attack-buttons').remove();
+            }
+            if (showOthers) {
+                const defenseHolder = buttons.find('.defense-buttons');
+                defenseHolder.find('.dodge-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
+                defenseHolder.find('.parry-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
+                defenseHolder.find('.special-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
+                defenseHolder.find('.resist-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
+                defenseHolder.find('.counter-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
+            } else {
+                buttons.find('.defense-buttons').remove();
+            }
+        }
+        if (attackInfo) {
+
+        }
+    }
+});
 
 /**
  * Extend the base Actor entity by defining a custom data necessary for the Ironclaw system
@@ -44,8 +80,8 @@ export class Ironclaw2EActor extends Actor {
      * @param {boolean} resist Whether the defense is a resist
      * @param {string} weaponname The weapon name to roll against
      */
-    static async weaponDefenseDialog(actor, defense, resist, weaponname) {
-        const standard = (makeCompareReady(defense) === CommonSystemInfo.defenseStandardName); // Check whether the defense is standard or special
+    static async weaponDefenseClick(actor, defense, resist, weaponname) {
+        const standard = checkStandardDefense(defense); // Check whether the defense is standard or special
         if (resist && standard) {
             ui.notifications.warn(game.i18n.format("ironclaw2e.ui.standardDefenseResist", { "name": weaponname }));
         }
@@ -141,6 +177,168 @@ export class Ironclaw2EActor extends Actor {
                         let extra = findTotalDice(EXTRA);
                         if (resist) rollTargetNumberArray(3, extra, rollLabel, actor);
                         else rollHighestArray(extra, rollLabel, actor);
+                    }
+                }
+            }
+        });
+        dlog.render(true);
+    }
+
+    /**
+     * Handle the chat button event for clicking attack
+     * @param {any} event
+     */
+    static async onChatAttackClick(event) {
+        event.preventDefault();
+        const element = event.currentTarget;
+        const dataset = element.dataset;
+        const holderset = $(event.currentTarget).closest('.button-holder')[0]?.dataset;
+
+        if (!holderset) {
+            return console.warn("onChatAttackClick somehow failed to get proper data.")
+        }
+
+        // Get the actor, either through the sceneid if synthetic, or actorid if a full one
+        let attackActor = null;
+        if (holderset.sceneid && holderset.tokenid) {
+            const foo = game.scenes.get(holderset.sceneid)?.tokens.get(holderset.tokenid);
+            attackActor = foo?.actor;
+        } else if (holderset.actorid) {
+            attackActor = game.actors.get(holderset.actorid);
+        }
+
+        // If the attacker is found and the itemid exists, roll the attack
+        if (attackActor && holderset.itemid) {
+            attackActor.items.get(holderset.itemid).attackRoll(dataset?.skipresist == "true");
+        }
+    }
+
+    /**
+     * Handle the chat button event for clicking attack
+     * @param {any} event
+     */
+    static async onChatDefenseClick(event) {
+        event.preventDefault();
+        const element = event.currentTarget;
+        const dataset = element.dataset;
+        const holderset = $(event.currentTarget).closest('.button-holder')[0]?.dataset;
+        const defenseset = $(event.currentTarget).closest('.defense-buttons')[0]?.dataset;
+
+        if (!defenseset) {
+            return console.warn("onChatDefenseClick somehow failed to get proper data.")
+        }
+
+        // Get the actor based on the current speaker
+        let defenseActor = getSpeakerActor();
+        let validDefenses = {};
+        let defenseOptions = [];
+
+        // Check what defense type was called and either directly roll that defense or compile the list of weapons that fit the type for the next step
+        if (defenseActor && dataset?.defensetype) {
+            switch (dataset.defensetype) {
+                case "dodge":
+                    return defenseActor.popupDefenseRoll({ "prechecked": ["speed", "dodge"] });
+                    break;
+                case "special":
+                    return defenseActor.popupDefenseRoll({ "prechecked": splitStatString(defenseset.defendwith) }, { "isspecial": true });
+                    break;
+                case "resist":
+                    return defenseActor.popupSelectRolled({ "prechecked": splitStatString(defenseset.defendwith) });
+                    break;
+                case "parry":
+                    const parries = defenseActor.items.filter(element => element.data.type === 'weapon' && element.data.data.canDefend);
+                    defenseOptions = parries;
+                    validDefenses.parryvalid = true;
+                    break;
+                case "counter":
+                    const counters = defenseActor.items.filter(element => element.data.type === 'weapon' && element.data.data.canCounter);
+                    defenseOptions = counters;
+                    validDefenses.countervalid = true;
+                    break;
+                default:
+                    console.error("Somehow, onChatDefenseClick defaulted on the defensetype switch: " + dataset.defensetype);
+                    break;
+            }
+        }
+
+        // Call the actual popup dialog to choose with what weapon to defend with
+        Ironclaw2EActor.weaponDefenseDialog(defenseActor, defenseOptions, defenseset?.weaponname, validDefenses);
+    }
+
+    /**
+     * Construct and pop up a dialog to pick the defending weapon
+     * @param {Ironclaw2EActor} actor The actor in question
+     * @param {[Ironclaw2EItem]} optionsource What options are available
+     * @param {string} weaponname The name of the attacking weapon
+     * @param {boolean} [parryvalid] Whether parries are a valid option
+     * @param {boolean} [countervalid] Whether counters are a valid option
+     */
+    static async weaponDefenseDialog(actor, optionsource, weaponname, { parryvalid = false, countervalid = false } = {}) {
+        const heading = game.i18n.format("ironclaw2e.dialog.defense.heading", { "weapon": weaponname });
+        const rollLabel = game.i18n.format("ironclaw2e.dialog.defense.label", { "weapon": weaponname });
+        let options = "";
+
+        if (actor) {
+            if (parryvalid) {
+                for (let foo of optionsource) {
+                    if (foo.data.data.canDefend)
+                        options += `<option value="${foo.id}" data-type="parry">${game.i18n.format("ironclaw2e.dialog.defense.parryRoll", { "name": foo.name })}</option >`;
+                }
+            }
+            if (countervalid) {
+                for (let foo of optionsource) {
+                    if (foo.data.data.canCounter)
+                        options += `<option value="${foo.id}" data-type="counter">${game.i18n.format("ironclaw2e.dialog.defense.counterRoll", { "name": foo.name })}</option >`;
+                }
+            }
+        }
+        options += `<option value="" data-type="extra">${game.i18n.localize("ironclaw2e.dialog.defense.extraOnly")}</option >`;
+
+        let confirmed = false;
+        let speaker = getMacroSpeaker(actor);
+        let dlog = new Dialog({
+            title: heading,
+            content: `
+        <form class="ironclaw2e">
+        <div class="flexcol">
+         <span class="small-text">${game.i18n.format("ironclaw2e.dialog.dicePool.showUp", { "alias": speaker.alias })}</span>
+         <select name="defensepick" id="defensepick">
+         ${options}
+         </select>
+        </div>
+        <div class="form-group">
+         <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.defense.extraField")}:</label>
+	     <input id="extra" name="extra" value="" onfocus="this.select();"></input>
+        </div>
+        </form>`,
+            buttons: {
+                one: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: game.i18n.localize("ironclaw2e.dialog.pick"),
+                    callback: () => confirmed = true
+                },
+                two: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
+                    callback: () => confirmed = false
+                }
+            },
+            default: "one",
+            render: html => { document.getElementById("defensepick").focus(); },
+            close: html => {
+                if (confirmed) {
+                    let DEFENSE = html.find('[name=defensepick]')[0];
+                    const defensetype = DEFENSE.selectedOptions[0].dataset.type;
+                    const defensevalue = DEFENSE.selectedOptions[0].value;
+                    let EXTRA = html.find('[name=extra]')[0]?.value;
+
+                    if (defensetype === "counter" || defensetype === "parry") {
+                        const weapon = actor?.items.get(defensevalue);
+                        if (defensetype === "counter") weapon?.counterRoll();
+                        if (defensetype === "parry") weapon?.defenseRoll();
+                    } else if (defensetype === "extra") {
+                        let extra = findTotalDice(EXTRA);
+                        rollHighestArray(extra, rollLabel, actor);
                     }
                 }
             }
@@ -1215,7 +1413,7 @@ export class Ironclaw2EActor extends Actor {
     /*  Special Popup Macro Puukko Functions        */
     /* -------------------------------------------- */
 
-    popupSoakRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "" } = {}, { directroll = false, checkweak = false, checkarmor = true } = {}, successfunc = null) {
+    popupSoakRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherlabel = "" } = {}, { directroll = false, checkweak = false, checkarmor = true } = {}, successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
         let formconstruction = otherinputs;
@@ -1247,7 +1445,7 @@ export class Ironclaw2EActor extends Actor {
             this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc);
     }
 
-    popupDefenseRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "" } = {}, { directroll = false, isparry = false, isspecial = false } = {},
+    popupDefenseRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherlabel = "" } = {}, { directroll = false, isparry = false, isspecial = false } = {},
         item = null, successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
@@ -1281,7 +1479,7 @@ export class Ironclaw2EActor extends Actor {
             this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc);
     }
 
-    popupAttackRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "" } = {}, { directroll = false } = {}, item = null, successfunc = null) {
+    popupAttackRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherlabel = "" } = {}, { directroll = false } = {}, item = null, successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
         let formconstruction = otherinputs;
@@ -1311,7 +1509,7 @@ export class Ironclaw2EActor extends Actor {
             this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc, autoremove);
     }
 
-    popupCounterRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherinputs = "", otherkeys = [], otherdice = [], otherlabel = "" } = {}, { directroll = false } = {},item = null, successfunc = null) {
+    popupCounterRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherlabel = "" } = {}, { directroll = false } = {}, item = null, successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
         let formconstruction = otherinputs;

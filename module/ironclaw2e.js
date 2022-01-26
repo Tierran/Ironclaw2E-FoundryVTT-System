@@ -105,6 +105,14 @@ Hooks.once('init', async function () {
         default: true,
         config: true
     });
+    game.settings.register("ironclaw2e", "noChatButtons", {
+        name: "ironclaw2e.config.noChatButtons",
+        hint: "ironclaw2e.config.noChatButtonsHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: true
+    });
     game.settings.register("ironclaw2e", "autoInitiativeConditions", {
         name: "ironclaw2e.config.autoInitiativeConditions",
         hint: "ironclaw2e.config.autoInitiativeConditionsHint",
@@ -113,6 +121,7 @@ Hooks.once('init', async function () {
         default: true,
         config: true
     });
+    // Auto condition removal configs
     game.settings.register("ironclaw2e", "autoConditionRemoval", {
         name: "ironclaw2e.config.autoConditionRemoval",
         hint: "ironclaw2e.config.autoConditionRemovalHint",
@@ -129,6 +138,7 @@ Hooks.once('init', async function () {
         default: false,
         config: true
     });
+    // Encubmrance configs
     game.settings.register("ironclaw2e", "manageEncumbranceAuto", {
         name: "ironclaw2e.config.manageEncumbranceAuto",
         hint: "ironclaw2e.config.manageEncumbranceAutoHint",
@@ -145,6 +155,7 @@ Hooks.once('init', async function () {
         default: true,
         config: true
     });
+    // Damage calculation configs
     game.settings.register("ironclaw2e", "calculateAttackEffects", {
         name: "ironclaw2e.config.calculateAttackEffects",
         hint: "ironclaw2e.config.calculateAttackEffectsHint",
@@ -203,8 +214,22 @@ Hooks.once('init', async function () {
         default: game.system.data.version,
         config: false
     });
-
-
+    /*
+    // Register keybinds for the system
+    game.keybindings.register("ironclaw2e", "quickRollModifier", {
+        name: "Quick Roll Modifier Key",
+        hint: "If pressed, the system will attempt to skip dialog popups and instead make dice rolls or execute funtions immediately with default values, where available.",
+        editable: [
+            {
+                key: "ControlLeft"
+            },
+            {
+                key: "ControlRight"
+            }
+        ],
+        restricted: false
+    });
+    */
     // Handlebars helper registration
     Handlebars.registerHelper('concat', function () {
         var outStr = '';
@@ -493,7 +518,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const weapon = message.getFlag("ironclaw2e", "defenseWeapon") || "unknown";
                 const speakeractor = getSpeakerActor();
                 if (type && defense) {
-                    Ironclaw2EActor.weaponDefenseDialog(speakeractor, defense, type === "resist", weapon);
+                    Ironclaw2EActor.weaponDefenseClick(speakeractor, defense, type === "resist", weapon);
                 }
             }
         },
@@ -515,7 +540,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const weapon = message.getFlag("ironclaw2e", "defenseWeapon") || "unknown";
                 const speakeractor = getSpeakerActor();
                 if (type && defense) {
-                    Ironclaw2EActor.weaponDefenseDialog(speakeractor, defense, type === "resist", weapon);
+                    Ironclaw2EActor.weaponDefenseClick(speakeractor, defense, type === "resist", weapon);
                 }
             }
         });

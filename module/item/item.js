@@ -7,7 +7,7 @@ import { splitStatsAndBonus } from "../helpers.js";
 import { getMacroSpeaker } from "../helpers.js";
 import { checkDiceArrayEmpty } from "../helpers.js";
 
-import { CommonSystemInfo } from "../systeminfo.js";
+import { checkStandardDefense, CommonSystemInfo } from "../systeminfo.js";
 import { getSpecialOptionPrototype } from "../systeminfo.js";
 
 import { rollTargetNumberOneLine } from "../dicerollers.js";
@@ -578,6 +578,11 @@ export class Ironclaw2EItem extends Item {
         const templateData = {
             "item": item,
             "itemData": itemData,
+            "hasButtons": item.type === "weapon",
+            "standardDefense": checkStandardDefense(itemData.defendWith),
+            "actorId": this.actor.id,
+            "tokenId": this.actor.token?.id ?? null,
+            "sceneId": this.actor.token?.parent?.id ?? null,
             "equipHandedness": (item.type === 'weapon' ? CommonSystemInfo.equipHandedness[itemData.equip] : ""),
             "equipRange": (item.type === 'weapon' ? CommonSystemInfo.rangeBands[itemData.range] : "")
         };
@@ -586,11 +591,12 @@ export class Ironclaw2EItem extends Item {
 
         let chatData = {
             content: contents,
-            speaker: getMacroSpeaker(this.actor)
+            speaker: getMacroSpeaker(this.actor),
+            flags: { "ironclaw2e.itemInfo": true }
         };
         if (item.type === 'weapon') {
             chatData.flags = {
-                "ironclaw2e.defenseInfo": (itemData.hasResist ? "resist" : "defense"), "ironclaw2e.defenseField": itemData.defendWith, "ironclaw2e.defenseWeapon": item.name
+                "ironclaw2e.itemInfo": true, "ironclaw2e.defenseInfo": (itemData.hasResist ? "resist" : "defense"), "ironclaw2e.defenseField": itemData.defendWith, "ironclaw2e.defenseWeapon": item.name
             };
         }
         ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
@@ -837,7 +843,8 @@ export class Ironclaw2EItem extends Item {
 
         let chatData = {
             content: contents,
-            speaker: getMacroSpeaker(this.actor)
+            speaker: getMacroSpeaker(this.actor),
+            flags: { "ironclaw2e.attackInfo": true }
         };
         ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
         CONFIG.ChatMessage.documentClass.create(chatData);
@@ -873,7 +880,8 @@ export class Ironclaw2EItem extends Item {
 
         let chatData = {
             content: contents,
-            speaker: getMacroSpeaker(this.actor)
+            speaker: getMacroSpeaker(this.actor),
+            flags: { "ironclaw2e.attackInfo": true }
         };
         ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
         CONFIG.ChatMessage.documentClass.create(chatData);
@@ -936,7 +944,7 @@ export class Ironclaw2EItem extends Item {
         }
     }
 
-    attackRoll() {
+    attackRoll(ignoreresist = false) {
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
         const data = itemData.data;
@@ -958,7 +966,7 @@ export class Ironclaw2EItem extends Item {
         } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust?.popupRefreshGift();
         } else {
-            this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, 2, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x, false, donotdisplay); }));
+            this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, 2, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x, ignoreresist, donotdisplay); }));
         }
     }
 
