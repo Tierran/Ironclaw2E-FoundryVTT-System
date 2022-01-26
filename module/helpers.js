@@ -322,9 +322,11 @@ export function splitStatString(stats, comparisonready = true) {
         return statarray;
     }
 
-    let foos = stats.split(",");
-    for (let i = 0; i < foos.length; ++i) {
-        statarray.push((comparisonready ? makeCompareReady(foos[i]) : foos[i]));
+    if (stats.length > 0) {
+        let foos = stats.split(",");
+        for (let i = 0; i < foos.length; ++i) {
+            statarray.push((comparisonready ? makeCompareReady(foos[i]) : foos[i]));
+        }
     }
     return statarray;
 }

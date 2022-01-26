@@ -10,6 +10,8 @@ import { checkDiceArrayEmpty } from "../helpers.js";
 import { checkStandardDefense, CommonSystemInfo } from "../systeminfo.js";
 import { getSpecialOptionPrototype } from "../systeminfo.js";
 
+import { CommonConditionInfo } from "../conditions.js"
+
 import { rollTargetNumberOneLine } from "../dicerollers.js";
 import { rollHighestOneLine } from "../dicerollers.js";
 import { copyToRollTNDialog } from "../dicerollers.js"
@@ -248,11 +250,23 @@ export class Ironclaw2EItem extends Item {
             data.effectsSplit = splitStatString(data.effect);
             const foo = data.effectsSplit.findIndex(element => element.includes("damage"));
             if (foo >= 0) {
-                const bar = data.effectsSplit.splice(foo, 1);
+                const bar = data.effectsSplit[foo];
                 if (bar.length > 0) {
-                    const damage = parseInt(bar[0].slice(-1));
-                    data.damageEffect = isNaN(damage) ? 0 : damage;
-                }
+                    const damage = parseInt(bar.slice(-1));
+                    data.damageEffect = isNaN(damage) ? -1 : damage;
+                } else { data.damageEffect = -1; }
+            } else { data.damageEffect = -1; }
+
+            const conds = CommonConditionInfo.getMatchedConditions(data.effectsSplit);
+            data.effectConditions = "";
+            data.effectConditionsLabel = "";
+            if (conds.length > 0) {
+                conds.forEach(element => {
+                    data.effectConditions += element.id + ",";
+                    data.effectConditionsLabel += game.i18n.localize(element.label) + ",";
+                });
+                data.effectConditions = data.effectConditions.slice(0, -1);
+                data.effectConditionsLabel = data.effectConditionsLabel.slice(0, -1);
             }
         }
         // Defense
@@ -830,7 +844,7 @@ export class Ironclaw2EItem extends Item {
             "hasResist": itemData.hasResist,
             "success": success,
             "resultStyle": "color:" + (success ? CommonSystemInfo.resultColors.success : CommonSystemInfo.resultColors.tie),
-            "damageType": (itemData.effectsSplit.includes("slaying") ? "slaying" : (itemData.effectsSplit.includes("critical") ? "critical" : "normal")),
+            "damageType": (itemData.effectsSplit.includes("slaying") ? "slaying" : (itemData.effectsSplit.includes("critical") ? "critical" : (itemData.damageEffect >= 0 ? "normal": "conditional"))),
             "isImpaling": itemData.effectsSplit.includes("impaling"),
             "isPenetrating": itemData.effectsSplit.includes("penetrating"),
             "isWeak": itemData.effectsSplit.includes("weak"),
@@ -844,7 +858,7 @@ export class Ironclaw2EItem extends Item {
         let chatData = {
             content: contents,
             speaker: getMacroSpeaker(this.actor),
-            flags: { "ironclaw2e.attackInfo": true }
+            flags: { "ironclaw2e.attackDamageInfo": true }
         };
         ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
         CONFIG.ChatMessage.documentClass.create(chatData);
@@ -867,7 +881,7 @@ export class Ironclaw2EItem extends Item {
             "hasResist": itemData.hasResist,
             "success": false,
             "resultStyle": "color:" + CommonSystemInfo.resultColors.failure,
-            "damageType": (itemData.effectsSplit.includes("slaying") ? "slaying" : (itemData.effectsSplit.includes("critical") ? "critical" : "normal")),
+            "damageType": (itemData.effectsSplit.includes("slaying") ? "slaying" : (itemData.effectsSplit.includes("critical") ? "critical" : (itemData.damageEffect ? "normal" : "conditional"))),
             "isImpaling": itemData.effectsSplit.includes("impaling"),
             "isPenetrating": itemData.effectsSplit.includes("penetrating"),
             "isWeak": itemData.effectsSplit.includes("weak"),
@@ -881,7 +895,7 @@ export class Ironclaw2EItem extends Item {
         let chatData = {
             content: contents,
             speaker: getMacroSpeaker(this.actor),
-            flags: { "ironclaw2e.attackInfo": true }
+            flags: { "ironclaw2e.attackDamageInfo": true }
         };
         ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
         CONFIG.ChatMessage.documentClass.create(chatData);

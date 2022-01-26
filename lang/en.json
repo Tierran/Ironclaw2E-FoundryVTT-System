@@ -174,6 +174,7 @@
   "ironclaw2e.dialog.damageCalc.conditionDamageNothing": "No damage added by conditions",
   "ironclaw2e.dialog.damageCalc.knockoutStrike": "Knockout Strike?",
   "ironclaw2e.dialog.damageCalc.nonLethal": "Non-lethal attack?",
+  "ironclaw2e.dialog.damageCalc.damageConditions": "Other conditions to add:",
   "ironclaw2e.dialog.damageCalc.chatMessage": "{name} is {condition}!",
 
   "ironclaw2e.dialog.addCondition.title": "Adding Condition to {name}",
@@ -295,11 +296,19 @@
   "ironclaw2e.chatInfo.damageCalcInfo.normalDamage": "Normal Damage",
   "ironclaw2e.chatInfo.damageCalcInfo.impalingDamage": "Impaling Damage",
   "ironclaw2e.chatInfo.damageCalcInfo.impalingNote": "unless target retreats",
+  "ironclaw2e.chatInfo.damageCalcInfo.conditionalDamage": "Causes conditions",
 
   "ironclaw2e.chatInfo.damageCalcInfo.penetratingAttack": "Penetrating Attack, no armor for Soak",
   "ironclaw2e.chatInfo.damageCalcInfo.weakAttack": "Weak Attack, roll Soak twice",
 
   "ironclaw2e.chatInfo.damageCalcInfo.allEffects": "All effects",
+
+  "ironclaw2e.chatInfo.damageCalcInfo.soakHeader": "Soak Rolls",
+  "ironclaw2e.chatInfo.damageCalcInfo.soakSlaying": "Slaying",
+  "ironclaw2e.chatInfo.damageCalcInfo.soakCritical": "Critical",
+  "ironclaw2e.chatInfo.damageCalcInfo.soakNormal": "Normal",
+  "ironclaw2e.chatInfo.damageCalcInfo.soakImpaling": "Impaling",
+  "ironclaw2e.chatInfo.damageCalcInfo.soakConditional": "Condition Effect",
 
 
   "ironclaw2e.sheets.actor.battleStatistics": "Battle Statistics",

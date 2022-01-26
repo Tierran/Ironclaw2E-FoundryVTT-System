@@ -457,7 +457,8 @@ export class CommonConditionInfo {
         if (Array.isArray(conditions)) {
             matches = this.conditionList.filter(cond => conditions.includes(cond.id));
         } else {
-            matches.push(this.conditionList.find(cond => cond.id == conditions));
+            const foo = this.conditionList.find(cond => cond.id == conditions);
+            if (foo) matches.push(foo);
         }
         return matches;
     }
@@ -469,5 +470,14 @@ export class CommonConditionInfo {
      */
     static getConditionLabel(condition) {
         return this.conditionList.find(cond => cond.id == condition)?.label;
+    }
+
+    /**
+     * Returns the translation identifier for a given condition
+     * @param {string} condition
+     * @returns {string}
+     */
+    static getConditionTranslated(condition) {
+        return game.i18n.localize(this.conditionList.find(cond => cond.id == condition)?.label);
     }
 }
