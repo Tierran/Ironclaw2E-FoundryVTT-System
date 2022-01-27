@@ -279,6 +279,7 @@
   "ironclaw2e.chatInfo.itemInfo.attackWith": "Attack with {name}",
   "ironclaw2e.chatInfo.itemInfo.attackBasic": "Basic",
   "ironclaw2e.chatInfo.itemInfo.attackBasicHint": "Attack with {name} while skipping the Resistance step",
+  "ironclaw2e.chatInfo.itemInfo.attackSpark": "Spark",
 
   "ironclaw2e.chatInfo.itemInfo.dodgeDefense": "Dodge",
   "ironclaw2e.chatInfo.itemInfo.parryDefense": "Parry with...",

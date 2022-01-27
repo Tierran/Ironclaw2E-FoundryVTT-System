@@ -58,6 +58,7 @@
                 {{#if itemData.hasResist}}<button class="skip-attack small-text" style="max-width:4em" title="{{localize "ironclaw2e.chatInfo.itemInfo.attackBasicHint" name=item.name}}" data-skipresist="true">
                     {{localize "ironclaw2e.chatInfo.itemInfo.attackBasic"}}
                 </button>{{/if}}
+                {{#if itemData.canSpark}}<button class="spark-attack small-text" style="max-width:4em">{{localize "ironclaw2e.chatInfo.itemInfo.attackSpark"}}</button>{{/if}}
             </div>
             <div class="defense-buttons flexrow" data-defense="{{itemData.defendWith}}" data-hasresist="{{itemData.hasResist}}" data-weaponname="{{item.name}}">
                 {{#unless itemData.hasResist}}

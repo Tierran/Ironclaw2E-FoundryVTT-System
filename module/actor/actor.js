@@ -45,6 +45,7 @@ Hooks.on("renderChatMessage", function (message, html, data) {
                 const attackHolder = buttons.find('.attack-buttons');
                 attackHolder.find('.default-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
                 attackHolder.find('.skip-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
+                attackHolder.find('.spark-attack').click(Ironclaw2EActor.onChatSparkClick.bind(this));
             } else {
                 buttons.find('.attack-buttons').remove();
             }
@@ -113,7 +114,40 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /**
-     * Handle the chat button event for clicking attack
+     * Handle the chat button event for clicking spark
+     * @param {any} event
+     */
+    static async onChatSparkClick(event) {
+        event.preventDefault();
+        const element = event.currentTarget;
+        const dataset = element.dataset;
+        const holderset = $(event.currentTarget).closest('.button-holder')[0]?.dataset;
+
+        if (!holderset) {
+            return console.warn("onChatAttackClick somehow failed to get proper data.")
+        }
+
+        // Get the actor, either through the sceneid if synthetic, or actorid if a full one
+        let attackActor = null;
+        if (holderset.sceneid && holderset.tokenid) {
+            const foo = game.scenes.get(holderset.sceneid)?.tokens.get(holderset.tokenid);
+            attackActor = foo?.actor;
+        } else if (holderset.actorid) {
+            attackActor = game.actors.get(holderset.actorid);
+        }
+
+        const directroll = checkQuickModifierKey();
+
+        // If the attacker is found and the itemid exists, roll the attack
+        if (attackActor && holderset.itemid) {
+            attackActor.items.get(holderset.itemid).sparkRoll(directroll);
+        } else if (!attackActor) {
+            ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
+        }
+    }
+
+    /**
+     * Handle the chat button event for clicking defense
      * @param {any} event
      */
     static async onChatDefenseClick(event) {
@@ -170,7 +204,7 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /**
-     * Handle the chat button event for clicking attack
+     * Handle the chat button event for clicking soak
      * @param {any} event
      */
     static async onChatSoakClick(event) {
