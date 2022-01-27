@@ -1,3 +1,13 @@
+### 0.5.3 Quick buttons release
+ - Added buttons to item info and attack damage info for quicker rolls
+ - Added a configurable keybind to skip most roll dialogs when pressing buttons, default is Control
+ - Added /quickroll as the command to use for quickrolls, /directroll still works
+ - Item info and attack damage info messages based on templates
+ - Beast actors have the missing Career configuration fields
+ - While the actor is an active combatant in an encounter without an initiative, the initiative in the sheet will be green and clicking it will roll the encounter initiative
+ - Encounter initiative automatically sets Focused and botch Reeling conditions
+ - Target number rolls show the highest die in smaller print
+
 ### 0.5.2 Aimed source release
  - Added aiming as a bonus source
  - Misc fixes
