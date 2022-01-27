@@ -6,13 +6,14 @@ import { splitStatString } from "../helpers.js";
 import { splitStatsAndBonus } from "../helpers.js";
 import { getMacroSpeaker } from "../helpers.js";
 import { checkDiceArrayEmpty } from "../helpers.js";
+import { checkQuickModifierKey } from "../helpers.js";
 
 import { checkStandardDefense, CommonSystemInfo } from "../systeminfo.js";
 import { getSpecialOptionPrototype } from "../systeminfo.js";
 
 import { CommonConditionInfo } from "../conditions.js"
 
-import { rollTargetNumberOneLine } from "../dicerollers.js";
+import { rollHighestArray, rollTargetNumberOneLine } from "../dicerollers.js";
 import { rollHighestOneLine } from "../dicerollers.js";
 import { copyToRollTNDialog } from "../dicerollers.js"
 
@@ -546,6 +547,7 @@ export class Ironclaw2EItem extends Item {
         const item = this.data;
         const actorData = this.actor ? this.actor.data.data : {};
         const itemData = item.data;
+        const directroll = checkQuickModifierKey();
 
         switch (item.type) {
             case 'gift':
@@ -559,7 +561,7 @@ export class Ironclaw2EItem extends Item {
                 if (itemData.canCounter) rolls.push(3);
 
                 if (rolls.length == 1) {
-                    this._itemRollSelection(rolls[0]);
+                    this._itemRollSelection(rolls[0], directroll);
                 } else {
                     this.popupWeaponRollType();
                 }
@@ -608,11 +610,6 @@ export class Ironclaw2EItem extends Item {
             speaker: getMacroSpeaker(this.actor),
             flags: { "ironclaw2e.itemInfo": true }
         };
-        if (item.type === 'weapon') {
-            chatData.flags = {
-                "ironclaw2e.itemInfo": true, "ironclaw2e.defenseInfo": (itemData.hasResist ? "resist" : "defense"), "ironclaw2e.defenseField": itemData.defendWith, "ironclaw2e.defenseWeapon": item.name
-            };
-        }
         ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
 
         if (confirmSend) {
@@ -695,8 +692,7 @@ export class Ironclaw2EItem extends Item {
             let updatedata = {
                 flags: {
                     "ironclaw2e.hangingAttack": "resist", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
-                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses,
-                    "ironclaw2e.defenseInfo": "resist", "ironclaw2e.defenseField": itemData.defendWith, "ironclaw2e.defenseWeapon": item.name
+                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses
                 }
             };
             info.message.update(updatedata);
@@ -907,7 +903,7 @@ export class Ironclaw2EItem extends Item {
 
     // Gift Rolls
 
-    giftRoll() {
+    giftRoll(directroll = false) {
         const theitem = this;
         const itemData = this.data;
         const data = itemData.data;
@@ -922,7 +918,7 @@ export class Ironclaw2EItem extends Item {
         }
         if (data.exhaustWhenUsed == false || data.exhausted == false) {
             if (data.giftStats || data.giftArray)
-                this.genericItemRoll(data.giftStats, data.defaultTN, itemData.name, data.giftArray, 0, (data.exhaustWhenUsed ? (x => { this.giftSetExhaust("true"); }) : null));
+                this.genericItemRoll(data.giftStats, data.defaultTN, itemData.name, data.giftArray, directroll, 0, (data.exhaustWhenUsed ? (x => { this.giftSetExhaust("true"); }) : null));
             else if (data.exhaustWhenUsed) // Check just in case, even though there should never be a situation where canUse is set, but neither rollable stats / dice nor exhaustWhenUsed aren't
                 this.popupExhaustGift();
         }
@@ -936,21 +932,22 @@ export class Ironclaw2EItem extends Item {
     /**
      * Select the correct weapon roll funtion to call based on the received integer
      * @param {number} selection
+     * @param {boolean} directroll Whether to skip the popup dialog
      * @private
      */
-    _itemRollSelection(selection) {
+    _itemRollSelection(selection, directroll = false) {
         switch (selection) {
             case 0:
-                this.attackRoll();
+                this.attackRoll(directroll);
                 break;
             case 1:
-                this.sparkRoll();
+                this.sparkRoll(directroll);
                 break;
             case 2:
-                this.defenseRoll();
+                this.defenseRoll(directroll);
                 break;
             case 3:
-                this.counterRoll();
+                this.counterRoll(directroll);
                 break;
             default:
                 console.error("Defaulted weapon roll type: " + this);
@@ -958,7 +955,7 @@ export class Ironclaw2EItem extends Item {
         }
     }
 
-    attackRoll(ignoreresist = false) {
+    attackRoll(directroll = false, ignoreresist = false) {
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
         const data = itemData.data;
@@ -980,11 +977,11 @@ export class Ironclaw2EItem extends Item {
         } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust?.popupRefreshGift();
         } else {
-            this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, 2, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x, ignoreresist, donotdisplay); }));
+            this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, directroll, 2, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x, ignoreresist, donotdisplay); }));
         }
     }
 
-    defenseRoll() {
+    defenseRoll(directroll = false) {
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
         const data = itemData.data;
@@ -998,10 +995,10 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        this.genericItemRoll(data.defenseStats, -1, itemData.name, data.defenseArray, 1);
+        this.genericItemRoll(data.defenseStats, -1, itemData.name, data.defenseArray, directroll, 1);
     }
 
-    counterRoll() {
+    counterRoll(directroll = false) {
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
         const data = itemData.data;
@@ -1022,11 +1019,11 @@ export class Ironclaw2EItem extends Item {
         } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust?.popupRefreshGift();
         } else {
-            this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, 3, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x); }));
+            this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, directroll, 3, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x); }));
         }
     }
 
-    sparkRoll() {
+    sparkRoll(directroll = false) {
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
         const data = itemData.data;
@@ -1040,7 +1037,12 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        rollHighestOneLine(data.sparkDie, game.i18n.localize("ironclaw2e.dialog.sparkRoll.label"), "ironclaw2e.dialog.sparkRoll.title", this.actor);
+        if (!directroll) {
+            rollHighestOneLine(data.sparkDie, game.i18n.localize("ironclaw2e.dialog.sparkRoll.label"), "ironclaw2e.dialog.sparkRoll.title", this.actor);
+        } else {
+            const foo = findTotalDice(data.sparkDie);
+            rollHighestArray(foo, game.i18n.localize("ironclaw2e.dialog.sparkRoll.label"), this.actor);
+        }
     }
 
     /**
@@ -1049,10 +1051,11 @@ export class Ironclaw2EItem extends Item {
      * @param {number} tn Target number of the roll, -1 if highest
      * @param {string} diceid What to name the item dice
      * @param {number[]} dicearray The dice array of the item being rolled
+     * @param {boolean} directroll Whether the roll is a direct one without a popup
      * @param {number} rolltype What type of popup function to use for the roll, mostly to allow automatic use gifts through special case hacks
      * @param {Function} callback The function to execute after the dice are rolled
      */
-    genericItemRoll(stats, tn, diceid, dicearray, rolltype = 0, callback = null) {
+    genericItemRoll(stats, tn, diceid, dicearray, directroll = false, rolltype = 0, callback = null) {
         let tnyes = (tn > 0);
         let usedtn = (tn > 0 ? tn : 3);
         if (this.actor) {
@@ -1075,26 +1078,26 @@ export class Ironclaw2EItem extends Item {
             switch (rolltype) {
                 case 0: // Generic gift roll
                     diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.giftRoll") + (this.data.data.exhaustWhenUsed ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.gift") + " <strong>" + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.exhausted") + "</strong>" : ": ");
-                    this.actor.popupSelectRolled(diceinput, callback);
+                    this.actor.basicRollSelector(diceinput, { directroll } , callback);
                     break;
                 case 1: // Parry roll
                     diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.parryRoll") + ": ";
-                    this.actor.popupDefenseRoll(diceinput, { "isparry": true }, this, callback);
+                    this.actor.popupDefenseRoll(diceinput, { directroll, "isparry": true }, this, callback);
                     break;
                 case 2: // Attack roll
                     diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect +
                         (this.data.data.opposingDefenseStats?.length > 0 ? ", " + (this.data.data.hasResist ? game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith") + " " + this.data.data.defendWith + " vs. 3 " : game.i18n.localize("ironclaw2e.chatInfo.itemInfo.opposingDefense") + ": " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attack") + " vs. " + this.data.data.defendWith) : "") : ": ");
                     if (this.weaponGetGiftToExhaust()?.giftUsable() === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
-                    this.actor.popupAttackRoll(diceinput, {}, this, callback);
+                    this.actor.popupAttackRoll(diceinput, { directroll }, this, callback);
                     break;
                 case 3: // Counter roll
                     diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.counterRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect : ": ");
                     if (this.weaponGetGiftToExhaust()?.giftUsable() === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
-                    this.actor.popupCounterRoll(diceinput, {}, this, callback);
+                    this.actor.popupCounterRoll(diceinput, { directroll }, this, callback);
                     break;
                 default:
                     console.warn("genericItemRoll defaulted when selecting a roll: " + rolltype);
-                    this.actor.popupSelectRolled(diceinput, callback);
+                    this.actor.basicRollSelector(diceinput, { directroll }, callback);
                     break;
             }
 
@@ -1290,10 +1293,11 @@ export class Ironclaw2EItem extends Item {
             render: html => { document.getElementById(first).focus(); },
             close: html => {
                 if (confirmed) {
+                    const directroll = checkQuickModifierKey();
                     let typestring = html.find('input[name=weapon]:checked')[0].value;
                     let rolltype = 0; if (typestring.length != 0) rolltype = parseInt(typestring);
                     if (Number.isInteger(rolltype)) {
-                        this._itemRollSelection(rolltype);
+                        this._itemRollSelection(rolltype, directroll);
                     }
                 }
             }

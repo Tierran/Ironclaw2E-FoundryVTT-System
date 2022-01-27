@@ -1,4 +1,4 @@
-import { checkDiceArrayEmpty, splitStatString } from "../helpers.js";
+import { checkDiceArrayEmpty } from "../helpers.js";
 import { addArrays } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -6,7 +6,7 @@ import { convertCamelCase } from "../helpers.js";
 import { getMacroSpeaker } from "../helpers.js";
 import { findActorToken } from "../helpers.js";
 import { findTotalDice } from "../helpers.js";
-import { splitStatsAndBonus } from "../helpers.js";
+import { splitStatString } from "../helpers.js";
 import { nullCheckConcat } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
 import { checkDiceArrayIndex } from "../helpers.js";
@@ -14,6 +14,7 @@ import { getDiceArrayMaxValue } from "../helpers.js";
 import { checkApplicability } from "../helpers.js";
 import { compareDiceArrays } from "../helpers.js";
 import { getSpeakerActor } from "../helpers.js";
+import { checkQuickModifierKey } from "../helpers.js";
 import { CommonConditionInfo } from "../conditions.js";
 import { checkStandardDefense, CommonSystemInfo } from "../systeminfo.js";
 // For condition management
@@ -30,6 +31,7 @@ import { Ironclaw2EItem } from "../item/item.js";
 
 Hooks.on("renderChatMessage", function (message, html, data) {
     const noButtons = game.settings.get("ironclaw2e", "noChatButtons");
+    const showOthersToAll = game.settings.get("ironclaw2e", "showDefenseButtons");
     const itemInfo = message.getFlag("ironclaw2e", "itemInfo");
     const attackInfo = message.getFlag("ironclaw2e", "attackDamageInfo");
     if (noButtons) {
@@ -37,7 +39,7 @@ Hooks.on("renderChatMessage", function (message, html, data) {
     } else {
         const buttons = html.find('.button-holder');
         const showAuthor = game.user.isGM || message.isAuthor;
-        const showOthers = game.user.isGM || !message.isAuthor;
+        const showOthers = game.user.isGM || !message.isAuthor || showOthersToAll;
         if (itemInfo) {
             if (showAuthor) {
                 const attackHolder = buttons.find('.attack-buttons');
@@ -78,117 +80,6 @@ export class Ironclaw2EActor extends Actor {
     /* -------------------------------------------- */
 
     /**
-     * Checks what to roll for defense and pops the correct dialog box through it
-     * @param {Actor} actor The actor to roll the defense for
-     * @param {string} defense The defense rolled
-     * @param {boolean} resist Whether the defense is a resist
-     * @param {string} weaponname The weapon name to roll against
-     */
-    static async weaponDefenseClick(actor, defense, resist, weaponname) {
-        const standard = checkStandardDefense(defense); // Check whether the defense is standard or special
-        if (resist && standard) {
-            ui.notifications.warn(game.i18n.format("ironclaw2e.ui.standardDefenseResist", { "name": weaponname }));
-        }
-        // Get the correct heading depending on whether the weapon is resisted, or against standard defense or special defense
-        const heading = game.i18n.format(resist ? "ironclaw2e.dialog.defense.resist" : (standard ? "ironclaw2e.dialog.defense.standard" : "ironclaw2e.dialog.defense.nonStandard"), { "weapon": weaponname });
-        const rollLabel = game.i18n.format(resist ? "ironclaw2e.dialog.defense.resist" : (standard ? "ironclaw2e.dialog.defense.dodgeAgainst" : "ironclaw2e.dialog.defense.nonStandard"), { "weapon": weaponname });
-        let options = "";
-
-        if (actor) {
-            const weapons = actor.items.filter(element => element.data.type === 'weapon');
-
-            if (standard && !resist) {
-                options += `<option value="Speed, Dodge" data-type="stats">${game.i18n.localize("ironclaw2e.dialog.defense.dodgeRoll")}</option >`;
-                for (let foo of weapons) {
-                    if (foo.data.data.canDefend)
-                        options += `<option value="${foo.id}" data-type="parry">${game.i18n.format("ironclaw2e.dialog.defense.parryRoll", { "name": foo.name })}</option >`;
-                }
-            }
-            else if (!standard && !resist) {
-                options += `<option value="${defense}" data-type="stats">${game.i18n.format("ironclaw2e.dialog.defense.specialRoll", { "stats": defense })}</option >`;
-            }
-            else {
-                options += `<option value="${defense}" data-type="stats">${game.i18n.format("ironclaw2e.dialog.defense.resistRoll", { "stats": defense })}</option >`;
-            }
-
-            for (let foo of weapons) {
-                if (foo.data.data.canCounter)
-                    options += `<option value="${foo.id}" data-type="counter">${game.i18n.format("ironclaw2e.dialog.defense.counterRoll", { "name": foo.name })}</option >`;
-            }
-        }
-        options += `<option value="" data-type="extra">${game.i18n.localize("ironclaw2e.dialog.defense.extraOnly")}</option >`;
-
-        let confirmed = false;
-        let speaker = getMacroSpeaker(actor);
-        let dlog = new Dialog({
-            title: heading,
-            content: `
-        <form class="ironclaw2e">
-        <div class="flexcol">
-         <span class="small-text">${game.i18n.format("ironclaw2e.dialog.dicePool.showUp", { "alias": speaker.alias })}</span>
-         <select name="defensepick" id="defensepick">
-         ${options}
-         </select>
-        </div>
-        <div class="form-group">
-         <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.defense.extraField")}:</label>
-	     <input id="extra" name="extra" value="" onfocus="this.select();"></input>
-        </div>
-        </form>`,
-            buttons: {
-                one: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.pick"),
-                    callback: () => confirmed = true
-                },
-                two: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
-                    callback: () => confirmed = false
-                }
-            },
-            default: "one",
-            render: html => { document.getElementById("defensepick").focus(); },
-            close: html => {
-                if (confirmed) {
-                    let DEFENSE = html.find('[name=defensepick]')[0];
-                    const defensetype = DEFENSE.selectedOptions[0].dataset.type;
-                    const defensevalue = DEFENSE.selectedOptions[0].value;
-                    let EXTRA = html.find('[name=extra]')[0]?.value;
-
-                    if (defensetype === "counter" || defensetype === "parry") {
-                        const weapon = actor?.items.get(defensevalue);
-                        if (defensetype === "counter") weapon?.counterRoll();
-                        if (defensetype === "parry") weapon?.defenseRoll();
-                    } else if (defensetype === "stats") {
-                        let otherkeys = []; let otherdice = []; let otherinputs = "";
-                        let defenseSplit = splitStatsAndBonus(defensevalue);
-
-                        if (defenseSplit[1].length > 0) {
-                            const label = game.i18n.localize("ironclaw2e.dialog.defense.defenseBonus");
-                            const dice = findTotalDice(defenseSplit[1]);
-                            otherkeys.push(label);
-                            otherdice.push(dice);
-                            otherinputs += `<div class="form-group flexrow">
-                             <label class="normal-label">${label}: ${reformDiceString(dice, true)}</label>
-	                         <input type="checkbox" id="${makeCompareReady(label)}" name="${makeCompareReady(label)}" checked></input>
-                            </div>`+ "\n";
-                        }
-
-                        if (resist) actor?.popupSelectRolled({ "prechecked": defenseSplit[0], "tnyes": resist, "tnnum": 3, "extradice": EXTRA || "", otherkeys, otherdice, otherinputs, "otherlabel": rollLabel });
-                        else actor?.popupDefenseRoll({ "prechecked": defenseSplit[0], "tnyes": resist, "tnnum": 3, "extradice": EXTRA || "", otherkeys, otherdice, otherinputs, "otherlabel": rollLabel }, { "isspecial": !standard }, null);
-                    } else if (defensetype === "extra") {
-                        let extra = findTotalDice(EXTRA);
-                        if (resist) rollTargetNumberArray(3, extra, rollLabel, actor);
-                        else rollHighestArray(extra, rollLabel, actor);
-                    }
-                }
-            }
-        });
-        dlog.render(true);
-    }
-
-    /**
      * Handle the chat button event for clicking attack
      * @param {any} event
      */
@@ -211,9 +102,11 @@ export class Ironclaw2EActor extends Actor {
             attackActor = game.actors.get(holderset.actorid);
         }
 
+        const directroll = checkQuickModifierKey();
+
         // If the attacker is found and the itemid exists, roll the attack
         if (attackActor && holderset.itemid) {
-            attackActor.items.get(holderset.itemid).attackRoll(dataset?.skipresist == "true");
+            attackActor.items.get(holderset.itemid).attackRoll(directroll, dataset?.skipresist == "true");
         } else if (!attackActor) {
             ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
         }
@@ -227,7 +120,6 @@ export class Ironclaw2EActor extends Actor {
         event.preventDefault();
         const element = event.currentTarget;
         const dataset = element.dataset;
-        const holderset = $(event.currentTarget).closest('.button-holder')[0]?.dataset;
         const defenseset = $(event.currentTarget).closest('.defense-buttons')[0]?.dataset;
 
         if (!defenseset) {
@@ -239,17 +131,19 @@ export class Ironclaw2EActor extends Actor {
         let validDefenses = {};
         let defenseOptions = [];
 
+        const directroll = checkQuickModifierKey();
+
         // Check what defense type was called and either directly roll that defense or compile the list of weapons that fit the type for the next step
         if (defenseActor && dataset?.defensetype) {
             switch (dataset.defensetype) {
                 case "dodge":
-                    return defenseActor.popupDefenseRoll({ "prechecked": ["speed", "dodge"] });
+                    return defenseActor.popupDefenseRoll({ "prechecked": ["speed", "dodge"] }, { directroll });
                     break;
                 case "special":
-                    return defenseActor.popupDefenseRoll({ "prechecked": splitStatString(defenseset.defendwith) }, { "isspecial": true });
+                    return defenseActor.popupDefenseRoll({ "prechecked": splitStatString(defenseset.defense) }, { directroll, "isspecial": true });
                     break;
                 case "resist":
-                    return defenseActor.popupSelectRolled({ "prechecked": splitStatString(defenseset.defendwith) });
+                    return defenseActor.popupSelectRolled({ "prechecked": splitStatString(defenseset.defense) }, { directroll });
                     break;
                 case "parry":
                     const parries = defenseActor.items.filter(element => element.data.type === 'weapon' && element.data.data.canDefend);
@@ -265,12 +159,14 @@ export class Ironclaw2EActor extends Actor {
                     console.error("Somehow, onChatDefenseClick defaulted on the defensetype switch: " + dataset.defensetype);
                     break;
             }
-        } else if (!defenseActor) {
-            ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
         }
 
         // Call the actual popup dialog to choose with what weapon to defend with
-        Ironclaw2EActor.weaponDefenseDialog(defenseActor, defenseOptions, defenseset?.weaponname, validDefenses);
+        if (defenseActor) {
+            Ironclaw2EActor.weaponDefenseDialog(defenseActor, defenseOptions, defenseset?.weaponname, validDefenses);
+        } else {
+            ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
+        }
     }
 
     /**
@@ -290,16 +186,25 @@ export class Ironclaw2EActor extends Actor {
         // Get the actor, either through the sceneid if synthetic, or actorid if a full one
         let soakActor = getSpeakerActor();
 
+        const directroll = checkQuickModifierKey();
+        const usedDamage = Number.parseInt(dataset.damage);
+
         // If the soak actor is found and the data necessary for it exists, roll the soak
         if (soakActor && dataset.soaktype) {
             let wait = function (x) {
-                if (x.tnData)
-                    soakActor.popupDamage(dataset.damage, x.tnData.successes, holderset.conditions);
+                if (x.tnData) {
+                    const verybad = (x.highest === 1 ? 1 : 0); // In case of botch, increase damage by one
+                    if (!directroll)
+                        soakActor.popupDamage(usedDamage + verybad, x.tnData.successes, holderset.conditions);
+                    else soakActor.silentDamage(usedDamage + verybad, x.tnData.successes, holderset.conditions);
+                }
             };
             if (dataset.soaktype != "conditional") {
-                soakActor.popupSoakRoll({ "prechecked": ["body"] }, { "checkweak": (holderset.weak == "true"), "checkarmor": (holderset.penetrating == "false") }, wait);
+                soakActor.popupSoakRoll({ "prechecked": ["body"] }, { directroll, "checkweak": (holderset.weak == "true"), "checkarmor": (holderset.penetrating == "false") }, wait);
             } else {
-                soakActor.popupDamage(0, 0, holderset.conditions);
+                if (!directroll)
+                    soakActor.popupDamage(0, 0, holderset.conditions);
+                else soakActor.silentDamage(0, 0, holderset.conditions);
             }
         } else {
             ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
@@ -368,6 +273,8 @@ export class Ironclaw2EActor extends Actor {
             render: html => { document.getElementById("defensepick").focus(); },
             close: html => {
                 if (confirmed) {
+                    const directroll = checkQuickModifierKey();
+
                     let DEFENSE = html.find('[name=defensepick]')[0];
                     const defensetype = DEFENSE.selectedOptions[0].dataset.type;
                     const defensevalue = DEFENSE.selectedOptions[0].value;
@@ -375,8 +282,8 @@ export class Ironclaw2EActor extends Actor {
 
                     if (defensetype === "counter" || defensetype === "parry") {
                         const weapon = actor?.items.get(defensevalue);
-                        if (defensetype === "counter") weapon?.counterRoll();
-                        if (defensetype === "parry") weapon?.defenseRoll();
+                        if (defensetype === "counter") weapon?.counterRoll(directroll);
+                        if (defensetype === "parry") weapon?.defenseRoll(directroll);
                     } else if (defensetype === "extra") {
                         let extra = findTotalDice(EXTRA);
                         rollHighestArray(extra, rollLabel, actor);
@@ -1281,7 +1188,7 @@ export class Ironclaw2EActor extends Actor {
      * @param {boolean} knockout
      * @param {boolean} nonlethal
      */
-    async applyDamage(damage, knockout, nonlethal = false) {
+    async applyDamage(damage, knockout = false, nonlethal = false) {
         let adding = ["reeling"];
         if (damage >= 1) {
             adding.push("hurt");
@@ -1361,9 +1268,10 @@ export class Ironclaw2EActor extends Actor {
      * Function to call initiative for an actor
      * @param {number} returntype The type of return to use: -1 to simply return the total initiative dice array, 0 for nothing as it launches a popup, 1 for a traditional initiative roll, 2 for the initiative check on combat start for side-based initiative
      * @param {number} tntouse The target number to use in case the mode uses target numbers
+     * @param {boolean} directroll Whether to skip the popup dialog
      * @returns {any} Exact return type depends on the returntype parameter, null if no normal return path
      */
-    initiativeRoll(returntype, tntouse = 2) {
+    initiativeRoll(returntype, tntouse = 2, directroll = false) {
         const data = this.data.data;
         let formconstruction = ``;
         let constructionkeys = [];
@@ -1392,10 +1300,10 @@ export class Ironclaw2EActor extends Actor {
                 return bar;
                 break;
             case 0:
-                this.popupSelectRolled({
+                this.basicRollSelector({
                     "prechecked": prechecked, "tnyes": true, "tnnum": tntouse, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction,
                     "otherlabel": game.i18n.localize("ironclaw2e.chat.rollingInitiative")
-                });
+                }, { directroll });
                 return null;
                 break;
             case 1:
@@ -1417,9 +1325,10 @@ export class Ironclaw2EActor extends Actor {
     /**
      * Function to call Sprint on an actor
      * @param {number} returntype The type of return to use: -1 to simply return the total Sprint dice array, 0 for nothing as it launches a popup
+     * @param {boolean} directroll Whether to skip the popup dialog
      * @returns {any} Exact return type depends on the returntype parameter, null if no normal return path
      */
-    sprintRoll(returntype) {
+    sprintRoll(returntype, directroll = false) {
         const data = this.data.data;
         let formconstruction = ``;
         let constructionkeys = [];
@@ -1441,10 +1350,10 @@ export class Ironclaw2EActor extends Actor {
                 return bar;
                 break;
             case 0:
-                this.popupSelectRolled({
+                this.basicRollSelector({
                     "prechecked": prechecked, "tnyes": false, "tnnum": 3, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, "otherlabel": game.i18n.localize("ironclaw2e.chat.rollingSprint") + ", " +
                         game.i18n.format("ironclaw2e.chat.rollingSprintExtra", { "stride": `+-${data.stride}` })
-                });
+                }, { directroll });
                 return;
                 break;
         }
@@ -1456,6 +1365,15 @@ export class Ironclaw2EActor extends Actor {
     /* -------------------------------------------- */
     /*  Special Popup Macro Puukko Functions        */
     /* -------------------------------------------- */
+
+    /** A simple selector to pick the correct roll function based whether directroll is set to true */
+    basicRollSelector(holder, { directroll = false } = {}, successfunc = null, autocondition = null) {
+        if (directroll) {
+            this.silentSelectRolled(holder, successfunc, autocondition);
+        } else {
+            this.popupSelectRolled(holder, successfunc, autocondition);
+        }
+    }
 
     popupSoakRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherlabel = "" } = {}, { directroll = false, checkweak = false, checkarmor = true } = {}, successfunc = null) {
         const data = this.data.data;
@@ -1589,7 +1507,7 @@ export class Ironclaw2EActor extends Actor {
      * @param {number} readysoak
      * @param {string} damageconditions
      */
-    popupDamage(readydamage = "", readysoak = "", damageconditions = "") {
+    popupDamage(readydamage = 0, readysoak = 0, damageconditions = "") {
         let confirmed = false;
         let speaker = getMacroSpeaker(this);
         let addeddamage = 0;
@@ -1697,23 +1615,20 @@ export class Ironclaw2EActor extends Actor {
      * @param {number} readysoak
      * @param {string} damageconditions
      */
-    async silentDamage(readydamage = "", readysoak = "", damageconditions = "") {
+    async silentDamage(readydamage = 0, readysoak = 0, damageconditions = "") {
         let speaker = getMacroSpeaker(this);
         let addeddamage = 0;
-        let addedconditions = "";
         const confirmSend = game.settings.get("ironclaw2e", "defaultSendDamage");
 
         if (hasConditionsIronclaw("hurt", this)) {
             addeddamage++;
-            addedconditions = game.i18n.localize(CommonConditionInfo.getConditionLabel("hurt"));
         }
         if (hasConditionsIronclaw("injured", this)) {
             addeddamage++;
-            addedconditions += (addedconditions ? ", " : "") + game.i18n.localize(CommonConditionInfo.getConditionLabel("injured"));
         }
 
-        let statuses = await this.applyDamage(damage + addeddamage - soak);
-        let conditions = splitStatString(conds);
+        let statuses = await this.applyDamage(readydamage + addeddamage - readysoak);
+        let conditions = splitStatString(damageconditions);
         if (conditions.length > 0) await this.addEffect(conditions);
 
         if (confirmSend) {

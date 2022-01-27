@@ -1,4 +1,4 @@
-import { checkApplicability, checkDiceArrayEmpty, diceFieldUpgrade, findTotalDice, getMacroSpeaker, makeCompareReady, parseSingleDiceString, reformDiceString, splitStatString } from "../helpers.js";
+import { checkApplicability, checkDiceArrayEmpty, diceFieldUpgrade, findTotalDice, getMacroSpeaker, makeCompareReady, parseSingleDiceString, reformDiceString, splitStatString, checkQuickModifierKey } from "../helpers.js";
 import { CommonSystemInfo } from "../systeminfo.js";
 import { getConditionByNameIronclaw } from "../conditions.js";
 import { hasConditionsIronclaw } from "../conditions.js";
@@ -435,6 +435,8 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         if (dataset.roll) {
             let selected = splitStatString(dataset.roll);
+            const directroll = checkQuickModifierKey();
+
             if (!data.hasOwnProperty("skills")) {
                 if (!selected.includes("species") && data.traits.species.skills.some(element => selected.includes(element)))
                     selected.push("species");
@@ -443,13 +445,13 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             }
             if (dataset.tnyes && dataset.tn) {
                 if (dataset.extradice) {
-                    this.actor.popupSelectRolled({ "tnyes": dataset.tnyes, "tnnum": dataset.tn, "prechecked": selected, "extradice": dataset.extradice });
+                    this.actor.basicRollSelector({ "tnyes": dataset.tnyes, "tnnum": dataset.tn, "prechecked": selected, "extradice": dataset.extradice }, { directroll });
                 }
                 else
-                    this.actor.popupSelectRolled({ "tnyes": dataset.tnyes, "tnnum": dataset.tn, "prechecked": selected });
+                    this.actor.basicRollSelector({ "tnyes": dataset.tnyes, "tnnum": dataset.tn, "prechecked": selected }, { directroll });
             }
             else
-                this.actor.popupSelectRolled({ "tnyes": false, "tnnum": 3, "prechecked": selected });
+                this.actor.basicRollSelector({ "tnyes": false, "tnnum": 3, "prechecked": selected }, { directroll });
         }
     }
 
@@ -461,8 +463,9 @@ export class Ironclaw2EActorSheet extends ActorSheet {
     async _onInitRoll(event) {
         event.preventDefault();
         const element = event.currentTarget;
+        const directroll = checkQuickModifierKey();
 
-        const foo = this.actor.initiativeRoll(0)
+        const foo = this.actor.initiativeRoll(0, 2, directroll);
         if (await foo) {
             this.render();
         }
@@ -476,8 +479,9 @@ export class Ironclaw2EActorSheet extends ActorSheet {
     _onSprintRoll(event) {
         event.preventDefault();
         const element = event.currentTarget;
+        const directroll = checkQuickModifierKey();
 
-        this.actor.sprintRoll(0);
+        this.actor.sprintRoll(0, directroll);
     }
 
     /**
@@ -491,6 +495,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const dataset = element.dataset;
         const data = this.actor.data.data;
         let selected = [];
+        const directroll = checkQuickModifierKey();
 
         if (dataset.roll) {
             selected = splitStatString(dataset.roll);
@@ -502,7 +507,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             }
         }
 
-        this.actor.popupSoakRoll({ "prechecked": selected, "tnyes": true, "tnnum": 3 });
+        this.actor.popupSoakRoll({ "prechecked": selected, "tnyes": true, "tnnum": 3 }, { directroll });
     }
 
     /**
@@ -516,6 +521,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const dataset = element.dataset;
         const data = this.actor.data.data;
         let selected = [];
+        const directroll = checkQuickModifierKey();
 
         if (dataset.roll) {
             selected = splitStatString(dataset.roll);
@@ -527,7 +533,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             }
         }
 
-        this.actor.popupDefenseRoll({ "prechecked": selected });
+        this.actor.popupDefenseRoll({ "prechecked": selected }, { directroll });
     }
 
     /**
@@ -658,22 +664,23 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         if (dataset.roll && dataset.item) {
             const item = this.actor.items.get(dataset.item);
+            const directroll = checkQuickModifierKey();
 
             switch (parseInt(dataset.roll)) {
                 case 0:
-                    item.giftRoll();
+                    item.giftRoll(directroll);
                     break;
                 case 1:
-                    item.attackRoll();
+                    item.attackRoll(directroll);
                     break;
                 case 2:
-                    item.defenseRoll();
+                    item.defenseRoll(directroll);
                     break;
                 case 3:
-                    item.counterRoll();
+                    item.counterRoll(directroll);
                     break;
                 case 4:
-                    item.sparkRoll();
+                    item.sparkRoll(directroll);
                     break;
                 case 5:
                     this.actor.changeLightSource(item);

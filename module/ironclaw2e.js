@@ -105,6 +105,7 @@ Hooks.once('init', async function () {
         default: true,
         config: true
     });
+    // Chat button configs
     game.settings.register("ironclaw2e", "noChatButtons", {
         name: "ironclaw2e.config.noChatButtons",
         hint: "ironclaw2e.config.noChatButtonsHint",
@@ -113,6 +114,15 @@ Hooks.once('init', async function () {
         default: false,
         config: true
     });
+    game.settings.register("ironclaw2e", "showDefenseButtons", {
+        name: "ironclaw2e.config.showDefenseButtons",
+        hint: "ironclaw2e.config.showDefenseButtonsHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: true
+    });
+    // Initiative condition config
     game.settings.register("ironclaw2e", "autoInitiativeConditions", {
         name: "ironclaw2e.config.autoInitiativeConditions",
         hint: "ironclaw2e.config.autoInitiativeConditionsHint",
@@ -214,7 +224,7 @@ Hooks.once('init', async function () {
         default: game.system.data.version,
         config: false
     });
-    /*
+    
     // Register keybinds for the system
     game.keybindings.register("ironclaw2e", "quickRollModifier", {
         name: "Quick Roll Modifier Key",
@@ -229,7 +239,7 @@ Hooks.once('init', async function () {
         ],
         restricted: false
     });
-    */
+    
     // Handlebars helper registration
     Handlebars.registerHelper('concat', function () {
         var outStr = '';
@@ -498,50 +508,6 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const actor = game.scenes.get(sceneid)?.tokens.get(tokenid)?.actor || game.actors.get(actorid);
                 const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
                 weapon?.resolveAsNormalAttack?.(message);
-            }
-        },
-        {
-            name: "ironclaw2e.rollDefense",
-            icon: '<i class="fas fa-shield-alt"></i>',
-            condition: li => {
-                const message = game.messages.get(li.data("messageId"));
-                const type = message.getFlag("ironclaw2e", "defenseInfo");
-                const defense = message.getFlag("ironclaw2e", "defenseField");
-                // Check that the message is not a roll, it has a weapon id set and defense info set to "resist"
-                const allowed = defense && type === "defense";
-                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
-            },
-            callback: li => {
-                const message = game.messages.get(li.data("messageId"));
-                const type = message.getFlag("ironclaw2e", "defenseInfo");
-                const defense = message.getFlag("ironclaw2e", "defenseField");
-                const weapon = message.getFlag("ironclaw2e", "defenseWeapon") || "unknown";
-                const speakeractor = getSpeakerActor();
-                if (type && defense) {
-                    Ironclaw2EActor.weaponDefenseClick(speakeractor, defense, type === "resist", weapon);
-                }
-            }
-        },
-        {
-            name: "ironclaw2e.rollResist",
-            icon: '<i class="fas fa-shield-alt"></i>',
-            condition: li => {
-                const message = game.messages.get(li.data("messageId"));
-                const type = message.getFlag("ironclaw2e", "defenseInfo");
-                const defense = message.getFlag("ironclaw2e", "defenseField");
-                // Check that the message is not a roll, it has a weapon id set and defense info set to "resist"
-                const allowed = defense && type === "resist";
-                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
-            },
-            callback: li => {
-                const message = game.messages.get(li.data("messageId"));
-                const type = message.getFlag("ironclaw2e", "defenseInfo");
-                const defense = message.getFlag("ironclaw2e", "defenseField");
-                const weapon = message.getFlag("ironclaw2e", "defenseWeapon") || "unknown";
-                const speakeractor = getSpeakerActor();
-                if (type && defense) {
-                    Ironclaw2EActor.weaponDefenseClick(speakeractor, defense, type === "resist", weapon);
-                }
             }
         });
 }

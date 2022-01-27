@@ -647,3 +647,23 @@ export function getAllItemsInWorld(itemtype = "") {
 
     return allItems;
 }
+
+/**
+ * Helper to check whether the quick roll dialog skip button is held
+ * @returns {boolean} Whether the skip key was held
+ */
+export function checkQuickModifierKey() {
+    const downkeys = game.keyboard.downKeys;
+    const binds = game.keybindings.get("ironclaw2e", "quickRollModifier");
+    for (let bind of binds) {
+        if (downkeys.has(bind.key)) {
+            let allmods = 0;
+            bind.modifiers.forEach(x => { if (downkeys.has(x)) allmods++; });
+            if (bind.modifiers.length == allmods) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}

@@ -1,7 +1,7 @@
 import { rollHighestArray } from "./dicerollers.js";
 import { rollTargetNumberArray } from "./dicerollers.js";
 
-import { findTotalDice } from "./helpers.js";
+import { findTotalDice, parseSingleDiceString, splitStatString } from "./helpers.js";
 import { splitStatsAndBonus } from "./helpers.js";
 import { makeCompareReady } from "./helpers.js";
 
@@ -32,6 +32,18 @@ export function chatCommandsIntegration(chatCommands) {
 
     // Trigger an silent actor dice pool roll
     chatCommands.registerCommand(chatCommands.createCommandFromData({
+        commandKey: "/quickroll",
+        invokeOnCommand: async (chatlog, messageText, chatdata) => {
+            await game.ironclaw2e.sleep(100);
+            ironclawRollActorChat(messageText, chatdata?.speaker, true);
+        },
+        shouldDisplayToChat: false,
+        iconClass: "fa-user",
+        description: game.i18n.localize("ironclaw2e.command.quickroll")
+    }));
+
+    // Trigger an silent actor dice pool roll
+    chatCommands.registerCommand(chatCommands.createCommandFromData({
         commandKey: "/directroll",
         invokeOnCommand: async (chatlog, messageText, chatdata) => {
             await game.ironclaw2e.sleep(100);
@@ -39,7 +51,7 @@ export function chatCommandsIntegration(chatCommands) {
         },
         shouldDisplayToChat: false,
         iconClass: "fa-user",
-        description: game.i18n.localize("ironclaw2e.command.directroll")
+        description: game.i18n.localize("ironclaw2e.command.quickroll")
     }));
 
     // Use an item as the currently selected actor
@@ -124,17 +136,25 @@ export function ironclawRollActorChat(inputstring, speaker, direct = false) {
 
     let tn = -1;
     let usedstring = inputstring;
-    let foo = inputstring.split(";"); // Attempt to check whether the input has two semicolons, and use the value after the third as a TN
+    let foo = inputstring.split(";");
+
+    // Attempt to check whether the input has two semicolons, and use the value after the third as a TN
     if (foo.length > 2) {
         let bar = parseInt(foo[2].trim());
         if (!isNaN(bar))
             tn = bar;
         usedstring = inputstring.slice(0, inputstring.lastIndexOf(";")); // Remove the last semicolon from the string used for determining dice pools
+    } else if (foo.length == 2) { // Attempt to check whether the input has only one semicolon and see if the part after the semicolon contains actual dice or a plain number
+        const test = splitStatString(foo[1]);
+        if (test.length > 0) {
+            let bar = parseInt(foo[1].trim());
+            if (parseSingleDiceString(test[0]) === null && !isNaN(bar)) {
+                tn = bar;
+                usedstring = inputstring.slice(0, inputstring.lastIndexOf(";")); // Remove the last semicolon from the string used for determining dice pools
+            }
+        }
     }
 
     let firstsplit = splitStatsAndBonus(usedstring);
-    if (direct)
-        actor.silentSelectRolled({ "prechecked": firstsplit[0], "tnyes": tn > 0, "tnnum": (tn > 0 ? tn : 3), "extradice": firstsplit[1] });
-    else
-        actor.popupSelectRolled({ "prechecked": firstsplit[0], "tnyes": tn > 0, "tnnum": (tn > 0 ? tn : 3), "extradice": firstsplit[1] });
+    actor.basicRollSelector({ "prechecked": firstsplit[0], "tnyes": tn > 0, "tnnum": (tn > 0 ? tn : 3), "extradice": firstsplit[1] }, { "directroll": direct });
 }
