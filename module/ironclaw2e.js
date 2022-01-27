@@ -148,7 +148,7 @@ Hooks.once('init', async function () {
         default: false,
         config: true
     });
-    // Encubmrance configs
+    // Encumbrance configs
     game.settings.register("ironclaw2e", "manageEncumbranceAuto", {
         name: "ironclaw2e.config.manageEncumbranceAuto",
         hint: "ironclaw2e.config.manageEncumbranceAutoHint",
@@ -171,7 +171,7 @@ Hooks.once('init', async function () {
         hint: "ironclaw2e.config.calculateAttackEffectsHint",
         scope: "world",
         type: Boolean,
-        default: false,
+        default: true,
         config: true
     });
     game.settings.register("ironclaw2e", "calculateDisplaysFailed", {
