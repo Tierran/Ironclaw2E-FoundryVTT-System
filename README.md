@@ -22,7 +22,7 @@ Ironclaw's initiative system is supported, both the normal side-based and the al
 The Combat Tracker will show the result of the initiative check before the initiative itself for the GM, either as the number of successes, or as Tie (T), Failure (F), or Botch (B).  
 
 The system has support for the Drag Ruler module (https://github.com/manuelVo/foundryvtt-drag-ruler). The distance colors represent Stride (blue), Stride+Dash (green), Run (yellow) and over max distance (red).  
-The system has support for the Chat Commands module (https://github.com/League-of-Foundry-Developers/Chat-Commands-Lib). If present and active, the system will register "/iroll", "/popuproll", "/directroll" and "/itemuse" commands.  
+The system has support for the Chat Commands module (https://github.com/League-of-Foundry-Developers/Chat-Commands-Lib). If present and active, the system will register "/iroll", "/popuproll", "/quickroll", "/directroll" and "/itemuse" commands.  
 The system has support for the Combat Utility Belt module (https://github.com/death-save/combat-utility-belt), specifically for its Enhanced Conditions system. If present and active, the system will try to use the EC for conditions. Proper setup explained below.  
 
 #### Options
@@ -51,7 +51,7 @@ Currently, the system does not allow dice pools to include items. Instead, the s
 The /iroll command can be used to quickly roll dice with the internal dice roller. It takes a one line format input after the command to roll dice as a highest roll type, with a semicolon followed by a number at the end changing it to a TN roll. Eg. "/iroll 3d6,d8" or "/iroll 3d6,d8;5"  
 The /popuproll command opens a standard roll dialog with the given dice pools already checked and optional extra dice and TN preset. It takes a dice pool format input, again with an additional semicolon and number changing the default roll type from highest to TN. Eg. "/popuproll dodge,speed;d12" or "/popuproll will,presence;;3"  
 In addition, /popuproll can take a simple "soak", "defense" or "dodging" as input. In the former case, it will open a standard soak roll popup, while the latter two open a dodge defense popup, since "dodge" would normally refer to a roll of pure dodge skill, rather than the defense.  
-The /directroll command takes the same parameters as /popuproll, but rather than opening a dice pool dialog, the given dice are rolled directly / "silently" without any dialog opening up.  
+The /quickroll command takes the same parameters as /popuproll, but rather than opening a dice pool dialog, the given dice are rolled quickly without any dialog opening up. The /directroll command is simply an alias for /quickroll.  
 The /itemuse command simply uses an item; it takes an item name and uses that to activate a normal item use, as if the item was used through a hotbar macro. The *item* in this case refers to all things FoundryVTT considers items (armor, gifts, weapons, illumination...), not just the gear type. The name must be an **exact** match.  
 
 #### Advanced Gift Bonus Settings
