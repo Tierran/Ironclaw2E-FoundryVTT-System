@@ -139,12 +139,14 @@ export class Ironclaw2EItemSheet extends ItemSheet {
                     if (confirmed) { // Only copy these settings and replace existing ones if confirmed
                         const gifts = getAllItemsInWorld("gift");
                         gifts.delete(this.item);
+                        ui.notifications.info("ironclaw2e.ui.itemUpdateInProgress", { localize: true, permanent: true });
                         for (let gift of gifts) {
                             if (gift.name === this.item.name) {
                                 console.log(gift); // Log all potential changes to console, just in case
                                 await gift.update({ "data.specialSettings": this.item.data.data.specialSettings });
                             }
                         }
+                        ui.notifications.info("ironclaw2e.ui.itemUpdateComplete", { localize: true, permanent: true });
                     }
                 }
             });
@@ -186,12 +188,14 @@ export class Ironclaw2EItemSheet extends ItemSheet {
                     if (confirmed) { // Only copy the item data and replace existing ones if confirmed
                         const items = getAllItemsInWorld(this.item.type);
                         items.delete(this.item);
+                        ui.notifications.info("ironclaw2e.ui.itemUpdateInProgress", { localize: true, permanent: true });
                         for (let item of items) {
                             if (item.name === this.item.name) {
                                 console.log(item); // Log all potential changes to console, just in case
                                 await item.update({ "data": data });
                             }
                         }
+                        ui.notifications.info("ironclaw2e.ui.itemUpdateComplete", { localize: true, permanent: true });
                     }
                 }
             });

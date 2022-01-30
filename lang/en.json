@@ -52,6 +52,8 @@
   "ironclaw2e.ui.itemWeightParseError": "Item weight parsing error for {item}: {weight}",
   "ironclaw2e.ui.standardDefenseResist": "Weapon '{name}' defense stat pool defined as standard defense, yet the weapon's attack is resisted",
   "ironclaw2e.ui.alreadyReplacedSetting": "Special bonus system found a competing replacement bonus in the Gift '{replacement}' that the Gift '{name}' requested for '{actor}'. This should be avoided.",
+  "ironclaw2e.ui.itemUpdateInProgress": "Item update in progress, please wait...",
+  "ironclaw2e.ui.itemUpdateComplete": "Item update complete!",
 
 
   "ironclaw2e.actor.traits": "Traits",
