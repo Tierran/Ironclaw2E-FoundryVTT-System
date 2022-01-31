@@ -140,6 +140,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         // Initialize containers.
         const gear = [];
         const gifts = [];
+        const extraCareers = [];
         const weapons = [];
         const lightItems = [];
 
@@ -156,6 +157,9 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                 case 'gift':
                     gifts.push(i);
                     break;
+                case 'extraCareer':
+                    extraCareers.push(i);
+                    break;
                 case 'weapon':
                     weapons.push(i);
                     break;
@@ -171,6 +175,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         // Assign and return
         actorData.gear = gear;
         actorData.gifts = gifts;
+        actorData.extraCareers = extraCareers;
         actorData.weapons = weapons;
         actorData.lightItems = lightItems;
     }
@@ -274,7 +279,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             if (this.actor.data.data.processingLists?.statChange) { // Check if the processing list and stat change list even exist
                 for (let special of this.actor.data.data.processingLists.statChange) { // Loop through the stat change specials
                     if (checkApplicability(special, item, this.actor)) { // Check if the current special applies
-                        for (let i = 0; i < special.changeFrom.length; ++i) { // Go through all the potential changes
+                        for (let i = 0; i < special.changeFrom.length && i < special.changeTo.length; ++i) { // Go through all the potential changes
                             let nameAdded = false;
 
                             const reg = new RegExp("(" + special.changeFrom[i] + "|" + makeCompareReady(special.changeFrom[i]) + ")", "gi"); // Prepare the regex

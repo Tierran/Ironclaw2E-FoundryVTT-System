@@ -190,6 +190,7 @@ export class Ironclaw2EItem extends Item {
             data.diceArray = findTotalDice(data.dice);
             data.valid = checkDiceArrayEmpty(data.diceArray);
             data.skills = [makeCompareReady(data.careerSkill1), makeCompareReady(data.careerSkill2), makeCompareReady(data.careerSkill3)];
+            data.skillNames = [data.careerSkill1, data.careerSkill2, data.careerSkill3];
         } else {
             data.valid = false;
         }

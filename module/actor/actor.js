@@ -237,8 +237,8 @@ export class Ironclaw2EActor extends Actor {
                 soakActor.popupSoakRoll({ "prechecked": ["body"] }, { directroll, "checkweak": (holderset.weak == "true"), "checkarmor": (holderset.penetrating == "false") }, wait);
             } else {
                 if (!directroll)
-                    soakActor.popupDamage(0, 0, holderset.conditions);
-                else soakActor.silentDamage(0, 0, holderset.conditions);
+                    soakActor.popupDamage(0, 4, holderset.conditions);
+                else soakActor.silentDamage(0, 4, holderset.conditions);
             }
         } else {
             ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
@@ -388,7 +388,7 @@ export class Ironclaw2EActor extends Actor {
             data.hasExtraCareers = true;
             extraCareers.sort((a, b) => a.data.sort - b.data.sort);
             let ids = [];
-            extraCareers.forEach(x => ids.push(x.id));
+            extraCareers.forEach(x => { if (x.data.data.valid) ids.push(x.id); });
             data.extraCareerIds = ids;
         }
         else
@@ -483,6 +483,7 @@ export class Ironclaw2EActor extends Actor {
      */
     _prepareBeastData(actorData) {
         this._processTraits(actorData);
+        this._processSkillsMinor(actorData);
 
         this._processItemData(actorData);
 
@@ -504,6 +505,11 @@ export class Ironclaw2EActor extends Actor {
 
         data.traits.species.skills = [makeCompareReady(data.traits.species.speciesSkill1), makeCompareReady(data.traits.species.speciesSkill2), makeCompareReady(data.traits.species.speciesSkill3)];
         data.traits.career.skills = [makeCompareReady(data.traits.career.careerSkill1), makeCompareReady(data.traits.career.careerSkill2), makeCompareReady(data.traits.career.careerSkill3)];
+
+        if (!data.skills) {
+            data.traits.species.skillNames = [data.traits.species.speciesSkill1, data.traits.species.speciesSkill2, data.traits.species.speciesSkill3];
+            data.traits.career.skillNames = [data.traits.career.careerSkill1, data.traits.career.careerSkill2, data.traits.career.careerSkill3];
+        }
     }
 
     /**
@@ -535,16 +541,19 @@ export class Ironclaw2EActor extends Actor {
 
             // Species and Career dice
             const comparekey = makeCompareReady(key);
-            if (data.traits.species.skills.includes(comparekey)) {
-                skill.diceArray = addArrays(skill.diceArray, data.traits.species.diceArray);
+            for (let foo of data.traits.species.skills) {
+                if (foo == comparekey)
+                    skill.diceArray = addArrays(skill.diceArray, data.traits.species.diceArray);
             }
-            if (data.traits.career.skills.includes(comparekey)) {
-                skill.diceArray = addArrays(skill.diceArray, data.traits.career.diceArray);
+            for (let foo of data.traits.career.skills) {
+                if (foo == comparekey)
+                    skill.diceArray = addArrays(skill.diceArray, data.traits.career.diceArray);
             }
             if (data.hasExtraCareers) {
                 extracareers.forEach(element => {
-                    if (element.data.data.skills.includes(comparekey)) {
-                        skill.diceArray = addArrays(skill.diceArray, element.data.data.diceArray);
+                    for (let foo of element.data.data.skills) {
+                        if (foo == comparekey)
+                            skill.diceArray = addArrays(skill.diceArray, element.data.data.diceArray);
                     }
                 });
             }
@@ -555,6 +564,80 @@ export class Ironclaw2EActor extends Actor {
             skill.usedTitle = convertCamelCase(key);
             if (burdenedLimitedStat(key)) {
                 skill.usedTitle = String.fromCodePoint([9949]) + " " + skill.usedTitle + " " + String.fromCodePoint([9949]);
+            }
+        }
+    }
+
+    /**
+     * Process skills data for actor types that lack baseSkills data
+     */
+    _processSkillsMinor(actorData) {
+        const data = actorData.data;
+
+        // Check whether the species and career traits either have no dice in them or have their first skill field be empty
+        if ((!checkDiceArrayEmpty(data.traits.species.diceArray) || !data.traits.species.speciesSkill1) && (!checkDiceArrayEmpty(data.traits.career.diceArray) || !data.traits.career.careerSkill1)) {
+            return; // If the check passes, abort processing
+        }
+        if (data.skills) {
+            // If an actor with preset skills somehow ends up in this function, return out immediately.
+            return console.warn("An actor that has skills by default ended up in the function for actors without skills: " + actorData.name);
+        }
+
+        // Add the missing skill field
+        data.skills = {};
+
+        let extracareers = [];
+        if (data.hasExtraCareers) {
+            data.extraCareerIds.forEach(x => extracareers.push(this.items.get(x)));
+        }
+
+        // Process trait skills
+        if (data.traits.species?.skillNames && checkDiceArrayEmpty(data.traits.species.diceArray)) { // Make sure there's actually something in the trait
+            for (let skill of data.traits.species.skillNames) { // Go through the skills
+                if (!skill) // If the skill is empty, skip it
+                    continue;
+                const foo = makeCompareReady(skill); // Prepare the skill name
+                data.skills[foo] = data.skills[foo] ?? {}; // If the data object does not exist, make it
+                data.skills[foo].diceArray = addArrays(data.skills[foo].diceArray, data.traits.species.diceArray); // Add the trait dice array to the one present
+                data.skills[foo].totalDiceString = data.skills[foo].diceString = reformDiceString(data.skills[foo].diceArray, true); // Record the reformed dice string for UI presentation
+                data.skills[foo].usedTitle = skill; // Record the name used
+                if (burdenedLimitedStat(foo)) { // If the name is limited, add the special icon
+                    data.skills[foo].usedTitle = String.fromCodePoint([9949]) + " " + data.skills[foo].usedTitle + " " + String.fromCodePoint([9949]);
+                }
+            }
+        }
+        if (data.traits.career?.skillNames && checkDiceArrayEmpty(data.traits.career.diceArray)) {
+            for (let skill of data.traits.career.skillNames) {
+                if (!skill)
+                    continue;
+                const foo = makeCompareReady(skill);
+                data.skills[foo] = data.skills[foo] ?? {};
+                data.skills[foo].diceArray = addArrays(data.skills[foo].diceArray, data.traits.career.diceArray);
+                data.skills[foo].totalDiceString = data.skills[foo].diceString = reformDiceString(data.skills[foo].diceArray, true);
+                data.skills[foo].usedTitle = skill;
+                if (burdenedLimitedStat(foo)) {
+                    data.skills[foo].usedTitle = String.fromCodePoint([9949]) + " " + data.skills[foo].usedTitle + " " + String.fromCodePoint([9949]);
+                }
+            }
+        }
+
+        // Process extra careers
+        if (data.hasExtraCareers) {
+            for (let extra of extracareers) {
+                if (!checkDiceArrayEmpty(extra.data.data.diceArray))
+                    continue;
+                for (let skill of extra.data.data.skillNames) {
+                    if (!skill)
+                        continue;
+                    const foo = makeCompareReady(skill);
+                    data.skills[foo] = data.skills[foo] ?? {};
+                    data.skills[foo].diceArray = addArrays(data.skills[foo].diceArray, extra.data.data.diceArray);
+                    data.skills[foo].totalDiceString = data.skills[foo].diceString = reformDiceString(data.skills[foo].diceArray, true);
+                    data.skills[foo].usedTitle = skill;
+                    if (burdenedLimitedStat(foo)) {
+                        data.skills[foo].usedTitle = String.fromCodePoint([9949]) + " " + data.skills[foo].usedTitle + " " + String.fromCodePoint([9949]);
+                    }
+                }
             }
         }
     }
@@ -1737,9 +1820,9 @@ export class Ironclaw2EActor extends Actor {
         const data = this.data.data;
         let formconstruction = ``;
         let firstelement = "";
-        let hastraits = data.hasOwnProperty("traits");
-        let hasskills = data.hasOwnProperty("skills");
-        let hashtml = otherinputs.length > 0;
+        const hastraits = data.hasOwnProperty("traits");
+        const hasskills = data.hasOwnProperty("skills");
+        const hashtml = otherinputs.length > 0;
         const conditionRemoval = game.settings.get("ironclaw2e", "autoConditionRemoval");
 
         if (prechecked === null || typeof (prechecked) === "undefined") {

@@ -125,7 +125,6 @@
                     </div>
                 </div>
             </div>
-            <div></div>
             <h2 class="header-label flexrow flex-center">Skills</h2>
             <div class="skillgrid grid grid-3col">
                 {{#each data.skills as |skill key|}}
@@ -190,7 +189,7 @@
                     <div class="item-controls flexrow">
                         <span class="normal-label">Die:</span>
                         <div></div>
-                        <input type="text" class="rollable roll-career-dice-change" value="{{item.data.dice}}" data-item="{{item._id}}" data-dtype="String" />
+                        <input type="text" class="rollable roll-career-dice-change" value="{{item.data.dice}}" data-item="{{item._id}}" data-dtype="String" onfocus="this.select();" />
                     </div>
                     <div class="item-controls">
                         <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
@@ -244,6 +243,8 @@
                     </div>
                 </li>
                 {{/each}}
+            </ol>
+            <ol class="items-list">
                 {{#each actor.gear as |item id|}}
                 <li class="item flexrow" data-item-id="{{item._id}}">
                     <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
