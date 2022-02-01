@@ -4,7 +4,7 @@
   "description": "Ironclaw Second Edition system for FoundryVTT.",
   "version": "0.5.4",
   "minimumCoreVersion": "9",
-  "compatibleCoreVersion": "9.245",
+  "compatibleCoreVersion": "9.249",
   "templateVersion": 22,
   "author": "Hertzila",
   "esmodules": [ "module/ironclaw2e.js" ],
