@@ -1,3 +1,10 @@
+### 0.5.4 Beastly skills release
+ - Redid how beast actors handle and display skills
+ - Made having the same skill multiple times as a trait skill (eg. species skills) add dice appropriately
+ - Beasts can now have extra careers too, just in case
+ - Added quotas to some conditions
+ - Changed some condition icons
+
 ### 0.5.3 Quick buttons release
  - Added buttons to item info and attack damage info for quicker rolls
  - Added a configurable keybind to skip most roll dialogs when pressing buttons, default is Control
