@@ -1,6 +1,6 @@
 import { checkApplicability, checkDiceArrayEmpty, diceFieldUpgrade, findTotalDice, getMacroSpeaker, makeCompareReady, parseSingleDiceString, reformDiceString, splitStatString, checkQuickModifierKey } from "../helpers.js";
 import { CommonSystemInfo } from "../systeminfo.js";
-import { getConditionByNameIronclaw } from "../conditions.js";
+import { getBaseConditionIronclaw } from "../conditions.js";
 import { hasConditionsIronclaw } from "../conditions.js";
 import { Ironclaw2EItem } from "../item/item.js";
 
@@ -227,6 +227,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         html.find('.roll-double-info-cond').dblclick(this._onConditionInfo.bind(this));
 
         html.find('.roll-career-dice-change').change(this._onChangeExtraCareerDice.bind(this));
+        html.find('.roll-effects-quota-change').change(this._onConditionQuotaChange.bind(this));
 
         // Drag events for macros.
         if (this.actor.isOwner) {
@@ -779,7 +780,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const li = $(event.currentTarget).parents(".effect");
         const cond = this.actor.getEmbeddedDocument("ActiveEffect", li.data("effectId"));
         if (!cond) return;
-        const basecondition = getConditionByNameIronclaw(cond);
+        const basecondition = getBaseConditionIronclaw(cond);
         if (!basecondition) return;
         let chatdata;
         const speak = getMacroSpeaker(this.actor);
@@ -796,5 +797,21 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         ChatMessage.applyRollMode(chatdata, game.settings.get("core", "rollMode"));
         CONFIG.ChatMessage.documentClass.create(chatdata);
+    }
+
+    /**
+     * Handle updating condition quota
+     * @param {Event} event   The originating change event
+     * @private
+     */
+    _onConditionQuotaChange(event) {
+        event.preventDefault();
+        const element = event.currentTarget;
+        const dataset = element.dataset;
+
+        if (dataset.id) {
+            const effect = this.actor.effects.get(dataset.id);
+            effect.update({ "_id": effect.id,  "flags.ironclaw2e.quota": element.value });
+        }
     }
 }

@@ -78,6 +78,13 @@
                     <li class="item effect flexrow" data-effect-id="{{effect._id}}">
                         <div class="item-image"><img src="{{effect.icon}}" title="{{effect.label}}" width="24" height="24" /></div>
                         <h4 class="item-name double-clickable roll-double-info-cond">{{effect.label}}</h4>
+                        {{#if (conditionQuotaCheck effect)}}
+                        <div class="item-controls flexrow">
+                            <span class="normal-label">{{#if (conditionCheck effect "temp-ward")}}Ward:{{else}}Quota:{{/if}}</span>
+                            <div></div>
+                            <input class="roll-effects-quota-change" type="text" value="{{effect.flags.ironclaw2e.quota}}" data-id="{{effect._id}}" data-dtype="Number" onfocus="this.select();" />
+                        </div>
+                        {{/if}}
                         <div class="item-controls">
                             <a class="rollable roll-effects-delete" title="Delete Effect" data-id="{{effect._id}}"><i class="fas fa-trash"></i></a>
                         </div>
@@ -189,7 +196,7 @@
                     <div class="item-controls flexrow">
                         <span class="normal-label">Die:</span>
                         <div></div>
-                        <input type="text" class="rollable roll-career-dice-change" value="{{item.data.dice}}" data-item="{{item._id}}" data-dtype="String" onfocus="this.select();" />
+                        <input type="text" class="roll-career-dice-change" value="{{item.data.dice}}" data-item="{{item._id}}" data-dtype="String" onfocus="this.select();" />
                     </div>
                     <div class="item-controls">
                         <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>

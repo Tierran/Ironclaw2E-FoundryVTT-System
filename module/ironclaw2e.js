@@ -29,6 +29,7 @@ import { chatCommandsIntegration } from "./commands.js";
 import { CommonConditionInfo } from "./conditions.js";
 
 import { CommonSystemInfo } from "./systeminfo.js";
+import { registerHandlebarsHelpers } from "./handlebars.js";
 
 
 /* -------------------------------------------- */
@@ -224,7 +225,7 @@ Hooks.once('init', async function () {
         default: game.system.data.version,
         config: false
     });
-    
+
     // Register keybinds for the system
     game.keybindings.register("ironclaw2e", "quickRollModifier", {
         name: "Quick Roll Modifier Key",
@@ -239,48 +240,9 @@ Hooks.once('init', async function () {
         ],
         restricted: false
     });
-    
+
     // Handlebars helper registration
-    Handlebars.registerHelper('concat', function () {
-        var outStr = '';
-        for (var arg in arguments) {
-            if (typeof arguments[arg] != 'object') {
-                outStr += arguments[arg];
-            }
-        }
-        return outStr;
-    });
-
-    Handlebars.registerHelper('toLowerCase', function (str) {
-        return str.toLowerCase();
-    });
-
-    Handlebars.registerHelper('equalOrNothing', function (str, compare) {
-        return str.length == 0 || makeCompareReady(str) == compare;
-    });
-
-    Handlebars.registerHelper('valueRoundTo', function (val, roundto) {
-        return isNaN(val) ? "NaN" : val.toFixed(roundto);
-    });
-
-    Handlebars.registerHelper('usableGift', function (gift) {
-        return gift.data.exhaustWhenUsed || gift.data.useDice?.length > 0;
-    });
-
-    Handlebars.registerHelper('propertyExists', function (thing, str) {
-        return (str in thing);
-    });
-
-    Handlebars.registerHelper('isCombatantNoInit', function (actorid) {
-        // True if lacking an init, false if has an init or is not a combatant
-        const foo = game.combat?.getCombatantByActor(actorid);
-        if (!foo) return false;
-        return foo.initiative == null;
-    });
-
-    Handlebars.registerHelper('typeCheck', function (foo, bar) {
-        return foo == bar;
-    });
+    registerHandlebarsHelpers();
 
     console.log("Ironclaw2E System init complete");
 });
@@ -409,7 +371,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const message = game.messages.get(li.data("messageId"));
                 const type = message.getFlag("ironclaw2e", "rollType");
                 if (type === "TN") {
-                    copyToRollTN(parseInt(message.roll.formula.slice(message.roll.formula.indexOf(">")+1)), message, true, true);
+                    copyToRollTN(parseInt(message.roll.formula.slice(message.roll.formula.indexOf(">") + 1)), message, true, true);
                 } else {
                     copyToRollHighest(message, true, true);
                 }

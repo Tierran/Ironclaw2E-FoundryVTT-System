@@ -3,7 +3,7 @@ import { makeCompareReady } from "./helpers.js";
 /**
  * Unified function to get whether the target has any of the select conditions for Ironclaw2E
  * @param {String[] | String} conditions Conditions to check for, make sure they are comparison-ready
- * @param {(Actor | Token)} target The actor or token(s) in question
+ * @param {(Actor | Token)} target The actor or token in question
  * @param {boolean} warn Whether to use CUB's warnings
  * @returns {boolean} Whether the target has any of the conditions
  */
@@ -119,7 +119,7 @@ export async function addConditionsIronclaw(conditions, target, warn = false) {
 /**
  * Unified function to remove conditions for Ironclaw2E
  * @param {String[] | String} conditions Conditions to remove
- * @param {(Actor[] | Token[] | Actor | Token)} target The actor(s) or token(s) in question
+ * @param {(Actor | Token)} target The actor or token in question
  * @param {boolean} checkfirst First check if the target has any of the conditions
  * @param {boolean} warn Whether to use CUB's warnings
  */
@@ -147,22 +147,59 @@ export async function removeConditionsIronclaw(conditions, target, checkfirst = 
 }
 
 /**
- * Unified function to get a specific condition for Ironclaw2E
+ * Unified function to get the base condition for Ironclaw2E
  * @param {string | ActiveEffect} condition The name or the ActiveEffect of the condition
  * @param {boolean} warn Whether to use CUB's warnings
- * @returns {Object} Array of conditions the target have
+ * @returns {Object} The base condition
  */
-export function getConditionByNameIronclaw(condition, warn = false) {
-    let name = condition?.data?.label || condition;
-    name = makeCompareReady(name);
+export function getBaseConditionIronclaw(condition, warn = false) {
+    const iseffect = condition instanceof ActiveEffect;
+    let name = iseffect ? condition?.data?.label : condition;
 
     if (game.ironclaw2e.useCUBConditions) {
-        name = CommonConditionInfo.convertToCub(name);
+        if (!iseffect) {
+            name = CommonConditionInfo.convertToCub(makeCompareReady(name));
+        }
         return game.cub.getCondition(name, null, { "warn": warn });
-    }
-    else {
+    } else {
+        if (iseffect) {
+            name = condition?.data?.flags?.core?.statusId || name;
+        } else {
+            name = makeCompareReady(name);
+        }
         let cond = CommonConditionInfo.getMatchedConditions(name);
         return cond.length > 0 ? cond.shift() : null;
+    }
+}
+
+/**
+ * Unified function to check whether the given condition matches the given name
+ * @param {ActiveEffectData | ActiveEffect} condition
+ * @param {string} name The name to check for
+ * @param {boolean} warn Whether to use CUB's warnings
+ * @returns {boolean} Returns true if the effect matches
+ */
+export function checkConditionIronclaw(condition, name, warn = false) {
+    const usedcond = condition instanceof ActiveEffect ? condition.data : condition;
+    if (game.ironclaw2e.useCUBConditions) {
+        const tocheck = CommonConditionInfo.convertToCub(name);
+        return tocheck.includes(usedcond?.label);
+    } else {
+        return usedcond?.flags?.core?.statusId === name;
+    }
+}
+
+/**
+ * Check whether the inputted condition should have a quota field
+ * @param {ActiveEffectData | ActiveEffect} condition
+ * @returns {boolean} Returns true if the quota field should be there
+ */
+export function checkConditionQuota(condition) {
+    const usedcond = condition instanceof ActiveEffect ? condition.data : condition;
+    if (game.ironclaw2e.useCUBConditions) {
+        return CommonConditionInfo.quotaCubList.has(usedcond?.label);
+    } else {
+        return CommonConditionInfo.quotaList.has(usedcond?.flags?.core?.statusId);
     }
 }
 
@@ -428,14 +465,24 @@ export class CommonConditionInfo {
     /**
      * Map of standard names and their proper names in the CUB-provided condition-map
      */
-    static cubList = Object.freeze(new Map([["focused", "Focused"], ["aiming", "Aiming"], ["guarding", "Guarding"], ["reeling", "Reeling"], ["hurt", "Hurt"], ["afraid", "Afraid"],
+    static cubList = new Map([["focused", "Focused"], ["aiming", "Aiming"], ["guarding", "Guarding"], ["reeling", "Reeling"], ["hurt", "Hurt"], ["afraid", "Afraid"],
     ["injured", "Injured"], ["dying", "Dying"], ["dead", "Dead"], ["overkilled", "Overkilled"], ["asleep", "Asleep"], ["unconscious", "Unconscious"],
     ["burdened", "Burdened"], ["over-burdened", "Over-Burdened"], ["cannotmove", "Cannot Move"], ["fatigued", "Fatigued"], ["sick", "Sick"],
     ["confused", "Confused"], ["terrified", "Terrified"], ["enraged", "Enraged"], ["knockdown", "Knockdown"], ["berserk", "Berserk"],
     ["blinded", "Blinded"], ["silenced", "Silenced"], ["fulltilt", "Full Tilt"], ["slowed", "Slowed"], ["immobilized", "Immobilized"],
     ["half-buried", "Half-Buried"], ["onfire", "On Fire"], ["mesmerized", "Mesmerized"], ["marionette", "Marionette"], ["controlled", "Controlled"],
     ["allfours", "All Fours"], ["flying", "Flying"], ["grappled", "Grappled"], ["hiding", "Hiding"], ["temp-ward", "Temporary Ward"], ["misc-a", "Misc-A"], ["misc-b", "Misc-B"], ["misc-c", "Misc-C"],
-    ["misc-d", "Misc-D"], ["misc-e", "Misc-E"], ["misc-f", "Misc-F"], ["misc-g", "Misc-G"]]));
+    ["misc-d", "Misc-D"], ["misc-e", "Misc-E"], ["misc-f", "Misc-F"], ["misc-g", "Misc-G"]]);
+
+    /**
+     * Set of conditions that should have a quota field
+     */
+    static quotaList = new Set(["injured", "sick", "temp-ward"]);
+
+    /**
+     * Set of CUB condition names that should have a quota field
+     */
+    static quotaCubList = new Set(["Injured", "Sick", "Temporary Ward"]);
 
     /**
      * Convert a single or a list of conditions from id's into CUB condition names
@@ -483,7 +530,7 @@ export class CommonConditionInfo {
     }
 
     /**
-     * Returns the translation identifier for a given condition
+     * Returns the translation for a given condition
      * @param {string} condition
      * @returns {string}
      */
