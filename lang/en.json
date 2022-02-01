@@ -379,11 +379,13 @@
   "ironclaw2e.effect.status.allfours": "All Fours",
   "ironclaw2e.effect.status.flying": "Flying",
   "ironclaw2e.effect.status.grappled": "Grappled",
+  "ironclaw2e.effect.status.temp-ward": "Temporary Ward",
   "ironclaw2e.effect.status.hiding": "Hiding",
   "ironclaw2e.effect.status.misc-a": "Misc-A",
   "ironclaw2e.effect.status.misc-b": "Misc-B",
   "ironclaw2e.effect.status.misc-c": "Misc-C",
   "ironclaw2e.effect.status.misc-d": "Misc-D",
   "ironclaw2e.effect.status.misc-e": "Misc-E",
-  "ironclaw2e.effect.status.misc-f": "Misc-F"
+  "ironclaw2e.effect.status.misc-f": "Misc-F",
+  "ironclaw2e.effect.status.misc-g": "Misc-G"
 }

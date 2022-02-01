@@ -58,7 +58,7 @@
     {
       "id": "reeling",
       "name": "Reeling",
-      "icon": "icons/svg/lightning.svg",
+      "icon": "icons/svg/daze.svg",
       "referenceId": "@Compendium[ironclaw2e.statuseffects.2RqmHH9RbzJKjdKA]{Reeling}",
       "applyTrigger": "",
       "removeTrigger": "",
@@ -324,7 +324,7 @@
     {
       "id": "confused",
       "name": "Confused",
-      "icon": "icons/svg/daze.svg",
+      "icon": "icons/svg/stoned.svg",
       "referenceId": "@Compendium[ironclaw2e.statuseffects.E156mwoPTBUaagBB]{Confused}",
       "applyTrigger": "",
       "removeTrigger": "",
@@ -540,7 +540,7 @@
     {
       "id": "mesmerized",
       "name": "Mesmerized",
-      "icon": "icons/svg/ice-aura.svg",
+      "icon": "icons/svg/sun.svg",
       "referenceId": "@Compendium[ironclaw2e.statuseffects.EMsCXyLEv1SEXIT4]{Mesmerized}",
       "applyTrigger": "",
       "removeTrigger": "",
@@ -664,6 +664,24 @@
       "isChanged": false
     },
     {
+      "id": "temporary-ward",
+      "name": "Temporary Ward",
+      "icon": "icons/svg/aura.svg",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.UOSMGqjqbc8GwAXe]{Temporary Ward}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"UOSMGqjqbc8GwAXe\"><i class=\"fas fa-book-open\"></i> Temporary Ward</a>",
+      "isChanged": false
+    },
+    {
       "id": "misc-a",
       "name": "Misc-A",
       "icon": "icons/svg/eye.svg",
@@ -757,6 +775,24 @@
       "id": "misc-f",
       "name": "Misc-F",
       "icon": "icons/svg/sound.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "misc-g",
+      "name": "Misc-G",
+      "icon": "icons/svg/tower-flag.svg",
       "referenceId": "",
       "applyTrigger": "",
       "removeTrigger": "",

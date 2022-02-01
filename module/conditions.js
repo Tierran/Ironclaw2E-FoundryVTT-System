@@ -222,7 +222,7 @@ export class CommonConditionInfo {
     {
         id: "reeling",
         label: "ironclaw2e.effect.status.reeling",
-        icon: "icons/svg/lightning.svg"
+        icon: "icons/svg/daze.svg"
     },
     {
         id: "hurt",
@@ -292,7 +292,7 @@ export class CommonConditionInfo {
     {
         id: "confused",
         label: "ironclaw2e.effect.status.confused",
-        icon: "icons/svg/daze.svg"
+        icon: "icons/svg/stoned.svg"
     },
     {
         id: "terrified",
@@ -352,7 +352,7 @@ export class CommonConditionInfo {
     {
         id: "mesmerized",
         label: "ironclaw2e.effect.status.mesmerized",
-        icon: "icons/svg/ice-aura.svg"
+        icon: "icons/svg/sun.svg"
     },
     {
         id: "marionette",
@@ -385,6 +385,11 @@ export class CommonConditionInfo {
         icon: "icons/svg/mystery-man.svg"
     },
     {
+        id: "temp-ward",
+        label: "ironclaw2e.effect.status.temp-ward",
+        icon: "icons/svg/aura.svg"
+    },
+    {
         id: "misc-a",
         label: "ironclaw2e.effect.status.misc-a",
         icon: "icons/svg/eye.svg"
@@ -413,6 +418,11 @@ export class CommonConditionInfo {
         id: "misc-f",
         label: "ironclaw2e.effect.status.misc-f",
         icon: "icons/svg/sound.svg"
+    },
+    {
+        id: "misc-g",
+        label: "ironclaw2e.effect.status.misc-g",
+        icon: "icons/svg/tower-flag.svg"
     }];
 
     /**
@@ -424,8 +434,8 @@ export class CommonConditionInfo {
     ["confused", "Confused"], ["terrified", "Terrified"], ["enraged", "Enraged"], ["knockdown", "Knockdown"], ["berserk", "Berserk"],
     ["blinded", "Blinded"], ["silenced", "Silenced"], ["fulltilt", "Full Tilt"], ["slowed", "Slowed"], ["immobilized", "Immobilized"],
     ["half-buried", "Half-Buried"], ["onfire", "On Fire"], ["mesmerized", "Mesmerized"], ["marionette", "Marionette"], ["controlled", "Controlled"],
-    ["allfours", "All Fours"], ["flying", "Flying"], ["grappled", "Grappled"], ["hiding", "Hiding"], ["misc-a", "Misc-A"], ["misc-b", "Misc-B"], ["misc-c", "Misc-C"],
-    ["misc-d", "Misc-D"], ["misc-e", "Misc-E"], ["misc-f", "Misc-F"]]));
+    ["allfours", "All Fours"], ["flying", "Flying"], ["grappled", "Grappled"], ["hiding", "Hiding"], ["temp-ward", "Temporary Ward"], ["misc-a", "Misc-A"], ["misc-b", "Misc-B"], ["misc-c", "Misc-C"],
+    ["misc-d", "Misc-D"], ["misc-e", "Misc-E"], ["misc-f", "Misc-F"], ["misc-g", "Misc-G"]]));
 
     /**
      * Convert a single or a list of conditions from id's into CUB condition names
