@@ -237,8 +237,8 @@ export class Ironclaw2EActor extends Actor {
                 soakActor.popupSoakRoll({ "prechecked": ["body"] }, { directroll, "checkweak": (holderset.weak == "true"), "checkarmor": (holderset.penetrating == "false") }, wait);
             } else {
                 if (!directroll)
-                    soakActor.popupDamage(0, 4, holderset.conditions);
-                else soakActor.silentDamage(0, 4, holderset.conditions);
+                    soakActor.popupDamage(-4, 0, holderset.conditions);
+                else soakActor.silentDamage(-4, 0, holderset.conditions);
             }
         } else {
             ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
