@@ -114,45 +114,55 @@ export class Ironclaw2EItem extends Item {
                 // Applicability settings
                 if (data.specialSettings[i].typeField) {
                     data.specialSettings[i].typeArray = splitStatString(data.specialSettings[i].typeField);
-                }
+                } else { data.specialSettings[i].typeArray = null; }
+
                 if (data.specialSettings[i].nameField) {
                     data.specialSettings[i].nameArray = splitStatString(data.specialSettings[i].nameField, false);
                     data.specialSettings[i].nameArray.forEach((val, index) => data.specialSettings[i].nameArray[index] = val.toLowerCase());
-                }
+                } else { data.specialSettings[i].nameArray = null; }
+
                 if (data.specialSettings[i].tagField) {
                     data.specialSettings[i].tagArray = splitStatString(data.specialSettings[i].tagField);
-                }
+                } else { data.specialSettings[i].tagArray = null; }
+
                 if (data.specialSettings[i].descriptorField) {
                     data.specialSettings[i].descriptorArray = splitStatString(data.specialSettings[i].descriptorField);
-                }
+                } else { data.specialSettings[i].descriptorArray = null; }
+
                 if (data.specialSettings[i].effectField) {
                     data.specialSettings[i].effectArray = splitStatString(data.specialSettings[i].effectField);
-                }
+                } else { data.specialSettings[i].effectArray = null; }
+
                 if (data.specialSettings[i].statField) {
                     data.specialSettings[i].statArray = splitStatString(data.specialSettings[i].statField);
-                }
+                } else { data.specialSettings[i].statArray = null; }
+
                 if (data.specialSettings[i].conditionField) {
                     data.specialSettings[i].conditionArray = splitStatString(data.specialSettings[i].conditionField);
-                }
+                } else { data.specialSettings[i].conditionArray = null; }
+
                 if (data.specialSettings[i].equipField) {
                     data.specialSettings[i].equipArray = splitStatString(data.specialSettings[i].equipField);
-                }
+                } else { data.specialSettings[i].equipArray = null; }
+
                 if (data.specialSettings[i].rangeField) {
                     data.specialSettings[i].rangeArray = splitStatString(data.specialSettings[i].rangeField);
-                }
+                } else { data.specialSettings[i].rangeArray = null; }
+
                 if (data.specialSettings[i].otherItemField) {
                     data.specialSettings[i].otherItemArray = splitStatString(data.specialSettings[i].otherItemField);
-                }
+                } else { data.specialSettings[i].otherItemArray = null; }
+
                 // Gift Exhaust check
                 if (data.specialSettings[i].worksWhenState === false) {
                     // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored refreshedState as true, otherwise it is false
                     data.specialSettings[i].refreshedState = (data.exhaustWhenUsed === false || !data.exhausted);
-                }
+                } else { data.specialSettings[i].refreshedState = false; }
 
                 // Effect settings
                 if (data.specialSettings[i].bonusSourcesField) {
                     data.specialSettings[i].bonusSources = splitStatString(data.specialSettings[i].bonusSourcesField);
-                }
+                } else { data.specialSettings[i].bonusSources = null; }
 
                 if (data.specialSettings[i].bonusStatsField === "-") {
                     // If the stat field is just a dash, interpret that as skipping the field
@@ -174,7 +184,7 @@ export class Ironclaw2EItem extends Item {
 
                 if (data.specialSettings[i].replaceNameField) {
                     data.specialSettings[i].replaceName = makeCompareReady(data.specialSettings[i].replaceNameField);
-                }
+                } else { data.specialSettings[i].replaceName = null; }
 
                 if (data.specialSettings[i].changeFromField && data.specialSettings[i].changeToField) {
                     // Check that both from and to fields have stuff, and then ensure that both have the same length before assiging them
@@ -183,7 +193,13 @@ export class Ironclaw2EItem extends Item {
                     if (foo.length === bar.length) {
                         data.specialSettings[i].changeFrom = foo;
                         data.specialSettings[i].changeTo = bar;
+                    } else {
+                        data.specialSettings[i].changeFrom = null;
+                        data.specialSettings[i].changeTo = null;
                     }
+                } else {
+                    data.specialSettings[i].changeFrom = null;
+                    data.specialSettings[i].changeTo = null;
                 }
             }
         }
@@ -850,7 +866,7 @@ export class Ironclaw2EItem extends Item {
             "hasResist": itemData.hasResist,
             "success": success,
             "resultStyle": "color:" + (success ? CommonSystemInfo.resultColors.success : CommonSystemInfo.resultColors.tie),
-            "damageType": (itemData.effectsSplit.includes("slaying") ? "slaying" : (itemData.effectsSplit.includes("critical") ? "critical" : (itemData.damageEffect >= 0 ? "normal": "conditional"))),
+            "damageType": (itemData.effectsSplit.includes("slaying") ? "slaying" : (itemData.effectsSplit.includes("critical") ? "critical" : (itemData.damageEffect >= 0 ? "normal" : "conditional"))),
             "isImpaling": itemData.effectsSplit.includes("impaling"),
             "isPenetrating": itemData.effectsSplit.includes("penetrating"),
             "isWeak": itemData.effectsSplit.includes("weak"),
@@ -1090,7 +1106,7 @@ export class Ironclaw2EItem extends Item {
             switch (rolltype) {
                 case 0: // Generic gift roll
                     diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.giftRoll") + (this.data.data.exhaustWhenUsed ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.gift") + " <strong>" + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.exhausted") + "</strong>" : ": ");
-                    this.actor.basicRollSelector(diceinput, { directroll } , callback);
+                    this.actor.basicRollSelector(diceinput, { directroll }, callback);
                     break;
                 case 1: // Parry roll
                     diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.parryRoll") + ": ";

@@ -280,38 +280,40 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             if (this.actor.data.data.processingLists?.statChange) { // Check if the processing list and stat change list even exist
                 for (let special of this.actor.data.data.processingLists.statChange) { // Loop through the stat change specials
                     if (checkApplicability(special, item, this.actor)) { // Check if the current special applies
-                        for (let i = 0; i < special.changeFrom.length && i < special.changeTo.length; ++i) { // Go through all the potential changes
-                            let nameAdded = false;
+                        if (special.changeFrom && special.changeTo) { // Check whether the special has the necessary fields
+                            for (let i = 0; i < special.changeFrom.length && i < special.changeTo.length; ++i) { // Go through all the potential changes
+                                let nameAdded = false;
 
-                            const reg = new RegExp("(" + special.changeFrom[i] + "|" + makeCompareReady(special.changeFrom[i]) + ")", "gi"); // Prepare the regex
-                            if (item.data.useDice) { // Check if the item even has anything in the roll field
-                                // Replace the roll field with a case-insensitive regex-replaced version with the from-word changed to to-word, with regex to account both for space and no-space versions
-                                item.data.useDice = item.data.useDice.replace(reg, special.changeTo[i]);
-                                if (nameAdded === false && special.nameAdditionField) { // If the item's name has not been changed yet and there is anything in the addition field
-                                    item.name += " " + special.nameAdditionField; // Append the name
-                                    nameAdded = true; // Set the bool to mark that the item's name has been changed already
+                                const reg = new RegExp("(" + special.changeFrom[i] + "|" + makeCompareReady(special.changeFrom[i]) + ")", "gi"); // Prepare the regex
+                                if (item.data.useDice) { // Check if the item even has anything in the roll field
+                                    // Replace the roll field with a case-insensitive regex-replaced version with the from-word changed to to-word, with regex to account both for space and no-space versions
+                                    item.data.useDice = item.data.useDice.replace(reg, special.changeTo[i]);
+                                    if (nameAdded === false && special.nameAdditionField) { // If the item's name has not been changed yet and there is anything in the addition field
+                                        item.name += " " + special.nameAdditionField; // Append the name
+                                        nameAdded = true; // Set the bool to mark that the item's name has been changed already
+                                    }
                                 }
-                            }
 
-                            if (item.data.attackDice) {
-                                item.data.attackDice = item.data.attackDice.replace(reg, special.changeTo[i]);
-                                if (nameAdded === false && special.nameAdditionField) {
-                                    item.name += " " + special.nameAdditionField;
-                                    nameAdded = true;
+                                if (item.data.attackDice) {
+                                    item.data.attackDice = item.data.attackDice.replace(reg, special.changeTo[i]);
+                                    if (nameAdded === false && special.nameAdditionField) {
+                                        item.name += " " + special.nameAdditionField;
+                                        nameAdded = true;
+                                    }
                                 }
-                            }
-                            if (item.data.defenseDice) {
-                                item.data.defenseDice = item.data.defenseDice.replace(reg, special.changeTo[i]);
-                                if (nameAdded === false && special.nameAdditionField) {
-                                    item.name += " " + special.nameAdditionField;
-                                    nameAdded = true;
+                                if (item.data.defenseDice) {
+                                    item.data.defenseDice = item.data.defenseDice.replace(reg, special.changeTo[i]);
+                                    if (nameAdded === false && special.nameAdditionField) {
+                                        item.name += " " + special.nameAdditionField;
+                                        nameAdded = true;
+                                    }
                                 }
-                            }
-                            if (item.data.counterDice) {
-                                item.data.counterDice = item.data.counterDice.replace(reg, special.changeTo[i]);
-                                if (nameAdded === false && special.nameAdditionField) {
-                                    item.name += " " + special.nameAdditionField;
-                                    nameAdded = true;
+                                if (item.data.counterDice) {
+                                    item.data.counterDice = item.data.counterDice.replace(reg, special.changeTo[i]);
+                                    if (nameAdded === false && special.nameAdditionField) {
+                                        item.name += " " + special.nameAdditionField;
+                                        nameAdded = true;
+                                    }
                                 }
                             }
                         }
