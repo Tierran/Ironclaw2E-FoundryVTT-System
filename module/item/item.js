@@ -153,16 +153,25 @@ export class Ironclaw2EItem extends Item {
                 if (data.specialSettings[i].bonusSourcesField) {
                     data.specialSettings[i].bonusSources = splitStatString(data.specialSettings[i].bonusSourcesField);
                 }
-                if (data.specialSettings[i].bonusStatsField) {
+
+                if (data.specialSettings[i].bonusStatsField === "-") {
+                    // If the stat field is just a dash, interpret that as skipping the field
+                    data.specialSettings[i].bonusStats = null;
+                } else if (data.specialSettings[i].bonusStatsField) {
                     data.specialSettings[i].bonusStats = splitStatString(data.specialSettings[i].bonusStatsField);
                 } else { // If the bonus field has stuff, use it, otherwise use the normal gift stuff
                     data.specialSettings[i].bonusStats = data.giftStats;
                 }
-                if (data.specialSettings[i].bonusDiceField) {
+
+                if (data.specialSettings[i].bonusDiceField === "-") {
+                    // If the dice field is just a dash, interpret that as skipping the field
+                    data.specialSettings[i].bonusDice = null;
+                } else if (data.specialSettings[i].bonusDiceField) {
                     data.specialSettings[i].bonusDice = findTotalDice(data.specialSettings[i].bonusDiceField);
                 } else { // If the bonus field has stuff, use it, otherwise use the normal gift stuff
                     data.specialSettings[i].bonusDice = data.giftArray;
                 }
+
                 if (data.specialSettings[i].replaceNameField) {
                     data.specialSettings[i].replaceName = makeCompareReady(data.specialSettings[i].replaceNameField);
                 }
