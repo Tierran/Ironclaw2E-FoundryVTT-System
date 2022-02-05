@@ -65,6 +65,18 @@ export function chatCommandsIntegration(chatCommands) {
         iconClass: "fa-fist-raised",
         description: game.i18n.localize("ironclaw2e.command.itemuse")
     }));
+
+    // Use an item as the currently selected actor
+    chatCommands.registerCommand(chatCommands.createCommandFromData({
+        commandKey: "/actordamage",
+        invokeOnCommand: async (chatlog, messageText, chatdata) => {
+            await game.ironclaw2e.sleep(100);
+            ironclawDamageApply(messageText, chatdata?.speaker);
+        },
+        shouldDisplayToChat: false,
+        iconClass: "fa-skull-crossbones",
+        description: game.i18n.localize("ironclaw2e.command.actordamage")
+    }));
 }
 
 /**
@@ -100,7 +112,7 @@ export function ironclawRollChat(inputstring) {
 
 /**
  * A function intended for the ChatCommands integration, it takes a string and tries to use it as a stat string to open the actor's dice popup with pre-checked fields
- * @param {string} inputstring An item roll string, with a target number attached to it after an extra semicolon after the extra dice section
+ * @param {string} inputstring An item dice pool string, with a target number attached to it after an extra semicolon after the extra dice section
  * @param {any} speaker The caller of the function
  * @param {boolean} direct Whether the roll pops a dialog or just rolls directly
  */
@@ -124,8 +136,8 @@ export function ironclawRollActorChat(inputstring, speaker, direct = false) {
         }
     }
 
-    let piecedinput = inputstring.split(";"); // Split the input to pieces
-    let specialcheck = makeCompareReady(inputstring[0]); // Special checks to allow certain special quick rolls
+    const piecedinput = inputstring.split(";"); // Split the input to pieces
+    const specialcheck = makeCompareReady(inputstring[0]); // Special checks to allow certain special quick rolls
     if (specialcheck === "soak") {
         actor.popupSoakRoll({ "prechecked": ["body"], "tnyes": true, "tnnum": 3, "extradice": (piecedinput.length > 1 ? piecedinput[1] : "") }, { "directroll": direct });
         return;
@@ -158,4 +170,46 @@ export function ironclawRollActorChat(inputstring, speaker, direct = false) {
 
     let firstsplit = splitStatsAndBonus(usedstring);
     actor.basicRollSelector({ "prechecked": firstsplit[0], "tnyes": tn > 0, "tnnum": (tn > 0 ? tn : 3), "extradice": firstsplit[1] }, { "directroll": direct });
+}
+
+/**
+ * A function intended for the ChatCommands integration, it takes a readied damage and soak numbers, and a condition name as well as whether to skip the dialogue, all separated by semicolons
+ * @param {string} inputstring An item roll string, with a target number attached to it after an extra semicolon after the extra dice section
+ * @param {any} speaker The caller of the function
+ */
+export function ironclawDamageApply(inputstring, speaker) {
+    if (typeof inputstring !== "string") {
+        console.error("Something other than a string inputted into ironclawRollActorChat: " + inputstring.toString());
+        return;
+    }
+
+    if (!speaker?.actor || !speaker?.token) {
+        ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.actorNotSelectedActorroll"));
+        return;
+    }
+
+    let actor = (speaker?.token ? game.actors.tokens[speaker.token] : null)?.token?.actor;
+    if (!actor) {
+        actor = game.actors.get(speaker.actor);
+        if (!actor) {
+            ui.notifications.warn(game.i18n.format("ironclaw2e.chat.actorNotFoundForSpeaker", { "name": speaker.toString() }));
+            return;
+        }
+    }
+
+    const quickstrings = ["quick", "skip", "direct"]; // Inputs for the fourth slot that trigger a silent damage-applying
+    const piecedinput = inputstring.split(";"); // Split the input to pieces
+    let damage = parseInt(piecedinput[0]);
+    let soak = (piecedinput.length > 1 ? parseInt(piecedinput[1]) : 0);
+    const conditions = (piecedinput.length > 2 ? piecedinput[2] : "");
+    const quick = (piecedinput.length > 3 ? quickstrings.includes(makeCompareReady(piecedinput[3])) : false);
+
+    // Check for NaN's
+    damage = (isNaN(damage) ? 0 : damage);
+    soak = (isNaN(soak) ? 0 : soak);
+
+    if (quick)
+        actor.silentDamage(damage, soak, conditions);
+    else
+        actor.popupDamage(damage, soak, conditions);
 }

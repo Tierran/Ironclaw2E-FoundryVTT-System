@@ -79,6 +79,7 @@
   "ironclaw2e.command.actorroll": "Actor dice pool popup",
   "ironclaw2e.command.quickroll": "Quick actor dice pool roll",
   "ironclaw2e.command.itemuse": "Use an item",
+  "ironclaw2e.command.actordamage": "Apply damage",
 
 
   "ironclaw2e.combat.sideBasedInitiative": "Use side-based initiative",

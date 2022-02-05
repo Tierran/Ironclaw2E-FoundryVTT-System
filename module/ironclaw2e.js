@@ -49,6 +49,7 @@ Hooks.once('init', async function () {
         rollItemMacro,
         popupMacro,
         popupSelect,
+        popupDamage,
         // Dice rolling commands
         rollTargetNumberArray,
         rollHighestArray,
@@ -614,10 +615,28 @@ function popupMacro(popup) {
  * @param {boolean} tnyes Whether to use a TN, true for yes
  * @param {number} tnnum TN to use, ignored if highest roll
  * @param {string} extradice Default extra dice to use for the bottom one-line slot
+ * @param {boolean} quick Whether the roll skips the dialog
  */
-function popupSelect(prechecked = [], tnyes = false, tnnum = 3, extradice = "") {
+function popupSelect(prechecked = [], tnyes = false, tnnum = 3, extradice = "", quick = false) {
     const actor = getSpeakerActor();
     if (!actor) return ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.actorNotFoundForMacro"));
 
-    return actor.popupSelectRolled({ prechecked, tnyes, tnnum, extradice });
+    return actor.basicRollSelector({ prechecked, tnyes, tnnum, extradice }, { "directroll": quick === true });
+}
+
+/**
+ * Popup the standard dice pool selection dialog with some readied data
+ * @param {number} readydamage The damage to use for default
+ * @param {number} readysoak The soak to use for default
+ * @param {string} damageconditions Extra conditions to be added alongside the damage conditions
+ * @param {boolean} quick Whether the roll skips the dialog
+ */
+function popupDamage(readydamage = 0, readysoak = 0, damageconditions = "", quick = false) {
+    const actor = getSpeakerActor();
+    if (!actor) return ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.actorNotFoundForMacro"));
+
+    if (quick === true)
+        return actor.silentDamage(readydamage, readysoak, damageconditions);
+    else
+        return actor.popupDamage(readydamage, readysoak, damageconditions);
 }
