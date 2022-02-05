@@ -124,30 +124,31 @@ export function ironclawRollActorChat(inputstring, speaker, direct = false) {
         }
     }
 
-    let specialcheck = makeCompareReady(inputstring); // Special checks to allow certain special quick rolls
+    let piecedinput = inputstring.split(";"); // Split the input to pieces
+    let specialcheck = makeCompareReady(inputstring[0]); // Special checks to allow certain special quick rolls
     if (specialcheck === "soak") {
-        actor.popupSoakRoll({ "prechecked": ["body"], "tnyes": true, "tnnum": 3 }, { "directroll": direct });
+        actor.popupSoakRoll({ "prechecked": ["body"], "tnyes": true, "tnnum": 3, "extradice": (piecedinput.length > 1 ? piecedinput[1] : "") }, { "directroll": direct });
         return;
     }
     if (specialcheck === "dodging" || specialcheck === "defense" || specialcheck === "defence") {
-        actor.popupDefenseRoll({ "prechecked": ["speed", "dodge"] }, { "directroll": direct }); // Actually dodge roll, despite being called "defense", in order to avoid confusion with the dodge skill for the system
+        actor.popupDefenseRoll({ "prechecked": ["speed", "dodge"], "extradice": (piecedinput.length > 1 ? piecedinput[1] : "") }, { "directroll": direct });
+        // Actually dodge roll, despite being called "defense", in order to avoid confusion with the dodge skill for the system
         return;
     }
 
     let tn = -1;
     let usedstring = inputstring;
-    let foo = inputstring.split(";");
 
     // Attempt to check whether the input has two semicolons, and use the value after the third as a TN
-    if (foo.length > 2) {
-        let bar = parseInt(foo[2].trim());
+    if (piecedinput.length > 2) {
+        let bar = parseInt(piecedinput[2].trim());
         if (!isNaN(bar))
             tn = bar;
         usedstring = inputstring.slice(0, inputstring.lastIndexOf(";")); // Remove the last semicolon from the string used for determining dice pools
-    } else if (foo.length == 2) { // Attempt to check whether the input has only one semicolon and see if the part after the semicolon contains actual dice or a plain number
-        const test = splitStatString(foo[1]);
+    } else if (piecedinput.length == 2) { // Attempt to check whether the input has only one semicolon and see if the part after the semicolon contains actual dice or a plain number
+        const test = splitStatString(piecedinput[1]); // Split the potential dice string into pieces for the single dice check
         if (test.length > 0) {
-            let bar = parseInt(foo[1].trim());
+            let bar = parseInt(piecedinput[1].trim());
             if (parseSingleDiceString(test[0]) === null && !isNaN(bar)) {
                 tn = bar;
                 usedstring = inputstring.slice(0, inputstring.lastIndexOf(";")); // Remove the last semicolon from the string used for determining dice pools
