@@ -22,7 +22,7 @@ Ironclaw's initiative system is supported, both the normal side-based and the al
 The Combat Tracker will show the result of the initiative check before the initiative itself for the GM, either as the number of successes, or as Tie (T), Failure (F), or Botch (B).  
 
 The system has support for the Drag Ruler module (https://github.com/manuelVo/foundryvtt-drag-ruler). The distance colors represent Stride (blue), Stride+Dash (green), Run (yellow) and over max distance (red).  
-The system has support for the Chat Commands module (https://github.com/League-of-Foundry-Developers/Chat-Commands-Lib). If present and active, the system will register "/iroll", "/popuproll", "/quickroll", "/directroll" and "/itemuse" commands.  
+The system has support for the Chat Commands module (https://github.com/League-of-Foundry-Developers/Chat-Commands-Lib). If present and active, the system will register different commands that can be called directly from chat. The commands listed and explained below.  
 The system has support for the Combat Utility Belt module (https://github.com/death-save/combat-utility-belt), specifically for its Enhanced Conditions system. If present and active, the system will try to use the EC for conditions. Proper setup explained below.  
 
 #### Options
@@ -53,6 +53,7 @@ The /popuproll command opens a standard roll dialog with the given dice pools al
 In addition, /popuproll can take a simple "soak", "defense" or "dodging" as input. In the former case, it will open a standard soak roll popup, while the latter two open a dodge defense popup, since "dodge" would normally refer to a roll of pure dodge skill, rather than the defense.  
 The /quickroll command takes the same parameters as /popuproll, but rather than opening a dice pool dialog, the given dice are rolled quickly without any dialog opening up. The /directroll command is simply an alias for /quickroll.  
 The /itemuse command simply uses an item; it takes an item name and uses that to activate a normal item use, as if the item was used through a hotbar macro. The *item* in this case refers to all things FoundryVTT considers items (armor, gifts, weapons, illumination...), not just the gear type. The name must be an **exact** match.  
+The /actordamage command pops up a damage dialog, either with the normal defaults or with inputted values. Every value should be separated by a semicolon, with the values being damage, soak, extra conditions and whether the damage should be added quickly / silently without a popup, respectively. For example: "/actordamage 4;3;Blinded;quick" or "/actordamage 2;-1"  
 
 #### Advanced Gift Bonus Settings
 
