@@ -106,100 +106,104 @@ export class Ironclaw2EItem extends Item {
 
         // Special settings
         if (data.specialSettings?.length > 0) {
-            for (let i = 0; i < data.specialSettings.length; ++i) {
-                data.specialSettings[i].giftName = itemData.name;
-                data.specialSettings[i].giftId = itemData._id;
-                data.specialSettings[i].settingIndex = i;
+            // If special settings exist, make a new array where the actual processed version of the special settings exist
+            // This helps prevent data corruption
+            data.usedSpecialSettings = [...data.specialSettings];
+
+            for (let i = 0; i < data.usedSpecialSettings.length; ++i) {
+                data.usedSpecialSettings[i].giftName = itemData.name;
+                data.usedSpecialSettings[i].giftId = itemData._id;
+                data.usedSpecialSettings[i].settingIndex = i;
 
                 // Applicability settings
-                if (data.specialSettings[i].typeField) {
-                    data.specialSettings[i].typeArray = splitStatString(data.specialSettings[i].typeField);
-                } else { data.specialSettings[i].typeArray = null; }
+                if (data.usedSpecialSettings[i].typeField) {
+                    data.usedSpecialSettings[i].typeArray = splitStatString(data.usedSpecialSettings[i].typeField);
+                } else { data.usedSpecialSettings[i].typeArray = null; }
 
-                if (data.specialSettings[i].nameField) {
-                    data.specialSettings[i].nameArray = splitStatString(data.specialSettings[i].nameField, false);
-                    data.specialSettings[i].nameArray.forEach((val, index) => data.specialSettings[i].nameArray[index] = val.toLowerCase());
-                } else { data.specialSettings[i].nameArray = null; }
+                if (data.usedSpecialSettings[i].nameField) {
+                    data.usedSpecialSettings[i].nameArray = splitStatString(data.usedSpecialSettings[i].nameField, false);
+                    data.usedSpecialSettings[i].nameArray.forEach((val, index) => data.usedSpecialSettings[i].nameArray[index] = val.toLowerCase());
+                } else { data.usedSpecialSettings[i].nameArray = null; }
 
-                if (data.specialSettings[i].tagField) {
-                    data.specialSettings[i].tagArray = splitStatString(data.specialSettings[i].tagField);
-                } else { data.specialSettings[i].tagArray = null; }
+                if (data.usedSpecialSettings[i].tagField) {
+                    data.usedSpecialSettings[i].tagArray = splitStatString(data.usedSpecialSettings[i].tagField);
+                } else { data.usedSpecialSettings[i].tagArray = null; }
 
-                if (data.specialSettings[i].descriptorField) {
-                    data.specialSettings[i].descriptorArray = splitStatString(data.specialSettings[i].descriptorField);
-                } else { data.specialSettings[i].descriptorArray = null; }
+                if (data.usedSpecialSettings[i].descriptorField) {
+                    data.usedSpecialSettings[i].descriptorArray = splitStatString(data.usedSpecialSettings[i].descriptorField);
+                } else { data.usedSpecialSettings[i].descriptorArray = null; }
 
-                if (data.specialSettings[i].effectField) {
-                    data.specialSettings[i].effectArray = splitStatString(data.specialSettings[i].effectField);
-                } else { data.specialSettings[i].effectArray = null; }
+                if (data.usedSpecialSettings[i].effectField) {
+                    data.usedSpecialSettings[i].effectArray = splitStatString(data.usedSpecialSettings[i].effectField);
+                } else { data.usedSpecialSettings[i].effectArray = null; }
 
-                if (data.specialSettings[i].statField) {
-                    data.specialSettings[i].statArray = splitStatString(data.specialSettings[i].statField);
-                } else { data.specialSettings[i].statArray = null; }
+                if (data.usedSpecialSettings[i].statField) {
+                    data.usedSpecialSettings[i].statArray = splitStatString(data.usedSpecialSettings[i].statField);
+                } else { data.usedSpecialSettings[i].statArray = null; }
 
-                if (data.specialSettings[i].conditionField) {
-                    data.specialSettings[i].conditionArray = splitStatString(data.specialSettings[i].conditionField);
-                } else { data.specialSettings[i].conditionArray = null; }
+                if (data.usedSpecialSettings[i].conditionField) {
+                    data.usedSpecialSettings[i].conditionArray = splitStatString(data.usedSpecialSettings[i].conditionField);
+                } else { data.usedSpecialSettings[i].conditionArray = null; }
 
-                if (data.specialSettings[i].equipField) {
-                    data.specialSettings[i].equipArray = splitStatString(data.specialSettings[i].equipField);
-                } else { data.specialSettings[i].equipArray = null; }
+                if (data.usedSpecialSettings[i].equipField) {
+                    data.usedSpecialSettings[i].equipArray = splitStatString(data.usedSpecialSettings[i].equipField);
+                } else { data.usedSpecialSettings[i].equipArray = null; }
 
-                if (data.specialSettings[i].rangeField) {
-                    data.specialSettings[i].rangeArray = splitStatString(data.specialSettings[i].rangeField);
-                } else { data.specialSettings[i].rangeArray = null; }
+                if (data.usedSpecialSettings[i].rangeField) {
+                    data.usedSpecialSettings[i].rangeArray = splitStatString(data.usedSpecialSettings[i].rangeField);
+                } else { data.usedSpecialSettings[i].rangeArray = null; }
 
-                if (data.specialSettings[i].otherItemField) {
-                    data.specialSettings[i].otherItemArray = splitStatString(data.specialSettings[i].otherItemField);
-                } else { data.specialSettings[i].otherItemArray = null; }
+                if (data.usedSpecialSettings[i].otherItemField) {
+                    data.usedSpecialSettings[i].otherItemArray = splitStatString(data.usedSpecialSettings[i].otherItemField);
+                } else { data.usedSpecialSettings[i].otherItemArray = null; }
 
                 // Gift Exhaust check
-                if (data.specialSettings[i].worksWhenState === false) {
+                if (data.usedSpecialSettings[i].worksWhenState === false) {
                     // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored refreshedState as true, otherwise it is false
-                    data.specialSettings[i].refreshedState = (data.exhaustWhenUsed === false || !data.exhausted);
-                } else { data.specialSettings[i].refreshedState = false; }
+                    data.usedSpecialSettings[i].refreshedState = (data.exhaustWhenUsed === false || !data.exhausted);
+                } else { data.usedSpecialSettings[i].refreshedState = false; }
 
                 // Effect settings
-                if (data.specialSettings[i].bonusSourcesField) {
-                    data.specialSettings[i].bonusSources = splitStatString(data.specialSettings[i].bonusSourcesField);
-                } else { data.specialSettings[i].bonusSources = null; }
+                if (data.usedSpecialSettings[i].bonusSourcesField) {
+                    data.usedSpecialSettings[i].bonusSources = splitStatString(data.usedSpecialSettings[i].bonusSourcesField);
+                } else { data.usedSpecialSettings[i].bonusSources = null; }
 
-                if (data.specialSettings[i].bonusStatsField === "-") {
+                if (data.usedSpecialSettings[i].bonusStatsField === "-") {
                     // If the stat field is just a dash, interpret that as skipping the field
-                    data.specialSettings[i].bonusStats = null;
-                } else if (data.specialSettings[i].bonusStatsField) {
-                    data.specialSettings[i].bonusStats = splitStatString(data.specialSettings[i].bonusStatsField);
+                    data.usedSpecialSettings[i].bonusStats = null;
+                } else if (data.usedSpecialSettings[i].bonusStatsField) {
+                    data.usedSpecialSettings[i].bonusStats = splitStatString(data.usedSpecialSettings[i].bonusStatsField);
                 } else { // If the bonus field has stuff, use it, otherwise use the normal gift stuff
-                    data.specialSettings[i].bonusStats = data.giftStats;
+                    data.usedSpecialSettings[i].bonusStats = data.giftStats;
                 }
 
-                if (data.specialSettings[i].bonusDiceField === "-") {
+                if (data.usedSpecialSettings[i].bonusDiceField === "-") {
                     // If the dice field is just a dash, interpret that as skipping the field
-                    data.specialSettings[i].bonusDice = null;
-                } else if (data.specialSettings[i].bonusDiceField) {
-                    data.specialSettings[i].bonusDice = findTotalDice(data.specialSettings[i].bonusDiceField);
+                    data.usedSpecialSettings[i].bonusDice = null;
+                } else if (data.usedSpecialSettings[i].bonusDiceField) {
+                    data.usedSpecialSettings[i].bonusDice = findTotalDice(data.usedSpecialSettings[i].bonusDiceField);
                 } else { // If the bonus field has stuff, use it, otherwise use the normal gift stuff
-                    data.specialSettings[i].bonusDice = data.giftArray;
+                    data.usedSpecialSettings[i].bonusDice = data.giftArray;
                 }
 
-                if (data.specialSettings[i].replaceNameField) {
-                    data.specialSettings[i].replaceName = makeCompareReady(data.specialSettings[i].replaceNameField);
-                } else { data.specialSettings[i].replaceName = null; }
+                if (data.usedSpecialSettings[i].replaceNameField) {
+                    data.usedSpecialSettings[i].replaceName = makeCompareReady(data.usedSpecialSettings[i].replaceNameField);
+                } else { data.usedSpecialSettings[i].replaceName = null; }
 
-                if (data.specialSettings[i].changeFromField && data.specialSettings[i].changeToField) {
+                if (data.usedSpecialSettings[i].changeFromField && data.usedSpecialSettings[i].changeToField) {
                     // Check that both from and to fields have stuff, and then ensure that both have the same length before assiging them
-                    const foo = splitStatString(data.specialSettings[i].changeFromField, false);
-                    const bar = splitStatString(data.specialSettings[i].changeToField, false);
+                    const foo = splitStatString(data.usedSpecialSettings[i].changeFromField, false);
+                    const bar = splitStatString(data.usedSpecialSettings[i].changeToField, false);
                     if (foo.length === bar.length) {
-                        data.specialSettings[i].changeFrom = foo;
-                        data.specialSettings[i].changeTo = bar;
+                        data.usedSpecialSettings[i].changeFrom = foo;
+                        data.usedSpecialSettings[i].changeTo = bar;
                     } else {
-                        data.specialSettings[i].changeFrom = null;
-                        data.specialSettings[i].changeTo = null;
+                        data.usedSpecialSettings[i].changeFrom = null;
+                        data.usedSpecialSettings[i].changeTo = null;
                     }
                 } else {
-                    data.specialSettings[i].changeFrom = null;
-                    data.specialSettings[i].changeTo = null;
+                    data.usedSpecialSettings[i].changeFrom = null;
+                    data.usedSpecialSettings[i].changeTo = null;
                 }
             }
         }

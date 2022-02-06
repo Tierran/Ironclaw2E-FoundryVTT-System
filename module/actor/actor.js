@@ -401,20 +401,20 @@ export class Ironclaw2EActor extends Actor {
     _prepareGiftData(actorData) {
         const data = actorData.data;
 
-        const specialGifts = this.items.filter(element => element.data.type === 'gift' && element.data.data.specialSettings?.length > 0);
+        const specialGifts = this.items.filter(element => element.data.type === 'gift' && element.data.data.usedSpecialSettings?.length > 0);
         if (specialGifts.length > 0) {
             data.processingLists = {}; // If any of the actor's gifts have special settings, add the holding object for the lists
             data.replacementLists = new Map(); // To store any replacement gifts, stored with the actor as derived data to avoid contaminating the actual gifts
 
             for (let gift of specialGifts) {
-                for (let setting of gift.data.data.specialSettings) {
+                for (let setting of gift.data.data.usedSpecialSettings) {
                     if (!(setting.settingMode in data.processingLists)) {
                         // If the relevant array for a setting mode does not exist, add an empty one
                         data.processingLists[setting.settingMode] = [];
                     }
                     // If the gift has the replacement field set, attempt to find what it replaces
                     if (setting.replaceName) {
-                        const replacement = specialGifts.find(x => makeCompareReady(x.name) === setting.replaceName)?.data.data.specialSettings.find(x => x.settingMode == setting.settingMode);
+                        const replacement = specialGifts.find(x => makeCompareReady(x.name) === setting.replaceName)?.data.data.usedSpecialSettings.find(x => x.settingMode == setting.settingMode);
                         if (replacement) { // If the replacement is found, add it to the map of replacements stored with the actor
                             if (replacement.giftId === setting.giftId) { // Check for an infinite loop
                                 console.warn("Potential infinite loop detected, bonus attempted to replace something with the same id as it: " + setting.giftName);
@@ -425,6 +425,7 @@ export class Ironclaw2EActor extends Actor {
                             stored.set(replacement.settingIndex, setting);
                             data.replacementLists.set(replacement.giftId, stored);
                         }
+                        // Skip adding a replacing gift to the normal setting list
                         continue;
                     }
 
