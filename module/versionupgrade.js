@@ -52,9 +52,10 @@ export function checkIfNewerVersion(testing, baseversion) {
  * @param {string} lastversion
  */
 export async function upgradeVersion(lastversion) {
-    const version = getVersionNumbers(lastversion);
-    if (version[0] == 0 && version[1] < 4) { // If the first number of version is zero and the second number is less than 4, do the gift refactor upgrade
-        ui.notifications.info(game.i18n.localize("System update to 0.4 requires data migration, please wait..."), { permanent: true });
+    // Version 0.4 check
+    let version = "0.4.0";
+    if (checkIfNewerVersion(version, lastversion)) { // If 0.4 would be newer than the last recorded version, it means it's pre-0.4 and needs the gift update
+        ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationNotice", {"version": version}), { permanent: true });
 
         // Item changes, first grab all items from everywhere
         let itemsToChange = getAllItemsInWorld();
@@ -71,35 +72,72 @@ export async function upgradeVersion(lastversion) {
             }
         }
 
+        // In case of potential problems the GM might need to check
         if (problemItems.length > 0) {
-            ui.notifications.info(game.i18n.localize("System update to 0.4 completed, but some items had potential migration issues, check the chat for the item list"), { permanent: true });
-            console.log(problemItems);
-
-            let contents = "<p>Items to check:</p>";
-            for (let item of problemItems) {
-                contents += "<p>";
-                contents += "<strong>" + item.name + "</strong>";
-                if (item.actor) {
-                    contents += ", belonging to character: " + item.actor.name;
-                    if (item.actor.token?.parent) {
-                        contents += ", under the scene: " + item.actor.token.parent.name;
-                    }
-                }
-                contents += "</p>";
-            }
-
-            let chatData = {
-                content: contents
-            };
-
-            ChatMessage.applyRollMode(chatData, "gmroll");
-            ChatMessage.create(chatData);
+            ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationWarning", { "version": version }), { permanent: true });
+            problemItemToChat(problemItems);
         } else {
-            ui.notifications.info(game.i18n.localize("System update to 0.4 completed"), { permanent: true });
+            ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationComplete", { "version": version }), { permanent: true });
         }
 
         console.log("0.4, Gift refactor update, done!");
     }
+
+    // Version 0.5.5 check
+    version = "0.5.5";
+    if (checkIfNewerVersion(version, lastversion)) { // Same deal, if 0.5.5 is newer than the last version, it means it's pre-0.5.5
+        ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationNotice", { "version": version }), { permanent: true });
+
+        // Item changes, first grab all items from everywhere
+        let itemsToChange = getAllItemsInWorld("gift");
+        let problemItems = [];
+
+        // Validate the data for special settings
+        for (let item of itemsToChange) {
+            const foo = await item.giftValidateSpecialSetting();
+            if (!(foo)) {
+                problemItems.push(item);
+            }
+        }
+
+        // In case of potential problems the GM might need to check
+        if (problemItems.length > 0) {
+            ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationWarning", { "version": version }), { permanent: true });
+            problemItemToChat(problemItems);
+        } else {
+            ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationComplete", { "version": version }), { permanent: true });
+        }
+
+        console.log("0.5.5, special setting data validation, done!");
+    }
+}
+
+/**
+ * Helper function to send all items with potential problems to console log and chat message
+ * @param {Object[]} problemitems
+ */
+export function problemItemToChat(problemitems) {
+    console.log(problemitems);
+
+    let contents = "<p>Potential problem Items to check:</p>";
+    for (let item of problemitems) {
+        contents += "<p>";
+        contents += "<strong>" + item.name + "</strong>";
+        if (item.actor) {
+            contents += ", belonging to character: " + item.actor.name;
+            if (item.actor.token?.parent) {
+                contents += ", under the scene: " + item.actor.token.parent.name;
+            }
+        }
+        contents += "</p>";
+    }
+
+    let chatData = {
+        content: contents
+    };
+
+    ChatMessage.applyRollMode(chatData, "gmroll");
+    ChatMessage.create(chatData);
 }
 
 /**

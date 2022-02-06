@@ -108,9 +108,12 @@ export class Ironclaw2EItem extends Item {
         if (data.specialSettings?.length > 0) {
             // If special settings exist, make a new array where the actual processed version of the special settings exist
             // This helps prevent data corruption
-            data.usedSpecialSettings = [...data.specialSettings];
+            data.usedSpecialSettings = [];
 
-            for (let i = 0; i < data.usedSpecialSettings.length; ++i) {
+            for (let i = 0; i < data.specialSettings.length; ++i) {
+                // Clone the object in the stored array into the actually used array
+                data.usedSpecialSettings.push({ ...data.specialSettings[i] });
+
                 data.usedSpecialSettings[i].giftName = itemData.name;
                 data.usedSpecialSettings[i].giftId = itemData._id;
                 data.usedSpecialSettings[i].settingIndex = i;
@@ -118,68 +121,66 @@ export class Ironclaw2EItem extends Item {
                 // Applicability settings
                 if (data.usedSpecialSettings[i].typeField) {
                     data.usedSpecialSettings[i].typeArray = splitStatString(data.usedSpecialSettings[i].typeField);
-                } else { data.usedSpecialSettings[i].typeArray = null; }
+                }
 
                 if (data.usedSpecialSettings[i].nameField) {
                     data.usedSpecialSettings[i].nameArray = splitStatString(data.usedSpecialSettings[i].nameField, false);
                     data.usedSpecialSettings[i].nameArray.forEach((val, index) => data.usedSpecialSettings[i].nameArray[index] = val.toLowerCase());
-                } else { data.usedSpecialSettings[i].nameArray = null; }
+                }
 
                 if (data.usedSpecialSettings[i].tagField) {
                     data.usedSpecialSettings[i].tagArray = splitStatString(data.usedSpecialSettings[i].tagField);
-                } else { data.usedSpecialSettings[i].tagArray = null; }
+                }
 
                 if (data.usedSpecialSettings[i].descriptorField) {
                     data.usedSpecialSettings[i].descriptorArray = splitStatString(data.usedSpecialSettings[i].descriptorField);
-                } else { data.usedSpecialSettings[i].descriptorArray = null; }
+                }
 
                 if (data.usedSpecialSettings[i].effectField) {
                     data.usedSpecialSettings[i].effectArray = splitStatString(data.usedSpecialSettings[i].effectField);
-                } else { data.usedSpecialSettings[i].effectArray = null; }
+                }
 
                 if (data.usedSpecialSettings[i].statField) {
                     data.usedSpecialSettings[i].statArray = splitStatString(data.usedSpecialSettings[i].statField);
-                } else { data.usedSpecialSettings[i].statArray = null; }
+                }
 
                 if (data.usedSpecialSettings[i].conditionField) {
                     data.usedSpecialSettings[i].conditionArray = splitStatString(data.usedSpecialSettings[i].conditionField);
-                } else { data.usedSpecialSettings[i].conditionArray = null; }
+                }
 
                 if (data.usedSpecialSettings[i].equipField) {
                     data.usedSpecialSettings[i].equipArray = splitStatString(data.usedSpecialSettings[i].equipField);
-                } else { data.usedSpecialSettings[i].equipArray = null; }
+                }
 
                 if (data.usedSpecialSettings[i].rangeField) {
                     data.usedSpecialSettings[i].rangeArray = splitStatString(data.usedSpecialSettings[i].rangeField);
-                } else { data.usedSpecialSettings[i].rangeArray = null; }
+                }
 
                 if (data.usedSpecialSettings[i].otherItemField) {
                     data.usedSpecialSettings[i].otherItemArray = splitStatString(data.usedSpecialSettings[i].otherItemField);
-                } else { data.usedSpecialSettings[i].otherItemArray = null; }
+                }
 
                 // Gift Exhaust check
                 if (data.usedSpecialSettings[i].worksWhenState === false) {
                     // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored refreshedState as true, otherwise it is false
                     data.usedSpecialSettings[i].refreshedState = (data.exhaustWhenUsed === false || !data.exhausted);
-                } else { data.usedSpecialSettings[i].refreshedState = false; }
+                }
 
                 // Effect settings
                 if (data.usedSpecialSettings[i].bonusSourcesField) {
                     data.usedSpecialSettings[i].bonusSources = splitStatString(data.usedSpecialSettings[i].bonusSourcesField);
-                } else { data.usedSpecialSettings[i].bonusSources = null; }
+                }
 
-                if (data.usedSpecialSettings[i].bonusStatsField === "-") {
-                    // If the stat field is just a dash, interpret that as skipping the field
-                    data.usedSpecialSettings[i].bonusStats = null;
+                if (!data.usedSpecialSettings[i].hasOwnProperty("bonusStatsField") || data.usedSpecialSettings[i].bonusStatsField === "-") {
+                    // If the stat field doesn't exist or is just a dash, interpret that as skipping the field
                 } else if (data.usedSpecialSettings[i].bonusStatsField) {
                     data.usedSpecialSettings[i].bonusStats = splitStatString(data.usedSpecialSettings[i].bonusStatsField);
                 } else { // If the bonus field has stuff, use it, otherwise use the normal gift stuff
                     data.usedSpecialSettings[i].bonusStats = data.giftStats;
                 }
 
-                if (data.usedSpecialSettings[i].bonusDiceField === "-") {
-                    // If the dice field is just a dash, interpret that as skipping the field
-                    data.usedSpecialSettings[i].bonusDice = null;
+                if (!data.usedSpecialSettings[i].hasOwnProperty("bonusDiceField") || data.usedSpecialSettings[i].bonusDiceField === "-") {
+                    // If the dice field doesn't exist or is just a dash, interpret that as skipping the field
                 } else if (data.usedSpecialSettings[i].bonusDiceField) {
                     data.usedSpecialSettings[i].bonusDice = findTotalDice(data.usedSpecialSettings[i].bonusDiceField);
                 } else { // If the bonus field has stuff, use it, otherwise use the normal gift stuff
@@ -188,7 +189,7 @@ export class Ironclaw2EItem extends Item {
 
                 if (data.usedSpecialSettings[i].replaceNameField) {
                     data.usedSpecialSettings[i].replaceName = makeCompareReady(data.usedSpecialSettings[i].replaceNameField);
-                } else { data.usedSpecialSettings[i].replaceName = null; }
+                }
 
                 if (data.usedSpecialSettings[i].changeFromField && data.usedSpecialSettings[i].changeToField) {
                     // Check that both from and to fields have stuff, and then ensure that both have the same length before assiging them
@@ -201,9 +202,6 @@ export class Ironclaw2EItem extends Item {
                         data.usedSpecialSettings[i].changeFrom = null;
                         data.usedSpecialSettings[i].changeTo = null;
                     }
-                } else {
-                    data.usedSpecialSettings[i].changeFrom = null;
-                    data.usedSpecialSettings[i].changeTo = null;
                 }
             }
         }
@@ -507,7 +505,7 @@ export class Ironclaw2EItem extends Item {
 
         // Go through the field names of the new setting and check whether the old setting has any same ones, for any that do, copy the data over
         for (let [key, field] of Object.entries(newSetting)) {
-            if (key == "settingMode") continue; // Special skip to not accidentally copy over the setting type
+            if (key == "settingMode") continue; // Special skip to not accidentally copy over the setting type, just in case
 
             if (oldSetting.hasOwnProperty(key)) {
                 newSetting[key] = oldSetting[key];
@@ -515,6 +513,52 @@ export class Ironclaw2EItem extends Item {
         }
 
         specialSettings[index] = newSetting;
+        return this.update({ "data.specialSettings": specialSettings });
+    }
+
+    /**
+     * Make sure the special settings array of the gift has no extra data haunting the system
+     */
+    async giftValidateSpecialSetting() {
+        const itemData = this.data;
+        const data = itemData.data;
+        if (!(itemData.type === 'gift')) {
+            console.error("Gift special setting validation attempted on a non-gift item: " + itemData.name);
+            return null;
+        }
+
+        // Panic escape in case the special settings ever get corrupted
+        if (!Array.isArray(data.specialSettings)) {
+            console.warn("Gift special options are not an array somehow, resetting...: " + data.specialSettings);
+            return await this.update({ "data.specialSettings": [] });
+        }
+
+        let specialSettings = [];
+
+        // The actual data validation
+        for (let i = 0; i < data.specialSettings.length; ++i) {
+            let oldSetting = data.specialSettings[i];
+            if (!oldSetting.settingMode) {
+                console.error("A special bonus setting lacked a settingMode: " + this.name);
+                return null;
+            }
+
+            let newSetting = getSpecialOptionPrototype(oldSetting.settingMode);
+
+            // Go through the field names of the new setting and check whether the old setting has any same ones, for any that do, copy the data over
+            for (let [key, field] of Object.entries(newSetting)) {
+                if (key == "settingMode") continue; // Special skip to not accidentally copy over the setting type, just in case
+
+                if (oldSetting.hasOwnProperty(key)) {
+                    newSetting[key] = oldSetting[key];
+                }
+            }
+
+            specialSettings.push(newSetting);
+        }
+
+        if (specialSettings.length == 0) // Special exception to return the item in case the function was successful, but there was nothing to validate
+            return this;
         return this.update({ "data.specialSettings": specialSettings });
     }
 

@@ -49,6 +49,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         // Add structural sheet stuff
         let selectables = { "handedness": CommonSystemInfo.equipHandedness, "range": CommonSystemInfo.rangeBands, "giftOptions": CommonSystemInfo.giftSpecialOptions, "giftStates": CommonSystemInfo.giftWorksStates };
         sheetData.selectables = selectables;
+        sheetData.isGM = game.user.isGM;
         sheetData.showDirectoryOptions = game.user.isGM && !this.item.parent;
         sheetData.rangeDistance = getRangeDistanceFromBand(sheetData.data.range);
 

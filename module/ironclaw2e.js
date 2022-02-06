@@ -192,6 +192,13 @@ Hooks.once('init', async function () {
         default: false,
         config: true
     });
+    // Register a version number that was used last time to allow determining if a new version is being used, world-scope for system function updates
+    game.settings.register("ironclaw2e", "lastSystemVersionWorld", {
+        scope: "world",
+        type: String,
+        default: game.system.data.version,
+        config: false
+    });
 
     // Register system client settings
     game.settings.register("ironclaw2e", "defaultSendDamage", {
@@ -219,7 +226,15 @@ Hooks.once('init', async function () {
         config: true
     });
 
-    // Register a version number that was used last time to allow determining if a new version is being used
+    // Register a version number that was used last time to allow determining if a new version is being used, client-scope for potential update logs and such
+    game.settings.register("ironclaw2e", "lastSystemVersionClient", {
+        scope: "client",
+        type: String,
+        default: game.system.data.version,
+        config: false
+    });
+
+    // TO BE REMOVED in the version 0.6, old single-setting version check stored in the client
     game.settings.register("ironclaw2e", "lastSystemVersion", {
         scope: "client",
         type: String,
@@ -280,14 +295,30 @@ Hooks.once("ready", async function () {
         ui.notifications.info(game.i18n.localize("ironclaw2e.ui.removeDefaultConditionsNag"), { permanent: true });
     }
 
-    // Version checks 
-    const lastVersion = game.settings.get("ironclaw2e", "lastSystemVersion");
-    if (checkIfNewerVersion(game.system.data.version, lastVersion)) {
-        if (game.user.isGM) { // GM-specific stuff here
+    // World Version checks 
+    if (game.user.isGM) {
+        // TO BE REMOVED
+        const obsoleteLastVersion = game.settings.get("ironclaw2e", "lastSystemVersion");
+        if (checkIfNewerVersion("0.5.5", obsoleteLastVersion)) {
+            game.settings.set("ironclaw2e", "lastSystemVersion", game.system.data.version);
+        }
+        // REMOVE THE SPECIAL CHECK
+        const lastVersion = (checkIfNewerVersion("0.5.5", obsoleteLastVersion) ? obsoleteLastVersion : game.settings.get("ironclaw2e", "lastSystemVersionWorld"));
+        // TO BE REMOVED END
+        console.log("Last system version played: " + lastVersion);
+        if (checkIfNewerVersion(game.system.data.version, lastVersion)) {
             await upgradeVersion(lastVersion);
         }
+        game.settings.set("ironclaw2e", "lastSystemVersionWorld", game.system.data.version);
     }
-    game.settings.set("ironclaw2e", "lastSystemVersion", game.system.data.version);
+
+    // Client Version checks
+    const lastClientVersion = game.settings.get("ironclaw2e", "lastSystemVersionClient");
+    if (checkIfNewerVersion(game.system.data.version, lastClientVersion)) {
+        // Insert changelog popups here
+    }
+    game.settings.set("ironclaw2e", "lastSystemVersionClient", game.system.data.version);
+
 
     console.log("Ironclaw2E System ready");
 });
