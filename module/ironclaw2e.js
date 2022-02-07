@@ -108,12 +108,12 @@ Hooks.once('init', async function () {
         config: true
     });
     // Chat button configs
-    game.settings.register("ironclaw2e", "noChatButtons", {
-        name: "ironclaw2e.config.noChatButtons",
-        hint: "ironclaw2e.config.noChatButtonsHint",
+    game.settings.register("ironclaw2e", "chatButtons", {
+        name: "ironclaw2e.config.chatButtons",
+        hint: "ironclaw2e.config.chatButtonsHint",
         scope: "world",
         type: Boolean,
-        default: false,
+        default: true,
         config: true
     });
     game.settings.register("ironclaw2e", "showDefenseButtons", {

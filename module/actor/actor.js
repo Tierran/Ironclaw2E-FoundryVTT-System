@@ -30,7 +30,7 @@ import { burdenedLimitedStat } from "../helpers.js";
 import { Ironclaw2EItem } from "../item/item.js";
 
 Hooks.on("renderChatMessage", function (message, html, data) {
-    const noButtons = game.settings.get("ironclaw2e", "noChatButtons");
+    const noButtons = game.settings.get("ironclaw2e", "chatButtons") === false;
     const showOthersToAll = game.settings.get("ironclaw2e", "showDefenseButtons");
     const itemInfo = message.getFlag("ironclaw2e", "itemInfo");
     const attackInfo = message.getFlag("ironclaw2e", "attackDamageInfo");
