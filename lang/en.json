@@ -86,9 +86,9 @@
 
 
   "ironclaw2e.combat.sideBasedInitiative": "Use side-based initiative",
-  "ironclaw2e.combat.sideBasedInitiativeHint": "Use the default side-based initiative of Ironclaw. If set, select from the dropdown list below for the exact order. If not set, use the alternative, more traditional initiative based on the highest die in the Initiative check and breaking ties on the second highest.",
+  "ironclaw2e.combat.sideBasedInitiativeHint": "Use the default side-based initiative of Ironclaw. If set, the encounter will used the side-based initiative system, with the exact order of combatants selected from the dropdown list below. If not set, the encounter uses the alternative, more traditional initiative based on the highest die in the Initiative check and breaking ties on the second highest.",
   "ironclaw2e.combat.sidesUsed": "Combat sides used",
-  "ironclaw2e.combat.sidesUsedHint": "Pick the method of grouping initiatives. The initiatives will play in the order from left to right. The system to determine allies and enemies is based on token settings, neutrals grouped with enemies. In traditional mode, this will only determine who counts as enemies.",
+  "ironclaw2e.combat.sidesUsedHint": "Pick the method of grouping initiatives. The initiatives will play in the order from left to right. The system to determine allies and enemies is based on token settings, neutrals grouped with enemies. In traditional mode, this will only determine who counts as enemies for the Initiative check auto-TN.",
   "ironclaw2e.combat.PCvsNPC": "Players versus NPC's",
   "ironclaw2e.combat.NPCvsPC": "NPC's versus players",
   "ironclaw2e.combat.alliesVsEnemies": "Allies versus Enemies",
@@ -97,6 +97,8 @@
   "ironclaw2e.combat.enemiesPcsAllies": "Enemies, Players and Allies",
   "ironclaw2e.combat.manualTN": "Set TN manually",
   "ironclaw2e.combat.manualTNHint": "Set the initiative check TN manually. If set to -1, the system will do its best to automatically determine the appropriate TN based on the distance to the nearest enemy token.",
+  "ironclaw2e.combat.forceSettings": "Force initiative settings",
+  "ironclaw2e.combat.forceSettingsHint": "Force the initiative style, side and TN settings to be used from the combat tracker rather than what the combat encounter saved into itself when the 'Begin Combat' button was pressed.",
 
 
   "ironclaw2e.config.preferTokenName": "WORLD: Use token names",

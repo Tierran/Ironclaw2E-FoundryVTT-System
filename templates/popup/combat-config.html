@@ -24,6 +24,12 @@
     </div>
 
     <div class="form-group">
+        <label>{{localize 'ironclaw2e.combat.forceSettings'}}</label>
+        <input type="checkbox" name="forceSettings" {{checked settings.forceSettings}} data-dtype="Boolean" />
+        <p class="notes">{{localize 'ironclaw2e.combat.forceSettingsHint'}}</p>
+    </div>
+
+    <div class="form-group">
         <label>{{localize 'COMBAT.SkipDefeated'}}</label>
         <input type="checkbox" name="skipDefeated" {{checked settings.skipDefeated}} data-dtype="Boolean" />
         <p class="notes">{{localize 'COMBAT.SkipDefeatedHint'}}</p>

@@ -145,10 +145,17 @@ export class Ironclaw2ECombat extends Combat {
     }
 
     /** @override */
-    async rollInitiative(ids, { formula = null, updateTurn = true, messageOptions = {} } = {}) {
+    async rollInitiative(ids, { updateTurn = true, messageOptions = {} } = {}) {
 
         // Get settings to know what type of initiative we are using
         const settings = game.settings.get("core", Combat.CONFIG_SETTING);
+
+        // Grab potential settings from the combat instance flags, if the combat has already started
+        if (this.data.round > 0 && settings?.forceSettings === false) {
+            settings.sideBased = this.getFlag("ironclaw2e", "sideBased");
+            settings.initType = this.getFlag("ironclaw2e", "initiativeType");
+            settings.manualTN = this.getFlag("ironclaw2e", "manualTN");
+        }
 
         // Structure input data
         ids = typeof ids === "string" ? [ids] : ids;
@@ -166,14 +173,14 @@ export class Ironclaw2ECombat extends Combat {
             const combatant = this.combatants.get(id);
             if (!combatant?.isOwner) continue;
 
-            // Roll initiative
+            // Roll initiative check
             const tn = Ironclaw2ECombat.getInitiativeTN(combatant, this.combatants, settings);
             const initRoll = await combatant.getInitiativeRollIronclaw(tn);
 
             let initiative = -2;
-            if (settings?.sideBased) {
+            if (settings?.sideBased) { // The normal side-based initiative system for Ironclaw
                 initiative = Ironclaw2ECombat.getInitiativeGroup(combatant, settings);
-            } else {
+            } else { // The alternative roll-based initiative
                 let skipped = false;
                 let decimals = 0;
                 initRoll.roll.dice.forEach(x => { // Tie-breaker calculation
@@ -241,6 +248,14 @@ export class Ironclaw2ECombat extends Combat {
 
         // Return the updated Combat
         return this;
+    }
+
+    /** @override */
+    async startCombat() {
+        const settings = game.settings.get("core", Combat.CONFIG_SETTING);
+        let updateData = { round: 1, turn: 0 };
+        updateData.flags = { "ironclaw2e.sideBased": settings.sideBased, "ironclaw2e.initiativeType": settings.initType, "ironclaw2e.manualTN": settings.manualTN };
+        return this.update(updateData);
     }
 
     /** Add PC advantage to the initiative tie-breaking
@@ -377,6 +392,7 @@ export class Ironclaw2ECombatTrackerConfig extends CombatTrackerConfig {
         return game.settings.set("core", Combat.CONFIG_SETTING, {
             sideBased: formData.sideBased,
             initType: formData.initType,
+            forceSettings: formData.forceSettings,
             skipDefeated: formData.skipDefeated,
             manualTN: formData.manualTN
         });

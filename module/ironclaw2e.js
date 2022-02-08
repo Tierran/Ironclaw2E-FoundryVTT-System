@@ -285,6 +285,7 @@ Hooks.once("ready", async function () {
         game.settings.set("core", Combat.CONFIG_SETTING, {
             sideBased: true,
             initType: 2,
+            forceSettings: false,
             skipDefeated: false,
             manualTN: -1
         });
