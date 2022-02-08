@@ -30,6 +30,7 @@ import { CommonConditionInfo } from "./conditions.js";
 
 import { CommonSystemInfo } from "./systeminfo.js";
 import { registerHandlebarsHelpers } from "./handlebars.js";
+import { WorldSettingsConfig } from "./config.js";
 
 
 /* -------------------------------------------- */
@@ -90,6 +91,15 @@ Hooks.once('init', async function () {
     Items.unregisterSheet("core", ItemSheet);
     Items.registerSheet("ironclaw2e", Ironclaw2EItemSheet, { makeDefault: true });
 
+    // Register system world config menu
+    game.settings.registerMenu("ironclaw2e", "worldSettingsConfig", {
+        name: "ironclaw2e.config.worldConfig.menuName",
+        hint: "ironclaw2e.config.worldConfig.menuHint",
+        label: "ironclaw2e.config.worldConfig.menuLabel",
+        icon: "fas fa-globe",
+        type: WorldSettingsConfig,
+        restricted: true
+    });
     // Register system world settings
     game.settings.register("ironclaw2e", "preferTokenName", {
         name: "ironclaw2e.config.preferTokenName",
@@ -97,7 +107,7 @@ Hooks.once('init', async function () {
         scope: "world",
         type: Boolean,
         default: true,
-        config: true
+        config: false
     });
     game.settings.register("ironclaw2e", "autoPrototypeSetup", {
         name: "ironclaw2e.config.autoPrototypeSetup",
@@ -105,7 +115,7 @@ Hooks.once('init', async function () {
         scope: "world",
         type: Boolean,
         default: true,
-        config: true
+        config: false
     });
     // Chat button configs
     game.settings.register("ironclaw2e", "chatButtons", {
@@ -114,7 +124,7 @@ Hooks.once('init', async function () {
         scope: "world",
         type: Boolean,
         default: true,
-        config: true
+        config: false
     });
     game.settings.register("ironclaw2e", "showDefenseButtons", {
         name: "ironclaw2e.config.showDefenseButtons",
@@ -122,7 +132,7 @@ Hooks.once('init', async function () {
         scope: "world",
         type: Boolean,
         default: true,
-        config: true
+        config: false
     });
     // Initiative condition config
     game.settings.register("ironclaw2e", "autoInitiativeConditions", {
@@ -131,7 +141,7 @@ Hooks.once('init', async function () {
         scope: "world",
         type: Boolean,
         default: true,
-        config: true
+        config: false
     });
     // Auto condition removal configs
     game.settings.register("ironclaw2e", "autoConditionRemoval", {
@@ -140,7 +150,7 @@ Hooks.once('init', async function () {
         scope: "world",
         type: Boolean,
         default: false,
-        config: true
+        config: false
     });
     game.settings.register("ironclaw2e", "autoConditionRemovalNoTurns", {
         name: "ironclaw2e.config.autoConditionRemovalNoTurns",
@@ -148,7 +158,7 @@ Hooks.once('init', async function () {
         scope: "world",
         type: Boolean,
         default: false,
-        config: true
+        config: false
     });
     // Encumbrance configs
     game.settings.register("ironclaw2e", "manageEncumbranceAuto", {
@@ -157,7 +167,7 @@ Hooks.once('init', async function () {
         scope: "world",
         type: Boolean,
         default: false,
-        config: true
+        config: false
     });
     game.settings.register("ironclaw2e", "coinsHaveWeight", {
         name: "ironclaw2e.config.coinsHaveWeight",
@@ -165,7 +175,7 @@ Hooks.once('init', async function () {
         scope: "world",
         type: Boolean,
         default: true,
-        config: true
+        config: false
     });
     // Damage calculation configs
     game.settings.register("ironclaw2e", "calculateAttackEffects", {
@@ -174,7 +184,7 @@ Hooks.once('init', async function () {
         scope: "world",
         type: Boolean,
         default: true,
-        config: true
+        config: false
     });
     game.settings.register("ironclaw2e", "calculateDisplaysFailed", {
         name: "ironclaw2e.config.calculateDisplaysFailed",
@@ -182,7 +192,7 @@ Hooks.once('init', async function () {
         scope: "world",
         type: Boolean,
         default: false,
-        config: true
+        config: false
     });
     game.settings.register("ironclaw2e", "calculateDoesNotDisplay", {
         name: "ironclaw2e.config.calculateDoesNotDisplay",
@@ -190,7 +200,7 @@ Hooks.once('init', async function () {
         scope: "world",
         type: Boolean,
         default: false,
-        config: true
+        config: false
     });
     // Register a version number that was used last time to allow determining if a new version is being used, world-scope for system function updates
     game.settings.register("ironclaw2e", "lastSystemVersionWorld", {

@@ -1,0 +1,81 @@
+<form autocomplete="off" onsubmit="event.preventDefault();">
+    <div>
+        <h2 class="header-label">{{localize 'ironclaw2e.config.worldConfig.calculate'}}</h2>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.calculateAttackEffects'}}</label>
+            <input type="checkbox" name="calculateAttackEffects" {{checked settings.calculateAttackEffects}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.calculateAttackEffectsHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.calculateDisplaysFailed'}}</label>
+            <input type="checkbox" name="calculateDisplaysFailed" {{checked settings.calculateDisplaysFailed}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.calculateDisplaysFailedHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.calculateDoesNotDisplay'}}</label>
+            <input type="checkbox" name="calculateDoesNotDisplay" {{checked settings.calculateDoesNotDisplay}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.calculateDoesNotDisplayHint'}}</p>
+        </div>
+    </div>
+
+    <div>
+        <h2 class="header-label">{{localize 'ironclaw2e.config.worldConfig.chatButtons'}}</h2>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.chatButtons'}}</label>
+            <input type="checkbox" name="chatButtons" {{checked settings.chatButtons}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.chatButtonsHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.showDefenseButtons'}}</label>
+            <input type="checkbox" name="showDefenseButtons" {{checked settings.showDefenseButtons}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.showDefenseButtonsHint'}}</p>
+        </div>
+    </div>
+
+    <div>
+        <h2 class="header-label">{{localize 'ironclaw2e.config.worldConfig.conditions'}}</h2>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.autoInitiativeConditions'}}</label>
+            <input type="checkbox" name="autoInitiativeConditions" {{checked settings.autoInitiativeConditions}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.autoInitiativeConditionsHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.autoConditionRemoval'}}</label>
+            <input type="checkbox" name="autoConditionRemoval" {{checked settings.autoConditionRemoval}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.autoConditionRemovalHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.autoConditionRemovalNoTurns'}}</label>
+            <input type="checkbox" name="autoConditionRemovalNoTurns" {{checked settings.autoConditionRemovalNoTurns}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.autoConditionRemovalNoTurnsHint'}}</p>
+        </div>
+    </div>
+
+    <div>
+        <h2 class="header-label">{{localize 'ironclaw2e.config.worldConfig.misc'}}</h2>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.preferTokenName'}}</label>
+            <input type="checkbox" name="preferTokenName" {{checked settings.preferTokenName}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.preferTokenNameHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.autoPrototypeSetup'}}</label>
+            <input type="checkbox" name="autoPrototypeSetup" {{checked settings.autoPrototypeSetup}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.autoPrototypeSetupHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.manageEncumbranceAuto'}}</label>
+            <input type="checkbox" name="manageEncumbranceAuto" {{checked settings.manageEncumbranceAuto}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.manageEncumbranceAutoHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinsHaveWeight'}}</label>
+            <input type="checkbox" name="coinsHaveWeight" {{checked settings.coinsHaveWeight}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinsHaveWeightHint'}}</p>
+        </div>
+    </div>
+
+    <button type="submit" name="submit">
+        <i class="fas fa-save"></i> {{localize 'ironclaw2e.config.worldConfig.menuSave'}}
+    </button>
+</form>

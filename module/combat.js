@@ -385,7 +385,7 @@ export class Ironclaw2ECombatTrackerConfig extends CombatTrackerConfig {
             settings: game.settings.get("core", Combat.CONFIG_SETTING),
             initOptions: this.getInitiativeOptions()
         };
-    };
+    }
 
     /** @override */
     async _updateObject(event, formData) {
