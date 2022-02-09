@@ -31,6 +31,7 @@ By default, certain automation options are turned off, in case they conflict wit
  - **Auto-remove conditions:** The system will remove conditions from actors based on hard-coded logic of where they should turn off. More on this under **Conditions**.  
  - **Automated encumbrance system:** Based on carried weight and worn armors, the system will give the actors encumbrance conditions as appropriate. The system is tested and should work fine, but it is potentially slightly unstable due to its implementation. When active, the encumbrance conditions should **not** be manually toggled.  
  - **Auto-calculate attack damage:** When attacking with a weapon, the system will attempt to check what the potential damage with the weapon would be, based on the successes and effects, then create a chat message with that information. Rolls representing counter-attacks and resisted attacks can be right-clicked to resolve them, triggering a popup to input the needed data to figure out how much damage the attack ultimately causes, or in case of turning a resisted attack into a normal one (for, say, when the enemy tries and fails to counter) it just does it based on the original roll. The auto-calculation system has some further options to also display failed attacks by default, or to never send the effect calculations to chat by default, only when asked through the context menu.  
+ - **Currency settings:** The used currencies and their attributes can be configured by the GM in the separate currency configuration menu.  
 
 ### How to roll
 
@@ -73,6 +74,7 @@ For gifts that should interact with the system by giving situational bonuses, th
  - **Movement Bonus**: A bonus that changes the movement speed of an actor.  
  - **Flying Move Bonus**: A bonus that changes the flying speed of an actor. (These stack with normal movement bonuses)  
  - **Encumbrance Limit Bonus**: A bonus to the carrying capacity of an actor.  
+ - **Currency Value Change**: A way to allow a gift to change the value of a currency for an actor.  
  - **Stat Change**: An automated way to change the stats for an item when it is dragged to the actor from the Items Directory.  
  - **Dice Upgrade**: An automated way to change the dice for an item when it is dragged to the actor from the Items Directory.  
  
@@ -113,6 +115,8 @@ If the special bonus applies, it's applied where relevant, with the bonus depend
  - **Bonus Stride/Dash/Run**: The amount of respective movement capability to add to the actor.
  - **Change From/To**: List of stats to change from and what to change them to. Both fields must have the same number of stats or the system will ignore it.
  - **Encumbrance Bonus**: The bonus added to the carrying capacity of the actor. Note that this bonus should be for the "None" encumbrance limit, the system will multiply it accordingly for the higher limits.
+ - **Currency Name**: The name of the currency to change the value of.
+ - **Currency Value**: The new value for the given currency.
  - **Upgrade Steps**: The number of steps to upgrade the dice. A single "step" would upgrade the dice by one, from d4 to d6, d6 to d8, etc. Negative steps will instead downgrade the dice instead. The upgraded dice cap at *d12* at maximum and *d4* at minimum.
  - **Name Addition**: What to append to the name of items modified by this bonus. If left empty, the name will not change at all. Note that these should not include brackets, as that will cause Foundry's internal system to attempt to parse it as a roll modifier.
  - **Replacing Name**: The name of a gift that this gift would replace. If this field has something, this bonus will not be applied normally. Instead, when the system would apply a same type bonus from the replaced gift, it will check whether this bonus applies and use this one instead if it does apply. Note that the system does not support multiple potential replacements, only one replacement per type is supported. Also, only the top-most one of each bonus type is considered for the replacement system.

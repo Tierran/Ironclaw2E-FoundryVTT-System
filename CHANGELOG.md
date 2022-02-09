@@ -1,3 +1,11 @@
+### 0.5.5 Very configurable release
+ - Made a separate, better formatted menu for the world settings
+ - Made currencies used in the world configurable from a separate menu
+ - Added a gift special bonus that changes the value of a currency
+ - Added /actordamage ChatCommand for quickly adding damage to someone
+ - Made combat encounters store the initiative settings when it is started, to allow GM's to change settings for other encounters without messing up the running one
+ - Added a way to make special bonuses ignore the Gift's dice and stats, by adding a '-' to the appropriate field
+
 ### 0.5.4 Beastly skills release
  - Redid how beast actors handle and display skills
  - Made having the same skill multiple times as a trait skill (eg. species skills) add dice appropriately

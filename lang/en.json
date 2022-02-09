@@ -37,10 +37,10 @@
   "ironclaw2e.rollResist": "Roll Resist",
 
 
-  "ironclaw2e.ui.encumbranceAutoActive": "Auto-Encumbrance management active, condition modification cancelled.",
-  "ironclaw2e.ui.dataMigrationNotice": "System update to {version} requires data migration, please wait...",
+  "ironclaw2e.ui.dataMigrationNotice": "System update to {version} requires data migration. Please do not close the world until an OK-message is sent. This may take a while, please wait...",
   "ironclaw2e.ui.dataMigrationWarning": "System update to {version} completed, but the update has had potential migration issues, check the chat for more details",
   "ironclaw2e.ui.dataMigrationComplete": "System update to {version} completed!",
+  "ironclaw2e.ui.encumbranceAutoActive": "Auto-Encumbrance management active, condition modification cancelled.",
   "ironclaw2e.ui.removeDefaultConditionsNag": "Combat Utility Belt detected, but default conditions are not removed. The GM should disable them from the Enhanced Conditions settings.",
   "ironclaw2e.ui.macroOwnedItemsWarning": "You can only create macro buttons for owned Items.",
   "ironclaw2e.ui.actorDoesNotHaveItem": "Your controlled Actor does not have an item named {itemName}.",
