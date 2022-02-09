@@ -31,7 +31,7 @@ import { CommonConditionInfo } from "./conditions.js";
 import { CommonSystemInfo } from "./systeminfo.js";
 import { registerHandlebarsHelpers } from "./handlebars.js";
 import { WorldSettingsConfig } from "./config.js";
-
+import { CoinageSettingsConfig } from "./config.js";
 
 /* -------------------------------------------- */
 /*  Base Hooks                                  */
@@ -91,13 +91,21 @@ Hooks.once('init', async function () {
     Items.unregisterSheet("core", ItemSheet);
     Items.registerSheet("ironclaw2e", Ironclaw2EItemSheet, { makeDefault: true });
 
-    // Register system world config menu
+    // Register system world config menus
     game.settings.registerMenu("ironclaw2e", "worldSettingsConfig", {
         name: "ironclaw2e.config.worldConfig.menuName",
         hint: "ironclaw2e.config.worldConfig.menuHint",
         label: "ironclaw2e.config.worldConfig.menuLabel",
         icon: "fas fa-globe",
         type: WorldSettingsConfig,
+        restricted: true
+    });
+    game.settings.registerMenu("ironclaw2e", "coinageSettingsConfig", {
+        name: "ironclaw2e.config.coinageConfig.menuName",
+        hint: "ironclaw2e.config.coinageConfig.menuHint",
+        label: "ironclaw2e.config.coinageConfig.menuLabel",
+        icon: "fas fa-coins",
+        type: CoinageSettingsConfig,
         restricted: true
     });
     // Register system world settings
@@ -200,6 +208,43 @@ Hooks.once('init', async function () {
         scope: "world",
         type: Boolean,
         default: false,
+        config: false
+    });
+    // Coinage settings
+    game.settings.register("ironclaw2e", "currencySettings", {
+        scope: "world",
+        type: Object,
+        default: {
+            baseCurrency: {
+                "name": "denar",
+                "plural": "denarii",
+                "weight": 4.5,
+                "value": "1",
+                "sign": 208,
+                "used": true
+            }, addedCurrency1: {
+                "name": "orichalk",
+                "plural": "orichalks",
+                "weight": 3.5,
+                "value": "1/12",
+                "sign": 415,
+                "used": true
+            }, addedCurrency2: {
+                "name": "aureal",
+                "plural": "aureals",
+                "weight": 6.3,
+                "value": "24",
+                "sign": 8371,
+                "used": true
+            }, addedCurrency3: {
+                "name": "quinqunx",
+                "plural": "quinqunxes",
+                "weight": 13.5,
+                "value": "3",
+                "sign": 81,
+                "used": true
+            }
+        },
         config: false
     });
     // Register a version number that was used last time to allow determining if a new version is being used, world-scope for system function updates

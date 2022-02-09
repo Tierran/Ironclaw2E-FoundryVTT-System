@@ -754,20 +754,56 @@ export class Ironclaw2EActor extends Actor {
 
         let allvalue = 0;
         let allweight = 0;
-        for (let [key, currency] of Object.entries(data.coinage)) {
-            if (currency.value.length == 0 || (isNaN(currency.value) && isNaN(currency.value.slice(1)))) {
-                console.error("Unable to parse the currency value of: " + key);
+        const currencySettings = game.settings.get("ironclaw2e", "currencySettings");
+        let currencyValueChanges = {};
+
+        // Get currency value changes
+        if (data.processingLists?.currencyValueChange) { // Check if currency value changes even exist
+            for (let setting of data.processingLists.currencyValueChange) { // Loop through them
+                if (checkApplicability(setting, null, this)) { // Check initial applicability
+                    let used = setting; // Store the setting in a temp variable
+                    let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
+                    while (replacement && checkApplicability(replacement, null, this)) { // As long as the currently used one could be replaced by something applicable
+                        used = replacement; // Store the replacement as the one to be used
+                        replacement = this._checkForReplacement(used); // Check for a new replacement
+                    }
+                    if (used && CommonSystemInfo.currencyNames.includes(used.currencyName) && typeof used.currencyValue === "string") { // Sanity check that the used still exists and the currency name is valid
+                        // Store the used setting for the coin processing
+                        currencyValueChanges[used.currencyName] = used.currencyValue;
+                    } else { // If used somehow turns out unsuable, send an error
+                        console.error("Somehow, the used setting came up unusable: " + used);
+                    }
+                }
+            }
+        }
+
+        for (let [key, setting] of Object.entries(currencySettings)) {
+            if (!data.coinage.hasOwnProperty(key)) {
+                // Check to make sure every currency that is kept track of actually exists in the settings
+                continue;
+            }
+            if (setting?.used === false) {
+                // If the currency is not set as used, skip it
                 continue;
             }
 
-            currency.totalValue = (currency.value.includes(";") ? currency.amount / parseInt(currency.value.slice(1)) : currency.amount * parseInt(currency.value));
-            currency.totalWeight = (currency.weight * currency.amount) / 6350;
-            currency.parsedSign = Number.isInteger(currency.sign) ? String.fromCodePoint([currency.sign]) : "";
+            let currency = data.coinage[key];
+            const valueString = (currencyValueChanges.hasOwnProperty(key) ? currencyValueChanges[key] : setting.value);
+            currency.used = true;
+            currency.name = setting.name;
+            currency.plural = setting.plural;
+            currency.shownValue = valueString;
+            const usedValue = (valueString?.includes("/")
+                ? parseInt(valueString.slice(0, valueString.indexOf("/"))) / parseInt(valueString.slice(valueString.indexOf("/") + 1))
+                : parseInt(valueString));
+            currency.totalValue = currency.amount * usedValue;
+            currency.totalWeight = (setting.weight * currency.amount) / 6350; // Translate the weight from grams to Ironclaw's stones
+            currency.parsedSign = Number.isInteger(setting.sign) ? String.fromCodePoint([setting.sign]) : "";
 
             allvalue += currency.totalValue;
             allweight += currency.totalWeight;
         }
-        data.coinageValue = Math.floor(allvalue).toString() + String.fromCodePoint([data.coinage.denar.sign]);
+        data.coinageValue = Math.floor(allvalue).toString() + String.fromCodePoint([data.coinage.baseCurrency.sign]);
         data.coinageWeight = allweight;
     }
 

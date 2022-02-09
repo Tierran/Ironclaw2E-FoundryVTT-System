@@ -47,7 +47,21 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         sheetData.dtypes = baseData.dtypes;
 
         // Add structural sheet stuff
-        let selectables = { "handedness": CommonSystemInfo.equipHandedness, "range": CommonSystemInfo.rangeBands, "giftOptions": CommonSystemInfo.giftSpecialOptions, "giftStates": CommonSystemInfo.giftWorksStates };
+        let currencyOptions = {};
+        const currencySettings = game.settings.get("ironclaw2e", "currencySettings");
+        for (let foo of CommonSystemInfo.currencyNames) {
+            if (foo === "baseCurrency")
+                continue; // Base currency cannot be added as the 'currencyValueChange' bonus
+            if (!currencySettings.hasOwnProperty(foo)) {
+                console.error("Currency settings was missing a currency field somehow: " + foo);
+                continue;
+            }
+            currencyOptions[foo] = currencySettings[foo].name;
+        }
+        let selectables = {
+            "handedness": CommonSystemInfo.equipHandedness, "range": CommonSystemInfo.rangeBands, "giftOptions": CommonSystemInfo.giftSpecialOptions, "giftStates": CommonSystemInfo.giftWorksStates,
+            "currencyOptions": currencyOptions
+        };
         sheetData.selectables = selectables;
         sheetData.isGM = game.user.isGM;
         sheetData.showDirectoryOptions = game.user.isGM && !this.item.parent;
@@ -226,6 +240,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         const index = li.data("special-index");
         const name = event.currentTarget.name;
         const value = event.currentTarget.value;
+        //console.log(`${name}: ${value}`);
         this.item.giftChangeSpecialField(index, name, value);
     }
 

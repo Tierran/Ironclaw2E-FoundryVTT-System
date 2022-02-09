@@ -45,7 +45,8 @@ export class CommonSystemInfo {
      */
     static giftSpecialOptions = {
         "attackBonus": "Attack Bonus", "defenseBonus": "Defense Bonus", "counterBonus": "Counter Bonus", "soakBonus": "Soak Bonus", "guardBonus": "Guard Bonus", "aimBonus": "Aim Bonus", "sprintBonus": "Sprint Bonus",
-        "initiativeBonus": "Initiative Bonus", "moveBonus": "Movement Bonus", "flyingBonus": "Flying Move Bonus", "encumbranceBonus": "Encumbrance Limit Bonus", "statChange": "Stat Change", "diceUpgrade": "Dice Upgrade"
+        "initiativeBonus": "Initiative Bonus", "moveBonus": "Movement Bonus", "flyingBonus": "Flying Move Bonus", "encumbranceBonus": "Encumbrance Limit Bonus", "currencyValueChange": "Currency Value Change",
+        "statChange": "Stat Change", "diceUpgrade": "Dice Upgrade"
     };
     /**
      * The state of gift exhaustion when the bonus can work
@@ -58,6 +59,10 @@ export class CommonSystemInfo {
      * Anything that's _not_ this string is assumed to be a special defense, and the field to be traits and skills separated with commas
      */
     static defenseStandardName = "defense"
+    /**
+     * The names of the different currencies used in the code
+     */
+    static currencyNames = ["baseCurrency", "addedCurrency1", "addedCurrency2", "addedCurrency3"];
 }
 
 /**
@@ -144,6 +149,13 @@ export function getSpecialOptionPrototype(option) {
             return mergeObject(special, {
                 "conditionField": "", "otherItemField": "", "worksWhenState": "anyState",
                 "encumbranceBonusNumber": 0, "replaceNameField": ""
+            });
+            break;
+
+        case ("currencyValueChange"):
+            return mergeObject(special, {
+                "otherItemField": "", "worksWhenState": "anyState",
+                "currencyName": "addedCurrency1", "currencyValue": "0", "replaceNameField": ""
             });
             break;
 

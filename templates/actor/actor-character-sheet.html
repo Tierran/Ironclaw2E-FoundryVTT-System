@@ -238,16 +238,17 @@
         <div class="tab items" data-group="primary" data-tab="items">
             <div>
                 <h3 class="header-label">Coinage:</h3>
-                <span class="bold-text allow-selection">Total value in Denarii: {{data.coinageValue}}</span>
+                <span class="bold-text allow-selection">Total value in {{data.coinage.baseCurrency.plural}}: {{data.coinageValue}}{{data.coinage.baseCurrency.parsedSign}}</span>
                 <div></div>
                 <span class="bold-text allow-selection">Total weight of coins: {{valueRoundTo data.coinageWeight 2}} stones</span>
                 <div class="grid grid-4col">
-                    {{#each data.coinage as |currency id|}}
+                    {{#each data.coinage as |currency id|}}{{#if currency.used}}
                     <div class="flexcol flex-group-center flex-tight">
                         <span class="normal-label allow-selection">{{currency.plural}}: {{currency.parsedSign}}</span>
-                        <input type="text" name="data.coinage.{{id}}.amount" value="{{currency.amount}}" data-dtype="Number">
+                        <input type="text" name="data.coinage.{{id}}.amount" value="{{currency.amount}}" data-dtype="Number"/>
+                        <span class="small-label allow-selection">Value: {{currency.shownValue}}{{../data.coinage.baseCurrency.parsedSign}}</span>
                     </div>
-                    {{/each}}
+                    {{/if}}{{/each}}
                 </div>
             </div>
             <h3 class="header-label">Items:</h3>

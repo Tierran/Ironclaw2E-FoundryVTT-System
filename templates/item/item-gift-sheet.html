@@ -112,6 +112,13 @@
                                     <label class="normal-label">Change To</label><input style="min-width: 30%" class="special-change-field" type="text" name="changeToField" value="{{special.changeToField}}" data-dtype="String" />
                                 </div>{{/if}}
                                 {{#if (propertyExists special "encumbranceBonusNumber")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Encumbrance Bonus</label><input class="special-change-number" type="number" name="encumbranceBonusNumber" value="{{special.encumbranceBonusNumber}}" data-dtype="Number" /></div>{{/if}}
+                                {{#if (propertyExists special "currencyName")}}<div class="flexrow flex-center">
+                                    <label class="normal-label" style="min-width: 60%">Currency Name</label>
+                                    <select style="width: 40%" class="special-change-field" name="currencyName" data-dtype="String">
+                                        {{selectOptions ../selectables.currencyOptions selected=special.currencyName localize=false}}
+                                    </select>
+                                </div>{{/if}}
+                                {{#if (propertyExists special "currencyValue")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 60%">Currency Value</label><input class="special-change-field" type="text" name="currencyValue" value="{{special.currencyValue}}" data-dtype="String" /></div>{{/if}}
                                 {{#if (propertyExists special "upgradeStepsNumber")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Upgrade Steps</label><input class="special-change-number" type="number" name="upgradeStepsNumber" value="{{special.upgradeStepsNumber}}" data-dtype="Number" /></div>{{/if}}
                                 {{#if (propertyExists special "nameAdditionField")}}<div class="flexrow flex-center"><label class="normal-label">Name Addition</label><input style="min-width: 65%" class="special-change-field" type="text" name="nameAdditionField" value="{{special.nameAdditionField}}" data-dtype="String" /></div>{{/if}}
                                 {{#if (propertyExists special "replaceNameField")}}<div class="flexrow flex-center"><label class="normal-label">Replacing Name</label><input style="min-width: 65%" class="special-change-field" type="text" name="replaceNameField" value="{{special.replaceNameField}}" data-dtype="String" /></div>{{/if}}

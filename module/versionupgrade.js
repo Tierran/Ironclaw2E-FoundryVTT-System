@@ -1,4 +1,4 @@
-import { makeCompareReady, getAllItemsInWorld } from "./helpers.js";
+import { makeCompareReady, getAllItemsInWorld, getAllActorsInWorld } from "./helpers.js";
 import { CommonSystemInfo, getSpecialOptionPrototype } from "./systeminfo.js";
 
 
@@ -100,6 +100,14 @@ export async function upgradeVersion(lastversion) {
             }
         }
 
+        // Currency changes
+        let allActors = getAllActorsInWorld();
+
+        // Currency update for all actors
+        for (let actor of allActors) {
+            await currencyUpgradePointFiveFive(actor);
+        }
+
         // In case of potential problems the GM might need to check
         if (problemItems.length > 0) {
             ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationWarning", { "version": version }), { permanent: true });
@@ -108,7 +116,7 @@ export async function upgradeVersion(lastversion) {
             ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationComplete", { "version": version }), { permanent: true });
         }
 
-        console.log("0.5.5, special setting data validation, done!");
+        console.log("0.5.5, currency and special setting data validation, done!");
     }
 }
 
@@ -203,6 +211,32 @@ async function weaponUpgradePointFour(weapon) {
     await weapon.update(updateData);
 
     return fail;
+}
+
+async function currencyUpgradePointFiveFive(actor) {
+    const actorData = actor.data.data;
+    const coinageData = actorData.coinage;
+    if (!coinageData) return null; // In case coinage doesn't exist, just immediately quit
+    let updateData = {};
+    updateData.coinage = {};
+
+    if (coinageData.denar) {
+        updateData.coinage.baseCurrency = { amount: (coinageData.denar.amount || 0) };
+        await actor.update({ "data.coinage.-=denar": null });
+    }
+    if (coinageData.orichalk) {
+        updateData.coinage.addedCurrency1 = { amount: (coinageData.orichalk.amount || 0) };
+        await actor.update({ "data.coinage.-=orichalk": null });
+    }
+    if (coinageData.aureal) {
+        updateData.coinage.addedCurrency2 = { amount: (coinageData.aureal.amount || 0) };
+        await actor.update({ "data.coinage.-=aureal": null });
+    }
+    if (coinageData[""]) {
+        await actor.update({ "data.coinage.-=": null });
+    }
+
+    return actor.update({ "data": updateData });
 }
 
 /**

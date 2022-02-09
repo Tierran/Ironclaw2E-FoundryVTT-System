@@ -154,26 +154,17 @@
       },
       "baseMoney": {
         "coinage": {
-          "orichalk": {
-            "plural": "orichalks",
-            "amount": 0,
-            "weight": 3.5,
-            "value": ";12",
-            "sign": 415
+          "baseCurrency": {
+            "amount": 0
           },
-          "denar": {
-            "plural": "denarii",
-            "amount": 0,
-            "weight": 4.5,
-            "value": "1",
-            "sign": 208
+          "addedCurrency1": {
+            "amount": 0
           },
-          "aureal": {
-            "plural": "aureals",
-            "amount": 0,
-            "weight": 6.3,
-            "value": "24",
-            "sign": 8371
+          "addedCurrency2": {
+            "amount": 0
+          },
+          "addedCurrency3": {
+            "amount": 0
           }
         }
       }

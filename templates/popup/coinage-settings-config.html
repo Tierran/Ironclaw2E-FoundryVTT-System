@@ -1,0 +1,137 @@
+<form autocomplete="off" onsubmit="event.preventDefault();">
+    <div>
+        <h2 class="header-label">{{localize 'ironclaw2e.config.coinageConfig.baseCurrencyHeading'}}</h2>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyName'}}</label>
+            <input type="text" name="baseCurrency.name" value="{{settings.baseCurrency.name}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyNameHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyPlural'}}</label>
+            <input type="text" name="baseCurrency.plural" value="{{settings.baseCurrency.plural}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyPluralHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyWeight'}}</label>
+            <input type="text" name="baseCurrency.weight" value="{{settings.baseCurrency.weight}}" data-dtype="Number" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyWeightHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencySign'}}</label>
+            <input type="text" name="baseCurrency.parsedSign" value="{{settings.baseCurrency.parsedSign}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencySignHint'}}</p>
+        </div>
+    </div>
+
+    <div>
+        <h2 class="header-label">{{localize 'ironclaw2e.config.coinageConfig.addedCurrencyHeading' number=1}}</h2>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyName'}}</label>
+            <input type="text" name="addedCurrency1.name" value="{{settings.addedCurrency1.name}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyNameHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyPlural'}}</label>
+            <input type="text" name="addedCurrency1.plural" value="{{settings.addedCurrency1.plural}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyPluralHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyWeight'}}</label>
+            <input type="text" name="addedCurrency1.weight" value="{{settings.addedCurrency1.weight}}" data-dtype="Number" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyWeightHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyValue'}}</label>
+            <input type="text" name="addedCurrency1.value" value="{{settings.addedCurrency1.value}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyValueHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencySign'}}</label>
+            <input type="text" name="addedCurrency1.parsedSign" value="{{settings.addedCurrency1.parsedSign}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencySignHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyUsed'}}</label>
+            <input type="checkbox" name="addedCurrency1.used" {{checked settings.addedCurrency1.used}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyUsedHint'}}</p>
+        </div>
+    </div>
+
+    <div>
+        <h2 class="header-label">{{localize 'ironclaw2e.config.coinageConfig.addedCurrencyHeading' number=2}}</h2>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyName'}}</label>
+            <input type="text" name="addedCurrency2.name" value="{{settings.addedCurrency2.name}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyNameHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyPlural'}}</label>
+            <input type="text" name="addedCurrency2.plural" value="{{settings.addedCurrency2.plural}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyPluralHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyWeight'}}</label>
+            <input type="text" name="addedCurrency2.weight" value="{{settings.addedCurrency2.weight}}" data-dtype="Number" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyWeightHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyValue'}}</label>
+            <input type="text" name="addedCurrency2.value" value="{{settings.addedCurrency2.value}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyValueHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencySign'}}</label>
+            <input type="text" name="addedCurrency2.parsedSign" value="{{settings.addedCurrency2.parsedSign}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencySignHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyUsed'}}</label>
+            <input type="checkbox" name="addedCurrency2.used" {{checked settings.addedCurrency2.used}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyUsedHint'}}</p>
+        </div>
+    </div>
+
+    <div>
+        <h2 class="header-label">{{localize 'ironclaw2e.config.coinageConfig.addedCurrencyHeading' number=3}}</h2>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyName'}}</label>
+            <input type="text" name="addedCurrency3.name" value="{{settings.addedCurrency3.name}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyNameHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyPlural'}}</label>
+            <input type="text" name="addedCurrency3.plural" value="{{settings.addedCurrency3.plural}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyPluralHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyWeight'}}</label>
+            <input type="text" name="addedCurrency3.weight" value="{{settings.addedCurrency3.weight}}" data-dtype="Number" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyWeightHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyValue'}}</label>
+            <input type="text" name="addedCurrency3.value" value="{{settings.addedCurrency3.value}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyValueHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencySign'}}</label>
+            <input type="text" name="addedCurrency3.parsedSign" value="{{settings.addedCurrency3.parsedSign}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencySignHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.coinageConfig.currencyUsed'}}</label>
+            <input type="checkbox" name="addedCurrency3.used" {{checked settings.addedCurrency3.used}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.coinageConfig.currencyUsedHint'}}</p>
+        </div>
+    </div>
+    
+    <div>
+        <p class="normal-text">{{localize 'ironclaw2e.config.coinageConfig.menuSaveHint'}}</p>
+    </div>
+    <button class="reset-settings" type="button" name="reset-settings">
+        <i class="fas fa-power-off"></i> {{localize 'ironclaw2e.config.coinageConfig.menuReset'}}
+    </button>
+    <button type="submit" name="submit">
+        <i class="fas fa-save"></i> {{localize 'ironclaw2e.config.coinageConfig.menuSave'}}
+    </button>
+</form>
