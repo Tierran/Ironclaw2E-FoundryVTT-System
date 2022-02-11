@@ -1,3 +1,8 @@
+### 0.5.6 Weapon resisting release
+ - Added a new "Resist Bonus" special bonus type
+ - Added special bonus setting fields that are applied from the attacking weapon
+ - Corrected some template bugs
+
 ### 0.5.5 Very configurable release
  - Made a separate, better formatted menu for the world settings
  - Made currencies used in the world configurable from a separate menu

@@ -66,6 +66,7 @@ For gifts that should interact with the system by giving situational bonuses, th
  - **Attack Bonus**: A bonus applied when a weapon is used to attack.  
  - **Defense Bonus**: A bonus applied when defending, whether as a parry with a weapon, when dodging, or with special defenses.  
  - **Counter Bonus**: A bonus applies when counter-attacking with a weapon.  
+ - **Resist Bonus**: A bonus applies when resisting a weapon.  
  - **Soak Bonus**: A bonus applied when rolling for Soak.  
  - **Guard Bonus**: Either a replacement or a bonus to what the Guarding condition gives. No need to check whether the actor is Guarding when configuring this bonus, it's implicit in its type.  
  - **Aim Bonus**:  Either a replacement or a bonus to what the Aiming condition gives. No need to check whether the actor is Aiming when configuring this bonus, it's implicit in its type.  
@@ -95,11 +96,28 @@ Any of these fields that aren't just checkboxes can include multiple values, sep
  - **Equip Field**: List of weapon equip types, one of which must match the item's equip type.
  - **Range Field**: List of range bands, one of which must match the item's range band.
  - **Condition Field**: List of conditions, one of which the actor must have.
- - **Other Item Field**: List of item names, one of which the actor must have.
+ - **Other Owned Item Field**: List of item names, one of which the actor must have.
  - **Works When State**: In what gift states will the bonus apply: any state, when gift is refreshed, or when gift is exhausted.
  - **Applies to Dodges**: Whether a defense bonus applies to dodge defenses.
  - **Applies to Parries**: Whether a defense bonus applies to parry defenses.
  - **Applies to Special Defenses**: Whether a defense bonus applies to special defenses.
+ 
+</details>
+
+<details>
+<summary>Attacker applicability configurations</summary>
+These applicability configuration fields are applied from the *attacking weapon*, to allow defensive bonuses to determine what sorts of weapons they are applicable *against*.  
+Any of these fields that aren't just checkboxes can include multiple values, separated with commas.  
+
+ - **Other Name Field**: List of partial names, one of which must match with the attacking weapon's name.
+ - **Other Descriptor Field**: List of descriptors, one of which must be present in the attacking weapon's descriptors.
+ - **Other Effect Field**: List of effects, one of which must be present in the attacking weapon's effects.
+ - **Other Stat Field**: List of stats, one of which must be present in any of the attacking weapon's attack stats.
+ - **Other Equip Field**: List of weapon equip types, one of which must match the attacking weapon's equip type.
+ - **Other Range Field**: List of range bands, depending on the checkbox settings, either tells the minimum and maximum distance from the attacker at or in-between which the special setting is applicable, or one of which must match the attacking weapon's range band.
+ - **Use Actual Range**: If checked, the special setting will try and measure the actual distance between the attacker and the defender, and the range bands at *Other Range Field* instead describe the range at which the special setting is applicable.
+ - **Applies To Longer Ranges**: Whether the range check will work with distances or range bands longer than listed.
+ - **Applies To Shorter Ranges**: Whether the range check will work with distances or range bands shorter than listed.
  
 </details>
 
