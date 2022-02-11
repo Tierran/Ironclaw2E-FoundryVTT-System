@@ -4,7 +4,7 @@
         <h3 class="chat-header">{{item.name}}</h3>
     </header>
     <div class="chat-content">
-        <div class="chat-item">{{itemData.description}}</div>
+        <div class="chat-item">{{{itemData.description}}}</div>
         <div class="chat-item">
             {{#if (typeCheck item.type "gift")}}
             <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.tags"}}:</strong> {{itemData.giftTags}}</p>
@@ -25,7 +25,7 @@
                 <strong>{{localize "ironclaw2e.chatInfo.itemInfo.equip"}}:</strong> {{equipHandedness}},
                 <strong>{{localize "ironclaw2e.chatInfo.itemInfo.range"}}:</strong> {{equipRange}}
             </p>
-            {{#if itemData.exhaustGift}}{{#if itemData.exhaustGiftName}})<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.exhaustGift"}}:</strong> {{itemData.exhaustGiftName}}</p>{{/if}}{{/if}}
+            {{#if itemData.exhaustGift}}{{#if itemData.exhaustGiftName}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.exhaustGift"}}:</strong> {{itemData.exhaustGiftName}}</p>{{/if}}{{/if}}
             {{#if itemData.attackDice}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.attackDice"}}:</strong> {{itemData.attackDice}}</p>{{/if}}
             {{#if itemData.useSpark}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.sparkDice"}}:</strong> {{itemData.sparkDie}}</p>{{/if}}
             {{#if itemData.defenseDice}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.parryDice"}}:</strong> {{itemData.defenseDice}}</p>{{/if}}

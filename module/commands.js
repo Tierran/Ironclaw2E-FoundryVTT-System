@@ -4,6 +4,7 @@ import { rollTargetNumberArray } from "./dicerollers.js";
 import { findTotalDice, parseSingleDiceString, splitStatString } from "./helpers.js";
 import { splitStatsAndBonus } from "./helpers.js";
 import { makeCompareReady } from "./helpers.js";
+import { CommonSystemInfo } from "./systeminfo.js";
 
 export function chatCommandsIntegration(chatCommands) {
 
@@ -139,11 +140,11 @@ export function ironclawRollActorChat(inputstring, speaker, direct = false) {
     const piecedinput = inputstring.split(";"); // Split the input to pieces
     const specialcheck = makeCompareReady(inputstring[0]); // Special checks to allow certain special quick rolls
     if (specialcheck === "soak") {
-        actor.popupSoakRoll({ "prechecked": ["body"], "tnyes": true, "tnnum": 3, "extradice": (piecedinput.length > 1 ? piecedinput[1] : "") }, { "directroll": direct });
+        actor.popupSoakRoll({ "prechecked": CommonSystemInfo.soakBaseStats, "tnyes": true, "tnnum": 3, "extradice": (piecedinput.length > 1 ? piecedinput[1] : "") }, { "directroll": direct });
         return;
     }
     if (specialcheck === "dodging" || specialcheck === "defense" || specialcheck === "defence") {
-        actor.popupDefenseRoll({ "prechecked": ["speed", "dodge"], "extradice": (piecedinput.length > 1 ? piecedinput[1] : "") }, { "directroll": direct });
+        actor.popupDefenseRoll({ "prechecked": CommonSystemInfo.dodgingBaseStats, "extradice": (piecedinput.length > 1 ? piecedinput[1] : "") }, { "directroll": direct });
         // Actually dodge roll, despite being called "defense", in order to avoid confusion with the dodge skill for the system
         return;
     }

@@ -7,6 +7,14 @@ export class CommonSystemInfo {
      */
     static burdenedList = Object.freeze(["speed", "climbing", "dodge", "endurance", "jumping", "stealth", "swimming"]);
     /**
+     * The standard stats used for soak rolls
+     */
+    static soakBaseStats = ["body"];
+    /**
+     * The standard stats used for dodge defense rolls
+     */
+    static dodgingBaseStats = ["speed", "dodge"];
+    /**
      * List of CSS colors to use for different message types
      */
     static resultColors = { success: "green", tie: "darkgoldenrod", normal: "black", failure: "black", botch: "red" };

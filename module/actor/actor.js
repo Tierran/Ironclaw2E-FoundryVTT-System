@@ -171,13 +171,13 @@ export class Ironclaw2EActor extends Actor {
         if (defenseActor && dataset?.defensetype) {
             switch (dataset.defensetype) {
                 case "dodge":
-                    return defenseActor.popupDefenseRoll({ "prechecked": ["speed", "dodge"] }, { directroll });
+                    return defenseActor.popupDefenseRoll({ "prechecked": CommonSystemInfo.dodgingBaseStats }, { directroll });
                     break;
                 case "special":
                     return defenseActor.popupDefenseRoll({ "prechecked": splitStatString(defenseset.defense) }, { directroll, "isspecial": true });
                     break;
                 case "resist":
-                    return defenseActor.popupSelectRolled({ "prechecked": splitStatString(defenseset.defense) }, { directroll });
+                    return defenseActor.basicRollSelector({ "prechecked": splitStatString(defenseset.defense) }, { directroll });
                     break;
                 case "parry":
                     const parries = defenseActor.items.filter(element => element.data.type === 'weapon' && element.data.data.canDefend);
@@ -234,7 +234,7 @@ export class Ironclaw2EActor extends Actor {
                 }
             };
             if (dataset.soaktype != "conditional") {
-                soakActor.popupSoakRoll({ "prechecked": ["body"] }, { directroll, "checkweak": (holderset.weak == "true"), "checkarmor": (holderset.penetrating == "false") }, wait);
+                soakActor.popupSoakRoll({ "prechecked": CommonSystemInfo.soakBaseStats }, { directroll, "checkweak": (holderset.weak == "true"), "checkarmor": (holderset.penetrating == "false") }, wait);
             } else {
                 if (!directroll)
                     soakActor.popupDamage(-4, 0, holderset.conditions);

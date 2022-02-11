@@ -445,12 +445,6 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             let selected = splitStatString(dataset.roll);
             const directroll = checkQuickModifierKey();
 
-            if (!data.hasOwnProperty("skills")) {
-                if (!selected.includes("species") && data.traits.species.skills.some(element => selected.includes(element)))
-                    selected.push("species");
-                if (!selected.includes("career") && data.traits.career.skills.some(element => selected.includes(element)))
-                    selected.push("career");
-            }
             if (dataset.tnyes && dataset.tn) {
                 if (dataset.extradice) {
                     this.actor.basicRollSelector({ "tnyes": dataset.tnyes, "tnnum": dataset.tn, "prechecked": selected, "extradice": dataset.extradice }, { directroll });
@@ -507,12 +501,8 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         if (dataset.roll) {
             selected = splitStatString(dataset.roll);
-            if (!data.hasOwnProperty("skills")) {
-                if (!selected.includes("species") && data.traits.species.skills.some(element => selected.includes(element)))
-                    selected.push("species");
-                if (!selected.includes("career") && data.traits.career.skills.some(element => selected.includes(element)))
-                    selected.push("career");
-            }
+        } else {
+            selected = CommonSystemInfo.soakBaseStats;
         }
 
         this.actor.popupSoakRoll({ "prechecked": selected, "tnyes": true, "tnnum": 3 }, { directroll });
@@ -533,12 +523,8 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         if (dataset.roll) {
             selected = splitStatString(dataset.roll);
-            if (!data.hasOwnProperty("skills")) {
-                if (!selected.includes("species") && data.traits.species.skills.some(element => selected.includes(element)))
-                    selected.push("species");
-                if (!selected.includes("career") && data.traits.career.skills.some(element => selected.includes(element)))
-                    selected.push("career");
-            }
+        } else {
+            selected = CommonSystemInfo.dodgingBaseStats;
         }
 
         this.actor.popupDefenseRoll({ "prechecked": selected }, { directroll });
