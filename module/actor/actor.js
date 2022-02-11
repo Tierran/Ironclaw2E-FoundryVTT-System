@@ -155,8 +155,9 @@ export class Ironclaw2EActor extends Actor {
         const element = event.currentTarget;
         const dataset = element.dataset;
         const defenseset = $(event.currentTarget).closest('.defense-buttons')[0]?.dataset;
+        const message = game.messages.get($(event.currentTarget).closest('.chat-message')[0]?.dataset?.messageId);
 
-        if (!defenseset) {
+        if (!defenseset || !message) {
             return console.warn("onChatDefenseClick somehow failed to get proper data.")
         }
 
@@ -165,19 +166,31 @@ export class Ironclaw2EActor extends Actor {
         let validDefenses = {};
         let defenseOptions = [];
 
+        let otheritem = {};
+        const messageFlags = message?.data?.flags?.ironclaw2e;
+        if (messageFlags) {
+            otheritem.name = messageFlags.weaponName;
+            otheritem.descriptors = messageFlags.weaponDescriptors;
+            otheritem.effects = messageFlags.weaponEffects;
+            otheritem.stats = messageFlags.weaponAttackStats;
+            otheritem.equip = messageFlags.weaponEquip;
+            otheritem.range = messageFlags.weaponRange;
+            otheritem.attackerPos = messageFlags.weaponAttackerPos;
+        }
+
         const directroll = checkQuickModifierKey();
 
         // Check what defense type was called and either directly roll that defense or compile the list of weapons that fit the type for the next step
         if (defenseActor && dataset?.defensetype) {
             switch (dataset.defensetype) {
                 case "dodge":
-                    return defenseActor.popupDefenseRoll({ "prechecked": CommonSystemInfo.dodgingBaseStats }, { directroll });
+                    return defenseActor.popupDefenseRoll({ "prechecked": CommonSystemInfo.dodgingBaseStats }, { directroll, otheritem });
                     break;
                 case "special":
-                    return defenseActor.popupDefenseRoll({ "prechecked": splitStatString(defenseset.defense) }, { directroll, "isspecial": true });
+                    return defenseActor.popupDefenseRoll({ "prechecked": splitStatString(defenseset.defense) }, { directroll, "isspecial": true, otheritem});
                     break;
                 case "resist":
-                    return defenseActor.basicRollSelector({ "prechecked": splitStatString(defenseset.defense) }, { directroll });
+                    return defenseActor.popupResistRoll({ "prechecked": splitStatString(defenseset.defense) }, { directroll, otheritem});
                     break;
                 case "parry":
                     const parries = defenseActor.items.filter(element => element.data.type === 'weapon' && element.data.data.canDefend);
@@ -252,8 +265,9 @@ export class Ironclaw2EActor extends Actor {
      * @param {string} weaponname The name of the attacking weapon
      * @param {boolean} [parryvalid] Whether parries are a valid option
      * @param {boolean} [countervalid] Whether counters are a valid option
+     * @param {object} otheritem The opposing item for this roll
      */
-    static async weaponDefenseDialog(actor, optionsource, weaponname, { parryvalid = false, countervalid = false } = {}) {
+    static async weaponDefenseDialog(actor, optionsource, weaponname, { parryvalid = false, countervalid = false } = {}, otheritem = null) {
         const heading = game.i18n.format("ironclaw2e.dialog.defense.heading", { "weapon": weaponname });
         const rollLabel = game.i18n.format("ironclaw2e.dialog.defense.label", { "weapon": weaponname });
         let options = "";
@@ -309,17 +323,17 @@ export class Ironclaw2EActor extends Actor {
                 if (confirmed) {
                     const directroll = checkQuickModifierKey();
 
-                    let DEFENSE = html.find('[name=defensepick]')[0];
+                    const DEFENSE = html.find('[name=defensepick]')[0];
                     const defensetype = DEFENSE.selectedOptions[0].dataset.type;
                     const defensevalue = DEFENSE.selectedOptions[0].value;
-                    let EXTRA = html.find('[name=extra]')[0]?.value;
+                    const EXTRA = html.find('[name=extra]')[0]?.value;
 
                     if (defensetype === "counter" || defensetype === "parry") {
                         const weapon = actor?.items.get(defensevalue);
-                        if (defensetype === "counter") weapon?.counterRoll(directroll);
-                        if (defensetype === "parry") weapon?.defenseRoll(directroll);
+                        if (defensetype === "counter") weapon?.counterRoll(directroll, { otheritem, "extradice": EXTRA });
+                        if (defensetype === "parry") weapon?.defenseRoll(directroll, { otheritem, "extradice": EXTRA });
                     } else if (defensetype === "extra") {
-                        let extra = findTotalDice(EXTRA);
+                        const extra = findTotalDice(EXTRA);
                         rollHighestArray(extra, rollLabel, actor);
                     }
                 }
@@ -1050,19 +1064,20 @@ export class Ironclaw2EActor extends Actor {
      * @param {any} otherkeys
      * @param {any} otherdice
      * @param {any} item
+     * @param {any} otheritem
      * @param {boolean} defensecheck Whether the check is done from a defense 
      * @param {string} defensetype
      * @returns {object} Returns a holder object which returns the inputs with the added bonuses
      * @private
      */
-    _getGiftSpecialConstruction(specialname, prechecked, otherkeys, otherdice, otherinputs, item, defensecheck = false, defensetype = "") {
+    _getGiftSpecialConstruction(specialname, prechecked, otherkeys, otherdice, otherinputs, item, otheritem = null, defensecheck = false, defensetype = "") {
         const data = this.data.data;
         if (data.processingLists?.[specialname]) { // Check if they even exist
             for (let setting of data.processingLists[specialname]) { // Loop through them
-                if (checkApplicability(setting, item, this, defensecheck, defensetype)) { // Check initial applicability
+                if (checkApplicability(setting, item, this, otheritem, defensecheck, defensetype)) { // Check initial applicability
                     let used = setting; // Store the setting in a temp variable
                     let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
-                    while (replacement && checkApplicability(replacement, item, this, defensecheck, defensetype)) { // As long as the currently used one could be replaced by something applicable
+                    while (replacement && checkApplicability(replacement, item, this, otheritem, defensecheck, defensetype)) { // As long as the currently used one could be replaced by something applicable
                         used = replacement; // Store the replacement as the one to be used
                         replacement = this._checkForReplacement(used); // Check for a new replacement
                     }
@@ -1561,7 +1576,7 @@ export class Ironclaw2EActor extends Actor {
             this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc);
     }
 
-    popupDefenseRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherlabel = "" } = {}, { directroll = false, isparry = false, isspecial = false } = {},
+    popupDefenseRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherlabel = "" } = {}, { directroll = false, isparry = false, isspecial = false, otheritem = null } = {},
         item = null, successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
@@ -1583,7 +1598,7 @@ export class Ironclaw2EActor extends Actor {
 
         // Defense bonuses
         const defensetype = (isparry ? "parry" : (isspecial ? "special" : "dodge"));
-        const bonuses = this._getGiftSpecialConstruction("defenseBonus", checkedstats, constructionkeys, constructionarray, formconstruction, item, true, defensetype);
+        const bonuses = this._getGiftSpecialConstruction("defenseBonus", checkedstats, constructionkeys, constructionarray, formconstruction, item, otheritem, true, defensetype);
         checkedstats = bonuses.prechecked;
         formconstruction = bonuses.otherinputs;
         constructionkeys = bonuses.otherkeys;
@@ -1625,7 +1640,7 @@ export class Ironclaw2EActor extends Actor {
             this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc, autoremove);
     }
 
-    popupCounterRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherlabel = "" } = {}, { directroll = false } = {}, item = null, successfunc = null) {
+    popupCounterRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherlabel = "" } = {}, { directroll = false, otheritem = null } = {}, item = null, successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
         let formconstruction = otherinputs;
@@ -1639,7 +1654,27 @@ export class Ironclaw2EActor extends Actor {
         constructionarray = guard.otherdice;
 
         // Counter bonuses
-        const bonuses = this._getGiftSpecialConstruction("counterBonus", checkedstats, constructionkeys, constructionarray, formconstruction, item);
+        const bonuses = this._getGiftSpecialConstruction("counterBonus", checkedstats, constructionkeys, constructionarray, formconstruction, item, otheritem);
+        checkedstats = bonuses.prechecked;
+        formconstruction = bonuses.otherinputs;
+        constructionkeys = bonuses.otherkeys;
+        constructionarray = bonuses.otherdice;
+
+        if (directroll)
+            this.silentSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, otherlabel }, successfunc);
+        else
+            this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc);
+    }
+
+    popupResistRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherlabel = "" } = {}, { directroll = false, otheritem = null } = {}, item = null, successfunc = null) {
+        const data = this.data.data;
+        let checkedstats = [...prechecked];
+        let formconstruction = otherinputs;
+        let constructionkeys = [...otherkeys];
+        let constructionarray = [...otherdice];
+
+        // Resist bonuses
+        const bonuses = this._getGiftSpecialConstruction("resistBonus", checkedstats, constructionkeys, constructionarray, formconstruction, item, otheritem);
         checkedstats = bonuses.prechecked;
         formconstruction = bonuses.otherinputs;
         constructionkeys = bonuses.otherkeys;

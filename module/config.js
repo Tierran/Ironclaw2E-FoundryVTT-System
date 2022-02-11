@@ -59,6 +59,7 @@ export class WorldSettingsConfig extends FormApplication {
     static get getWorldSettingsObject() {
         let settings = {};
         settings.preferTokenName = game.settings.get("ironclaw2e", "preferTokenName");
+        settings.requireSpecialRangeFound = game.settings.get("ironclaw2e", "requireSpecialRangeFound");
         settings.autoPrototypeSetup = game.settings.get("ironclaw2e", "autoPrototypeSetup");
         settings.chatButtons = game.settings.get("ironclaw2e", "chatButtons");
         settings.showDefenseButtons = game.settings.get("ironclaw2e", "showDefenseButtons");

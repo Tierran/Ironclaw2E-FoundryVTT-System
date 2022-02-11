@@ -78,7 +78,7 @@ export class Ironclaw2ECombat extends Combat {
             }
             return Ironclaw2ECombat.getDistanceTN(Ironclaw2ECombat.getDistanceToClosestOther(combatant, otherSide));
         }
-        else return 2;
+        else return 6;
     }
 
     /**
@@ -89,11 +89,11 @@ export class Ironclaw2ECombat extends Combat {
      * @private
      */
     static getDistanceToClosestOther(combatant, othercombatants) {
-        let distance = 10000;
+        let distance = Infinity;
         if (combatant?.token) {
             othercombatants.forEach(x => {
                 if (x?.token) {
-                    let dist = canvas.grid.measureDistance(combatant.token.data, x.token.data);
+                    const dist = canvas.grid.measureDistance(combatant.token.data, x.token.data);
                     if (distance > dist) distance = dist;
                 }
             });

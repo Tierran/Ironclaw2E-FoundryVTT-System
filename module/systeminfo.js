@@ -52,9 +52,9 @@ export class CommonSystemInfo {
      * The special option types that gift items can have
      */
     static giftSpecialOptions = {
-        "attackBonus": "Attack Bonus", "defenseBonus": "Defense Bonus", "counterBonus": "Counter Bonus", "soakBonus": "Soak Bonus", "guardBonus": "Guard Bonus", "aimBonus": "Aim Bonus", "sprintBonus": "Sprint Bonus",
-        "initiativeBonus": "Initiative Bonus", "moveBonus": "Movement Bonus", "flyingBonus": "Flying Move Bonus", "encumbranceBonus": "Encumbrance Limit Bonus", "currencyValueChange": "Currency Value Change",
-        "statChange": "Stat Change", "diceUpgrade": "Dice Upgrade"
+        "attackBonus": "Attack Bonus", "defenseBonus": "Defense Bonus", "counterBonus": "Counter Bonus", "resistBonus": "Resist Bonus", "soakBonus": "Soak Bonus", "guardBonus": "Guard Bonus", "aimBonus": "Aim Bonus",
+        "sprintBonus": "Sprint Bonus", "initiativeBonus": "Initiative Bonus", "moveBonus": "Movement Bonus", "flyingBonus": "Flying Move Bonus", "encumbranceBonus": "Encumbrance Limit Bonus",
+        "currencyValueChange": "Currency Value Change", "statChange": "Stat Change", "diceUpgrade": "Dice Upgrade"
     };
     /**
      * The state of gift exhaustion when the bonus can work
@@ -84,14 +84,15 @@ export function getSpecialOptionPrototype(option) {
     switch (option) {
         case ("attackBonus"):
             return mergeObject(special, {
-                "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState",
+                "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState",
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("defenseBonus"):
             return mergeObject(special, {
-                "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState",
+                "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState",
+                "nameOtherField": "", "descriptorOtherField": "", "effectOtherField": "", "statOtherField": "", "equipOtherField": "", "rangeOtherField": "", "useActualRange": true, "appliesLongerRange": false, "appliesShorterRange": false,
                 "appliesToDodges": true, "appliesToParries": true, "appliesToSpecialDefenses": true,
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
@@ -99,84 +100,93 @@ export function getSpecialOptionPrototype(option) {
 
         case ("counterBonus"):
             return mergeObject(special, {
-                "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState",
+                "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState",
+                "nameOtherField": "", "descriptorOtherField": "", "effectOtherField": "", "statOtherField": "", "equipOtherField": "", "rangeOtherField": "", "useActualRange": true, "appliesLongerRange": false, "appliesShorterRange": false,
+                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
+            });
+            break;
+
+        case ("resistBonus"):
+            return mergeObject(special, {
+                "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
+                "nameOtherField": "", "descriptorOtherField": "", "effectOtherField": "", "statOtherField": "", "equipOtherField": "", "rangeOtherField": "", "useActualRange": true, "appliesLongerRange": false, "appliesShorterRange": false,
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("soakBonus"):
             return mergeObject(special, {
-                "conditionField": "", "otherItemField": "", "worksWhenState": "anyState",
+                "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("guardBonus"):
             return mergeObject(special, {
-                "conditionField": "", "otherItemField": "", "worksWhenState": "anyState",
+                "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "bonusDiceField": "", "replaceNameField": "", "replacesBaseBonus": true
             });
             break;
 
         case ("aimBonus"):
             return mergeObject(special, {
-                "conditionField": "", "otherItemField": "", "worksWhenState": "anyState",
+                "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "bonusDiceField": "", "replaceNameField": "", "replacesBaseBonus": true
             });
             break;
 
         case ("sprintBonus"):
             return mergeObject(special, {
-                "conditionField": "", "otherItemField": "", "worksWhenState": "anyState",
+                "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("initiativeBonus"):
             return mergeObject(special, {
-                "conditionField": "", "otherItemField": "", "worksWhenState": "anyState",
+                "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "replaceNameField": ""
             });
             break;
 
         case ("moveBonus"):
             return mergeObject(special, {
-                "conditionField": "", "otherItemField": "", "worksWhenState": "anyState",
+                "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "bonusStrideNumber": 0, "bonusDashNumber": 0, "bonusRunNumber": 0, "replaceNameField": ""
             });
             break;
 
         case ("flyingBonus"):
             return mergeObject(special, {
-                "conditionField": "", "otherItemField": "", "worksWhenState": "anyState",
+                "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "bonusStrideNumber": 0, "bonusDashNumber": 0, "bonusRunNumber": 0, "replaceNameField": ""
             });
             break;
 
         case ("encumbranceBonus"):
             return mergeObject(special, {
-                "conditionField": "", "otherItemField": "", "worksWhenState": "anyState",
+                "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "encumbranceBonusNumber": 0, "replaceNameField": ""
             });
             break;
 
         case ("currencyValueChange"):
             return mergeObject(special, {
-                "otherItemField": "", "worksWhenState": "anyState",
+                "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "currencyName": "addedCurrency1", "currencyValue": "0", "replaceNameField": ""
             });
             break;
 
         case ("statChange"):
             return mergeObject(special, {
-                "typeField": "", "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "otherItemField": "",
+                "typeField": "", "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "otherOwnedItemField": "",
                 "changeFromField": "", "changeToField": "", "nameAdditionField": ""
             });
             break;
 
         case ("diceUpgrade"):
             return mergeObject(special, {
-                "typeField": "", "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "otherItemField": "",
+                "typeField": "", "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "otherOwnedItemField": "",
                 "upgradeStepsNumber": 0, "nameAdditionField": ""
             });
             break;

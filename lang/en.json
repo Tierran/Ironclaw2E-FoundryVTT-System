@@ -133,6 +133,8 @@
 
   "ironclaw2e.config.preferTokenName": "Use token names",
   "ironclaw2e.config.preferTokenNameHint": "If checked, dice rollers will not use actor's own names and will instead use the name and presentation of their tokens, when available. Always works for synthetic actors, whereas linked actors require an active scene.",
+  "ironclaw2e.config.requireSpecialRangeFound": "Require special bonus range",
+  "ironclaw2e.config.requireSpecialRangeFoundHint": "If checked, whenever the special bonus system tries to measure the range between the attacker and the defender, it will default to failing the check if an error happens, rather than ignoring it if an error happens.",
   "ironclaw2e.config.manageEncumbranceAuto": "Auto-manage encumbrance",
   "ironclaw2e.config.manageEncumbranceAutoHint": "If checked, the system will automatically manage Burdened, Over-Burdened and Cannot Move statuses for actors, based on their carried weight and worn armors. Do not try to change them manually when active, doing so is likely to cause errors. Requires a restart to take effect on all actors.",
   "ironclaw2e.config.chatButtons": "Chat buttons",

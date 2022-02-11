@@ -1,7 +1,7 @@
 import { Ironclaw2EActor } from "./actor/actor.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { hasConditionsIronclaw } from "./conditions.js";
-import { CommonSystemInfo } from "./systeminfo.js";
+import { CommonSystemInfo, getRangeDistanceFromBand } from "./systeminfo.js";
 
 /* -------------------------------------------- */
 /*  Dice Helpers                                */
@@ -382,11 +382,12 @@ export function burdenedLimitedStat(name) {
  * @param {object} special The special setting
  * @param {Ironclaw2EItem} item The target item for the bonus setting or the data for one
  * @param {Ironclaw2EActor} actor The actor of the check
+ * @param {Object} otheritem Data from the other item, mostly used for the weapon attacking the actor
  * @param {boolean} defensecheck Special trigger for defense bonus, whether the check is for a defense
  * @param {string} defensetype Special trigger for defense bonus, what type of defense this is
  * @returns {boolean} Whether the target is applicable for the special
  */
-export function checkApplicability(special, item, actor, defensecheck = false, defensetype = "") {
+export function checkApplicability(special, item, actor, otheritem = null, defensecheck = false, defensetype = "") {
     if (!special) {
         // In case the check is given something that doesn't exist
         return false;
@@ -453,7 +454,7 @@ export function checkApplicability(special, item, actor, defensecheck = false, d
             if (special.descriptorArray && !special.descriptorArray.some(x => splitStatString(itemData.data.descriptors)?.includes(x))) {
                 return false;
             }
-            if (special.effectArray && !special.effectArray.some(x => splitStatString(itemData.data.effectsSplit)?.includes(x))) {
+            if (special.effectArray && !special.effectArray.some(x => splitStatString(itemData.data.effect)?.includes(x))) {
                 return false;
             }
             if (special.statArray) {
@@ -467,15 +468,65 @@ export function checkApplicability(special, item, actor, defensecheck = false, d
                 }
             }
         }
+    } else if (special.typeArray || special.nameArray || special.equipArray || special.rangeArray || special.tagArray || special.descriptorArray || special.effectArray || special.statArray) {
+        return false; // If the special has fields that would expect an item and none is given, fail the check
     }
     // Actor-specific checks
     if (actor) {
         if (special.conditionArray && !hasConditionsIronclaw(special.conditionArray, actor)) {
             return false;
         }
-        if (special.otherItemArray && special.otherItemArray.some(x => !findInItems(actor.items, x))) {
+        if (special.otherOwnedItemArray && !special.otherOwnedItemArray.some(x => findInItems(actor.items, x))) {
             return false;
         }
+    } else if (special.conditionArray || special.otherOwnedItemArray) {
+        return false; // If the special has fields that would expect an actor and none is given, fail the check
+    }
+    // Other-item-specific checks
+    if (otheritem) {
+        if (special.nameOtherArray && !special.nameOtherArray.some(x => otheritem.name?.toLowerCase().includes(x))) {
+            return false;
+        }
+        if (special.descriptorOtherArray && !special.descriptorOtherArray.some(x => otheritem.descriptors?.includes(x))) {
+            return false;
+        }
+        if (special.effectOtherArray && !special.effectOtherArray.some(x => otheritem.effects?.includes(x))) {
+            return false;
+        }
+        if (special.statOtherArray && !special.statOtherArray.some(x => otheritem.stats?.includes(x))) {
+            return false;
+        }
+        if (special.equipOtherArray && !special.equipOtherArray.includes(makeCompareReady(otheritem.equip))) {
+            return false;
+        }
+        if (special.rangeOtherArray) {
+            const requireSuccess = game.settings.get("ironclaw2e", "requireSpecialRangeFound");
+            const foundToken = findActorToken(actor);
+            const functionalRange = getRangeRange(special.rangeOtherArray, special.appliesShorterRange, special.appliesLongerRange);
+            // Actual range checks
+            if (requireSuccess && special.useActualRange && (!otheritem.attackerPos || !foundToken || !functionalRange)) {
+                return false; // If the special uses actual range, the system settings require that this check goes through and either the attacker or defender position can't be determined, fail the check
+            } else if (special.useActualRange) {
+                if (otheritem?.attackerPos && foundToken?.data && functionalRange) {
+                    const dist = canvas.grid.measureDistance(otheritem.attackerPos, foundToken.data);
+                    if (dist < functionalRange?.min || dist > functionalRange?.max) {
+                        return false; // If the range check goes through and either the distance between defender and attacker is less than min or more than max, fail the check
+                    }
+                }
+                // Weapon range band checks
+            } else if (!special.useActualRange && !special.appliesShorterRange && !special.appliesLongerRange) {
+                if (!special.rangeOtherArray.includes(otheritem.range)) {
+                    return false; // If neither range boolean is set, simply check whether or not the weapon range band is included in the rangeOtherArray 
+                }
+            } else if (!special.useActualRange) {
+                const weaponRange = getRangeDistanceFromBand(otheritem.range);
+                if (weaponRange >= 0 && (weaponRange < functionalRange?.min || weaponRange > functionalRange?.max)) {
+                    return false; // If either boolean is set, check whether the weapon's range band is outside the special's range bands
+                }
+            }
+        }
+    } else if (special.nameOtherArray || special.descriptorOtherArray || special.effectOtherArray || special.statOtherArray || special.equipOtherArray || special.rangeOtherArray) {
+        return false; // If the special has fields that would expect the other item and none is given, fail the check
     }
 
     return true;
@@ -557,6 +608,39 @@ export function getSpeakerActor() {
     if (speaker.token) actor = game.actors.tokens[speaker.token];
     if (!actor) actor = game.actors.get(speaker.actor);
     return actor;
+}
+
+/**
+ * Helper function to get the functional range of something from given range bands
+ * @param {string | string[]} range
+ * @param {boolean} shorterOkay // Whether shorter distances than what was given are okay, in which case, the returned min is zero
+ * @param {boolean} longerOkay // Whether longer distances than what was given are okay, in which case, the returned max is Infinity
+ * @returns {{min: number, max: number} | null} // Returns either the min and max of the range, or null in case no range band was mapped successfully
+ */
+export function getRangeRange(range, shorterOkay = false, longerOkay = false) {
+    const usedRanges = Array.isArray(range) ? range : [range];
+    let min = Infinity, max = 0;
+    let foundAnything = false;
+    for (let foo of usedRanges) {
+        const pace = getRangeDistanceFromBand(foo);
+        if (pace >= 0) {
+            foundAnything = true;
+            if (pace < min)
+                min = pace;
+            if (pace > max)
+                max = pace;
+        }
+    }
+    if (longerOkay) {
+        max = Infinity;
+    }
+    if (shorterOkay) {
+        min = 0;
+    }
+    if (foundAnything)
+        return { min, max };
+    else
+        return null;
 }
 
 /**

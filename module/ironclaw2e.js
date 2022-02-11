@@ -117,6 +117,14 @@ Hooks.once('init', async function () {
         default: true,
         config: false
     });
+    game.settings.register("ironclaw2e", "requireSpecialRangeFound", {
+        name: "ironclaw2e.config.requireSpecialRangeFound",
+        hint: "ironclaw2e.config.requireSpecialRangeFoundHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: false
+    });
     game.settings.register("ironclaw2e", "autoPrototypeSetup", {
         name: "ironclaw2e.config.autoPrototypeSetup",
         hint: "ironclaw2e.config.autoPrototypeSetupHint",

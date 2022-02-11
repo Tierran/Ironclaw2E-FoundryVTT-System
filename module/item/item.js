@@ -1,4 +1,4 @@
-import { findInItems, findTotalDice } from "../helpers.js";
+import { findActorToken, findInItems, findTotalDice } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -119,6 +119,7 @@ export class Ironclaw2EItem extends Item {
                 data.usedSpecialSettings[i].settingIndex = i;
 
                 // Applicability settings
+                // Self settings
                 if (data.usedSpecialSettings[i].typeField) {
                     data.usedSpecialSettings[i].typeArray = splitStatString(data.usedSpecialSettings[i].typeField);
                 }
@@ -156,8 +157,34 @@ export class Ironclaw2EItem extends Item {
                     data.usedSpecialSettings[i].rangeArray = splitStatString(data.usedSpecialSettings[i].rangeField);
                 }
 
-                if (data.usedSpecialSettings[i].otherItemField) {
-                    data.usedSpecialSettings[i].otherItemArray = splitStatString(data.usedSpecialSettings[i].otherItemField);
+                if (data.usedSpecialSettings[i].otherOwnedItemField) {
+                    data.usedSpecialSettings[i].otherOwnedItemArray = splitStatString(data.usedSpecialSettings[i].otherOwnedItemField);
+                }
+
+                // Other settings
+                if (data.usedSpecialSettings[i].nameOtherField) {
+                    data.usedSpecialSettings[i].nameOtherArray = splitStatString(data.usedSpecialSettings[i].nameOtherField, false);
+                    data.usedSpecialSettings[i].nameOtherArray.forEach((val, index) => data.usedSpecialSettings[i].nameOtherArray[index] = val.toLowerCase());
+                }
+
+                if (data.usedSpecialSettings[i].descriptorOtherField) {
+                    data.usedSpecialSettings[i].descriptorOtherArray = splitStatString(data.usedSpecialSettings[i].descriptorOtherField);
+                }
+
+                if (data.usedSpecialSettings[i].effectOtherField) {
+                    data.usedSpecialSettings[i].effectOtherArray = splitStatString(data.usedSpecialSettings[i].effectOtherField);
+                }
+
+                if (data.usedSpecialSettings[i].statOtherField) {
+                    data.usedSpecialSettings[i].statOtherArray = splitStatString(data.usedSpecialSettings[i].statOtherField);
+                }
+
+                if (data.usedSpecialSettings[i].equipOtherField) {
+                    data.usedSpecialSettings[i].equipOtherArray = splitStatString(data.usedSpecialSettings[i].equipOtherField);
+                }
+
+                if (data.usedSpecialSettings[i].rangeOtherField) {
+                    data.usedSpecialSettings[i].rangeOtherArray = splitStatString(data.usedSpecialSettings[i].rangeOtherField);
                 }
 
                 // Gift Exhaust check
@@ -297,14 +324,20 @@ export class Ironclaw2EItem extends Item {
                 data.effectConditions = data.effectConditions.slice(0, -1);
                 data.effectConditionsLabel = data.effectConditionsLabel.slice(0, -1);
             }
+        } else {
+            data.effectsSplit = null;
         }
         // Defense
         if (data.defendWith.length > 0) {
             data.opposingDefenseStats = splitStatString(data.defendWith);
+        } else {
+            data.opposingDefenseStats = null;
         }
         // Descriptors
         if (data.descriptors.length > 0) {
             data.descriptorsSplit = splitStatString(data.descriptors);
+        } else {
+            data.descriptorsSplit = null;
         }
     }
 
@@ -663,6 +696,7 @@ export class Ironclaw2EItem extends Item {
     async sendInfoToChat() {
         const item = this.data;
         const itemData = item.data;
+        const actor = this.actor;
         const confirmSend = game.settings.get("ironclaw2e", "confirmItemInfo");
 
         const templateData = {
@@ -679,10 +713,22 @@ export class Ironclaw2EItem extends Item {
 
         const contents = await renderTemplate("systems/ironclaw2e/templates/chat/item-info.html", templateData);
 
+        let flags = { "ironclaw2e.itemInfo": true };
+        if (item.type === "weapon") {
+            flags = mergeObject(flags, {
+                "ironclaw2e.weaponName": item.name, "ironclaw2e.weaponDescriptors": itemData.descriptorsSplit, "ironclaw2e.weaponEffects": itemData.effectsSplit, "ironclaw2e.weaponAttackStats": itemData.attackStats,
+                "ironclaw2e.weaponEquip": itemData.equip, "ironclaw2e.weaponRange": itemData.range
+            });
+            const foundToken = findActorToken(actor);
+            if (foundToken) {
+                flags = mergeObject(flags, { "ironclaw2e.weaponAttackerPos": { "x": foundToken.data.x, "y": foundToken.data.y } });
+            }
+        }
+
         let chatData = {
             content: contents,
             speaker: getMacroSpeaker(this.actor),
-            flags: { "ironclaw2e.itemInfo": true }
+            flags
         };
         ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
 
@@ -992,7 +1038,7 @@ export class Ironclaw2EItem extends Item {
         }
         if (data.exhaustWhenUsed == false || data.exhausted == false) {
             if (data.giftStats || data.giftArray)
-                this.genericItemRoll(data.giftStats, data.defaultTN, itemData.name, data.giftArray, directroll, 0, (data.exhaustWhenUsed ? (x => { this.giftSetExhaust("true"); }) : null));
+                this.genericItemRoll(data.giftStats, data.defaultTN, itemData.name, data.giftArray, directroll, 0, null, (data.exhaustWhenUsed ? (x => { this.giftSetExhaust("true"); }) : null));
             else if (data.exhaustWhenUsed) // Check just in case, even though there should never be a situation where canUse is set, but neither rollable stats / dice nor exhaustWhenUsed aren't
                 this.popupExhaustGift();
         }
@@ -1053,11 +1099,11 @@ export class Ironclaw2EItem extends Item {
         } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust?.popupRefreshGift();
         } else {
-            this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, canQuickroll && directroll, 2, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x, ignoreresist, donotdisplay); }));
+            this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, canQuickroll && directroll, 2, null, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x, ignoreresist, donotdisplay); }));
         }
     }
 
-    defenseRoll(directroll = false) {
+    defenseRoll(directroll = false, { otheritem = null, extradice = "" } = {}) {
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
         const data = itemData.data;
@@ -1071,10 +1117,10 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        this.genericItemRoll(data.defenseStats, -1, itemData.name, data.defenseArray, directroll, 1);
+        this.genericItemRoll(data.defenseStats, -1, itemData.name, data.defenseArray, directroll, 1, { otheritem, extradice });
     }
 
-    counterRoll(directroll = false) {
+    counterRoll(directroll = false, { otheritem = null, extradice = "" } = {}) {
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
         const data = itemData.data;
@@ -1095,7 +1141,7 @@ export class Ironclaw2EItem extends Item {
         } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust?.popupRefreshGift();
         } else {
-            this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, directroll, 3, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x); }));
+            this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, directroll, 3, { otheritem, extradice }, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x); }));
         }
     }
 
@@ -1129,9 +1175,10 @@ export class Ironclaw2EItem extends Item {
      * @param {number[]} dicearray The dice array of the item being rolled
      * @param {boolean} directroll Whether the roll is a direct one without a popup
      * @param {number} rolltype What type of popup function to use for the roll, mostly to allow automatic use gifts through special case hacks
+     * @param {Object} otheritem The opposing item for this roll
      * @param {Function} callback The function to execute after the dice are rolled
      */
-    genericItemRoll(stats, tn, diceid, dicearray, directroll = false, rolltype = 0, callback = null) {
+    genericItemRoll(stats, tn, diceid, dicearray, directroll = false, rolltype = 0, { otheritem = null, extradice = "" } = {}, callback = null) {
         let tnyes = (tn > 0);
         let usedtn = (tn > 0 ? tn : 3);
         if (this.actor) {
@@ -1148,7 +1195,7 @@ export class Ironclaw2EItem extends Item {
             let label = "";
             const diceinput = {
                 "prechecked": stats, "tnyes": tnyes, "tnnum": usedtn, "otherkeys": (usesmoredice ? [diceid] : []), "otherdice": (usesmoredice ? [dicearray] : []),
-                "otherinputs": formconstruction, "otherlabel": ""
+                "otherinputs": formconstruction, "otherlabel": "", "extradice": extradice
             };
 
             switch (rolltype) {
@@ -1158,7 +1205,7 @@ export class Ironclaw2EItem extends Item {
                     break;
                 case 1: // Parry roll
                     diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.parryRoll") + ": ";
-                    this.actor.popupDefenseRoll(diceinput, { directroll, "isparry": true }, this, callback);
+                    this.actor.popupDefenseRoll(diceinput, { directroll, "isparry": true, otheritem }, this, callback);
                     break;
                 case 2: // Attack roll
                     diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect +
@@ -1169,7 +1216,7 @@ export class Ironclaw2EItem extends Item {
                 case 3: // Counter roll
                     diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.counterRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect : ": ");
                     if (this.weaponGetGiftToExhaust()?.giftUsable() === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
-                    this.actor.popupCounterRoll(diceinput, { directroll }, this, callback);
+                    this.actor.popupCounterRoll(diceinput, { directroll, otheritem }, this, callback);
                     break;
                 default:
                     console.warn("genericItemRoll defaulted when selecting a roll: " + rolltype);
