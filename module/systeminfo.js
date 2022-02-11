@@ -42,6 +42,10 @@ export class CommonSystemInfo {
         "verylong": "Very Long", "extreme": "Extreme", "far": "Far", "horizon": "Horizon"
     };
     /**
+     * The range bands in the correct order, in an array for easier access to the next one
+     */
+    static rangeBandsArray = ["close", "reach", "near", "short", "medium", "long", "verylong", "extreme", "far", "horizon"];
+    /**
      * The amount of paces each range band maps to
      */
     static rangePaces = {
@@ -205,6 +209,23 @@ export function getSpecialOptionPrototype(option) {
  */
 export function getRangeDistanceFromBand(band) {
     return (CommonSystemInfo.rangePaces.hasOwnProperty(band) ? CommonSystemInfo.rangePaces[band] : -1);
+}
+
+/**
+ * Get the distance in paces from a range band
+ * @param {string} band The range band
+ * @returns {{ minRange: number, maxRange: number } | null} The minimum and maximum ranges of the band
+ */
+export function getRangeMinMaxFromBand(band) {
+    const index = CommonSystemInfo.rangeBandsArray.indexOf(band);
+    if (index >= 0) {
+        const max = getRangeDistanceFromBand(band);
+        const min = index > 0 ? getRangeDistanceFromBand(CommonSystemInfo.rangeBandsArray[index - 1]) + 0.01 : 0;
+        if (max >= 0 && min >= 0) {
+            return { "minRange": min, "maxRange": max };
+        }
+    }
+    return null;
 }
 
 /**

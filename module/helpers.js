@@ -1,7 +1,7 @@
 import { Ironclaw2EActor } from "./actor/actor.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { hasConditionsIronclaw } from "./conditions.js";
-import { CommonSystemInfo, getRangeDistanceFromBand } from "./systeminfo.js";
+import { CommonSystemInfo, getRangeDistanceFromBand, getRangeMinMaxFromBand } from "./systeminfo.js";
 
 /* -------------------------------------------- */
 /*  Dice Helpers                                */
@@ -509,7 +509,7 @@ export function checkApplicability(special, item, actor, otheritem = null, defen
             } else if (special.useActualRange) {
                 if (otheritem?.attackerPos && foundToken?.data && functionalRange) {
                     const dist = canvas.grid.measureDistance(otheritem.attackerPos, foundToken.data);
-                    if (dist < functionalRange?.min || dist > functionalRange?.max) {
+                    if (dist < functionalRange?.minRange || dist > functionalRange?.maxRange) {
                         return false; // If the range check goes through and either the distance between defender and attacker is less than min or more than max, fail the check
                     }
                 }
@@ -520,7 +520,7 @@ export function checkApplicability(special, item, actor, otheritem = null, defen
                 }
             } else if (!special.useActualRange) {
                 const weaponRange = getRangeDistanceFromBand(otheritem.range);
-                if (weaponRange >= 0 && (weaponRange < functionalRange?.min || weaponRange > functionalRange?.max)) {
+                if (weaponRange >= 0 && (weaponRange < functionalRange?.minRange || weaponRange > functionalRange?.maxRange)) {
                     return false; // If either boolean is set, check whether the weapon's range band is outside the special's range bands
                 }
             }
@@ -615,20 +615,20 @@ export function getSpeakerActor() {
  * @param {string | string[]} range
  * @param {boolean} shorterOkay // Whether shorter distances than what was given are okay, in which case, the returned min is zero
  * @param {boolean} longerOkay // Whether longer distances than what was given are okay, in which case, the returned max is Infinity
- * @returns {{min: number, max: number} | null} // Returns either the min and max of the range, or null in case no range band was mapped successfully
+ * @returns {{minRange: number, maxRange: number} | null} // Returns either the min and max of the range, or null in case no range band was mapped successfully
  */
 export function getRangeRange(range, shorterOkay = false, longerOkay = false) {
     const usedRanges = Array.isArray(range) ? range : [range];
     let min = Infinity, max = 0;
     let foundAnything = false;
     for (let foo of usedRanges) {
-        const pace = getRangeDistanceFromBand(foo);
-        if (pace >= 0) {
+        const paces = getRangeMinMaxFromBand(foo);
+        if (paces) {
             foundAnything = true;
-            if (pace < min)
-                min = pace;
-            if (pace > max)
-                max = pace;
+            if (paces.minRange < min)
+                min = paces.minRange;
+            if (paces.maxRange > max)
+                max = paces.maxRange;
         }
     }
     if (longerOkay) {
@@ -638,7 +638,7 @@ export function getRangeRange(range, shorterOkay = false, longerOkay = false) {
         min = 0;
     }
     if (foundAnything)
-        return { min, max };
+        return { "minRange": min, "maxRange": max };
     else
         return null;
 }
