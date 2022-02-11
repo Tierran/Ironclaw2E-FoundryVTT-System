@@ -88,24 +88,33 @@ export async function upgradeVersion(lastversion) {
     if (checkIfNewerVersion(version, lastversion)) { // Same deal, if 0.5.5 is newer than the last version, it means it's pre-0.5.5
         ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationNotice", { "version": version }), { permanent: true });
 
-        // Item changes, first grab all items from everywhere
-        let itemsToChange = getAllItemsInWorld("gift");
-        let problemItems = [];
-
-        // Validate the data for special settings
-        for (let item of itemsToChange) {
-            const foo = await item.giftValidateSpecialSetting();
-            if (!(foo)) {
-                problemItems.push(item);
-            }
-        }
-
         // Currency changes
         let allActors = getAllActorsInWorld();
 
         // Currency update for all actors
         for (let actor of allActors) {
             await currencyUpgradePointFiveFive(actor);
+        }
+
+        ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationComplete", { "version": version }), { permanent: true });
+        console.log("0.5.5, currency upgrade, done!");
+    }
+
+    // Version 0.5.6 check
+    version = "0.5.6";
+    if (checkIfNewerVersion(version, lastversion)) {
+        ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationNotice", { "version": version }), { permanent: true });
+
+        // Item changes, first grab all items from everywhere
+        let itemsToChange = getAllItemsInWorld("gift");
+        let problemItems = [];
+
+        // Validate the data for special settings
+        for (let item of itemsToChange) {
+            const foo = await giftUpgradePointFiveSix(item);
+            if (!(foo)) {
+                problemItems.push(item);
+            }
         }
 
         // In case of potential problems the GM might need to check
@@ -116,7 +125,7 @@ export async function upgradeVersion(lastversion) {
             ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationComplete", { "version": version }), { permanent: true });
         }
 
-        console.log("0.5.5, currency and special setting data validation, done!");
+        console.log("0.5.6, special setting upgrade, done!");
     }
 }
 
@@ -237,6 +246,18 @@ async function currencyUpgradePointFiveFive(actor) {
     }
 
     return actor.update({ "data": updateData });
+}
+
+async function giftUpgradePointFiveSix(item) {
+    let itemData = item.data.data;
+    if (itemData.specialSettings?.length > 0) {
+        for (let i = 0; i < itemData.specialSettings.length; ++i) {
+            if (itemData.specialSettings[i].otherItemField)
+                await item.giftChangeSpecialField(i, "otherOwnedItemField", itemData.specialSettings[i].otherItemField);
+        }
+        return item.giftValidateSpecialSetting();
+    }
+    return item;
 }
 
 /**
