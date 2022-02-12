@@ -1038,7 +1038,7 @@ export class Ironclaw2EItem extends Item {
         }
         if (data.exhaustWhenUsed == false || data.exhausted == false) {
             if (data.giftStats || data.giftArray)
-                this.genericItemRoll(data.giftStats, data.defaultTN, itemData.name, data.giftArray, directroll, 0, null, (data.exhaustWhenUsed ? (x => { this.giftSetExhaust("true"); }) : null));
+                this.genericItemRoll(data.giftStats, data.defaultTN, itemData.name, data.giftArray, 0, { directroll }, (data.exhaustWhenUsed ? (x => { this.giftSetExhaust("true"); }) : null));
             else if (data.exhaustWhenUsed) // Check just in case, even though there should never be a situation where canUse is set, but neither rollable stats / dice nor exhaustWhenUsed aren't
                 this.popupExhaustGift();
         }
@@ -1099,11 +1099,12 @@ export class Ironclaw2EItem extends Item {
         } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust?.popupRefreshGift();
         } else {
-            this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, canQuickroll && directroll, 2, {}, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x, ignoreresist, donotdisplay); }));
+            this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, 2, { "directroll": canQuickroll && directroll },
+                (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x, ignoreresist, donotdisplay); }));
         }
     }
 
-    defenseRoll(directroll = false, { otheritem = null, extradice = "" } = {}) {
+    defenseRoll(directroll = false, otheritem = null, extradice = "") {
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
         const data = itemData.data;
@@ -1117,10 +1118,10 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        this.genericItemRoll(data.defenseStats, -1, itemData.name, data.defenseArray, directroll, 1, { otheritem, extradice });
+        this.genericItemRoll(data.defenseStats, -1, itemData.name, data.defenseArray, 1, { directroll, otheritem, extradice });
     }
 
-    counterRoll(directroll = false, { otheritem = null, extradice = "" } = {}) {
+    counterRoll(directroll = false, otheritem = null, extradice = "") {
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
         const data = itemData.data;
@@ -1141,7 +1142,8 @@ export class Ironclaw2EItem extends Item {
         } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust?.popupRefreshGift();
         } else {
-            this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, directroll, 3, { otheritem, extradice }, (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x); }));
+            this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, 3, { directroll, otheritem, extradice },
+                (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x); }));
         }
     }
 
@@ -1178,7 +1180,7 @@ export class Ironclaw2EItem extends Item {
      * @param {Object} otheritem The opposing item for this roll
      * @param {Function} callback The function to execute after the dice are rolled
      */
-    genericItemRoll(stats, tn, diceid, dicearray, directroll = false, rolltype = 0, { otheritem = null, extradice = "" } = {}, callback = null) {
+    genericItemRoll(stats, tn, diceid, dicearray, rolltype = 0, { directroll = false, otheritem = null, extradice = "" } = {}, callback = null) {
         let tnyes = (tn > 0);
         let usedtn = (tn > 0 ? tn : 3);
         if (this.actor) {

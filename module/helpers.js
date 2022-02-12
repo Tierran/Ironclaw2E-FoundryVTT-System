@@ -372,6 +372,138 @@ export function burdenedLimitedStat(name) {
     return CommonSystemInfo.burdenedList.includes(makeCompareReady(name));
 }
 
+/* -------------------------------------------- */
+/*  Actor & Token Helpers                       */
+/* -------------------------------------------- */
+
+/**
+ * Helper function to get what speaker to use in the dice roller output, dependent on the system settings
+ * @param {Actor} rollingactor The actor to find a speaker for
+ * @returns {Object} Returns the speaker data
+ */
+export function getMacroSpeaker(rollingactor) {
+    if (!rollingactor)
+        return ChatMessage.getSpeaker(); // In case the function ever receives an actor that does not exist
+
+    const prefertokens = game.settings.get("ironclaw2e", "preferTokenName");
+    if (prefertokens) {
+        let chattoken = findActorToken(rollingactor);
+        if (chattoken) {
+            return ChatMessage.getSpeaker({ token: chattoken });
+        }
+    }
+
+    return (rollingactor ? ChatMessage.getSpeaker({ actor: rollingactor }) : ChatMessage.getSpeaker());
+}
+
+/**
+ * Helper function to find the token for a given actor, or return undefined if no token is found
+ * On non-synthetic actors, requires the token's actorLink to be TRUE in order to pick them
+ * @param {Actor} actor The actor to find a token for
+ * @returns {TokenDocument} Returns the found token, or null
+ */
+export function findActorToken(actor) {
+    if (!actor)
+        return null;
+
+    let foundtoken = null;
+    if (actor.token) {
+        foundtoken = actor.token;
+    }
+    else {
+        let tokenarray = actor.getActiveTokens(true);
+        if (tokenarray.length > 0 && tokenarray[0]?.data?.actorLink === true)
+            foundtoken = tokenarray[0].document;
+    }
+    return foundtoken;
+}
+
+/**
+ * Helper function to get the actor of the current speaker, be it the user default or the currently selected actor, or null if no actor is found
+ * @returns {Actor | null} The actor of the current speaker, or null if nothing found
+ */
+export function getSpeakerActor() {
+    const speaker = ChatMessage.getSpeaker();
+    let actor = null;
+    if (speaker.token) actor = game.actors.tokens[speaker.token];
+    if (!actor) actor = game.actors.get(speaker.actor);
+    return actor;
+}
+
+/* -------------------------------------------- */
+/*  Range Helpers                               */
+/* -------------------------------------------- */
+
+/**
+ * @typedef {{
+ *   minRange: number,
+ *   maxRange: number
+ * }} RangeBandMinMax
+ */
+
+/**
+ * Helper function to check whether a range is within the given range band
+ * @param {number | RangeBandMinMax | string} range The range to check, either as a number meaning single distance, another range band, or a name of the range to check
+ * @param {RangeBandMinMax} rangeband The range band to check against
+ */
+export function checkIfWithinRange(range, rangeband) {
+    let usedRange = 0;
+    if (!range || !rangeband) {
+        console.error("checkIfWithinRange was given null range or rangeband: " + range + " " + rangeband);
+        return false;
+    }
+    if (typeof range === "string") {
+        usedRange = getRangeDistanceFromBand(range);
+    } else if (range.maxRange) {
+        usedRange = range.maxRange;
+    } else {
+        usedRange = range;
+    }
+
+    // Inclusive check if the given range is under the maximum range of the given rangeband
+    if (usedRange <= rangeband.maxRange) {
+        // Usually exclusive check if the given range is over the minimum range of the given rangeband, minRange of zero instead uses an inclusive check
+        if ((rangeband.minRange === 0 ? usedRange >= rangeband.minRange : usedRange > rangeband.minRange)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Helper function to get the functional range of something from given range bands
+ * @param {string | string[]} range
+ * @param {boolean} shorterOkay // Whether shorter distances than what was given are okay, in which case, the returned min is zero
+ * @param {boolean} longerOkay // Whether longer distances than what was given are okay, in which case, the returned max is Infinity
+ * @returns {RangeBandMinMax | null} // Returns either the min and max of the range, or null in case no range band was mapped successfully
+ */
+export function getRangeBandMinMax(range, shorterOkay = false, longerOkay = false) {
+    const usedRanges = Array.isArray(range) ? range : [range];
+    let min = Infinity, max = 0;
+    let foundAnything = false;
+    for (let foo of usedRanges) {
+        const paces = getRangeMinMaxFromBand(foo);
+        if (paces) {
+            foundAnything = true;
+            if (paces.minRange < min)
+                min = paces.minRange;
+            if (paces.maxRange > max)
+                max = paces.maxRange;
+        }
+    }
+
+    if (longerOkay) {
+        max = Infinity;
+    }
+    if (shorterOkay) {
+        min = 0;
+    }
+
+    if (foundAnything)
+        return { "minRange": min, "maxRange": max };
+    else
+        return null;
+}
 
 /* -------------------------------------------- */
 /*  Gift Special Bonus Helpers                  */
@@ -502,14 +634,14 @@ export function checkApplicability(special, item, actor, otheritem = null, defen
         if (special.rangeOtherArray) {
             const requireSuccess = game.settings.get("ironclaw2e", "requireSpecialRangeFound");
             const foundToken = findActorToken(actor);
-            const functionalRange = getRangeRange(special.rangeOtherArray, special.appliesShorterRange, special.appliesLongerRange);
+            const functionalRange = getRangeBandMinMax(special.rangeOtherArray, special.appliesShorterRange, special.appliesLongerRange);
             // Actual range checks
             if (requireSuccess && special.useActualRange && (!otheritem.attackerPos || !foundToken || !functionalRange)) {
                 return false; // If the special uses actual range, the system settings require that this check goes through and either the attacker or defender position can't be determined, fail the check
             } else if (special.useActualRange) {
                 if (otheritem?.attackerPos && foundToken?.data && functionalRange) {
                     const dist = canvas.grid.measureDistance(otheritem.attackerPos, foundToken.data);
-                    if (dist < functionalRange?.minRange || dist > functionalRange?.maxRange) {
+                    if (!checkIfWithinRange(dist, functionalRange)) {
                         return false; // If the range check goes through and either the distance between defender and attacker is less than min or more than max, fail the check
                     }
                 }
@@ -520,7 +652,7 @@ export function checkApplicability(special, item, actor, otheritem = null, defen
                 }
             } else if (!special.useActualRange) {
                 const weaponRange = getRangeDistanceFromBand(otheritem.range);
-                if (weaponRange >= 0 && (weaponRange < functionalRange?.minRange || weaponRange > functionalRange?.maxRange)) {
+                if (weaponRange >= 0 && (!checkIfWithinRange(weaponRange, functionalRange))) {
                     return false; // If either boolean is set, check whether the weapon's range band is outside the special's range bands
                 }
             }
@@ -555,93 +687,6 @@ export function diceFieldUpgrade(dicearray, upgrade) {
 /* -------------------------------------------- */
 /*  Misc Helpers                                */
 /* -------------------------------------------- */
-
-/**
- * Helper function to get what speaker to use in the dice roller output, dependent on the system settings
- * @param {Actor} rollingactor The actor to find a speaker for
- * @returns {Object} Returns the speaker data
- */
-export function getMacroSpeaker(rollingactor) {
-    if (!rollingactor)
-        return ChatMessage.getSpeaker(); // In case the function ever receives an actor that does not exist
-
-    const prefertokens = game.settings.get("ironclaw2e", "preferTokenName");
-    if (prefertokens) {
-        let chattoken = findActorToken(rollingactor);
-        if (chattoken) {
-            return ChatMessage.getSpeaker({ token: chattoken });
-        }
-    }
-
-    return (rollingactor ? ChatMessage.getSpeaker({ actor: rollingactor }) : ChatMessage.getSpeaker());
-}
-
-/**
- * Helper function to find the token for a given actor, or return undefined if no token is found
- * On non-synthetic actors, requires the token's actorLink to be TRUE in order to pick them
- * @param {Actor} actor The actor to find a token for
- * @returns {TokenDocument} Returns the found token, or null
- */
-export function findActorToken(actor) {
-    if (!actor)
-        return null;
-
-    let foundtoken = null;
-    if (actor.token) {
-        foundtoken = actor.token;
-    }
-    else {
-        let tokenarray = actor.getActiveTokens(true);
-        if (tokenarray.length > 0 && tokenarray[0]?.data?.actorLink === true)
-            foundtoken = tokenarray[0].document;
-    }
-    return foundtoken;
-}
-
-/**
- * Helper function to get the actor of the current speaker, be it the user default or the currently selected actor, or null if no actor is found
- * @returns {Actor | null} The actor of the current speaker, or null if nothing found
- */
-export function getSpeakerActor() {
-    const speaker = ChatMessage.getSpeaker();
-    let actor = null;
-    if (speaker.token) actor = game.actors.tokens[speaker.token];
-    if (!actor) actor = game.actors.get(speaker.actor);
-    return actor;
-}
-
-/**
- * Helper function to get the functional range of something from given range bands
- * @param {string | string[]} range
- * @param {boolean} shorterOkay // Whether shorter distances than what was given are okay, in which case, the returned min is zero
- * @param {boolean} longerOkay // Whether longer distances than what was given are okay, in which case, the returned max is Infinity
- * @returns {{minRange: number, maxRange: number} | null} // Returns either the min and max of the range, or null in case no range band was mapped successfully
- */
-export function getRangeRange(range, shorterOkay = false, longerOkay = false) {
-    const usedRanges = Array.isArray(range) ? range : [range];
-    let min = Infinity, max = 0;
-    let foundAnything = false;
-    for (let foo of usedRanges) {
-        const paces = getRangeMinMaxFromBand(foo);
-        if (paces) {
-            foundAnything = true;
-            if (paces.minRange < min)
-                min = paces.minRange;
-            if (paces.maxRange > max)
-                max = paces.maxRange;
-        }
-    }
-    if (longerOkay) {
-        max = Infinity;
-    }
-    if (shorterOkay) {
-        min = 0;
-    }
-    if (foundAnything)
-        return { "minRange": min, "maxRange": max };
-    else
-        return null;
-}
 
 /**
  * Helper function to search through a given item list for any items matching the name given

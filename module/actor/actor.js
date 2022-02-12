@@ -187,10 +187,10 @@ export class Ironclaw2EActor extends Actor {
                     return defenseActor.popupDefenseRoll({ "prechecked": CommonSystemInfo.dodgingBaseStats }, { directroll, otheritem });
                     break;
                 case "special":
-                    return defenseActor.popupDefenseRoll({ "prechecked": splitStatString(defenseset.defense) }, { directroll, "isspecial": true, otheritem});
+                    return defenseActor.popupDefenseRoll({ "prechecked": splitStatString(defenseset.defense) }, { directroll, "isspecial": true, otheritem });
                     break;
                 case "resist":
-                    return defenseActor.popupResistRoll({ "prechecked": splitStatString(defenseset.defense) }, { directroll, otheritem});
+                    return defenseActor.popupResistRoll({ "prechecked": splitStatString(defenseset.defense) }, { directroll, otheritem });
                     break;
                 case "parry":
                     const parries = defenseActor.items.filter(element => element.data.type === 'weapon' && element.data.data.canDefend);
@@ -330,8 +330,8 @@ export class Ironclaw2EActor extends Actor {
 
                     if (defensetype === "counter" || defensetype === "parry") {
                         const weapon = actor?.items.get(defensevalue);
-                        if (defensetype === "counter") weapon?.counterRoll(directroll, { otheritem, "extradice": EXTRA });
-                        if (defensetype === "parry") weapon?.defenseRoll(directroll, { otheritem, "extradice": EXTRA });
+                        if (defensetype === "counter") weapon?.counterRoll(directroll, otheritem, EXTRA);
+                        if (defensetype === "parry") weapon?.defenseRoll(directroll, otheritem, EXTRA);
                     } else if (defensetype === "extra") {
                         const extra = findTotalDice(EXTRA);
                         rollHighestArray(extra, rollLabel, actor);

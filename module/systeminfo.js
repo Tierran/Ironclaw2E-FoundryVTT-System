@@ -1,5 +1,12 @@
 import { makeCompareReady } from "./helpers.js";
 
+/**
+ * @typedef {{
+ *   minRange: number,
+ *   maxRange: number
+ * }} RangeBandMinMax
+ */
+
 /** Common class for common system info that might be used */
 export class CommonSystemInfo {
     /**
@@ -214,13 +221,13 @@ export function getRangeDistanceFromBand(band) {
 /**
  * Get the distance in paces from a range band
  * @param {string} band The range band
- * @returns {{ minRange: number, maxRange: number } | null} The minimum and maximum ranges of the band
+ * @returns {RangeBandMinMax | null} The minimum and maximum ranges of the band, minimum exclusive unless zero, maximum inclusive
  */
 export function getRangeMinMaxFromBand(band) {
     const index = CommonSystemInfo.rangeBandsArray.indexOf(band);
     if (index >= 0) {
         const max = getRangeDistanceFromBand(band);
-        const min = index > 0 ? getRangeDistanceFromBand(CommonSystemInfo.rangeBandsArray[index - 1]) + 0.01 : 0;
+        const min = index > 0 ? getRangeDistanceFromBand(CommonSystemInfo.rangeBandsArray[index - 1]) : 0;
         if (max >= 0 && min >= 0) {
             return { "minRange": min, "maxRange": max };
         }
