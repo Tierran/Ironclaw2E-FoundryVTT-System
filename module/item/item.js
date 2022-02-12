@@ -336,6 +336,10 @@ export class Ironclaw2EItem extends Item {
         // Descriptors
         if (data.descriptors.length > 0) {
             data.descriptorsSplit = splitStatString(data.descriptors);
+            // Special check to make sure wands have "wand" as a descriptor as far as the system is concerned
+            if (!data.descriptorsSplit("wand") && itemData.name.toLowerCase().includes("wand")) {
+                data.descriptorsSplit.push("wand");
+            }
         } else {
             data.descriptorsSplit = null;
         }
@@ -704,9 +708,9 @@ export class Ironclaw2EItem extends Item {
             "itemData": itemData,
             "hasButtons": item.type === "weapon",
             "standardDefense": checkStandardDefense(itemData.defendWith),
-            "actorId": this.actor.id,
-            "tokenId": this.actor.token?.id ?? null,
-            "sceneId": this.actor.token?.parent?.id ?? null,
+            "actorId": actor.id,
+            "tokenId": actor.token?.id ?? null,
+            "sceneId": actor.token?.parent?.id ?? null,
             "equipHandedness": (item.type === 'weapon' ? CommonSystemInfo.equipHandedness[itemData.equip] : ""),
             "equipRange": (item.type === 'weapon' ? CommonSystemInfo.rangeBands[itemData.range] : "")
         };
@@ -719,15 +723,19 @@ export class Ironclaw2EItem extends Item {
                 "ironclaw2e.weaponName": item.name, "ironclaw2e.weaponDescriptors": itemData.descriptorsSplit, "ironclaw2e.weaponEffects": itemData.effectsSplit, "ironclaw2e.weaponAttackStats": itemData.attackStats,
                 "ironclaw2e.weaponEquip": itemData.equip, "ironclaw2e.weaponRange": itemData.range
             });
-            const foundToken = findActorToken(actor);
-            if (foundToken) {
-                flags = mergeObject(flags, { "ironclaw2e.weaponAttackerPos": { "x": foundToken.data.x, "y": foundToken.data.y } });
-            }
+        }
+        const foundToken = findActorToken(actor);
+        if (foundToken) {
+            const rangePenalty = actor.getRangePenaltyReduction(this);
+            flags = mergeObject(flags, {
+                "ironclaw2e.itemUserPos": { "x": foundToken.data.x, "y": foundToken.data.y },
+                "ironclaw2e.itemUserRangeReduction": rangePenalty.reduction, "ironclaw2e.itemUserRangeAutocheck": rangePenalty.autocheck
+            });
         }
 
         let chatData = {
             content: contents,
-            speaker: getMacroSpeaker(this.actor),
+            speaker: getMacroSpeaker(actor),
             flags
         };
         ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));

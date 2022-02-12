@@ -125,6 +125,7 @@
                                     <label class="normal-label">Change From</label><input style="min-width: 30%" class="special-change-field" type="text" name="changeFromField" value="{{special.changeFromField}}" data-dtype="String" />
                                     <label class="normal-label">Change To</label><input style="min-width: 30%" class="special-change-field" type="text" name="changeToField" value="{{special.changeToField}}" data-dtype="String" />
                                 </div>{{/if}}
+                                {{#if (propertyExists special "penaltyReductionNumber")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Penalty Reduction</label><input class="special-change-number" type="number" name="penaltyReductionNumber" value="{{special.penaltyReductionNumber}}" data-dtype="Number" /></div>{{/if}}
                                 {{#if (propertyExists special "encumbranceBonusNumber")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Encumbrance Bonus</label><input class="special-change-number" type="number" name="encumbranceBonusNumber" value="{{special.encumbranceBonusNumber}}" data-dtype="Number" /></div>{{/if}}
                                 {{#if (propertyExists special "currencyName")}}<div class="flexrow flex-center">
                                     <label class="normal-label" style="min-width: 60%">Currency Name</label>

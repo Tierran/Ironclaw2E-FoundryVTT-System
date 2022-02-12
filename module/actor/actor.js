@@ -14,6 +14,7 @@ import { getDiceArrayMaxValue } from "../helpers.js";
 import { checkApplicability } from "../helpers.js";
 import { compareDiceArrays } from "../helpers.js";
 import { getSpeakerActor } from "../helpers.js";
+import { getDistancePenaltyConstruction } from "../helpers.js";
 import { checkQuickModifierKey } from "../helpers.js";
 import { CommonConditionInfo } from "../conditions.js";
 import { checkStandardDefense, CommonSystemInfo } from "../systeminfo.js";
@@ -175,7 +176,9 @@ export class Ironclaw2EActor extends Actor {
             otheritem.stats = messageFlags.weaponAttackStats;
             otheritem.equip = messageFlags.weaponEquip;
             otheritem.range = messageFlags.weaponRange;
-            otheritem.attackerPos = messageFlags.weaponAttackerPos;
+            otheritem.attackerPos = messageFlags.itemUserPos;
+            otheritem.attackerRangeReduction = messageFlags.itemUserRangeReduction;
+            otheritem.attackerRangeAutocheck = messageFlags.itemUserRangeAutocheck;
         }
 
         const directroll = checkQuickModifierKey();
@@ -1054,7 +1057,9 @@ export class Ironclaw2EActor extends Actor {
         return null; // Otherwise return null
     }
 
-    // Functions to construct the roll dialog properly
+    /* -------------------------------------------- */
+    /* Roll Construction Functions                  */
+    /* -------------------------------------------- */
 
     /**
      * Apply a certain type of gift special bonus to roll dialog construction
@@ -1429,6 +1434,43 @@ export class Ironclaw2EActor extends Actor {
         }
     }
 
+    /**
+     * Get the degree of range penalty reduction this actor has for the given item
+     * @param {Ironclaw2EItem} item
+     * @returns {{reduction: number, autocheck: boolean}}
+     */
+    getRangePenaltyReduction(item = null) {
+        const data = this.data.data;
+        let reduction = 0;
+        let autocheck = false;
+        // Grab the penalty reduction degree from the special settings
+        if (data.processingLists?.rangePenaltyReduction) { // Check if range penalty reduction bonuses even exist
+            for (let setting of data.processingLists.rangePenaltyReduction) { // Loop through them
+                if (checkApplicability(setting, item, this)) { // Check initial applicability
+                    let used = setting; // Store the setting in a temp variable
+                    let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
+                    while (replacement && checkApplicability(replacement, item, this)) { // As long as the currently used one could be replaced by something applicable
+                        used = replacement; // Store the replacement as the one to be used
+                        replacement = this._checkForReplacement(used); // Check for a new replacement
+                    }
+                    if (used) { // Sanity check that the used still exists
+                        // Apply the used setting
+                        if (reduction < used.penaltyReductionNumber) reduction = used.penaltyReductionNumber;
+                    } else { // If used somehow turns out unsuable, send an error
+                        console.error("Somehow, the used setting came up unusable: " + used);
+                    }
+                }
+            }
+        }
+
+        // Check whether the attack 'item' is representing is magical, and whether the character has a wand readied, in which case, toggle the auto-check off
+        if (item?.descriptorsSplit?.includes("magic") && this.items.some(element => element.data.data.readied === true && element.data.data.descriptorsSplit?.includes("wand"))) {
+            autocheck = true;
+        }
+
+        return { reduction, autocheck };
+    }
+
     /* -------------------------------------------- */
     /*  Non-popup Roll Functions                    */
     /* -------------------------------------------- */
@@ -1596,6 +1638,18 @@ export class Ironclaw2EActor extends Actor {
         constructionkeys = guard.otherkeys;
         constructionarray = guard.otherdice;
 
+        // Attacker range penalty
+        if (otheritem) {
+            const foundToken = findActorToken(actor);
+            if (foundToken) {
+                const dist = canvas.grid.measureDistance(otheritem.attackerPos, foundToken.data);
+                const range = getDistancePenaltyConstruction(constructionkeys, constructionarray, formconstruction, dist, { "reduction": otheritem.attackerRangeReduction, "autocheck": otheritem.attackerRangeAutocheck });
+                formconstruction = range.otherinputs;
+                constructionkeys = range.otherkeys;
+                constructionarray = range.otherdice;
+            }
+        }
+
         // Defense bonuses
         const defensetype = (isparry ? "parry" : (isspecial ? "special" : "dodge"));
         const bonuses = this._getGiftSpecialConstruction("defenseBonus", checkedstats, constructionkeys, constructionarray, formconstruction, item, otheritem, true, defensetype);
@@ -1672,6 +1726,18 @@ export class Ironclaw2EActor extends Actor {
         let formconstruction = otherinputs;
         let constructionkeys = [...otherkeys];
         let constructionarray = [...otherdice];
+
+        // Attacker range penalty
+        if (otheritem) {
+            const foundToken = findActorToken(actor);
+            if (foundToken) {
+                const dist = canvas.grid.measureDistance(otheritem.attackerPos, foundToken.data);
+                const range = getDistancePenaltyConstruction(constructionkeys, constructionarray, formconstruction, dist, { "reduction": otheritem.attackerRangeReduction, "autocheck": otheritem.attackerRangeAutocheck });
+                formconstruction = range.otherinputs;
+                constructionkeys = range.otherkeys;
+                constructionarray = range.otherdice;
+            }
+        }
 
         // Resist bonuses
         const bonuses = this._getGiftSpecialConstruction("resistBonus", checkedstats, constructionkeys, constructionarray, formconstruction, item, otheritem);

@@ -49,7 +49,7 @@ export class CommonSystemInfo {
         "verylong": "Very Long", "extreme": "Extreme", "far": "Far", "horizon": "Horizon"
     };
     /**
-     * The range bands in the correct order, in an array for easier access to the next one
+     * The range bands in the order of shortest to longest
      */
     static rangeBandsArray = ["close", "reach", "near", "short", "medium", "long", "verylong", "extreme", "far", "horizon"];
     /**
@@ -60,12 +60,23 @@ export class CommonSystemInfo {
         "verylong": 300, "extreme": 1000, "far": 3000, "horizon": 11000
     };
     /**
+     * The penalties for each range
+     */
+    static rangePenalties = {
+        "close": "", "reach": "", "near": "", "short": "d8", "medium": "d12", "long": "2d12",
+        "verylong": "3d12", "extreme": "4d12", "far": "5d12", "horizon": "6d12"
+    };
+    /**
+     * The over maximum range penalty, if allowed
+     */
+    static rangeOverMaxPenalty = "12d12";
+    /**
      * The special option types that gift items can have
      */
     static giftSpecialOptions = {
         "attackBonus": "Attack Bonus", "defenseBonus": "Defense Bonus", "counterBonus": "Counter Bonus", "resistBonus": "Resist Bonus", "soakBonus": "Soak Bonus", "guardBonus": "Guard Bonus", "aimBonus": "Aim Bonus",
-        "sprintBonus": "Sprint Bonus", "initiativeBonus": "Initiative Bonus", "moveBonus": "Movement Bonus", "flyingBonus": "Flying Move Bonus", "encumbranceBonus": "Encumbrance Limit Bonus",
-        "currencyValueChange": "Currency Value Change", "statChange": "Stat Change", "diceUpgrade": "Dice Upgrade"
+        "sprintBonus": "Sprint Bonus", "initiativeBonus": "Initiative Bonus", "moveBonus": "Movement Bonus", "flyingBonus": "Flying Move Bonus", "rangePenaltyReduction": "Range Penalty Reduction",
+        "encumbranceBonus": "Encumbrance Limit Bonus", "currencyValueChange": "Currency Value Change", "statChange": "Stat Change", "diceUpgrade": "Dice Upgrade"
     };
     /**
      * The state of gift exhaustion when the bonus can work
@@ -174,6 +185,13 @@ export function getSpecialOptionPrototype(option) {
             });
             break;
 
+        case ("rangePenaltyReduction"):
+            return mergeObject(special, {
+                "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState",
+                "penaltyReductionNumber": 0, "replaceNameField": ""
+            });
+            break;
+
         case ("encumbranceBonus"):
             return mergeObject(special, {
                 "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
@@ -245,13 +263,47 @@ export function getRangeBandFromDistance(distance) {
         console.error("Attempted to get a distance that is not a number: " + distance);
         return null;
     }
+    // Sort the ranges from shortest to longest, just in case
     const foobar = Object.entries(CommonSystemInfo.rangePaces).sort((a, b) => a[1] - b[1]);
-    for (const band of foobar) {
+    for (const band of foobar) { // Loop through the range bands and return the one where the distance is equal or less than the band's
         if (distance <= band[1])
             return band[0];
     }
     console.warn("Attempted to get a distance further away than the max range: " + distance);
     return foobar[foobar.length - 1][0];
+}
+
+/**
+ * Get the distance in paces from a range band
+ * @param {string} band The range band
+ * @param {number} reduction The degree of penalty reduction
+ * @returns {string} The penalty dice
+ */
+export function getRangePenaltyFromBand(band, reduction = 0) {
+    let usedBand = band;
+    if (reduction > 0) { // If there is usable penalty reduction, get the actual penalty 
+        const index = CommonSystemInfo.rangeBandsArray.indexOf(band);
+        usedBand = CommonSystemInfo.rangeBandsArray[(index - reduction >= 0 ? index - reduction : 0)];
+    }
+    return (CommonSystemInfo.rangePenalties.hasOwnProperty(usedBand) ? CommonSystemInfo.rangePenalties[usedBand] : "");
+}
+
+/**
+ * Get the distance in paces from a range band
+ * @param {number} distance The range band
+ * @param {number} reduction The degree of penalty reduction
+ * @returns {string} The penalty dice
+ */
+export function getRangePenaltyFromDistance(distance, reduction = 0, allowovermax = false) {
+    const band = getRangeBandFromDistance(distance);
+    // A very complicated-looking get, which gets the distance for the last range band in the system info, to compare against the distance given
+    if (distance > CommonSystemInfo.rangePaces[CommonSystemInfo.rangeBandsArray[CommonSystemInfo.rangeBandsArray.length - 1]]) {
+        // If the distance is longer than the maximum range band, return either an error message or a max penalty setting
+        return (allowovermax ? CommonSystemInfo.rangeOverMaxPenalty : "error");
+    }
+    if (band)
+        return getRangePenaltyFromBand(band, reduction);
+    return "";
 }
 
 /**

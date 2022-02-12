@@ -206,6 +206,8 @@
   "ironclaw2e.dialog.dicePool.guardingVeteran": "Veteran guarding",
   "ironclaw2e.dialog.dicePool.aiming": "Aiming",
   "ironclaw2e.dialog.dicePool.soakWeak": "Soak against Weak damage, double dice rolled",
+  "ironclaw2e.dialog.dicePool.rangePenaltyAttacker": "Range penalty for attacker: {penalty}",
+  "ironclaw2e.dialog.dicePool.rangeOverMax": "Attacker over horizon range, attack should be impossible!",
 
   "ironclaw2e.dialog.damageCalc.title": "Damage Calculation for {name}",
   "ironclaw2e.dialog.damageCalc.header": "Add damage to {name}",

@@ -1,7 +1,7 @@
 import { Ironclaw2EActor } from "./actor/actor.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { hasConditionsIronclaw } from "./conditions.js";
-import { CommonSystemInfo, getRangeDistanceFromBand, getRangeMinMaxFromBand } from "./systeminfo.js";
+import { CommonSystemInfo, getRangeDistanceFromBand, getRangeMinMaxFromBand, getRangePenaltyFromDistance } from "./systeminfo.js";
 
 /* -------------------------------------------- */
 /*  Dice Helpers                                */
@@ -503,6 +503,37 @@ export function getRangeBandMinMax(range, shorterOkay = false, longerOkay = fals
         return { "minRange": min, "maxRange": max };
     else
         return null;
+}
+
+/**
+ * Apply range penalty from the raw distance in paces to the roll
+ * @param {any} otherinputs
+ * @param {any} otherkeys
+ * @param {any} otherdice
+ * @param {number} distance The distance to get a penalty for, in paces
+ * @param {number} reduction The degree of penalty reduction
+ * @param {boolean} autocheck Whether to autocheck the penalty, only really false for when a wand is used
+ * @param {boolean} allowovermax Whether to allow a range penalty over the maximum distance to exist (true), or to show it as an error (false)
+ * @returns {object} Returns a holder object which returns the inputs with the added bonuses
+ * @private
+ */
+export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs, distance, { reduction = 0, autocheck = true, allowovermax = false } = {}) {
+    const penaltyDice = getRangePenaltyFromDistance(distance, reduction, allowovermax);
+    const distKey = "Distance Penalty";
+    if (penaltyDice === "error") {
+        otherinputs += `<div class="form-group flexrow">
+                <label class="normal-label"><strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.rangeOverMax")}</strong></label>
+                </div>`+ "\n";
+    } else if (penaltyDice) {
+        const diceArray = findTotalDice(penaltyDice);
+        otherkeys.push(distKey);
+        otherdice.push(diceArray);
+        otherinputs += `<div class="form-group flexrow">
+                <label class="normal-label">${game.i18n.format("ironclaw2e.dialog.dicePool.rangePenaltyAttacker", { "penalty": penaltyDice })}</label>
+	            <input type="checkbox" id="${makeCompareReady(distKey)}" name="${makeCompareReady(distKey)}" ${(autocheck ? "checked" : "")}></input>
+                </div>`+ "\n";
+    }
+    return { "otherinputs": otherinputs, "otherkeys": otherkeys, "otherdice": otherdice };
 }
 
 /* -------------------------------------------- */
