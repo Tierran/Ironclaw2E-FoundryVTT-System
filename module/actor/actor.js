@@ -1304,7 +1304,7 @@ export class Ironclaw2EActor extends Actor {
      * Change which illumination item the actor is using, or turn them all off
      * @param {Ironclaw2EItem} lightsource
      */
-    changeLightSource(lightsource) {
+    async changeLightSource(lightsource) {
         if (!lightsource) {
             console.error("Attempted to change a light source without providing light source for actor: " + this);
             return;
@@ -1331,15 +1331,15 @@ export class Ironclaw2EActor extends Actor {
             const index = lightsources.findIndex(element => element.id == lightsource.id);
             if (index > -1)
                 lightsources.splice(index, 1); // Exclude from dousing
-            lightsource.update({ "_id": lightsource.id, "data.lighted": true });
+            await lightsource.update({ "_id": lightsource.id, "data.lighted": true });
         }
 
         let doused = [];
         for (let l of lightsources) { // Douse all other light sources, including the caller if it was previously lighted
             doused.push({ "_id": l.id, "data.lighted": false });
         }
-        this.updateEmbeddedDocuments("Item", doused);
-        this._updateTokenLighting(updatedlightdata);
+        await this.updateEmbeddedDocuments("Item", doused);
+        await this._updateTokenLighting(updatedlightdata);
     }
 
     /**
@@ -1367,7 +1367,7 @@ export class Ironclaw2EActor extends Actor {
             };
         }
 
-        this._updateTokenLighting(updatedlightdata);
+        return this._updateTokenLighting(updatedlightdata);
     }
 
     /**
@@ -2220,9 +2220,9 @@ export class Ironclaw2EActor extends Actor {
      * @param {boolean} [tnyes] Whether to use a TN, true for yes
      * @param {number} [tnnum] TN to use
      * @param {string[]} [prechecked] Traits and skills to roll
-     * @param {[string]} [otherkeys] An array of keys, to be used for UI information
-     * @param {[number[]]} [otherdice] An array of dice arrays, the items should match exactly with their counterparts at otherkeys
-     * @param {[boolean]} [otherbools] An array of booleans that determine which modifiers should actually be used for quick rolls by default, the items should match exactly with their counterparts at otherkeys
+     * @param {[number[]]} [otherdice] An array of dice arrays
+     * @param {[string]} [otherkeys] An array of keys, to be used for UI information, the items should match exactly with their counterparts at otherdice
+     * @param {[boolean]} [otherbools] An array of booleans that determine which modifiers should actually be used for quick rolls by default, the items should match exactly with their counterparts at otherdice
      * @param {string} extradice Extra dice to roll
      * @param {string} [otherlabel] Text to postpend to the label
      * @param successfunc Callback to execute after going through with the macro, executed unless an error happens
