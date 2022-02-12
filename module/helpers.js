@@ -1,7 +1,7 @@
 import { Ironclaw2EActor } from "./actor/actor.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { hasConditionsIronclaw } from "./conditions.js";
-import { CommonSystemInfo, getRangeDistanceFromBand, getRangeMinMaxFromBand, getRangePenaltyFromDistance } from "./systeminfo.js";
+import { CommonSystemInfo, getRangeDistanceFromBand, getRangeMinMaxFromBand, getRangeDiceFromDistance } from "./systeminfo.js";
 
 /* -------------------------------------------- */
 /*  Dice Helpers                                */
@@ -518,18 +518,18 @@ export function getRangeBandMinMax(range, shorterOkay = false, longerOkay = fals
  * @private
  */
 export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs, distance, { reduction = 0, autocheck = true, allowovermax = false } = {}) {
-    const penaltyDice = getRangePenaltyFromDistance(distance, reduction, allowovermax);
-    const distKey = "Distance Penalty";
-    if (penaltyDice === "error") {
+    const distanceDice = getRangeDiceFromDistance(distance, reduction, allowovermax);
+    const distKey = "Range Penalty";
+    if (distanceDice === "error") {
         otherinputs += `<div class="form-group flexrow">
                 <label class="normal-label"><strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.rangeOverMax")}</strong></label>
                 </div>`+ "\n";
-    } else if (penaltyDice) {
-        const diceArray = findTotalDice(penaltyDice);
+    } else if (distanceDice) {
+        const diceArray = findTotalDice(distanceDice);
         otherkeys.push(distKey);
         otherdice.push(diceArray);
         otherinputs += `<div class="form-group flexrow">
-                <label class="normal-label">${game.i18n.format("ironclaw2e.dialog.dicePool.rangePenaltyAttacker", { "penalty": penaltyDice })}</label>
+                <label class="normal-label">${game.i18n.format("ironclaw2e.dialog.dicePool.rangePenaltyAttacker", { "penalty": distanceDice })}</label>
 	            <input type="checkbox" id="${makeCompareReady(distKey)}" name="${makeCompareReady(distKey)}" ${(autocheck ? "checked" : "")}></input>
                 </div>`+ "\n";
     }

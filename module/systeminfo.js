@@ -62,14 +62,14 @@ export class CommonSystemInfo {
     /**
      * The penalties for each range
      */
-    static rangePenalties = {
+    static rangeDice = {
         "close": "", "reach": "", "near": "", "short": "d8", "medium": "d12", "long": "2d12",
         "verylong": "3d12", "extreme": "4d12", "far": "5d12", "horizon": "6d12"
     };
     /**
      * The over maximum range penalty, if allowed
      */
-    static rangeOverMaxPenalty = "12d12";
+    static rangeOverMaxDice = "12d12";
     /**
      * The special option types that gift items can have
      */
@@ -237,9 +237,9 @@ export function getRangeDistanceFromBand(band) {
 }
 
 /**
- * Get the distance in paces from a range band
+ * Get the actual range band in paces from a range band
  * @param {string} band The range band
- * @returns {RangeBandMinMax | null} The minimum and maximum ranges of the band, minimum exclusive unless zero, maximum inclusive
+ * @returns {RangeBandMinMax | null} The minimum and maximum ranges of the band in paces, minimum exclusive unless zero, maximum inclusive
  */
 export function getRangeMinMaxFromBand(band) {
     const index = CommonSystemInfo.rangeBandsArray.indexOf(band);
@@ -274,35 +274,35 @@ export function getRangeBandFromDistance(distance) {
 }
 
 /**
- * Get the distance in paces from a range band
+ * Get the range dice for the matching band
  * @param {string} band The range band
- * @param {number} reduction The degree of penalty reduction
- * @returns {string} The penalty dice
+ * @param {number} reduction The degree of range reduction
+ * @returns {string} The range dice
  */
-export function getRangePenaltyFromBand(band, reduction = 0) {
+export function getRangeDiceFromBand(band, reduction = 0) {
     let usedBand = band;
-    if (reduction > 0) { // If there is usable penalty reduction, get the actual penalty 
+    if (reduction > 0) { // If there is usable range reduction, get the actual penalty 
         const index = CommonSystemInfo.rangeBandsArray.indexOf(band);
         usedBand = CommonSystemInfo.rangeBandsArray[(index - reduction >= 0 ? index - reduction : 0)];
     }
-    return (CommonSystemInfo.rangePenalties.hasOwnProperty(usedBand) ? CommonSystemInfo.rangePenalties[usedBand] : "");
+    return (CommonSystemInfo.rangeDice.hasOwnProperty(usedBand) ? CommonSystemInfo.rangeDice[usedBand] : "");
 }
 
 /**
- * Get the distance in paces from a range band
+ * Get the range dice matching the distance given
  * @param {number} distance The range band
- * @param {number} reduction The degree of penalty reduction
- * @returns {string} The penalty dice
+ * @param {number} reduction The degree of range reduction
+ * @returns {string} The range dice
  */
-export function getRangePenaltyFromDistance(distance, reduction = 0, allowovermax = false) {
+export function getRangeDiceFromDistance(distance, reduction = 0, allowovermax = false) {
     const band = getRangeBandFromDistance(distance);
     // A very complicated-looking get, which gets the distance for the last range band in the system info, to compare against the distance given
     if (distance > CommonSystemInfo.rangePaces[CommonSystemInfo.rangeBandsArray[CommonSystemInfo.rangeBandsArray.length - 1]]) {
-        // If the distance is longer than the maximum range band, return either an error message or a max penalty setting
-        return (allowovermax ? CommonSystemInfo.rangeOverMaxPenalty : "error");
+        // If the distance is longer than the maximum range band, return either an error message or a max range dice setting
+        return (allowovermax ? CommonSystemInfo.rangeOverMaxDice : "error");
     }
     if (band)
-        return getRangePenaltyFromBand(band, reduction);
+        return getRangeDiceFromBand(band, reduction);
     return "";
 }
 

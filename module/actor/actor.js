@@ -178,7 +178,7 @@ export class Ironclaw2EActor extends Actor {
             otheritem.range = messageFlags.weaponRange;
             otheritem.attackerPos = messageFlags.itemUserPos;
             otheritem.attackerRangeReduction = messageFlags.itemUserRangeReduction;
-            otheritem.attackerRangeAutocheck = messageFlags.itemUserRangeAutocheck;
+            otheritem.attackerRangeAutocheck = !(messageFlags.itemUserRangeAutocheck === false); // If and only if the the value is false, will the value be false; if it is true, undefined or something else, value will be true
         }
 
         const directroll = checkQuickModifierKey();
@@ -213,7 +213,7 @@ export class Ironclaw2EActor extends Actor {
 
         // Call the actual popup dialog to choose with what weapon to defend with
         if (defenseActor) {
-            Ironclaw2EActor.weaponDefenseDialog(defenseActor, defenseOptions, defenseset?.weaponname, validDefenses);
+            Ironclaw2EActor.weaponDefenseDialog(defenseActor, defenseOptions, defenseset?.weaponname, validDefenses, otheritem);
         } else {
             ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
         }
@@ -1442,7 +1442,7 @@ export class Ironclaw2EActor extends Actor {
     getRangePenaltyReduction(item = null) {
         const data = this.data.data;
         let reduction = 0;
-        let autocheck = false;
+        let autocheck = true;
         // Grab the penalty reduction degree from the special settings
         if (data.processingLists?.rangePenaltyReduction) { // Check if range penalty reduction bonuses even exist
             for (let setting of data.processingLists.rangePenaltyReduction) { // Loop through them
@@ -1465,7 +1465,7 @@ export class Ironclaw2EActor extends Actor {
 
         // Check whether the attack 'item' is representing is magical, and whether the character has a wand readied, in which case, toggle the auto-check off
         if (item?.descriptorsSplit?.includes("magic") && this.items.some(element => element.data.data.readied === true && element.data.data.descriptorsSplit?.includes("wand"))) {
-            autocheck = true;
+            autocheck = false;
         }
 
         return { reduction, autocheck };
@@ -1640,7 +1640,7 @@ export class Ironclaw2EActor extends Actor {
 
         // Attacker range penalty
         if (otheritem) {
-            const foundToken = findActorToken(actor);
+            const foundToken = findActorToken(this);
             if (foundToken) {
                 const dist = canvas.grid.measureDistance(otheritem.attackerPos, foundToken.data);
                 const range = getDistancePenaltyConstruction(constructionkeys, constructionarray, formconstruction, dist, { "reduction": otheritem.attackerRangeReduction, "autocheck": otheritem.attackerRangeAutocheck });
@@ -1729,7 +1729,7 @@ export class Ironclaw2EActor extends Actor {
 
         // Attacker range penalty
         if (otheritem) {
-            const foundToken = findActorToken(actor);
+            const foundToken = findActorToken(this);
             if (foundToken) {
                 const dist = canvas.grid.measureDistance(otheritem.attackerPos, foundToken.data);
                 const range = getDistancePenaltyConstruction(constructionkeys, constructionarray, formconstruction, dist, { "reduction": otheritem.attackerRangeReduction, "autocheck": otheritem.attackerRangeAutocheck });
