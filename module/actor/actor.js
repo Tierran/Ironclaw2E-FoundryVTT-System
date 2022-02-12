@@ -1441,6 +1441,7 @@ export class Ironclaw2EActor extends Actor {
      */
     getRangePenaltyReduction(item = null) {
         const data = this.data.data;
+        const itemData = item.data.data;
         let reduction = 0;
         let autocheck = true;
         // Grab the penalty reduction degree from the special settings
@@ -1464,7 +1465,7 @@ export class Ironclaw2EActor extends Actor {
         }
 
         // Check whether the attack 'item' is representing is magical, and whether the character has a wand readied, in which case, toggle the auto-check off
-        if (item?.descriptorsSplit?.includes("magic") && this.items.some(element => element.data.data.readied === true && element.data.data.descriptorsSplit?.includes("wand"))) {
+        if (itemData?.descriptorsSplit?.includes("magic") && this.items.some(element => element.data.data.readied === true && element.data.data.descriptorsSplit?.includes("wand"))) {
             autocheck = false;
         }
 

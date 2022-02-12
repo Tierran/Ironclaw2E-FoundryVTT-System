@@ -337,7 +337,7 @@ export class Ironclaw2EItem extends Item {
         if (data.descriptors.length > 0) {
             data.descriptorsSplit = splitStatString(data.descriptors);
             // Special check to make sure wands have "wand" as a descriptor as far as the system is concerned
-            if (!data.descriptorsSplit("wand") && itemData.name.toLowerCase().includes("wand")) {
+            if (!data.descriptorsSplit.includes("wand") && itemData.name.toLowerCase().includes("wand")) {
                 data.descriptorsSplit.push("wand");
             }
         } else {
