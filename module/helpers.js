@@ -508,6 +508,7 @@ export function getRangeBandMinMax(range, shorterOkay = false, longerOkay = fals
 /**
  * Apply range penalty from the raw distance in paces to the roll
  * @param {any} otherinputs
+ * @param {any} otherbools
  * @param {any} otherkeys
  * @param {any} otherdice
  * @param {number} distance The distance to get a penalty for, in paces
@@ -517,7 +518,7 @@ export function getRangeBandMinMax(range, shorterOkay = false, longerOkay = fals
  * @returns {object} Returns a holder object which returns the inputs with the added bonuses
  * @private
  */
-export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs, distance, { reduction = 0, autocheck = true, allowovermax = false } = {}) {
+export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs, otherbools, distance, { reduction = 0, autocheck = true, allowovermax = false } = {}) {
     const distanceDice = getRangeDiceFromDistance(distance, reduction, allowovermax);
     const distKey = "Range Penalty";
     if (distanceDice === "error") {
@@ -532,8 +533,9 @@ export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs
                 <label class="normal-label">${game.i18n.format("ironclaw2e.dialog.dicePool.rangePenaltyAttacker", { "penalty": distanceDice })}</label>
 	            <input type="checkbox" id="${makeCompareReady(distKey)}" name="${makeCompareReady(distKey)}" ${(autocheck ? "checked" : "")}></input>
                 </div>`+ "\n";
+        otherbools.push(autocheck);
     }
-    return { "otherinputs": otherinputs, "otherkeys": otherkeys, "otherdice": otherdice };
+    return { "otherinputs": otherinputs, "otherbools": otherbools, "otherkeys": otherkeys, "otherdice": otherdice };
 }
 
 /* -------------------------------------------- */

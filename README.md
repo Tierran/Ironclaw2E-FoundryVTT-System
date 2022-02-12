@@ -74,6 +74,7 @@ For gifts that should interact with the system by giving situational bonuses, th
  - **Initiative Bonus**: A bonus applied to the initiative roll.  
  - **Movement Bonus**: A bonus that changes the movement speed of an actor.  
  - **Flying Move Bonus**: A bonus that changes the flying speed of an actor. (These stack with normal movement bonuses)  
+ - **Range Penalty Reduction**: A bonus that reduces the range penalty applied to attacks by the actor.  
  - **Encumbrance Limit Bonus**: A bonus to the carrying capacity of an actor.  
  - **Currency Value Change**: A way to allow a gift to change the value of a currency for an actor.  
  - **Stat Change**: An automated way to change the stats for an item when it is dragged to the actor from the Items Directory.  
@@ -132,6 +133,7 @@ If the special bonus applies, it's applied where relevant, with the bonus depend
  - **Replaces the Base Bonus**: Whether the bonus to Guarding/Aiming replaces or adds to the Guarding/Aiming dice.
  - **Bonus Stride/Dash/Run**: The amount of respective movement capability to add to the actor.
  - **Change From/To**: List of stats to change from and what to change them to. Both fields must have the same number of stats or the system will ignore it.
+ - **Penalty Reduction**: The number of range bands the range penalty is reduced by.
  - **Encumbrance Bonus**: The bonus added to the carrying capacity of the actor. Note that this bonus should be for the "None" encumbrance limit, the system will multiply it accordingly for the higher limits.
  - **Currency Name**: The name of the currency to change the value of.
  - **Currency Value**: The new value for the given currency.

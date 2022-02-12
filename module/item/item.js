@@ -1205,7 +1205,7 @@ export class Ironclaw2EItem extends Item {
             let label = "";
             const diceinput = {
                 "prechecked": stats, "tnyes": tnyes, "tnnum": usedtn, "otherkeys": (usesmoredice ? [diceid] : []), "otherdice": (usesmoredice ? [dicearray] : []),
-                "otherinputs": formconstruction, "otherlabel": "", "extradice": extradice
+                "otherinputs": formconstruction, "otherbools": (usesmoredice ? [true] : []), "otherlabel": "", "extradice": extradice
             };
 
             switch (rolltype) {

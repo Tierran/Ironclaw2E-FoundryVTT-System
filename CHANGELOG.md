@@ -1,3 +1,9 @@
+### 0.5.7 Ranged release
+ - Added penalties from range as a bonus when defending or resisting against attacks from long-enough range
+ - Added a new "Range Penalty Reduction" special bonus type that reduces the range penalty applied
+ - A readied wand should correctly eliminate the range penalty for magic attacks
+ - Corrected some null reference bugs
+
 ### 0.5.6 Weapon resisting release
  - Added a new "Resist Bonus" special bonus type
  - Added special bonus setting fields that are applied from the attacking weapon
