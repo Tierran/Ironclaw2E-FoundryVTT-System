@@ -385,7 +385,7 @@ export class Ironclaw2ECombatTrackerConfig extends CombatTrackerConfig {
     async getData(options) {
         return {
             settings: game.settings.get("core", Combat.CONFIG_SETTING),
-            initOptions: this.getInitiativeOptions()
+            initOptions: Ironclaw2ECombatTrackerConfig.getInitiativeOptions()
         };
     }
 
@@ -400,12 +400,12 @@ export class Ironclaw2ECombatTrackerConfig extends CombatTrackerConfig {
         });
     }
 
-    getInitiativeOptions() {
-        return [{ key: "ironclaw2e.combat.PCvsNPC", value: 0 },
-        { key: "ironclaw2e.combat.NPCvsPC", value: 1 },
-        { key: "ironclaw2e.combat.alliesVsEnemies", value: 2 },
+    static getInitiativeOptions() {
+        return [{ key: "ironclaw2e.combat.alliesVsEnemies", value: 2 },
         { key: "ironclaw2e.combat.enemiesVsAllies", value: 3 },
         { key: "ironclaw2e.combat.pcsAlliesEnemies", value: 4 },
-        { key: "ironclaw2e.combat.enemiesPcsAllies", value: 5 }];
+        { key: "ironclaw2e.combat.enemiesPcsAllies", value: 5 },
+        { key: "ironclaw2e.combat.PCvsNPC", value: 0 },
+        { key: "ironclaw2e.combat.NPCvsPC", value: 1 }];
     }
 }

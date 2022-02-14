@@ -240,6 +240,7 @@ export class Ironclaw2EItem extends Item {
     _prepareCareerData(itemData, actorData) {
         const data = itemData.data;
 
+        data.careerName = (data.forcedCareerName?.length > 0 ? data.forcedCareerName : itemData.name);
         if (data.dice.length > 0) {
             data.diceArray = findTotalDice(data.dice);
             data.valid = checkDiceArrayEmpty(data.diceArray);
