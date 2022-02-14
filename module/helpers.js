@@ -431,7 +431,7 @@ export function getSpeakerActor() {
 }
 
 /* -------------------------------------------- */
-/*  Range Helpers                               */
+/*  Range & Distance Helpers                    */
 /* -------------------------------------------- */
 
 /**
@@ -442,13 +442,69 @@ export function getSpeakerActor() {
  */
 
 /**
+ * @typedef {{
+ *   x: number,
+ *   y: number,
+ *   elevation: number | undefined
+ * }} TokenPosition
+ */
+
+/**
+ * Helper function that determines the distance between two points on the current canvas, with the elevation of things included in the measurement
+ * @param {TokenPosition} origin The origin of measurement, usually the attacker or otherwise active actor
+ * @param {TokenPosition} target The target to which to measure the distance, usually the defender or otherwise passive actor
+ * @param {boolean} [measurevertical] Whether to measure the vertical distance as well, defaults to true
+ * @param {boolean} [usecombatrules] Whether to use the ranged combat rules for vertical distance, defaults to false
+ * @returns {number} The total distance between origin and target
+ */
+export function getDistanceBetweenPositions(origin, target, { measurevertical = true, usecombatrules = false } = {}) {
+    const useRulerMeasurement = game.settings.get("ironclaw2e", "matchStandardRuler"); // Whether to use the same imprecise ruler measurement, rather than the full-precision measurements
+    const diagonalRule = game.settings.get("ironclaw2e", "diagonalRule");
+
+    // Get the distance from the map grid, which gets the pure horizontal distance
+    let distance = canvas.grid.measureDistance(origin, target, { gridSpaces: useRulerMeasurement });
+    // See if the vertical distance can even be measured, or that there is a point to it
+    if (measurevertical && typeof origin.elevation === "number" && typeof target.elevation === "number" && Math.abs(target.elevation - origin.elevation) >= 1) {
+        // Check whether the measurement is asking for raw distance or for the distance according to combat rules
+        if (usecombatrules) {
+            // For combat rules, ignore the height difference from above the target unless the vertical distance is higher than horizontal distance
+            if (origin.elevation > target.elevation) {
+                if (origin.elevation - target.elevation > distance)
+                    distance = (useRulerMeasurement ? Math.round(origin.elevation - target.elevation) : origin.elevation - target.elevation);
+            } else { // But if the origin is below the target, add the vertical distance to the horizontal distance
+                distance += (useRulerMeasurement ? Math.round(target.elevation - origin.elevation) : target.elevation - origin.elevation);
+            }
+        }
+        else {
+            if (useRulerMeasurement) {
+                // Mimic the imprecise ruler measurements for vertical distance as well
+                if (diagonalRule === "SAME") {
+                    // In "SAME" mode, apply the equidistant rule to vertical distance as well, which in practice means only take it into effect if the vertical distance is larger than horizontal
+                    if (Math.abs(origin.elevation - target.elevation) > distance)
+                        distance = Math.abs(origin.elevation - target.elevation);
+                } else {
+                    // Round the output just like the ruler measurement would
+                    distance = Math.round(Math.hypot(distance, target.elevation - origin.elevation));
+                }
+            } else {
+                // Fully precise measurement
+                distance = Math.hypot(distance, target.elevation - origin.elevation);
+            }
+        }
+    }
+
+    return distance;
+}
+
+/**
  * Helper function to check whether a range is within the given range band
  * @param {number | RangeBandMinMax | string} range The range to check, either as a number meaning single distance, another range band, or a name of the range to check
  * @param {RangeBandMinMax} rangeband The range band to check against
  */
 export function checkIfWithinRange(range, rangeband) {
     let usedRange = 0;
-    if (!range || !rangeband) {
+    // Check to make sure both range and rangeband are usable
+    if ((!range && range !== 0) || !rangeband) {
         console.error("checkIfWithinRange was given null range or rangeband: " + range + " " + rangeband);
         return false;
     }
@@ -519,6 +575,12 @@ export function getRangeBandMinMax(range, shorterOkay = false, longerOkay = fals
  * @private
  */
 export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs, otherbools, distance, { reduction = 0, autocheck = true, allowovermax = false } = {}) {
+    const usePenalties = game.settings.get("ironclaw2e", "rangePenalties");
+    if (!usePenalties) {
+        // If the penalties are turned off, just return out with the inputs as they were
+        return { "otherinputs": otherinputs, "otherbools": otherbools, "otherkeys": otherkeys, "otherdice": otherdice };
+    }
+
     const distanceDice = getRangeDiceFromDistance(distance, reduction, allowovermax);
     const distKey = "Range Penalty";
     if (distanceDice === "error") {
@@ -673,7 +735,7 @@ export function checkApplicability(special, item, actor, otheritem = null, defen
                 return false; // If the special uses actual range, the system settings require that this check goes through and either the attacker or defender position can't be determined, fail the check
             } else if (special.useActualRange) {
                 if (otheritem?.attackerPos && foundToken?.data && functionalRange) {
-                    const dist = canvas.grid.measureDistance(otheritem.attackerPos, foundToken.data);
+                    const dist = getDistanceBetweenPositions(otheritem.attackerPos, foundToken.data);
                     if (!checkIfWithinRange(dist, functionalRange)) {
                         return false; // If the range check goes through and either the distance between defender and attacker is less than min or more than max, fail the check
                     }

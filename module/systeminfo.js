@@ -93,6 +93,14 @@ export class CommonSystemInfo {
      * The names of the different currencies used in the code
      */
     static currencyNames = ["baseCurrency", "addedCurrency1", "addedCurrency2", "addedCurrency3"];
+    /**
+     * The values and names of the diagonal measurement rules
+     */
+    static diagonalRules = {
+        "EUCL": "Euclidean",
+        "ONTW": "One-Two Diagonals",
+        "SAME": "Equidistant"
+    };
 }
 
 /**

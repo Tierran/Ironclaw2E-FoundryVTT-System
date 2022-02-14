@@ -32,6 +32,7 @@ import { CommonSystemInfo } from "./systeminfo.js";
 import { registerHandlebarsHelpers } from "./handlebars.js";
 import { WorldSettingsConfig } from "./config.js";
 import { CoinageSettingsConfig } from "./config.js";
+import { measureDistances } from "./canvas.js";
 
 /* -------------------------------------------- */
 /*  Base Hooks                                  */
@@ -115,14 +116,6 @@ Hooks.once('init', async function () {
         scope: "world",
         type: Boolean,
         default: true,
-        config: false
-    });
-    game.settings.register("ironclaw2e", "requireSpecialRangeFound", {
-        name: "ironclaw2e.config.requireSpecialRangeFound",
-        hint: "ironclaw2e.config.requireSpecialRangeFoundHint",
-        scope: "world",
-        type: Boolean,
-        default: false,
         config: false
     });
     game.settings.register("ironclaw2e", "autoPrototypeSetup", {
@@ -218,6 +211,42 @@ Hooks.once('init', async function () {
         default: false,
         config: false
     });
+    // Range settings
+    game.settings.register("ironclaw2e", "diagonalRule", {
+        name: "ironclaw2e.config.diagonalRule",
+        hint: "ironclaw2e.config.diagonalRuleHint",
+        scope: "world",
+        config: false,
+        default: "EUCL",
+        type: String,
+        choices: CommonSystemInfo.diagonalRules,
+        onChange: rule => canvas.grid.diagonalRule = rule
+    });
+    game.settings.register("ironclaw2e", "rangePenalties", {
+        name: "ironclaw2e.config.rangePenalties",
+        hint: "ironclaw2e.config.rangePenaltiesHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "matchStandardRuler", {
+        name: "ironclaw2e.config.matchStandardRuler",
+        hint: "ironclaw2e.config.matchStandardRulerHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "requireSpecialRangeFound", {
+        name: "ironclaw2e.config.requireSpecialRangeFound",
+        hint: "ironclaw2e.config.requireSpecialRangeFoundHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: false
+    });
+
     // Coinage settings
     game.settings.register("ironclaw2e", "currencySettings", {
         scope: "world",
@@ -385,6 +414,17 @@ Hooks.once("ready", async function () {
 
 
     console.log("Ironclaw2E System ready");
+});
+
+
+/* -------------------------------------------- */
+/*  Canvas Initialization                       */
+/* -------------------------------------------- */
+
+Hooks.on("canvasInit", function () {
+    // Implement Euclidean measurement by default
+    canvas.grid.diagonalRule = game.settings.get("ironclaw2e", "diagonalRule");
+    SquareGrid.prototype.measureDistances = measureDistances;
 });
 
 

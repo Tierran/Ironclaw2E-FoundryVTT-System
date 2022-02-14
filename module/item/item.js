@@ -727,8 +727,10 @@ export class Ironclaw2EItem extends Item {
         const foundToken = findActorToken(actor);
         if (foundToken) {
             const rangePenalty = actor.getRangePenaltyReduction(this);
+            let userPos = { "x": foundToken.data.x, "y": foundToken.data.y };
+            if (foundToken.data.elevation) userPos.elevation = foundToken.data.elevation;
             flags = mergeObject(flags, {
-                "ironclaw2e.itemUserPos": { "x": foundToken.data.x, "y": foundToken.data.y },
+                "ironclaw2e.itemUserPos": userPos,
                 "ironclaw2e.itemUserRangeReduction": rangePenalty.reduction, "ironclaw2e.itemUserRangeAutocheck": rangePenalty.autocheck
             });
         }

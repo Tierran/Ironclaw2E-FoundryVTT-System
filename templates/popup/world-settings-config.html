@@ -52,16 +52,37 @@
     </div>
 
     <div>
-        <h2 class="header-label">{{localize 'ironclaw2e.config.worldConfig.misc'}}</h2>
+        <h2 class="header-label">{{localize 'ironclaw2e.config.worldConfig.range'}}</h2>
         <div class="form-group">
-            <label>{{localize 'ironclaw2e.config.preferTokenName'}}</label>
-            <input type="checkbox" name="preferTokenName" {{checked settings.preferTokenName}} data-dtype="Boolean" />
-            <p class="notes">{{localize 'ironclaw2e.config.preferTokenNameHint'}}</p>
+            <label>{{localize 'ironclaw2e.config.diagonalRule'}}</label>
+            <select name="diagonalRule" data-dtype="String">
+                {{selectOptions diagonals selected=settings.diagonalRule localize=false}}
+            </select>
+            <p class="notes">{{localize 'ironclaw2e.config.diagonalRuleHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.rangePenalties'}}</label>
+            <input type="checkbox" name="rangePenalties" {{checked settings.rangePenalties}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.rangePenaltiesHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.matchStandardRuler'}}</label>
+            <input type="checkbox" name="matchStandardRuler" {{checked settings.matchStandardRuler}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.matchStandardRulerHint'}}</p>
         </div>
         <div class="form-group">
             <label>{{localize 'ironclaw2e.config.requireSpecialRangeFound'}}</label>
             <input type="checkbox" name="requireSpecialRangeFound" {{checked settings.requireSpecialRangeFound}} data-dtype="Boolean" />
             <p class="notes">{{localize 'ironclaw2e.config.requireSpecialRangeFoundHint'}}</p>
+        </div>
+    </div>
+
+    <div>
+        <h2 class="header-label">{{localize 'ironclaw2e.config.worldConfig.misc'}}</h2>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.preferTokenName'}}</label>
+            <input type="checkbox" name="preferTokenName" {{checked settings.preferTokenName}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.preferTokenNameHint'}}</p>
         </div>
         <div class="form-group">
             <label>{{localize 'ironclaw2e.config.autoPrototypeSetup'}}</label>

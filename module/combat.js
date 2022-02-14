@@ -1,3 +1,5 @@
+import { getDistanceBetweenPositions } from "./helpers.js";
+
 /**
  * Extend the base Combat class to allow for the use of Ironclaw's initiative systems
  * @extends {Combat}
@@ -93,7 +95,7 @@ export class Ironclaw2ECombat extends Combat {
         if (combatant?.token) {
             othercombatants.forEach(x => {
                 if (x?.token) {
-                    const dist = canvas.grid.measureDistance(combatant.token.data, x.token.data);
+                    const dist = getDistanceBetweenPositions(combatant.token.data, x.token.data);
                     if (distance > dist) distance = dist;
                 }
             });

@@ -30,8 +30,10 @@ export class WorldSettingsConfig extends FormApplication {
     /** @override */
     async getData(options) {
         const settings = WorldSettingsConfig.getWorldSettingsObject;
+        const diagonals = CommonSystemInfo.diagonalRules;
         return {
-            settings
+            settings,
+            diagonals
         };
     }
 
@@ -59,7 +61,6 @@ export class WorldSettingsConfig extends FormApplication {
     static get getWorldSettingsObject() {
         let settings = {};
         settings.preferTokenName = game.settings.get("ironclaw2e", "preferTokenName");
-        settings.requireSpecialRangeFound = game.settings.get("ironclaw2e", "requireSpecialRangeFound");
         settings.autoPrototypeSetup = game.settings.get("ironclaw2e", "autoPrototypeSetup");
         settings.chatButtons = game.settings.get("ironclaw2e", "chatButtons");
         settings.showDefenseButtons = game.settings.get("ironclaw2e", "showDefenseButtons");
@@ -71,6 +72,10 @@ export class WorldSettingsConfig extends FormApplication {
         settings.calculateAttackEffects = game.settings.get("ironclaw2e", "calculateAttackEffects");
         settings.calculateDisplaysFailed = game.settings.get("ironclaw2e", "calculateDisplaysFailed");
         settings.calculateDoesNotDisplay = game.settings.get("ironclaw2e", "calculateDoesNotDisplay");
+        settings.diagonalRule = game.settings.get("ironclaw2e", "diagonalRule");
+        settings.rangePenalties = game.settings.get("ironclaw2e", "rangePenalties");
+        settings.matchStandardRuler = game.settings.get("ironclaw2e", "matchStandardRuler");
+        settings.requireSpecialRangeFound = game.settings.get("ironclaw2e", "requireSpecialRangeFound");
         return settings;
     }
 }

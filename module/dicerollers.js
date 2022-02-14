@@ -20,6 +20,11 @@ import { CommonSystemInfo } from "./systeminfo.js";
  * }} TNData
  */
 
+
+/* -------------------------------------------- */
+/*  Dice Rolling Functions Proper               */
+/* -------------------------------------------- */
+
 /**
  * A common dice roller function to roll a set of dice against a target number
  * @param {number} tni Target number

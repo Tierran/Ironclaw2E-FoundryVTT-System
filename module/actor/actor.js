@@ -16,6 +16,7 @@ import { compareDiceArrays } from "../helpers.js";
 import { getSpeakerActor } from "../helpers.js";
 import { getDistancePenaltyConstruction } from "../helpers.js";
 import { checkQuickModifierKey } from "../helpers.js";
+import { getDistanceBetweenPositions } from "../helpers.js";
 import { CommonConditionInfo } from "../conditions.js";
 import { checkStandardDefense, CommonSystemInfo } from "../systeminfo.js";
 // For condition management
@@ -1667,7 +1668,7 @@ export class Ironclaw2EActor extends Actor {
         if (otheritem) {
             const foundToken = findActorToken(this);
             if (foundToken) {
-                const dist = canvas.grid.measureDistance(otheritem.attackerPos, foundToken.data);
+                const dist = getDistanceBetweenPositions(otheritem.attackerPos, foundToken.data, { usecombatrules: true });
                 const range = getDistancePenaltyConstruction(constructionkeys, constructionarray, formconstruction, constructionbools, dist, { "reduction": otheritem.attackerRangeReduction, "autocheck": otheritem.attackerRangeAutocheck });
                 formconstruction = range.otherinputs;
                 constructionkeys = range.otherkeys;
@@ -1765,7 +1766,7 @@ export class Ironclaw2EActor extends Actor {
         if (otheritem) {
             const foundToken = findActorToken(this);
             if (foundToken) {
-                const dist = canvas.grid.measureDistance(otheritem.attackerPos, foundToken.data);
+                const dist = getDistanceBetweenPositions(otheritem.attackerPos, foundToken.data, { usecombatrules: true });
                 const range = getDistancePenaltyConstruction(constructionkeys, constructionarray, formconstruction, constructionbools, dist, { "reduction": otheritem.attackerRangeReduction, "autocheck": otheritem.attackerRangeAutocheck });
                 formconstruction = range.otherinputs;
                 constructionkeys = range.otherkeys;
