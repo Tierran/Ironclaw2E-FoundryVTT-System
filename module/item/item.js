@@ -15,7 +15,8 @@ import { CommonConditionInfo } from "../conditions.js"
 
 import { CardinalDiceRoller, rollTargetNumberOneLine } from "../dicerollers.js";
 import { rollHighestOneLine } from "../dicerollers.js";
-import { copyToRollTNDialog } from "../dicerollers.js"
+import { copyToRollTNDialog } from "../dicerollers.js";
+import { Ironclaw2EActor } from "../actor/actor.js";
 
 /**
  * Extend the basic Item for Ironclaw's systems.
@@ -810,7 +811,7 @@ export class Ironclaw2EItem extends Item {
                     "ironclaw2e.hangingScene": this.actor?.token?.parent?.id
                 }
             };
-            info.message.update(updatedata);
+            info.message?.update(updatedata);
             return; // Return out of a counter-attack
         }
 
@@ -826,7 +827,7 @@ export class Ironclaw2EItem extends Item {
                     "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses
                 }
             };
-            info.message.update(updatedata);
+            info.message?.update(updatedata);
             return; // Return out of a resisted weapon
         }
         else { // Else, treat it as a normal attack and set the flags to store the information for future reference
@@ -836,7 +837,7 @@ export class Ironclaw2EItem extends Item {
                     "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.attackSuccess": success, "ironclaw2e.attackSuccessCount": usedsuccesses
                 }
             };
-            info.message.update(updatedata);
+            info.message?.update(updatedata);
         }
 
         if (onlyupdate) {
@@ -1129,7 +1130,8 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        this.genericItemRoll(data.defenseStats, -1, itemData.name, data.defenseArray, 1, { directroll, otheritem, extradice });
+        this.genericItemRoll(data.defenseStats, -1, itemData.name, data.defenseArray, 1, { directroll, otheritem, extradice },
+            (x => { Ironclaw2EActor.addCallbackToAttackMessage(x?.message, otheritem.messageId); }));
     }
 
     counterRoll(directroll = false, otheritem = null, extradice = "") {
@@ -1154,7 +1156,7 @@ export class Ironclaw2EItem extends Item {
             exhaust?.popupRefreshGift();
         } else {
             this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, 3, { directroll, otheritem, extradice },
-                (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x); }));
+                (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x); Ironclaw2EActor.addCallbackToAttackMessage(x?.message, otheritem.messageId); }));
         }
     }
 

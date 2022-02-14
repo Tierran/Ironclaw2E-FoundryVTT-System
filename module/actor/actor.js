@@ -168,6 +168,7 @@ export class Ironclaw2EActor extends Actor {
         let defenseOptions = [];
 
         let otheritem = {};
+        const messageId = message.id;
         const messageFlags = message?.data?.flags?.ironclaw2e;
         if (messageFlags) {
             otheritem.name = messageFlags.weaponName;
@@ -179,22 +180,23 @@ export class Ironclaw2EActor extends Actor {
             otheritem.attackerPos = messageFlags.itemUserPos;
             otheritem.attackerRangeReduction = messageFlags.itemUserRangeReduction;
             otheritem.attackerRangeAutocheck = !(messageFlags.itemUserRangeAutocheck === false); // If and only if the the value is false, will the value be false; if it is true, undefined or something else, value will be true
-            otheritem.messageId = message.id;
+            otheritem.messageId = messageId;
         }
 
         const directroll = checkQuickModifierKey();
+        const addMessageId = (x => { Ironclaw2EActor.addCallbackToAttackMessage(x?.message, messageId); });
 
         // Check what defense type was called and either directly roll that defense or compile the list of weapons that fit the type for the next step
         if (defenseActor && dataset?.defensetype) {
             switch (dataset.defensetype) {
                 case "dodge":
-                    return defenseActor.popupDefenseRoll({ "prechecked": CommonSystemInfo.dodgingBaseStats }, { directroll, otheritem });
+                    return defenseActor.popupDefenseRoll({ "prechecked": CommonSystemInfo.dodgingBaseStats }, { directroll, otheritem }, null, addMessageId);
                     break;
                 case "special":
-                    return defenseActor.popupDefenseRoll({ "prechecked": splitStatString(defenseset.defense) }, { directroll, "isspecial": true, otheritem });
+                    return defenseActor.popupDefenseRoll({ "prechecked": splitStatString(defenseset.defense) }, { directroll, "isspecial": true, otheritem }, null, addMessageId);
                     break;
                 case "resist":
-                    return defenseActor.popupResistRoll({ "prechecked": splitStatString(defenseset.defense) }, { directroll, otheritem });
+                    return defenseActor.popupResistRoll({ "prechecked": splitStatString(defenseset.defense) }, { directroll, otheritem }, null, addMessageId);
                     break;
                 case "parry":
                     const parries = defenseActor.items.filter(element => element.data.type === 'weapon' && element.data.data.canDefend);
@@ -323,7 +325,7 @@ export class Ironclaw2EActor extends Actor {
             },
             default: "one",
             render: html => { document.getElementById("defensepick").focus(); },
-            close: html => {
+            close: async html => {
                 if (confirmed) {
                     const directroll = checkQuickModifierKey();
 
@@ -338,12 +340,29 @@ export class Ironclaw2EActor extends Actor {
                         if (defensetype === "parry") weapon?.defenseRoll(directroll, otheritem, EXTRA);
                     } else if (defensetype === "extra") {
                         const extra = findTotalDice(EXTRA);
-                        CardinalDiceRoller.rollHighestArray(extra, rollLabel, actor);
+                        const rollresult = await CardinalDiceRoller.rollHighestArray(extra, rollLabel, actor);
+                        Ironclaw2EActor.addCallbackToAttackMessage(rollresult.message, otheritem.messageId);
                     }
                 }
             }
         });
         dlog.render(true);
+    }
+
+    /**
+     * Function to add the attacker's message id to a defending roll to allow the attacker to auto-use the correct TN through the context menu
+     * @param {string} messageid
+     */
+    static async addCallbackToAttackMessage(message, messageid) {
+        if (!message || !messageid) {
+            // If either input is falsey, return out 
+            return null;
+        }
+
+        let updateData = {
+            flags: { "ironclaw2e.defenseForAttack": messageid }
+        };
+        return await message.update(updateData);
     }
 
     /* -------------------------------------------- */
