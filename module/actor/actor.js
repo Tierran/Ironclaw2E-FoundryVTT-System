@@ -179,6 +179,7 @@ export class Ironclaw2EActor extends Actor {
             otheritem.attackerPos = messageFlags.itemUserPos;
             otheritem.attackerRangeReduction = messageFlags.itemUserRangeReduction;
             otheritem.attackerRangeAutocheck = !(messageFlags.itemUserRangeAutocheck === false); // If and only if the the value is false, will the value be false; if it is true, undefined or something else, value will be true
+            otheritem.messageId = message.id;
         }
 
         const directroll = checkQuickModifierKey();
@@ -2114,7 +2115,12 @@ export class Ironclaw2EActor extends Actor {
                 }
             },
             default: "one",
-            render: html => { document.getElementById("iftn").focus(); },
+            render: html => {
+                if (tnyes)
+                    document.getElementById("tn").focus();
+                else
+                    document.getElementById("iftn").focus();
+            },
             close: async html => {
                 if (confirmed) {
                     let traitchecks = html.find('input:checkbox[name=trait]:checked');
