@@ -22,6 +22,14 @@ export class CommonSystemInfo {
      */
     static dodgingBaseStats = ["speed", "dodge"];
     /**
+     * The standard stats used for initiative rolls
+     */
+    static initiativeBaseStats = ["speed", "mind"];
+    /**
+     * The standard stats used for sprint rolls
+     */
+    static sprintBaseStats = ["speed"];
+    /**
      * List of CSS colors to use for different message types
      */
     static resultColors = { success: "green", tie: "darkgoldenrod", normal: "black", failure: "black", botch: "red" };

@@ -25,8 +25,7 @@ import { getConditionNamesIronclaw } from "../conditions.js";
 import { addConditionsIronclaw } from "../conditions.js";
 import { removeConditionsIronclaw } from "../conditions.js";
 // The rest are for the supermassive function
-import { rollTargetNumberArray } from "../dicerollers.js";
-import { rollHighestArray } from "../dicerollers.js";
+import { CardinalDiceRoller } from "../dicerollers.js";
 import { enforceLimit } from "../helpers.js";
 import { burdenedLimitedStat } from "../helpers.js";
 import { Ironclaw2EItem } from "../item/item.js";
@@ -338,7 +337,7 @@ export class Ironclaw2EActor extends Actor {
                         if (defensetype === "parry") weapon?.defenseRoll(directroll, otheritem, EXTRA);
                     } else if (defensetype === "extra") {
                         const extra = findTotalDice(EXTRA);
-                        rollHighestArray(extra, rollLabel, actor);
+                        CardinalDiceRoller.rollHighestArray(extra, rollLabel, actor);
                     }
                 }
             }
@@ -1504,7 +1503,7 @@ export class Ironclaw2EActor extends Actor {
         let constructionkeys = [];
         let constructionarray = [];
         let constructionbools = [];
-        let prechecked = ["speed", "mind"];
+        let prechecked = CommonSystemInfo.initiativeBaseStats;
         const burdened = hasConditionsIronclaw("burdened", this);
 
         if (returntype === 0) {// Special case to roll initiative in an encounter through the sheet
@@ -1538,12 +1537,12 @@ export class Ironclaw2EActor extends Actor {
             case 1:
                 foo = this._getAllDicePools(prechecked, burdened, constructionkeys, constructionarray, constructionbools);
                 bar = foo.totalDice;
-                return rollHighestArray(bar, game.i18n.localize("ironclaw2e.chat.rollingInitiative") + ": " + foo.label, this, false);
+                return CardinalDiceRoller.rollHighestArray(bar, game.i18n.localize("ironclaw2e.chat.rollingInitiative") + ": " + foo.label, this, false);
                 break;
             case 2:
                 foo = this._getAllDicePools(prechecked, burdened, constructionkeys, constructionarray, constructionbools);
                 bar = foo.totalDice;
-                return rollTargetNumberArray(tntouse, bar, game.i18n.localize("ironclaw2e.chat.rollingInitiativeCheck") + ": " + foo.label, this, false);
+                return CardinalDiceRoller.rollTargetNumberArray(tntouse, bar, game.i18n.localize("ironclaw2e.chat.rollingInitiativeCheck") + ": " + foo.label, this, false);
                 break;
         }
 
@@ -1563,7 +1562,7 @@ export class Ironclaw2EActor extends Actor {
         let constructionkeys = [];
         let constructionarray = [];
         let constructionbools = [];
-        let prechecked = ["speed"];
+        let prechecked = CommonSystemInfo.sprintBaseStats;
         const burdened = hasConditionsIronclaw("burdened", this);
 
         const bonuses = this._getGiftSpecialConstruction("sprintBonus", prechecked, constructionkeys, constructionarray, formconstruction, constructionbools, null);
@@ -2199,9 +2198,9 @@ export class Ironclaw2EActor extends Actor {
 
                     let rollreturn;
                     if (IFTN) // Do and get the actual roll
-                        rollreturn = await rollTargetNumberArray(TN, totaldice, label, this);
+                        rollreturn = await CardinalDiceRoller.rollTargetNumberArray(TN, totaldice, label, this);
                     else
-                        rollreturn = await rollHighestArray(totaldice, label, this);
+                        rollreturn = await CardinalDiceRoller.rollHighestArray(totaldice, label, this);
 
                     if (successfunc && typeof (successfunc) == "function") {
                         successfunc(rollreturn); // Then do the special callback function of the roll if it is set
@@ -2244,9 +2243,9 @@ export class Ironclaw2EActor extends Actor {
 
         let rollreturn;
         if (tnyes) // Do the actual roll, either TN or Highest based on tnyes
-            rollreturn = await rollTargetNumberArray(tnnum, all.totalDice, label, this);
+            rollreturn = await CardinalDiceRoller.rollTargetNumberArray(tnnum, all.totalDice, label, this);
         else
-            rollreturn = await rollHighestArray(all.totalDice, label, this);
+            rollreturn = await CardinalDiceRoller.rollHighestArray(all.totalDice, label, this);
 
         // The success callback function
         if (successfunc && typeof (successfunc) == "function") {

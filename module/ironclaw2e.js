@@ -8,15 +8,12 @@ import { Ironclaw2ECombat } from "./combat.js";
 import { Ironclaw2ECombatant } from "./combat.js";
 import { Ironclaw2ECombatTracker } from "./combat.js";
 
-import { rollTargetNumberArray } from "./dicerollers.js";
-import { rollHighestArray } from "./dicerollers.js";
+import { CardinalDiceRoller } from "./dicerollers.js";
 import { rollTargetNumberDialog } from "./dicerollers.js";
 import { rollHighestDialog } from "./dicerollers.js";
 import { rollTargetNumberOneLine } from "./dicerollers.js";
 import { rollHighestOneLine } from "./dicerollers.js";
-import { copyToRollTN } from "./dicerollers.js";
 import { copyToRollTNDialog } from "./dicerollers.js";
-import { copyToRollHighest } from "./dicerollers.js";
 
 import { getSpeakerActor, makeCompareReady } from "./helpers.js";
 
@@ -53,8 +50,7 @@ Hooks.once('init', async function () {
         popupSelect,
         popupDamage,
         // Dice rolling commands
-        rollTargetNumberArray,
-        rollHighestArray,
+        CardinalDiceRoller,
         rollTargetNumberDialog,
         rollHighestDialog,
         rollTargetNumberOneLine,
@@ -490,7 +486,7 @@ function addIronclawChatLogContext(html, entryOptions) {
             },
             callback: li => {
                 const message = game.messages.get(li.data("messageId"));
-                copyToRollHighest(message);
+                CardinalDiceRoller.copyToRollHighest(message);
             }
         },
         {
@@ -507,9 +503,9 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const message = game.messages.get(li.data("messageId"));
                 const type = message.getFlag("ironclaw2e", "rollType");
                 if (type === "TN") {
-                    copyToRollTN(parseInt(message.roll.formula.slice(message.roll.formula.indexOf(">") + 1)), message, true, true);
+                    CardinalDiceRoller.copyToRollTN(parseInt(message.roll.formula.slice(message.roll.formula.indexOf(">") + 1)), message, true, true);
                 } else {
-                    copyToRollHighest(message, true, true);
+                    CardinalDiceRoller.copyToRollHighest(message, true, true);
                 }
             }
         },

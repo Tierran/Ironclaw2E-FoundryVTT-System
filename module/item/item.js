@@ -13,7 +13,7 @@ import { getSpecialOptionPrototype } from "../systeminfo.js";
 
 import { CommonConditionInfo } from "../conditions.js"
 
-import { rollHighestArray, rollTargetNumberOneLine } from "../dicerollers.js";
+import { CardinalDiceRoller, rollTargetNumberOneLine } from "../dicerollers.js";
 import { rollHighestOneLine } from "../dicerollers.js";
 import { copyToRollTNDialog } from "../dicerollers.js"
 
@@ -1176,7 +1176,7 @@ export class Ironclaw2EItem extends Item {
             rollHighestOneLine(data.sparkDie, game.i18n.localize("ironclaw2e.dialog.sparkRoll.label"), "ironclaw2e.dialog.sparkRoll.title", this.actor);
         } else {
             const foo = findTotalDice(data.sparkDie);
-            rollHighestArray(foo, game.i18n.localize("ironclaw2e.dialog.sparkRoll.label"), this.actor);
+            CardinalDiceRoller.rollHighestArray(foo, game.i18n.localize("ironclaw2e.dialog.sparkRoll.label"), this.actor);
         }
     }
 
