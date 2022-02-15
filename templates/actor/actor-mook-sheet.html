@@ -96,58 +96,7 @@
 
         {{!-- Skills Tab --}}
         <div class="tab skills" data-group="primary" data-tab="skills">
-            <div class="speciesstuff">
-                <div class="flexrow flex-tight">
-                    <h3 class="header-label flexrow flex-center">Species</h3>
-                    <input class="bold-text" name="data.traits.species.name" type="text" value="{{data.traits.species.name}}" placeholder="Species Name" data-dtype="String" />
-                </div>
-                <div class="flex-group-center flex-tight arrange-vertically">
-                    <div class="trait flexrow flex-center">
-                        <label for="data.traits.species.speciesSkill1" class="normal-label">Species Skills:</label>
-                        <input type="text" name="data.traits.species.speciesSkill1" value="{{data.traits.species.speciesSkill1}}" data-dtype="String" />
-                        <input type="text" name="data.traits.species.speciesSkill2" value="{{data.traits.species.speciesSkill2}}" data-dtype="String" />
-                        <input type="text" name="data.traits.species.speciesSkill3" value="{{data.traits.species.speciesSkill3}}" data-dtype="String" />
-                    </div>
-                    <div class="attributes grid grid-4col grid-minimal">
-                        {{#each data.attributes as |attribute key|}}
-                        <div class="trait flexrow flex-center flex-tight arrange-vertically">
-                            <label for="data.attributes.{{key}}" class="normal-label">{{key}}</label>
-                            <input type="text" name="data.attributes.{{key}}" value="{{attribute}}" data-dtype="String" />
-                        </div>
-                        {{/each}}
-                    </div>
-                </div>
-            </div>
-            <div class="careerstuff">
-                <div class="flexrow flex-tight">
-                    <h3 class="header-label flexrow flex-center">Career</h3>
-                    <input class="bold-text" name="data.traits.career.name" type="text" value="{{data.traits.career.name}}" placeholder="Career Name" data-dtype="String" />
-                </div>
-                <div class="flex-group-center flex-tight arrange-vertically">
-                    <div class="trait flexrow flex-center">
-                        <label for="data.traits.career.careerSkill1" class="normal-label">Career Skills:</label>
-                        <input type="text" name="data.traits.career.careerSkill1" value="{{data.traits.career.careerSkill1}}" data-dtype="String" />
-                        <input type="text" name="data.traits.career.careerSkill2" value="{{data.traits.career.careerSkill2}}" data-dtype="String" />
-                        <input type="text" name="data.traits.career.careerSkill3" value="{{data.traits.career.careerSkill3}}" data-dtype="String" />
-                    </div>
-                </div>
-            </div>
-            <h2 class="header-label flexrow flex-center">Skills</h2>
-            <div class="skillgrid grid grid-3col">
-                {{#each data.skills as |skill key|}}
-                <div class="skill flexcol flex-group-center flex-tight">
-                    <span class="resource-label">{{skill.usedTitle}}</span>
-                    <div class="skill flexrow">
-                        <span class="small-label under-header">Total dice: {{skill.totalDiceString}}</span>
-                    </div>
-                    <div class="skill flexrow flex-center">
-                        <label for="data.skills.{{key}}.marks" class="normal-label" style="flex:0 0 56px">Marks:</label>
-                        <input type="text" style="flex:0 0 32px" name="data.skills.{{key}}.marks" value="{{skill.marks}}" data-dtype="Number" onfocus="this.select();" />
-                        <span class="small-label" style="flex:0 0 110px">Mark dice: {{skill.diceString}}</span>
-                    </div>
-                </div>
-                {{/each}}
-            </div>
+            {{> 'systems/ironclaw2e/templates/parts/details.html'}}
         </div>
 
         {{!-- Owned Gifts Tab --}}

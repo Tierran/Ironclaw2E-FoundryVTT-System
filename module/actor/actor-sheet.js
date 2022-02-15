@@ -65,6 +65,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         // Get whether the actor is flying for some things
         sheetData.isFlying = baseData.data.data.isFlying === true;
+        sheetData.templateHelp = this._prepateTemplateHelp(sheetData);
 
         //console.log(sheetData);
         return sheetData;
@@ -178,6 +179,14 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         actorData.extraCareers = extraCareers;
         actorData.weapons = weapons;
         actorData.lightItems = lightItems;
+    }
+
+    _prepateTemplateHelp(sheetData) {
+        let help = {
+            "skillSystem": this.actor.data.type !== 'beast',
+            "favoredUse": this.actor.data.type === 'character'
+        };
+        return help;
     }
 
     /* -------------------------------------------- */

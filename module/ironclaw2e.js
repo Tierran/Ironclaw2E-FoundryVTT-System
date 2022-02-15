@@ -431,7 +431,8 @@ Hooks.on("canvasInit", function () {
 async function loadHandleBarTemplates() {
     // register templates parts
     const templatePaths = [
-        "systems/ironclaw2e/templates/parts/battlestats.html"
+        "systems/ironclaw2e/templates/parts/battlestats.html",
+        "systems/ironclaw2e/templates/parts/details.html"
     ];
     return loadTemplates(templatePaths);
 }
