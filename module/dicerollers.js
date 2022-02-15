@@ -363,12 +363,16 @@ export class CardinalDiceRoller {
         }
 
         const hangingType = origin.getFlag("ironclaw2e", "hangingAttack");
+        const defenseAttack = origin.getFlag("ironclaw2e", "defenseForAttack");
+        let updatedata = {
+            "flags": {}
+        };
+
         if (hangingType) {
-            let updatedata = {};
-            updatedata.flags = {
+            updatedata.flags = mergeObject(updatedata.flags, {
                 "ironclaw2e.hangingAttack": hangingType, "ironclaw2e.hangingWeapon": origin.getFlag("ironclaw2e", "hangingWeapon"), "ironclaw2e.hangingActor": origin.getFlag("ironclaw2e", "hangingActor"),
                 "ironclaw2e.hangingToken": origin.getFlag("ironclaw2e", "hangingToken"), "ironclaw2e.hangingScene": origin.getFlag("ironclaw2e", "hangingScene")
-            };
+            });
 
             if (tndata) {
                 const successes = (isNaN(tndata.successes) ? 0 : tndata.successes);
@@ -382,9 +386,12 @@ export class CardinalDiceRoller {
                     updatedata.flags = mergeObject(updatedata.flags, { "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses });
                 }
             }
-
-            await target.update(updatedata);
         }
+        if (defenseAttack) {
+            updatedata.flags = mergeObject(updatedata.flags, { "ironclaw2e.defenseForAttack": defenseAttack});
+        }
+
+        await target.update(updatedata);
     }
 }
 
@@ -714,7 +721,7 @@ export async function copyToRollTNDialog(message, rolltitle = "") {
                 if (confirmed) {
                     let DICES = html.find('[name=tn]')[0].value;
                     let TN = 0; if (DICES.length > 0) TN = parseInt(DICES);
-                    resolve(CardinalDiceRoller. copyToRollTN(TN, message));
+                    resolve(CardinalDiceRoller.copyToRollTN(TN, message));
                 } else {
                     resolve(null);
                 }

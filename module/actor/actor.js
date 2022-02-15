@@ -89,29 +89,12 @@ export class Ironclaw2EActor extends Actor {
         event.preventDefault();
         const element = event.currentTarget;
         const dataset = element.dataset;
-        const holderset = $(event.currentTarget).closest('.button-holder')[0]?.dataset;
-
-        if (!holderset) {
-            return console.warn("onChatAttackClick somehow failed to get proper data.")
-        }
-
-        // Get the actor, either through the sceneid if synthetic, or actorid if a full one
-        let attackActor = null;
-        if (holderset.sceneid && holderset.tokenid) {
-            const foo = game.scenes.get(holderset.sceneid)?.tokens.get(holderset.tokenid);
-            attackActor = foo?.actor;
-        } else if (holderset.actorid) {
-            attackActor = game.actors.get(holderset.actorid);
-        }
+        const message = game.messages.get($(event.currentTarget).closest('.chat-message')[0]?.dataset?.messageId);
 
         const directroll = checkQuickModifierKey();
 
-        // If the attacker is found and the itemid exists, roll the attack
-        if (attackActor && holderset.itemid) {
-            attackActor.items.get(holderset.itemid).attackRoll(directroll, dataset?.skipresist == "true");
-        } else if (!attackActor) {
-            ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
-        }
+        // Trigger the attack roll
+        Ironclaw2EActor.triggerAttackerRoll(message, "attack", directroll, dataset?.skipresist == "true");
     }
 
     /**
@@ -121,30 +104,12 @@ export class Ironclaw2EActor extends Actor {
     static async onChatSparkClick(event) {
         event.preventDefault();
         const element = event.currentTarget;
-        const dataset = element.dataset;
-        const holderset = $(event.currentTarget).closest('.button-holder')[0]?.dataset;
-
-        if (!holderset) {
-            return console.warn("onChatAttackClick somehow failed to get proper data.")
-        }
-
-        // Get the actor, either through the sceneid if synthetic, or actorid if a full one
-        let attackActor = null;
-        if (holderset.sceneid && holderset.tokenid) {
-            const foo = game.scenes.get(holderset.sceneid)?.tokens.get(holderset.tokenid);
-            attackActor = foo?.actor;
-        } else if (holderset.actorid) {
-            attackActor = game.actors.get(holderset.actorid);
-        }
+        const message = game.messages.get($(event.currentTarget).closest('.chat-message')[0]?.dataset?.messageId);
 
         const directroll = checkQuickModifierKey();
 
-        // If the attacker is found and the itemid exists, roll the attack
-        if (attackActor && holderset.itemid) {
-            attackActor.items.get(holderset.itemid).sparkRoll(directroll);
-        } else if (!attackActor) {
-            ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
-        }
+        // Trigger the spark roll
+        Ironclaw2EActor.triggerAttackerRoll(message, "spark", directroll);
     }
 
     /**
@@ -171,6 +136,8 @@ export class Ironclaw2EActor extends Actor {
         const messageId = message.id;
         const messageFlags = message?.data?.flags?.ironclaw2e;
         if (messageFlags) {
+            // Grab the message flags
+            otheritem.messageId = messageId;
             otheritem.name = messageFlags.weaponName;
             otheritem.descriptors = messageFlags.weaponDescriptors;
             otheritem.effects = messageFlags.weaponEffects;
@@ -180,7 +147,6 @@ export class Ironclaw2EActor extends Actor {
             otheritem.attackerPos = messageFlags.itemUserPos;
             otheritem.attackerRangeReduction = messageFlags.itemUserRangeReduction;
             otheritem.attackerRangeAutocheck = !(messageFlags.itemUserRangeAutocheck === false); // If and only if the the value is false, will the value be false; if it is true, undefined or something else, value will be true
-            otheritem.messageId = messageId;
         }
 
         const directroll = checkQuickModifierKey();
@@ -341,12 +307,55 @@ export class Ironclaw2EActor extends Actor {
                     } else if (defensetype === "extra") {
                         const extra = findTotalDice(EXTRA);
                         const rollresult = await CardinalDiceRoller.rollHighestArray(extra, rollLabel, actor);
-                        Ironclaw2EActor.addCallbackToAttackMessage(rollresult.message, otheritem.messageId);
+                        if (rollresult.message) Ironclaw2EActor.addCallbackToAttackMessage(rollresult.message, otheritem.messageId);
                     }
                 }
             }
         });
         dlog.render(true);
+    }
+
+    /**
+     * Separate function to trigger the actual attacker roll from chat
+     * @param {object} otheritem
+     * @param {string} rolltype
+     * @param {boolean} directroll
+     * @param {boolean} skipresist
+     * @param {number} presettn
+     * @param {number} resists
+     */
+    static triggerAttackerRoll(message, rolltype, directroll = false, skipresist = false, presettn = 3, resists = -1) {
+        let otheritem = {};
+        const messageFlags = message?.data?.flags?.ironclaw2e;
+        if (messageFlags) {
+            // Grab the message flags
+            otheritem.weaponId = messageFlags.itemId;
+            otheritem.actorId = messageFlags.itemActorId;
+            otheritem.tokenId = messageFlags.itemTokenId;
+            otheritem.sceneId = messageFlags.itemSceneId;
+        } else {
+            console.error("Attacker chat roll failed to get the proper information from message flags: " + message);
+            return;
+        }
+
+        // Get the actor, either through the sceneid if synthetic, or actorid if a full one
+        let attackActor = null;
+        if (otheritem.sceneId && otheritem.tokenId) {
+            const foo = game.scenes.get(otheritem.sceneId)?.tokens.get(otheritem.tokenId);
+            attackActor = foo?.actor;
+        } else if (otheritem.actorId) {
+            attackActor = game.actors.get(otheritem.actorId);
+        }
+
+        // Trigger the actual roll if the attacker is found and the weapon id is listed
+        if (attackActor && otheritem.weaponId) {
+            if (rolltype === "attack")
+                attackActor.items.get(otheritem.weaponId).attackRoll(directroll, skipresist, presettn, resists);
+            else if (rolltype === "spark")
+                attackActor.items.get(otheritem.weaponId).sparkRoll(directroll);
+        } else if (!attackActor) {
+            ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
+        }
     }
 
     /**
@@ -2044,6 +2053,10 @@ export class Ironclaw2EActor extends Actor {
        <span class="normal-text"><strong>${game.i18n.localize("ironclaw2e.effect.status.hiding")}:</strong> ${game.i18n.localize("ironclaw2e.dialog.dicePool.hidingExplanation")}:</span>
      </div>`;
         }
+        let labelNotice = "";
+        if (otherlabel) {
+            labelNotice = `<span class="normal-text">${game.i18n.format("ironclaw2e.dialog.dicePool.labelNotice", { "label": otherlabel })}</span><br>`;
+        }
 
         if (hastraits) {
             formconstruction += `<h2>${game.i18n.localize("ironclaw2e.actor.traits")}:</h2>
@@ -2101,6 +2114,7 @@ export class Ironclaw2EActor extends Actor {
             content: `
      <form class="ironclaw2e">
      <h1>${game.i18n.format("ironclaw2e.dialog.dicePool.header", { "name": this.data.name })}</h1>
+     ${labelNotice}
      <span class="small-text">${game.i18n.format("ironclaw2e.dialog.dicePool.showUp", { "alias": getMacroSpeaker(this).alias })}</span>
      <div class="form-group">
        <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.dicePool.useTN")}:</label>

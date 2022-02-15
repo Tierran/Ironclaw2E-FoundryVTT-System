@@ -719,11 +719,11 @@ export class Ironclaw2EItem extends Item {
 
         const contents = await renderTemplate("systems/ironclaw2e/templates/chat/item-info.html", templateData);
 
-        let flags = { "ironclaw2e.itemInfo": true };
+        let flags = { "ironclaw2e.itemInfo": true, "ironclaw2e.itemId": this.id, "ironclaw2e.itemActorId": actor.id, "ironclaw2e.itemTokenId": actor.token?.id, "ironclaw2e.itemSceneId": actor.token?.parent?.id };
         if (item.type === "weapon") {
             flags = mergeObject(flags, {
-                "ironclaw2e.weaponName": item.name, "ironclaw2e.weaponDescriptors": itemData.descriptorsSplit, "ironclaw2e.weaponEffects": itemData.effectsSplit, "ironclaw2e.weaponAttackStats": itemData.attackStats,
-                "ironclaw2e.weaponEquip": itemData.equip, "ironclaw2e.weaponRange": itemData.range
+                "ironclaw2e.weaponName": item.name, "ironclaw2e.weaponDescriptors": itemData.descriptorsSplit, "ironclaw2e.weaponEffects": itemData.effectsSplit,
+                "ironclaw2e.weaponAttackStats": itemData.attackStats, "ironclaw2e.weaponEquip": itemData.equip, "ironclaw2e.weaponRange": itemData.range
             });
         }
         const foundToken = findActorToken(actor);
@@ -784,8 +784,9 @@ export class Ironclaw2EItem extends Item {
      * @param {DiceReturn} info The roll information returned by the system dice rollers
      * @param {boolean} ignoreresist Whether to ignore the fact that the weapon has a resist roll, used when such a weapon is used in a counter-attack
      * @param {boolean} onlyupdate If true, only update the roll data, do not send anything to chat yet
+     * @param {number} opposingsuccesses The already-rolled resisting successes, -1 means they haven't been rolled yet
      */
-    automaticDamageCalculation(info, ignoreresist = false, onlyupdate = false) {
+    automaticDamageCalculation(info, ignoreresist = false, onlyupdate = false, opposingsuccesses = -1) {
         if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
             return; // If the system is turned off, return out
         }
@@ -818,9 +819,9 @@ export class Ironclaw2EItem extends Item {
         const successes = (isNaN(info.tnData.successes) ? 0 : info.tnData.successes);
         const ties = (isNaN(info.tnData.ties) ? 0 : info.tnData.ties);
         const success = successes > 0;
-        const usedsuccesses = (success ? successes : ties);
+        let usedsuccesses = (success ? successes : ties);
 
-        if (ignoreresist === false && itemData.hasResist) { // If the weapon's attack was a successful resist roll, set the flags accordingly and return out
+        if (ignoreresist === false && itemData.hasResist) { // If the weapon's attack is a resisted one, set the flags accordingly
             let updatedata = {
                 flags: {
                     "ironclaw2e.hangingAttack": "resist", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
@@ -828,7 +829,9 @@ export class Ironclaw2EItem extends Item {
                 }
             };
             info.message?.update(updatedata);
-            return; // Return out of a resisted weapon
+            // If the resist has not yet been rolled, return out after setting the resist flags
+            if (opposingsuccesses < 0)
+                return;
         }
         else { // Else, treat it as a normal attack and set the flags to store the information for future reference
             let updatedata = {
@@ -839,6 +842,10 @@ export class Ironclaw2EItem extends Item {
             };
             info.message?.update(updatedata);
         }
+
+        // If the weapon's attack is resisted and the resists have been rolled, subtract the resistance successes from the attack
+        if (itemData.hasResist && opposingsuccesses > 0)
+            usedsuccesses -= opposingsuccesses;
 
         if (onlyupdate) {
             return; // Return out to not send anything in update mode
@@ -1087,7 +1094,8 @@ export class Ironclaw2EItem extends Item {
         }
     }
 
-    attackRoll(directroll = false, ignoreresist = false) {
+    attackRoll(directroll = false, ignoreresist = false, presettn = 3, opposingsuccesses = -1) {
+        const item = this;
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
         const data = itemData.data;
@@ -1102,6 +1110,10 @@ export class Ironclaw2EItem extends Item {
         }
 
         const canQuickroll = data.hasResist && !ignoreresist;
+        const callback = (x => {
+            if (exhaust) exhaust.giftSetExhaust("true", sendToChat);
+            item.automaticDamageCalculation(x, ignoreresist, donotdisplay, opposingsuccesses);
+        });
 
         const donotdisplay = game.settings.get("ironclaw2e", "calculateDoesNotDisplay");
         const exhaust = this.weaponGetGiftToExhaust();
@@ -1111,8 +1123,7 @@ export class Ironclaw2EItem extends Item {
         } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust?.popupRefreshGift();
         } else {
-            this.genericItemRoll(data.attackStats, 3, itemData.name, data.attackArray, 2, { "directroll": canQuickroll && directroll },
-                (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x, ignoreresist, donotdisplay); }));
+            this.genericItemRoll(data.attackStats, presettn, itemData.name, data.attackArray, 2, { "directroll": canQuickroll && directroll }, callback);
         }
     }
 
@@ -1135,6 +1146,7 @@ export class Ironclaw2EItem extends Item {
     }
 
     counterRoll(directroll = false, otheritem = null, extradice = "") {
+        const item = this;
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
         const data = itemData.data;
@@ -1156,7 +1168,7 @@ export class Ironclaw2EItem extends Item {
             exhaust?.popupRefreshGift();
         } else {
             this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, 3, { directroll, otheritem, extradice },
-                (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); this.automaticDamageCalculation(x); Ironclaw2EActor.addCallbackToAttackMessage(x?.message, otheritem.messageId); }));
+                (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); item.automaticDamageCalculation(x); Ironclaw2EActor.addCallbackToAttackMessage(x?.message, otheritem.messageId); }));
         }
     }
 

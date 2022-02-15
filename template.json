@@ -210,6 +210,8 @@
       "refresh": "",
       "exhausted": false,
       "exhaustWhenUsed": false,
+      "grantsMark": false,
+	  "markSkill": "",
       "useDice": "",
       "defaultTN": 3,
       "specialSettings": []

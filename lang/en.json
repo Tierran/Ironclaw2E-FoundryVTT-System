@@ -33,6 +33,7 @@
   "ironclaw2e.resolveCounter": "Resolve the Counter-Attack",
   "ironclaw2e.resolveResist": "Resolve the Resisted Attack",
   "ironclaw2e.resolveAsNormal": "Resolve as Normal Attack",
+  "ironclaw2e.attackAgainstDefense": "Attack Against This Defense",
   "ironclaw2e.rollDefense": "Roll Defense",
   "ironclaw2e.rollResist": "Roll Resist",
 
@@ -198,6 +199,7 @@
 
   "ironclaw2e.dialog.dicePool.title": "Choose Pools",
   "ironclaw2e.dialog.dicePool.header": "Choose dice pools for {name}",
+  "ironclaw2e.dialog.dicePool.labelNotice": "<strong>The chat label for the roll:</strong> {label}",
   "ironclaw2e.dialog.dicePool.showUp": "Showing up in chat as {alias}",
   "ironclaw2e.dialog.dicePool.useTN": "Check to use TN",
   "ironclaw2e.dialog.dicePool.applyBurdened": "Apply Burdened Limit automatically",

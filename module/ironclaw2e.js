@@ -196,7 +196,7 @@ Hooks.once('init', async function () {
         hint: "ironclaw2e.config.calculateDisplaysFailedHint",
         scope: "world",
         type: Boolean,
-        default: false,
+        default: true,
         config: false
     });
     game.settings.register("ironclaw2e", "calculateDoesNotDisplay", {
@@ -602,6 +602,28 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const actor = game.scenes.get(sceneid)?.tokens.get(tokenid)?.actor || game.actors.get(actorid);
                 const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
                 weapon?.resolveAsNormalAttack?.(message);
+            }
+        },
+        {
+            name: "ironclaw2e.attackAgainstDefense",
+            icon: '<i class="fas fa-fist-raised"></i>',
+            condition: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const type = message.getFlag("ironclaw2e", "rollType");
+                const messageid = message.getFlag("ironclaw2e", "defenseForAttack");
+                const attackMessage = game.messages.get(messageid);
+                // Check that the message is a roll and that the message has a callback id to the attacker's item info chat message
+                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && attackMessage && type;
+                return allowed && (game.user.isGM || attackMessage.isAuthor) && attackMessage.isContentVisible && message.isContentVisible;
+            },
+            callback: async li => {
+                const message = game.messages.get(li.data("messageId"));
+                const type = message.getFlag("ironclaw2e", "rollType");
+                const messageid = message.getFlag("ironclaw2e", "defenseForAttack");
+                const attackMessage = game.messages.get(messageid);
+                const tn = (type === "HIGH" ? message.roll.result : 3);
+                const resists = (type === "TN" ? message.roll.result : -1);
+                Ironclaw2EActor.triggerAttackerRoll(attackMessage, "attack", false, type === "HIGH", tn, resists);
             }
         });
 }
