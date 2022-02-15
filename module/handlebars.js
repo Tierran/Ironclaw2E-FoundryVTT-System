@@ -52,3 +52,17 @@ export function registerHandlebarsHelpers() {
         return checkConditionQuota(cond);
     });
 }
+
+/** Load Handlebars templates */
+async function loadHandleBarTemplates() {
+    // register templates parts
+    const templatePaths = [
+        "systems/ironclaw2e/templates/parts/battlestats.html",
+        "systems/ironclaw2e/templates/parts/details.html"
+    ];
+    return loadTemplates(templatePaths);
+}
+
+Hooks.once("init", function () {
+    loadHandleBarTemplates();
+});

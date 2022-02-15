@@ -90,6 +90,11 @@
             <p class="notes">{{localize 'ironclaw2e.config.autoPrototypeSetupHint'}}</p>
         </div>
         <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.allowNonGMAskRolls'}}</label>
+            <input type="checkbox" name="allowNonGMAskRolls" {{checked settings.allowNonGMAskRolls}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.allowNonGMAskRollsHint'}}</p>
+        </div>
+        <div class="form-group">
             <label>{{localize 'ironclaw2e.config.manageEncumbranceAuto'}}</label>
             <input type="checkbox" name="manageEncumbranceAuto" {{checked settings.manageEncumbranceAuto}} data-dtype="Boolean" />
             <p class="notes">{{localize 'ironclaw2e.config.manageEncumbranceAutoHint'}}</p>

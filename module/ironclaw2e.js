@@ -1,8 +1,11 @@
 // Import Modules
 import { Ironclaw2EActor } from "./actor/actor.js";
 import { Ironclaw2EActorSheet } from "./actor/actor-sheet.js";
+
 import { Ironclaw2EItem } from "./item/item.js";
 import { Ironclaw2EItemSheet } from "./item/item-sheet.js";
+
+import { askRollPopup, askRollToMessage } from "./utilitiesmacros.js";
 
 import { Ironclaw2ECombat } from "./combat.js";
 import { Ironclaw2ECombatant } from "./combat.js";
@@ -26,7 +29,9 @@ import { chatCommandsIntegration } from "./commands.js";
 import { CommonConditionInfo } from "./conditions.js";
 
 import { CommonSystemInfo } from "./systeminfo.js";
+
 import { registerHandlebarsHelpers } from "./handlebars.js";
+
 import { WorldSettingsConfig } from "./config.js";
 import { CoinageSettingsConfig } from "./config.js";
 import { measureDistances } from "./canvas.js";
@@ -49,6 +54,7 @@ Hooks.once('init', async function () {
         popupMacro,
         popupSelect,
         popupDamage,
+        askRollPopup,
         // Dice rolling commands
         CardinalDiceRoller,
         rollTargetNumberDialog,
@@ -117,6 +123,14 @@ Hooks.once('init', async function () {
     game.settings.register("ironclaw2e", "autoPrototypeSetup", {
         name: "ironclaw2e.config.autoPrototypeSetup",
         hint: "ironclaw2e.config.autoPrototypeSetupHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "allowNonGMAskRolls", {
+        name: "ironclaw2e.config.allowNonGMAskRolls",
+        hint: "ironclaw2e.config.allowNonGMAskRollsHint",
         scope: "world",
         type: Boolean,
         default: true,
@@ -427,19 +441,6 @@ Hooks.on("canvasInit", function () {
 /* -------------------------------------------- */
 /*  Additional Hooks                            */
 /* -------------------------------------------- */
-
-async function loadHandleBarTemplates() {
-    // register templates parts
-    const templatePaths = [
-        "systems/ironclaw2e/templates/parts/battlestats.html",
-        "systems/ironclaw2e/templates/parts/details.html"
-    ];
-    return loadTemplates(templatePaths);
-}
-
-Hooks.once("init", function () {
-    loadHandleBarTemplates();
-});
 
 /**
  * Adds the Ironclaw context menu options to the given menu

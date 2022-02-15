@@ -30,47 +30,6 @@ import { enforceLimit } from "../helpers.js";
 import { burdenedLimitedStat } from "../helpers.js";
 import { Ironclaw2EItem } from "../item/item.js";
 
-Hooks.on("renderChatMessage", function (message, html, data) {
-    const noButtons = game.settings.get("ironclaw2e", "chatButtons") === false;
-    const showOthersToAll = game.settings.get("ironclaw2e", "showDefenseButtons");
-    const itemInfo = message.getFlag("ironclaw2e", "itemInfo");
-    const attackInfo = message.getFlag("ironclaw2e", "attackDamageInfo");
-    if (noButtons) {
-        html.find('.button-holder').remove();
-    } else {
-        const buttons = html.find('.button-holder');
-        const showAuthor = game.user.isGM || message.isAuthor;
-        const showOthers = game.user.isGM || !message.isAuthor || showOthersToAll;
-        if (itemInfo) {
-            if (showAuthor) {
-                const attackHolder = buttons.find('.attack-buttons');
-                attackHolder.find('.default-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
-                attackHolder.find('.skip-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
-                attackHolder.find('.spark-attack').click(Ironclaw2EActor.onChatSparkClick.bind(this));
-            } else {
-                buttons.find('.attack-buttons').remove();
-            }
-            if (showOthers) {
-                const defenseHolder = buttons.find('.defense-buttons');
-                defenseHolder.find('.dodge-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
-                defenseHolder.find('.parry-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
-                defenseHolder.find('.special-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
-                defenseHolder.find('.resist-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
-                defenseHolder.find('.counter-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
-            } else {
-                buttons.find('.defense-buttons').remove();
-            }
-        }
-        if (attackInfo) {
-            if (showOthers) {
-                buttons.find('.soak-button').click(Ironclaw2EActor.onChatSoakClick.bind(this));
-            } else {
-                buttons.remove();
-            }
-        }
-    }
-});
-
 /**
  * Extend the base Actor entity by defining a custom data necessary for the Ironclaw system
  * @extends {Actor}
@@ -1647,6 +1606,22 @@ export class Ironclaw2EActor extends Actor {
         }
     }
 
+    async popupRallyRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherbools = [], otherlabel = "" } = {}, { directroll = false } = {}, successfunc = null) {
+        const data = this.data.data;
+        let checkedstats = [...prechecked];
+        let formconstruction = otherinputs;
+        let constructionkeys = [...otherkeys];
+        let constructionarray = [...otherdice];
+        let constructionbools = [...otherbools];
+
+
+
+        if (directroll)
+            this.silentSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherbools": constructionbools, otherlabel }, successfunc);
+        else
+            this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc);
+    }
+
     popupSoakRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherbools = [], otherlabel = "" } = {}, { directroll = false, checkweak = false, checkarmor = true } = {}, successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
@@ -1670,6 +1645,7 @@ export class Ironclaw2EActor extends Actor {
         constructionarray = bonuses.otherdice;
         constructionbools = bonuses.otherbools;
 
+        // Weak damage toggle
         formconstruction += `
       <div class="form-group">
        <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.dicePool.soakWeak")}</label>

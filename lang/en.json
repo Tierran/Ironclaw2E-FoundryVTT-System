@@ -25,6 +25,10 @@
   "ironclaw2e.parry": "Parry",
   "ironclaw2e.counter": "Counter",
 
+  "ironclaw2e.targetNumber": "Target Number",
+  "ironclaw2e.highest": "Highest",
+  "ironclaw2e.targetNumberRoll": "Target Number Roll",
+  "ironclaw2e.highestRoll": "Highest Roll",
   "ironclaw2e.copyToTN": "Copy to TN Roll",
   "ironclaw2e.changeTN": "Change TN",
   "ironclaw2e.copyToHighest": "Copy to Highest Roll",
@@ -58,6 +62,7 @@
   "ironclaw2e.ui.alreadyReplacedSetting": "Special bonus system found a competing replacement bonus in the Gift '{replacement}' that the Gift '{name}' requested for '{actor}'. This should be avoided.",
   "ironclaw2e.ui.itemUpdateInProgress": "Item update in progress, please wait...",
   "ironclaw2e.ui.itemUpdateComplete": "Item update complete!",
+  "ironclaw2e.ui.askRollNotAllowed": "Not allowed to ask for rolls",
 
 
   "ironclaw2e.actor.traits": "Traits",
@@ -84,6 +89,7 @@
   "ironclaw2e.command.quickroll": "Quick actor dice pool roll",
   "ironclaw2e.command.itemuse": "Use an item",
   "ironclaw2e.command.actordamage": "Apply damage",
+  "ironclaw2e.command.askroll": "Ask for a roll",
 
 
   "ironclaw2e.combat.sideBasedInitiative": "Use side-based initiative",
@@ -165,6 +171,8 @@
   "ironclaw2e.config.rangePenaltiesHint": "If checked, dice pools will show an auto-calculated ranged penalty field when appropriate and possible to measure. Vertical distance is included when appropriate.",
   "ironclaw2e.config.matchStandardRuler": "Match system and ruler measurements",
   "ironclaw2e.config.matchStandardRulerHint": "If checked, the internal distance measurement system will use the same imprecise measuring as the standard ruler does. Unchecked, the internal system will be as precise as the floating-point math allows, which can be seen with the ruler to two-decimal precision by holding Shift.",
+  "ironclaw2e.config.allowNonGMAskRolls": "Allow Non-GM Users to ask for Rolls",
+  "ironclaw2e.config.allowNonGMAskRollsHint": "If checked, the system will allow users without GM status to ask for rolls.",
 
   "ironclaw2e.config.defaultSendDamage": "Damage to chat by default",
   "ironclaw2e.config.defaultSendDamageHint": "If checked, the damage-applying dialog will have the 'Send to chat' option checked by default.",
@@ -184,6 +192,7 @@
   "ironclaw2e.dialog.pick": "Pick",
   "ironclaw2e.dialog.cancel": "Cancel",
   "ironclaw2e.dialog.sendToChat": "Send to Chat?",
+  "ironclaw2e.dialog.ask": "Ask",
 
   "ironclaw2e.dialog.macroDefault.titleTN": "Target Number Roll for {name}",
   "ironclaw2e.dialog.macroDefault.titleCopyTN": "Change Roll to TN",
@@ -280,6 +289,12 @@
   "ironclaw2e.dialog.defense.extraField": "Extra Dice",
   "ironclaw2e.dialog.defense.defenseBonus": "Defense Bonus",
 
+  "ironclaw2e.dialog.askRoll.askRollHeader": "Ask for a Roll",
+  "ironclaw2e.dialog.askRoll.askRollAsUser": "Name to Use",
+  "ironclaw2e.dialog.askRoll.whisperLabel": "Whisper to user",
+  "ironclaw2e.dialog.askRoll.targetNumber": "Default Target Number",
+  "ironclaw2e.dialog.askRoll.rollToAsk": "The Roll to ask, in Dice Pool format",
+
 
   "ironclaw2e.chatInfo.tn": "TN",
   "ironclaw2e.chatInfo.high": "High",
@@ -363,6 +378,12 @@
   "ironclaw2e.chatInfo.damageCalcInfo.soakNormal": "Normal",
   "ironclaw2e.chatInfo.damageCalcInfo.soakImpaling": "Impaling",
   "ironclaw2e.chatInfo.damageCalcInfo.soakConditional": "Condition Effect",
+
+  "ironclaw2e.chatInfo.askRoll.askRollHeader": "{user} Asked for a Roll",
+  "ironclaw2e.chatInfo.askRoll.askRollType": "Roll Type",
+  "ironclaw2e.chatInfo.askRoll.askRollDicePool": "Asked Dice Pool",
+  "ironclaw2e.chatInfo.askRoll.rollPool": "Roll the Dice Pool",
+  "ironclaw2e.chatInfo.askRoll.rollLabel": "Roll, asked by {user}.",
 
 
   "ironclaw2e.sheets.actor.battleStatistics": "Battle Statistics",

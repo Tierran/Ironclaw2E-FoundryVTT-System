@@ -1,0 +1,16 @@
+<div class="ironclaw2e">
+    <header class="chat-item flexrow">
+        <h3 class="chat-header">{{localize "ironclaw2e.chatInfo.askRoll.askRollHeader" user=speaker}}</h3>
+    </header>
+    <div class="chat-content">
+        <div class="chat-item">
+            <span class="normal-label">{{localize "ironclaw2e.chatInfo.askRoll.askRollType"}}: </span><span class="normal-text">{{#if tnyes}}{{localize "ironclaw2e.targetNumber"}}: {{tnnum}}{{else}}{{localize "ironclaw2e.highestRoll"}}{{/if}}<br /></span>
+            <span class="normal-label">{{localize "ironclaw2e.chatInfo.askRoll.askRollDicePool"}}: </span><span class="normal-text">{{stats}}</span>
+        </div>
+        <div class="chat-item button-holder">
+            <div class="flexrow">
+                <button class="asked-roll-button">{{localize "ironclaw2e.chatInfo.askRoll.rollPool"}}</button>
+            </div>
+        </div>
+    </div>
+</div>

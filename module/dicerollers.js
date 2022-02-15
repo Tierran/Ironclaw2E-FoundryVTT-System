@@ -424,27 +424,27 @@ export async function rollTargetNumberDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0
      <form class="ironclaw2e">
       <div class="form-group">
        <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.targetNumber")}:</label>
-	   <input id="tn" name="tn" value="${tn.toString()}" onfocus="this.select();"></input>
+	   <input type="text" id="tn" name="tn" value="${tn.toString()}" onfocus="this.select();"></input>
       </div>
       <div class="form-group">
        <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d12Dice")}:</label>
-	   <input id="d12s" name="d12s" value="${d12s != 0 ? d12s.toString() : ""}" onfocus="this.select();"></input>
+	   <input type="text" id="d12s" name="d12s" value="${d12s != 0 ? d12s.toString() : ""}" onfocus="this.select();"></input>
       </div>
 	  <div class="form-group">
        <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d10Dice")}:</label>
-	   <input id="d10s" name="d10s" value="${d10s != 0 ? d10s.toString() : ""}" onfocus="this.select();"></input>
+	   <input type="text" id="d10s" name="d10s" value="${d10s != 0 ? d10s.toString() : ""}" onfocus="this.select();"></input>
       </div>
 	  <div class="form-group">
        <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d8Dice")}:</label>
-	   <input id="d8s" name="d8s" value="${d8s != 0 ? d8s.toString() : ""}" onfocus="this.select();"></input>
+	   <input type="text" id="d8s" name="d8s" value="${d8s != 0 ? d8s.toString() : ""}" onfocus="this.select();"></input>
       </div>
 	  <div class="form-group">
        <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d6Dice")}:</label>
-	   <input id="d6s" name="d6s" value="${d6s != 0 ? d6s.toString() : ""}" onfocus="this.select();"></input>
+	   <input type="text" id="d6s" name="d6s" value="${d6s != 0 ? d6s.toString() : ""}" onfocus="this.select();"></input>
       </div>
 	  <div class="form-group">
        <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d4Dice")}:</label>
-	   <input id="d4s" name="d4s" value="${d4s != 0 ? d4s.toString() : ""}" onfocus="this.select();"></input>
+	   <input type="text" id="d4s" name="d4s" value="${d4s != 0 ? d4s.toString() : ""}" onfocus="this.select();"></input>
       </div>
      </form>
      `,
@@ -510,23 +510,23 @@ export async function rollHighestDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4
      <form class="ironclaw2e">
       <div class="form-group">
        <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d12Dice")}:</label>
-	   <input id="d12s" name="d12s" value="${d12s != 0 ? d12s.toString() : ""}" onfocus="this.select();"></input>
+	   <input type="text" id="d12s" name="d12s" value="${d12s != 0 ? d12s.toString() : ""}" onfocus="this.select();"></input>
       </div>
 	  <div class="form-group">
        <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d10Dice")}:</label>
-	   <input id="d10s" name="d10s" value="${d10s != 0 ? d10s.toString() : ""}" onfocus="this.select();"></input>
+	   <input type="text" id="d10s" name="d10s" value="${d10s != 0 ? d10s.toString() : ""}" onfocus="this.select();"></input>
       </div>
 	  <div class="form-group">
        <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d8Dice")}:</label>
-	   <input id="d8s" name="d8s" value="${d8s != 0 ? d8s.toString() : ""}" onfocus="this.select();"></input>
+	   <input type="text" id="d8s" name="d8s" value="${d8s != 0 ? d8s.toString() : ""}" onfocus="this.select();"></input>
       </div>
 	  <div class="form-group">
        <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d6Dice")}:</label>
-	   <input id="d6s" name="d6s" value="${d6s != 0 ? d6s.toString() : ""}" onfocus="this.select();"></input>
+	   <input type="text" id="d6s" name="d6s" value="${d6s != 0 ? d6s.toString() : ""}" onfocus="this.select();"></input>
       </div>
 	  <div class="form-group">
        <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d4Dice")}:</label>
-	   <input id="d4s" name="d4s" value="${d4s != 0 ? d4s.toString() : ""}" onfocus="this.select();"></input>
+	   <input type="text" id="d4s" name="d4s" value="${d4s != 0 ? d4s.toString() : ""}" onfocus="this.select();"></input>
       </div>
      </form>
      `,
@@ -587,13 +587,13 @@ export async function rollTargetNumberOneLine(tnnum = 3, readydice = "", label =
      <form class="ironclaw2e">
       <div class="form-group">
        <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.targetNumber")}:</label>
-	   <input id="tn" name="tn" value="${tnnum}" onfocus="this.select();"></input>
+	   <input type="text" id="tn" name="tn" value="${tnnum}" onfocus="this.select();"></input>
       </div>
       <div class="form-group">
        <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.oneLineDice")}:</label>
       </div>
 	  <div class="form-group">
-	   <input id="dices" name="dices" value="${readydice}" onfocus="this.select();"></input>
+	   <input type="text" id="dices" name="dices" value="${readydice}" onfocus="this.select();"></input>
       </div>
      </form>
      `,
@@ -649,7 +649,7 @@ export async function rollHighestOneLine(readydice = "", label = "", rolltitle =
        <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.oneLineDice")}:</label>
       </div>
 	  <div class="form-group">
-	   <input id="dices" name="dices" value="${readydice}" onfocus="this.select();"></input>
+	   <input type="text" id="dices" name="dices" value="${readydice}" onfocus="this.select();"></input>
       </div>
      </form>
      `,
@@ -699,7 +699,7 @@ export async function copyToRollTNDialog(message, rolltitle = "") {
        <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.targetNumberCopy")}:</label>
       </div>
 	  <div class="form-group">
-	   <input id="tn" name="tn" onfocus="this.select();"></input>
+	   <input type="text" id="tn" name="tn" onfocus="this.select();"></input>
       </div>
      </form>
      `,

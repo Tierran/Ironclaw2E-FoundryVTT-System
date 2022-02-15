@@ -4,6 +4,7 @@ import { findTotalDice, parseSingleDiceString, splitStatString } from "./helpers
 import { splitStatsAndBonus } from "./helpers.js";
 import { makeCompareReady } from "./helpers.js";
 import { CommonSystemInfo } from "./systeminfo.js";
+import { askRollToMessage } from "./utilitiesmacros.js";
 
 export function chatCommandsIntegration(chatCommands) {
 
@@ -76,6 +77,18 @@ export function chatCommandsIntegration(chatCommands) {
         shouldDisplayToChat: false,
         iconClass: "fa-skull-crossbones",
         description: game.i18n.localize("ironclaw2e.command.actordamage")
+    }));
+
+    // Use an item as the currently selected actor
+    chatCommands.registerCommand(chatCommands.createCommandFromData({
+        commandKey: "/askroll",
+        invokeOnCommand: async (chatlog, messageText, chatdata) => {
+            await game.ironclaw2e.sleep(100);
+            //askRollToMessage()
+        },
+        shouldDisplayToChat: false,
+        iconClass: "fa-user",
+        description: game.i18n.localize("ironclaw2e.command.askroll")
     }));
 }
 
