@@ -104,6 +104,10 @@ export class Ironclaw2EItem extends Item {
         if (data.giftTags.length > 0) {
             data.giftTagsSplit = splitStatString(data.giftTags);
         }
+        // Skill Mark
+        if (data.grantsMark) {
+            data.skillName = makeCompareReady(data.markSkill);
+        }
 
         // Special settings
         if (data.specialSettings?.length > 0) {

@@ -447,6 +447,16 @@ export class Ironclaw2EActor extends Actor {
     _prepareGiftData(actorData) {
         const data = actorData.data;
 
+        // Gift Skill marks
+        const markGifts = this.items.filter(element => element.data.type === 'gift' && element.data.data.grantsMark);
+        let markMap = new Map();
+        for (let gift of markGifts) {
+            const giftData = gift.data.data;
+            markMap.set(giftData.skillName, 1 + (markMap.get(giftData.skillName) ?? 0));
+        }
+        data.tempMarks = markMap;
+
+        // Special settings
         const specialGifts = this.items.filter(element => element.data.type === 'gift' && element.data.data.usedSpecialSettings?.length > 0);
         if (specialGifts.length > 0) {
             data.processingLists = {}; // If any of the actor's gifts have special settings, add the holding object for the lists
@@ -574,11 +584,15 @@ export class Ironclaw2EActor extends Actor {
             skill.diceArray = [0, 0, 0, 0, 0];
             skill.diceString = "";
             skill.totalDiceString = "";
+            const comparekey = makeCompareReady(key);
 
+            // Include the marks from Gifts to the calculation
+            skill.giftMarks = (data.tempMarks.has(comparekey) ? data.tempMarks.get(comparekey) : 0);
+            const marks = skill.marks + skill.giftMarks;
             // Marks
-            if (skill.marks > 0) {
-                let d12s = Math.floor(skill.marks / 5); // Get the number of d12's for the skill
-                let remainder = skill.marks % 5; // Get whatever the mark count is minus full 5's (d12's)
+            if (marks > 0) {
+                let d12s = Math.floor(marks / 5); // Get the number of d12's for the skill
+                let remainder = marks % 5; // Get whatever the mark count is minus full 5's (d12's)
                 skill.diceArray[0] += d12s; // Add the d12's
                 if (remainder > 0) {
                     skill.diceArray[5 - remainder] += 1; // Based on what the marks are minus full 5's, add a smaller die
@@ -587,7 +601,6 @@ export class Ironclaw2EActor extends Actor {
             }
 
             // Species and Career dice
-            const comparekey = makeCompareReady(key);
             for (let foo of data.traits.species.skills) {
                 if (foo == comparekey)
                     skill.diceArray = addArrays(skill.diceArray, data.traits.species.diceArray);

@@ -37,8 +37,10 @@
                 <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Refresh:</label>
                     <input type="text" name="data.refresh" value="{{data.refresh}}" data-dtype="String" />
-                    <label class="normal-label">Exhaust when used:</label>
+                    <label class="normal-label">Exhausts when used:</label>
                     <input type="checkbox" name="data.exhaustWhenUsed" {{checked data.exhaustWhenUsed}} data-dtype="Boolean" />
+                    <label class="normal-label">Grants a Skill Mark:</label>
+                    <input type="checkbox" name="data.grantsMark" {{checked data.grantsMark}} data-dtype="Boolean" />
                 </div>
                 <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Gift dice:</label>
@@ -46,6 +48,12 @@
                     <label class="normal-label">Default TN:</label>
                     <input type="text" name="data.defaultTN" value="{{data.defaultTN}}" data-dtype="Number" />
                 </div>
+                {{#if data.grantsMark}}
+                <div class="resource flexrow flex-group-center">
+                    <label class="resource-label">Gift Skill Mark Name:</label>
+                    <input type="text" name="data.markSkill" value="{{data.markSkill}}" data-dtype="String" />
+                </div>
+                {{/if}}
             </div>
         </div>
 
