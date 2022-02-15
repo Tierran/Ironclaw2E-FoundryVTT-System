@@ -170,7 +170,11 @@ export async function askRollToMessage(stats, tn, { whisper = "", speaker = null
         speaker,
         flags
     };
-    //ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
+    if (whisper?.length > 0) {
+        chatData.whisper = ChatMessage.getWhisperRecipients(whisper);
+    } else {
+        ChatMessage.applyRollMode(chatData, "publicroll");
+    }
     CONFIG.ChatMessage.documentClass.create(chatData);
 }
 
@@ -189,7 +193,6 @@ async function onAskRollTrigger(event) {
     const messageId = message.id;
     const messageFlags = message?.data?.flags?.ironclaw2e;
     const splitStats = splitStatsAndBonus(messageFlags.askStats);
-    console.log(messageFlags);
 
     defenseActor.popupSelectRolled({
         "tnyes": messageFlags.askTNYes, "tnnum": messageFlags.askTNNum, "prechecked": splitStats[0],
