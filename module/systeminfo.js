@@ -7,6 +7,13 @@ import { makeCompareReady } from "./helpers.js";
  * }} RangeBandMinMax
  */
 
+/**
+ * @typedef {{
+ *   rangeDice: string,
+ *   rangeBand: string
+ * }} RangeDiceReturn
+ */
+
 /** Common class for common system info that might be used */
 export class CommonSystemInfo {
     /**
@@ -272,9 +279,10 @@ export function getRangeMinMaxFromBand(band) {
 /**
  * Get the band from a distance in paces, rounding upwards
  * @param {number} distance The distance in paces
+ * @param {boolean} readable Whether to return a compare-ready key or a readable name
  * @returns {string | null} The range band, or null if given a NaN
  */
-export function getRangeBandFromDistance(distance) {
+export function getRangeBandFromDistance(distance, readable = false) {
     if (isNaN(distance)) {
         console.error("Attempted to get a distance that is not a number: " + distance);
         return null;
@@ -283,17 +291,17 @@ export function getRangeBandFromDistance(distance) {
     const foobar = Object.entries(CommonSystemInfo.rangePaces).sort((a, b) => a[1] - b[1]);
     for (const band of foobar) { // Loop through the range bands and return the one where the distance is equal or less than the band's
         if (distance <= band[1])
-            return band[0];
+            return readable ? CommonSystemInfo.rangeBands[band[0]] : band[0];
     }
     console.warn("Attempted to get a distance further away than the max range: " + distance);
-    return foobar[foobar.length - 1][0];
+    return readable ? "Over Maximum" : "overmax";
 }
 
 /**
  * Get the range dice for the matching band
  * @param {string} band The range band
  * @param {number} reduction The degree of range reduction
- * @returns {string} The range dice
+ * @returns {RangeDiceReturn} The range dice and range band
  */
 export function getRangeDiceFromBand(band, reduction = 0) {
     let usedBand = band;
@@ -301,25 +309,32 @@ export function getRangeDiceFromBand(band, reduction = 0) {
         const index = CommonSystemInfo.rangeBandsArray.indexOf(band);
         usedBand = CommonSystemInfo.rangeBandsArray[(index - reduction >= 0 ? index - reduction : 0)];
     }
-    return (CommonSystemInfo.rangeDice.hasOwnProperty(usedBand) ? CommonSystemInfo.rangeDice[usedBand] : "");
+    return {
+        "rangeDice": (CommonSystemInfo.rangeDice.hasOwnProperty(usedBand) ? CommonSystemInfo.rangeDice[usedBand] : ""),
+        "rangeBand": usedBand
+    };
 }
 
 /**
  * Get the range dice matching the distance given
  * @param {number} distance The range band
  * @param {number} reduction The degree of range reduction
- * @returns {string} The range dice
+ * @param {boolean} allowovermax Whether to allow a dice penatly for over maximum distance, or just return an error
+ * @returns {RangeDiceReturn} The range dice and range band
  */
 export function getRangeDiceFromDistance(distance, reduction = 0, allowovermax = false) {
     const band = getRangeBandFromDistance(distance);
     // A very complicated-looking get, which gets the distance for the last range band in the system info, to compare against the distance given
     if (distance > CommonSystemInfo.rangePaces[CommonSystemInfo.rangeBandsArray[CommonSystemInfo.rangeBandsArray.length - 1]]) {
         // If the distance is longer than the maximum range band, return either an error message or a max range dice setting
-        return (allowovermax ? CommonSystemInfo.rangeOverMaxDice : "error");
+        return {
+            "rangeDice": (allowovermax ? CommonSystemInfo.rangeOverMaxDice : "error"),
+            "rangeBand": "overmax"
+        };
     }
     if (band)
         return getRangeDiceFromBand(band, reduction);
-    return "";
+    return { "rangeDice": "", "rangeBand": "" };
 }
 
 /**

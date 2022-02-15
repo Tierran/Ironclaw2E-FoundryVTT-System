@@ -1,7 +1,7 @@
 import { Ironclaw2EActor } from "./actor/actor.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { hasConditionsIronclaw } from "./conditions.js";
-import { CommonSystemInfo, getRangeDistanceFromBand, getRangeMinMaxFromBand, getRangeDiceFromDistance } from "./systeminfo.js";
+import { CommonSystemInfo, getRangeDistanceFromBand, getRangeMinMaxFromBand, getRangeDiceFromDistance, getRangeBandFromDistance } from "./systeminfo.js";
 
 /* -------------------------------------------- */
 /*  Dice Helpers                                */
@@ -581,7 +581,8 @@ export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs
         return { "otherinputs": otherinputs, "otherbools": otherbools, "otherkeys": otherkeys, "otherdice": otherdice };
     }
 
-    const distanceDice = getRangeDiceFromDistance(distance, reduction, allowovermax);
+    const distanceDice = getRangeDiceFromDistance(distance, reduction, allowovermax).rangeDice;
+    const rangeBand = getRangeBandFromDistance(distance, true); // Separate, since the one the upper one returns is the penalty band, not the actual band
     const distKey = "Range Penalty";
     if (distanceDice === "error") {
         otherinputs += `<div class="form-group flexrow">
@@ -592,7 +593,7 @@ export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs
         otherkeys.push(distKey);
         otherdice.push(diceArray);
         otherinputs += `<div class="form-group flexrow">
-                <label class="normal-label">${game.i18n.format("ironclaw2e.dialog.dicePool.rangePenaltyAttacker", { "penalty": distanceDice })}</label>
+                <label class="normal-label">${game.i18n.format("ironclaw2e.dialog.dicePool.rangePenaltyAttacker", { "range": rangeBand, "penalty": distanceDice })}</label>
 	            <input type="checkbox" id="${makeCompareReady(distKey)}" name="${makeCompareReady(distKey)}" ${(autocheck ? "checked" : "")}></input>
                 </div>`+ "\n";
         otherbools.push(autocheck);
