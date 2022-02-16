@@ -259,14 +259,16 @@ function ironclawRequestRollChat(inputstring, speaker, expectwhisper = false) {
 
     const usedSpeaker = game.user.isGM ? { alias: game.user.name } : speaker;
 
-    let piecedinput = inputstring.split(";"); // Split the input to pieces
-    let tn = -1;
-    let usedstring = inputstring;
+    const piecedinput = inputstring.split(";"); // Split the input to pieces
     let whisperUsers = "";
 
     if (expectwhisper) {
-        whisperUsers = piecedinput.splice(0, 1);
+        whisperUsers = piecedinput.splice(0, 1)[0];
+        inputstring = inputstring.substring(inputstring.indexOf(";") + 1);
     }
+
+    let tn = -1;
+    let usedstring = inputstring;
 
     // Attempt to check whether the input has two semicolons, and use the value after the third as a TN
     if (piecedinput.length > 2) {

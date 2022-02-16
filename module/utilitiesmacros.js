@@ -176,7 +176,7 @@ export async function requestRollToMessage(dicepool, tn, { whisper = "", speaker
         flags
     };
     // Check whether the whisper field even contains anything, then whether there are multiple users there split with commas
-    if (whisper?.length > 0) {
+    if (typeof whisper === "string" && whisper?.length > 0) {
         let whisperIds = [];
         const whisperSplit = whisper.split(",");
         if (whisperSplit.length > 1) {
