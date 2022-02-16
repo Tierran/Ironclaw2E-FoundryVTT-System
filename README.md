@@ -5,9 +5,9 @@ The system has full sheets for characters and simpler sheets for 'mooks', ie. re
 
 For arbitrary rolls and for people that prefer external sheets, there are two sets of ready-made macros included that can be used to roll arbitrary dice pools without creating an actor for them. In addition, there are some other utility macros available.  
 
-While the system has compendiums, they **do not** contain characters, gifts, gear or other notable game content from the Ironclaw books. Instead, they include paraphrased basic system information for quick reference as well as the aforementioned macros.
+While the system has compendiums, they **do not** contain characters, gifts, gear or other notable game content from the Ironclaw books. Instead, they include paraphrased basic system information for quick reference as well as the aforementioned macros.  
 
-This system was built from the Boilerplate system found here: https://gitlab.com/asacolips-projects/foundry-mods/boilerplate
+This system was built from the Boilerplate system found here: https://gitlab.com/asacolips-projects/foundry-mods/boilerplate  
 
 ## Usage
 
@@ -55,7 +55,7 @@ In addition, /popuproll can take a simple "soak", "defense" or "dodging" as inpu
 The /quickroll command takes the same parameters as /popuproll, but rather than opening a dice pool dialog, the given dice are rolled quickly without any dialog opening up. The /directroll command is simply an alias for /quickroll.  
 The /itemuse command simply uses an item; it takes an item name and uses that to activate a normal item use, as if the item was used through a hotbar macro. The *item* in this case refers to all things FoundryVTT considers items (armor, gifts, weapons, illumination...), not just the gear type. The name must be an **exact** match.  
 The /actordamage command pops up a damage dialog, either with the normal defaults or with inputted values. Every value should be separated by a semicolon, with the values being damage, soak, extra conditions and whether the damage should be added quickly / silently without a popup, respectively. For example: "/actordamage 4;3;Blinded;quick" or "/actordamage 2;-1"  
-The /askroll command is for requesting a specific roll from other players, and sends a chat message which contains a button to roll the specified stats, dice and TN. It takes a dice pool format input, again with an additional semicolon and number changing the default roll type from highest to TN. Eg. "/askroll Dodge, Speed;d12" or "/askroll will,presence;4". The "/whisperask" does the same thing, but this time, the first part should be player names that the request will be whispered to. Eg. "/whisperask Alice; Will, Gossip; d8; 3" or "/whisperask Bob, Charlie; Mind, weathersense; 3"  
+The /requestroll and its alias /askroll commands are for requesting a specific roll from other players, and send a chat message which contains a button to roll the specified stats, dice and TN. It takes a dice pool format input, again with an additional semicolon and number changing the default roll type from highest to TN. Eg. "/requestroll Dodge, Speed;d12" or "/askroll will,presence;4". The /whisperask does the same thing, but this time, the first part should be player names that the request will be whispered to. Eg. "/whisperask Alice; Will, Gossip; d8; 3" or "/whisperask Bob, Charlie; Mind, weathersense; 3"  
 
 #### Advanced Gift Bonus Settings
 

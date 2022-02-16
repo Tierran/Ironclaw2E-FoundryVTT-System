@@ -4,7 +4,7 @@ import { findTotalDice, parseSingleDiceString, splitStatString } from "./helpers
 import { splitStatsAndBonus } from "./helpers.js";
 import { makeCompareReady } from "./helpers.js";
 import { CommonSystemInfo } from "./systeminfo.js";
-import { askRollToMessage } from "./utilitiesmacros.js";
+import { requestRollToMessage } from "./utilitiesmacros.js";
 
 export function chatCommandsIntegration(chatCommands) {
 
@@ -81,14 +81,26 @@ export function chatCommandsIntegration(chatCommands) {
 
     // Send a chat message that asks users to roll selected dice
     chatCommands.registerCommand(chatCommands.createCommandFromData({
-        commandKey: "/askroll",
+        commandKey: "/requestroll",
         invokeOnCommand: async (chatlog, messageText, chatdata) => {
             await game.ironclaw2e.sleep(100);
-            ironclawAskRollChat(messageText, chatdata?.speaker);
+            ironclawRequestRollChat(messageText, chatdata?.speaker);
         },
         shouldDisplayToChat: false,
         iconClass: "fa-user",
-        description: game.i18n.localize("ironclaw2e.command.askroll")
+        description: game.i18n.localize("ironclaw2e.command.requestroll")
+    }));
+
+    // Send a chat message that asks users to roll selected dice
+    chatCommands.registerCommand(chatCommands.createCommandFromData({
+        commandKey: "/askroll",
+        invokeOnCommand: async (chatlog, messageText, chatdata) => {
+            await game.ironclaw2e.sleep(100);
+            ironclawRequestRollChat(messageText, chatdata?.speaker);
+        },
+        shouldDisplayToChat: false,
+        iconClass: "fa-user",
+        description: game.i18n.localize("ironclaw2e.command.requestroll")
     }));
 
     // Send a chat message that asks select users to roll selected dice
@@ -96,7 +108,7 @@ export function chatCommandsIntegration(chatCommands) {
         commandKey: "/whisperask",
         invokeOnCommand: async (chatlog, messageText, chatdata) => {
             await game.ironclaw2e.sleep(100);
-            ironclawAskRollChat(messageText, chatdata?.speaker, true);
+            ironclawRequestRollChat(messageText, chatdata?.speaker, true);
         },
         shouldDisplayToChat: false,
         iconClass: "fa-user",
@@ -239,9 +251,9 @@ function ironclawDamageApplyChat(inputstring, speaker) {
         actor.popupDamage(damage, soak, conditions);
 }
 
-function ironclawAskRollChat(inputstring, speaker, expectwhisper = false) {
+function ironclawRequestRollChat(inputstring, speaker, expectwhisper = false) {
     if (typeof inputstring !== "string") {
-        console.error("Something other than a string inputted into ironclawAskRollChat: " + inputstring.toString());
+        console.error("Something other than a string inputted into ironclawRequestRollChat: " + inputstring.toString());
         return;
     }
 
@@ -273,5 +285,5 @@ function ironclawAskRollChat(inputstring, speaker, expectwhisper = false) {
         }
     }
 
-    askRollToMessage(usedstring, tn, { "speaker": usedSpeaker, "whisper": whisperUsers });
+    requestRollToMessage(usedstring, tn, { "speaker": usedSpeaker, "whisper": whisperUsers });
 }

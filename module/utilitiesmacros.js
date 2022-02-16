@@ -19,7 +19,7 @@ Hooks.on("renderChatMessage", function (message, html, data) {
         // Get the flags of the message that determine what type of message it is
         const itemInfo = message.getFlag("ironclaw2e", "itemInfo");
         const attackInfo = message.getFlag("ironclaw2e", "attackDamageInfo");
-        const askRoll = message.getFlag("ironclaw2e", "askRoll");
+        const requestRoll = message.getFlag("ironclaw2e", "requestRoll");
 
         if (itemInfo) {
             if (showAuthor) {
@@ -48,9 +48,9 @@ Hooks.on("renderChatMessage", function (message, html, data) {
                 buttons.remove();
             }
         }
-        if (askRoll) {
+        if (requestRoll) {
             if (showOthers) {
-                buttons.find('.asked-roll-button').click(onAskRollTrigger.bind(this));
+                buttons.find('.asked-roll-button').click(onRequestRollTrigger.bind(this));
             } else {
                 buttons.remove();
             }
@@ -64,11 +64,11 @@ Hooks.on("renderChatMessage", function (message, html, data) {
  * @param {number} tnnum
  * @param {string} whispername
  */
-export function askRollPopup(readydice = "", tnnum = -1, whispername = "") {
-    const allowNonGM = game.settings.get("ironclaw2e", "allowNonGMAskRolls");
+export function requestRollPopup(readydice = "", tnnum = -1, whispername = "") {
+    const allowNonGM = game.settings.get("ironclaw2e", "allowNonGMrequestRolls");
     if (!game.user.isGM && !allowNonGM) {
         // If the user is not a GM and the world settings do not allow non-GM's to ask rolls
-        ui.notifications.warn("ironclaw2e.ui.askRollNotAllowed", { localize: true });
+        ui.notifications.warn("ironclaw2e.ui.requestRollNotAllowed", { localize: true });
         return;
     }
 
@@ -79,22 +79,22 @@ export function askRollPopup(readydice = "", tnnum = -1, whispername = "") {
     let dialogContent = `
      <form class="ironclaw2e">
       <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.askRoll.askRollAsUser")}:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.requestRoll.requestRollAsUser")}:</label>
        <select style="width: 60%" id="selectuser" name="selectuser">
         <option value="0" selected>${userSpeaker.alias}</option>
         <option value="1">${macroSpeaker.alias}</option>
        </select>
       </div>
 	  <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.askRoll.whisperLabel")}:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.requestRoll.whisperLabel")}:</label>
 	   <input type="text" id="whisper" name="whisper" value="${whispername}"></input>
       </div>
       <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.askRoll.targetNumber")}:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.requestRoll.targetNumber")}:</label>
 	   <input type="text" id="tn" name="tn" value="${tnnum}" onfocus="this.select();"></input>
       </div>
       <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.askRoll.rollToAsk")}:</label>
+       <label>${game.i18n.localize("ironclaw2e.dialog.requestRoll.rollToRequest")}:</label>
       </div>
 	  <div class="form-group">
 	   <input type="text" id="dices" name="dices" value="${readydice}"></input>
@@ -102,12 +102,12 @@ export function askRollPopup(readydice = "", tnnum = -1, whispername = "") {
      </form>`;
 
     let dlog = new Dialog({
-        title: game.i18n.localize("ironclaw2e.dialog.askRoll.askRollHeader"),
+        title: game.i18n.localize("ironclaw2e.dialog.requestRoll.requestRollHeader"),
         content: dialogContent,
         buttons: {
             one: {
                 icon: '<i class="fas fa-check"></i>',
-                label: game.i18n.localize("ironclaw2e.dialog.ask"),
+                label: game.i18n.localize("ironclaw2e.dialog.request"),
                 callback: () => confirmed = true
             },
             two: {
@@ -129,7 +129,7 @@ export function askRollPopup(readydice = "", tnnum = -1, whispername = "") {
                 let DICES = html.find('[name=dices]')[0].value;
                 let dices = ""; if (DICES.length > 0) dices = DICES;
 
-                askRollToMessage(dices, tn, { "speaker": (usernumber === 1 ? macroSpeaker : userSpeaker), "whisper": whisper });
+                requestRollToMessage(dices, tn, { "speaker": (usernumber === 1 ? macroSpeaker : userSpeaker), "whisper": whisper });
             }
         }
     });
@@ -137,21 +137,21 @@ export function askRollPopup(readydice = "", tnnum = -1, whispername = "") {
 }
 
 /**
- * Actual sending of the chat message that asks the roll
+ * Actual sending of the chat message that requests the roll
  * @param {string} dicepool
  * @param {number} tn
  * @param {any} param2
  */
-export async function askRollToMessage(dicepool, tn, { whisper = "", speaker = null } = {}) {
-    const allowNonGM = game.settings.get("ironclaw2e", "allowNonGMAskRolls");
+export async function requestRollToMessage(dicepool, tn, { whisper = "", speaker = null } = {}) {
+    const allowNonGM = game.settings.get("ironclaw2e", "allowNonGMrequestRolls");
     if (!game.user.isGM && !allowNonGM) {
-        // If the user is not a GM and the world settings do not allow non-GM's to ask rolls
-        ui.notifications.warn("ironclaw2e.ui.askRollNotAllowed", { localize: true });
+        // If the user is not a GM and the world settings do not allow non-GM's to request rolls
+        ui.notifications.warn("ironclaw2e.ui.requestRollNotAllowed", { localize: true });
         return;
     }
     if (!dicepool) {
-        // Stop the ask roll sending if there is nothing asked
-        ui.notifications.info("ironclaw2e.ui.askRollEmpty", { localize: true });
+        // Stop the request roll sending if there is nothing requested
+        ui.notifications.info("ironclaw2e.ui.requestRollEmpty", { localize: true });
         return;
     }
 
@@ -166,9 +166,9 @@ export async function askRollToMessage(dicepool, tn, { whisper = "", speaker = n
         "tnnum": tnnum
     };
 
-    const contents = await renderTemplate("systems/ironclaw2e/templates/chat/ask-roll.html", templateData);
+    const contents = await renderTemplate("systems/ironclaw2e/templates/chat/request-roll.html", templateData);
 
-    let flags = { "ironclaw2e.askRoll": true, "ironclaw2e.askDicePool": dicepool, "ironclaw2e.askTNYes": tnyes, "ironclaw2e.askTNNum": tnnum, "ironclaw2e.askSpeaker": speaker.alias };
+    let flags = { "ironclaw2e.requestRoll": true, "ironclaw2e.requestDicePool": dicepool, "ironclaw2e.requestTNYes": tnyes, "ironclaw2e.requestTNNum": tnnum, "ironclaw2e.requestSpeaker": speaker.alias };
 
     let chatData = {
         content: contents,
@@ -194,10 +194,10 @@ export async function askRollToMessage(dicepool, tn, { whisper = "", speaker = n
 }
 
 /**
- * The function to trigger when a user presses the "Roll asked pool" button
+ * The function to trigger when a user presses the "Roll dice pool" button
  * @param {any} event
  */
-async function onAskRollTrigger(event) {
+async function onRequestRollTrigger(event) {
     event.preventDefault();
     const element = event.currentTarget;
     const dataset = element.dataset;
@@ -211,10 +211,10 @@ async function onAskRollTrigger(event) {
 
     const messageId = message.id;
     const messageFlags = message?.data?.flags?.ironclaw2e;
-    const splitStats = splitStatsAndBonus(messageFlags.askDicePool);
+    const splitStats = splitStatsAndBonus(messageFlags.requestDicePool);
 
     defenseActor.popupSelectRolled({
-        "tnyes": messageFlags.askTNYes, "tnnum": messageFlags.askTNNum, "prechecked": splitStats[0],
-        "extradice": splitStats[1], "otherlabel": game.i18n.format("ironclaw2e.chatInfo.askRoll.rollLabel", { "user": messageFlags.askSpeaker })
+        "tnyes": messageFlags.requestTNYes, "tnnum": messageFlags.requestTNNum, "prechecked": splitStats[0],
+        "extradice": splitStats[1], "otherlabel": game.i18n.format("ironclaw2e.chatInfo.requestRoll.rollLabel", { "user": messageFlags.requestSpeaker })
     });
 }

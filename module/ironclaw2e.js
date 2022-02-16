@@ -5,7 +5,7 @@ import { Ironclaw2EActorSheet } from "./actor/actor-sheet.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { Ironclaw2EItemSheet } from "./item/item-sheet.js";
 
-import { askRollPopup, askRollToMessage } from "./utilitiesmacros.js";
+import { requestRollPopup } from "./utilitiesmacros.js";
 
 import { Ironclaw2ECombat } from "./combat.js";
 import { Ironclaw2ECombatant } from "./combat.js";
@@ -54,7 +54,7 @@ Hooks.once('init', async function () {
         popupMacro,
         popupSelect,
         popupDamage,
-        askRollPopup,
+        requestRollPopup,
         // Dice rolling commands
         CardinalDiceRoller,
         rollTargetNumberDialog,
@@ -128,9 +128,9 @@ Hooks.once('init', async function () {
         default: true,
         config: false
     });
-    game.settings.register("ironclaw2e", "allowNonGMAskRolls", {
-        name: "ironclaw2e.config.allowNonGMAskRolls",
-        hint: "ironclaw2e.config.allowNonGMAskRollsHint",
+    game.settings.register("ironclaw2e", "allowNonGMRequestRolls", {
+        name: "ironclaw2e.config.allowNonGMRequestRolls",
+        hint: "ironclaw2e.config.allowNonGMRequestRollsHint",
         scope: "world",
         type: Boolean,
         default: true,
