@@ -65,7 +65,7 @@ Hooks.on("renderChatMessage", function (message, html, data) {
  * @param {string} whispername
  */
 export function requestRollPopup(readydice = "", tnnum = -1, whispername = "") {
-    const allowNonGM = game.settings.get("ironclaw2e", "allowNonGMrequestRolls");
+    const allowNonGM = game.settings.get("ironclaw2e", "allowNonGMRequestRolls");
     if (!game.user.isGM && !allowNonGM) {
         // If the user is not a GM and the world settings do not allow non-GM's to ask rolls
         ui.notifications.warn("ironclaw2e.ui.requestRollNotAllowed", { localize: true });
@@ -143,7 +143,7 @@ export function requestRollPopup(readydice = "", tnnum = -1, whispername = "") {
  * @param {any} param2
  */
 export async function requestRollToMessage(dicepool, tn, { whisper = "", speaker = null } = {}) {
-    const allowNonGM = game.settings.get("ironclaw2e", "allowNonGMrequestRolls");
+    const allowNonGM = game.settings.get("ironclaw2e", "allowNonGMRequestRolls");
     if (!game.user.isGM && !allowNonGM) {
         // If the user is not a GM and the world settings do not allow non-GM's to request rolls
         ui.notifications.warn("ironclaw2e.ui.requestRollNotAllowed", { localize: true });
