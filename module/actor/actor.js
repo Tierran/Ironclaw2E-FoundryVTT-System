@@ -18,14 +18,14 @@ import { getDistancePenaltyConstruction } from "../helpers.js";
 import { checkQuickModifierKey } from "../helpers.js";
 import { getDistanceBetweenPositions } from "../helpers.js";
 import { CommonConditionInfo } from "../conditions.js";
-import { checkStandardDefense, CommonSystemInfo } from "../systeminfo.js";
+import { checkStandardDefense, CommonSystemInfo, getRangeDiceFromDistance } from "../systeminfo.js";
 // For condition management
 import { hasConditionsIronclaw } from "../conditions.js";
 import { getConditionNamesIronclaw } from "../conditions.js";
 import { addConditionsIronclaw } from "../conditions.js";
 import { removeConditionsIronclaw } from "../conditions.js";
 // The rest are for the supermassive function
-import { CardinalDiceRoller } from "../dicerollers.js";
+import { CardinalDiceRoller, rollHighestOneLine } from "../dicerollers.js";
 import { enforceLimit } from "../helpers.js";
 import { burdenedLimitedStat } from "../helpers.js";
 import { Ironclaw2EItem } from "../item/item.js";
@@ -1086,10 +1086,10 @@ export class Ironclaw2EActor extends Actor {
         const data = this.data.data;
         if (data.processingLists?.[specialname]) { // Check if they even exist
             for (let setting of data.processingLists[specialname]) { // Loop through them
-                if (checkApplicability(setting, item, this, otheritem, defensecheck, defensetype)) { // Check initial applicability
+                if (checkApplicability(setting, item, this, { otheritem, defensecheck, defensetype })) { // Check initial applicability
                     let used = setting; // Store the setting in a temp variable
                     let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
-                    while (replacement && checkApplicability(replacement, item, this, otheritem, defensecheck, defensetype)) { // As long as the currently used one could be replaced by something applicable
+                    while (replacement && checkApplicability(replacement, item, this, { otheritem, defensecheck, defensetype })) { // As long as the currently used one could be replaced by something applicable
                         used = replacement; // Store the replacement as the one to be used
                         replacement = this._checkForReplacement(used); // Check for a new replacement
                     }
@@ -1454,18 +1454,18 @@ export class Ironclaw2EActor extends Actor {
      * @param {Ironclaw2EItem} item
      * @returns {{reduction: number, autocheck: boolean}}
      */
-    getRangePenaltyReduction(item = null) {
+    getRangePenaltyReduction(item = null, rallycheck = false) {
         const data = this.data.data;
-        const itemData = item.data.data;
+        const itemData = item?.data?.data;
         let reduction = 0;
         let autocheck = true;
         // Grab the penalty reduction degree from the special settings
         if (data.processingLists?.rangePenaltyReduction) { // Check if range penalty reduction bonuses even exist
             for (let setting of data.processingLists.rangePenaltyReduction) { // Loop through them
-                if (checkApplicability(setting, item, this)) { // Check initial applicability
+                if (checkApplicability(setting, item, this, { rallycheck })) { // Check initial applicability
                     let used = setting; // Store the setting in a temp variable
                     let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
-                    while (replacement && checkApplicability(replacement, item, this)) { // As long as the currently used one could be replaced by something applicable
+                    while (replacement && checkApplicability(replacement, item, this, { rallycheck })) { // As long as the currently used one could be replaced by something applicable
                         used = replacement; // Store the replacement as the one to be used
                         replacement = this._checkForReplacement(used); // Check for a new replacement
                     }
@@ -1606,7 +1606,8 @@ export class Ironclaw2EActor extends Actor {
         }
     }
 
-    async popupRallyRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherbools = [], otherlabel = "" } = {}, { directroll = false } = {}, successfunc = null) {
+    async popupRallyAlliesRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherbools = [], otherlabel = "" } = {}, { directroll = false, targetpos = null } = {},
+        successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
         let formconstruction = otherinputs;
@@ -1614,12 +1615,26 @@ export class Ironclaw2EActor extends Actor {
         let constructionarray = [...otherdice];
         let constructionbools = [...otherbools];
 
-
+        let usedTn = tnnum;
+        // Distance penalty as the TN
+        if (targetpos) {
+            const foundToken = findActorToken(this);
+            if (foundToken) {
+                const dist = getDistanceBetweenPositions(foundToken.data, targetpos);
+                const reduction = this.getRangePenaltyReduction(null, true).reduction;
+                const penalty = getRangeDiceFromDistance(dist, reduction, false, true);
+                const foundDice = findTotalDice(penalty.rangeDice);
+                const rangeLabel = game.i18n.format("ironclaw2e.dialog.dicePool.rangePenaltyDistance", { "range": penalty.rangeBandOriginal, "penalty": penalty.rangeDice });
+                const rangeTitle = game.i18n.format("ironclaw2e.dialog.dicePool.rangeRollTitle", { "range": penalty.rangeBandOriginal });
+                const rolled = await (directroll ? CardinalDiceRoller.rollHighestArray(foundDice, rangeLabel, this) : rollHighestOneLine(penalty.rangeDice, rangeLabel, rangeTitle, this));
+                if (rolled && usedTn < rolled.highest) usedTn = rolled.highest;
+            }
+        }
 
         if (directroll)
-            this.silentSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherbools": constructionbools, otherlabel }, successfunc);
+            this.silentSelectRolled({ "prechecked": checkedstats, tnyes, "tnnum": usedTn, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherbools": constructionbools, otherlabel }, successfunc);
         else
-            this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc);
+            this.popupSelectRolled({ "prechecked": checkedstats, tnyes, "tnnum": usedTn, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc);
     }
 
     popupSoakRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherbools = [], otherlabel = "" } = {}, { directroll = false, checkweak = false, checkarmor = true } = {}, successfunc = null) {

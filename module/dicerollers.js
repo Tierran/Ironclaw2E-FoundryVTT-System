@@ -412,6 +412,7 @@ export class CardinalDiceRoller {
  * @param {string} label The label given to the roll function to display in the chat message
  * @param {string} rolltitle The title shown as the dialog's purpose, translated if one is found
  * @param {Actor} rollingactor The actor for which the roll is for
+ * @returns {Promise<DiceReturn> | Promise<null>} Promise of the roll data in an object, or null if cancelled
  */
 export async function rollTargetNumberDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0, label = "", rolltitle = "", rollingactor = null) {
     let confirmed = false;
@@ -498,6 +499,7 @@ export async function rollTargetNumberDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0
  * @param {string} label The label given to the roll function to display in the chat message
  * @param {string} rolltitle The title shown as the dialog's purpose, translated if one is found
  * @param {Actor} rollingactor The actor for which the roll is for
+ * @returns {Promise<DiceReturn> | Promise<null>} Promise of the roll data in an object, or null if cancelled
  */
 export async function rollHighestDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0, label = "", rolltitle = "", rollingactor = null) {
     let confirmed = false;
@@ -575,6 +577,7 @@ export async function rollHighestDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4
  * @param {string} label The label given to the roll function to display in the chat message
  * @param {string} rolltitle The title shown as the dialog's purpose, translated if one is found
  * @param {Actor} rollingactor The actor for which the roll is for
+ * @returns {Promise<DiceReturn> | Promise<null>} Promise of the roll data in an object, or null if cancelled
  */
 export async function rollTargetNumberOneLine(tnnum = 3, readydice = "", label = "", rolltitle = "", rollingactor = null) {
     let confirmed = false;
@@ -635,6 +638,7 @@ export async function rollTargetNumberOneLine(tnnum = 3, readydice = "", label =
  * @param {string} label The label given to the roll function to display in the chat message
  * @param {string} rolltitle The title shown as the dialog's purpose, translated if one is found
  * @param {Actor} rollingactor The actor for which the roll is for
+ * @returns {Promise<DiceReturn> | Promise<null>} Promise of the roll data in an object, or null if cancelled
  */
 export async function rollHighestOneLine(readydice = "", label = "", rolltitle = "", rollingactor = null) {
     let confirmed = false;
@@ -686,6 +690,7 @@ export async function rollHighestOneLine(readydice = "", label = "", rolltitle =
  * Function that takes a message with a roll and asks for a target number to use in copying the results of the roll to a new one
  * @param {ChatMessage} message The chat message to copy the roll from, assuming it has one
  * @param {string} rolltitle The title shown as the dialog's purpose, translated if one is found
+ * @returns {Promise<DiceReturn> | Promise<null>} Promise of the roll data in an object, or null if cancelled
  */
 export async function copyToRollTNDialog(message, rolltitle = "") {
     let confirmed = false;

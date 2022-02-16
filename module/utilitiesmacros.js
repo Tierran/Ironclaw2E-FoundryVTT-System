@@ -138,15 +138,20 @@ export function askRollPopup(readydice = "", tnnum = -1, whispername = "") {
 
 /**
  * Actual sending of the chat message that asks the roll
- * @param {string} stats
+ * @param {string} dicepool
  * @param {number} tn
  * @param {any} param2
  */
-export async function askRollToMessage(stats, tn, { whisper = "", speaker = null } = {}) {
+export async function askRollToMessage(dicepool, tn, { whisper = "", speaker = null } = {}) {
     const allowNonGM = game.settings.get("ironclaw2e", "allowNonGMAskRolls");
     if (!game.user.isGM && !allowNonGM) {
         // If the user is not a GM and the world settings do not allow non-GM's to ask rolls
         ui.notifications.warn("ironclaw2e.ui.askRollNotAllowed", { localize: true });
+        return;
+    }
+    if (!dicepool) {
+        // Stop the ask roll sending if there is nothing asked
+        ui.notifications.info("ironclaw2e.ui.askRollEmpty", { localize: true });
         return;
     }
 
@@ -156,28 +161,42 @@ export async function askRollToMessage(stats, tn, { whisper = "", speaker = null
 
     const templateData = {
         "speaker": speaker.alias,
-        "stats": stats,
+        "stats": dicepool,
         "tnyes": tnyes,
         "tnnum": tnnum
     };
 
     const contents = await renderTemplate("systems/ironclaw2e/templates/chat/ask-roll.html", templateData);
 
-    let flags = { "ironclaw2e.askRoll": true, "ironclaw2e.askStats": stats, "ironclaw2e.askTNYes": tnyes, "ironclaw2e.askTNNum": tnnum, "ironclaw2e.askSpeaker": speaker.alias };
+    let flags = { "ironclaw2e.askRoll": true, "ironclaw2e.askDicePool": dicepool, "ironclaw2e.askTNYes": tnyes, "ironclaw2e.askTNNum": tnnum, "ironclaw2e.askSpeaker": speaker.alias };
 
     let chatData = {
         content: contents,
         speaker,
         flags
     };
+    // Check whether the whisper field even contains anything, then whether there are multiple users there split with commas
     if (whisper?.length > 0) {
-        chatData.whisper = ChatMessage.getWhisperRecipients(whisper);
+        let whisperIds = [];
+        const whisperSplit = whisper.split(",");
+        if (whisperSplit.length > 1) {
+            for (let foo of whisperSplit) {
+                whisperIds = whisperIds.concat(ChatMessage.getWhisperRecipients(foo));
+            }
+        } else {
+            whisperIds = whisperIds.concat(ChatMessage.getWhisperRecipients(whisper));
+        }
+        chatData.whisper = whisperIds;
     } else {
         ChatMessage.applyRollMode(chatData, "publicroll");
     }
     CONFIG.ChatMessage.documentClass.create(chatData);
 }
 
+/**
+ * The function to trigger when a user presses the "Roll asked pool" button
+ * @param {any} event
+ */
 async function onAskRollTrigger(event) {
     event.preventDefault();
     const element = event.currentTarget;
@@ -192,7 +211,7 @@ async function onAskRollTrigger(event) {
 
     const messageId = message.id;
     const messageFlags = message?.data?.flags?.ironclaw2e;
-    const splitStats = splitStatsAndBonus(messageFlags.askStats);
+    const splitStats = splitStatsAndBonus(messageFlags.askDicePool);
 
     defenseActor.popupSelectRolled({
         "tnyes": messageFlags.askTNYes, "tnnum": messageFlags.askTNNum, "prechecked": splitStats[0],

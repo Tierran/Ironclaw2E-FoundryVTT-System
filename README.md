@@ -3,7 +3,7 @@
 This is a system for running the second edition version of Ironclaw (the corebook named Ironclaw Omnibus: Squaring the Circle) in Foundry VTT.  
 The system has full sheets for characters and simpler sheets for 'mooks', ie. relatively unimportant / minor NPC's to be mass-copied onto the field, and beasts which lack separate skills. The system also has multiple item types to represent gifts and the different gear characters can acquire, plus a general one with no mechanical systems to it.  
 
-For arbitrary rolls and for people that prefer external sheets, there are two sets of ready-made macros included that can be used to roll arbitrary dice pools without creating an actor for them. In addition, there is a ready macro to popup the damage dialog for the currently selected actor.  
+For arbitrary rolls and for people that prefer external sheets, there are two sets of ready-made macros included that can be used to roll arbitrary dice pools without creating an actor for them. In addition, there are some other utility macros available.  
 
 While the system has compendiums, they **do not** contain characters, gifts, gear or other notable game content from the Ironclaw books. Instead, they include paraphrased basic system information for quick reference as well as the aforementioned macros.
 
@@ -50,11 +50,12 @@ Currently, the system does not allow dice pools to include items. Instead, the s
 
 **For Chat Commands**:  
 The /iroll command can be used to quickly roll dice with the internal dice roller. It takes a one line format input after the command to roll dice as a highest roll type, with a semicolon followed by a number at the end changing it to a TN roll. Eg. "/iroll 3d6,d8" or "/iroll 3d6,d8;5"  
-The /popuproll command opens a standard roll dialog with the given dice pools already checked and optional extra dice and TN preset. It takes a dice pool format input, again with an additional semicolon and number changing the default roll type from highest to TN. Eg. "/popuproll dodge,speed;d12" or "/popuproll will,presence;;3"  
+The /popuproll command opens a standard roll dialog with the given dice pools already checked and optional extra dice and TN preset. It takes a dice pool format input, again with an additional semicolon and number changing the default roll type from highest to TN. However, the system will attempt to detect if the value after the first and only semicolon is a dice input or a TN. Eg. "/popuproll Dodge, Speed;d12;5" or "/popuproll will,presence;3"  
 In addition, /popuproll can take a simple "soak", "defense" or "dodging" as input. In the former case, it will open a standard soak roll popup, while the latter two open a dodge defense popup, since "dodge" would normally refer to a roll of pure dodge skill, rather than the defense.  
 The /quickroll command takes the same parameters as /popuproll, but rather than opening a dice pool dialog, the given dice are rolled quickly without any dialog opening up. The /directroll command is simply an alias for /quickroll.  
 The /itemuse command simply uses an item; it takes an item name and uses that to activate a normal item use, as if the item was used through a hotbar macro. The *item* in this case refers to all things FoundryVTT considers items (armor, gifts, weapons, illumination...), not just the gear type. The name must be an **exact** match.  
 The /actordamage command pops up a damage dialog, either with the normal defaults or with inputted values. Every value should be separated by a semicolon, with the values being damage, soak, extra conditions and whether the damage should be added quickly / silently without a popup, respectively. For example: "/actordamage 4;3;Blinded;quick" or "/actordamage 2;-1"  
+The /askroll command is for requesting a specific roll from other players, and sends a chat message which contains a button to roll the specified stats, dice and TN. It takes a dice pool format input, again with an additional semicolon and number changing the default roll type from highest to TN. Eg. "/askroll Dodge, Speed;d12" or "/askroll will,presence;4". The "/whisperask" does the same thing, but this time, the first part should be player names that the request will be whispered to. Eg. "/whisperask Alice; Will, Gossip; d8; 3" or "/whisperask Bob, Charlie; Mind, weathersense; 3"  
 
 #### Advanced Gift Bonus Settings
 
@@ -102,6 +103,7 @@ Any of these fields that aren't just checkboxes can include multiple values, sep
  - **Applies to Dodges**: Whether a defense bonus applies to dodge defenses.
  - **Applies to Parries**: Whether a defense bonus applies to parry defenses.
  - **Applies to Special Defenses**: Whether a defense bonus applies to special defenses.
+ - **Applies to Rallying**: Whether a range penalty reduction applies to rallying.
  
 </details>
 

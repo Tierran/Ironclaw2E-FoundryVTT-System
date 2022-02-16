@@ -581,8 +581,9 @@ export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs
         return { "otherinputs": otherinputs, "otherbools": otherbools, "otherkeys": otherkeys, "otherdice": otherdice };
     }
 
-    const distanceDice = getRangeDiceFromDistance(distance, reduction, allowovermax).rangeDice;
-    const rangeBand = getRangeBandFromDistance(distance, true); // Separate, since the one the upper one returns is the penalty band, not the actual band
+    const foobar = getRangeDiceFromDistance(distance, reduction, allowovermax, true);
+    const distanceDice = foobar.rangeDice;
+    const rangeBand = foobar.rangeBandOriginal;
     const distKey = "Range Penalty";
     if (distanceDice === "error") {
         otherinputs += `<div class="form-group flexrow">
@@ -613,9 +614,11 @@ export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs
  * @param {Object} otheritem Data from the other item, mostly used for the weapon attacking the actor
  * @param {boolean} defensecheck Special trigger for defense bonus, whether the check is for a defense
  * @param {string} defensetype Special trigger for defense bonus, what type of defense this is
+ * @param {boolean} rallycheck Special trigger for rally bonuses, only really used for range penalties
  * @returns {boolean} Whether the target is applicable for the special
  */
-export function checkApplicability(special, item, actor, otheritem = null, defensecheck = false, defensetype = "") {
+export function checkApplicability(special, item, actor,
+    { otheritem = null, defensecheck = false, defensetype = "", rallycheck = false } = {}) {
     if (!special) {
         // In case the check is given something that doesn't exist
         return false;
@@ -635,6 +638,12 @@ export function checkApplicability(special, item, actor, otheritem = null, defen
         }
         if (!special.appliesToSpecialDefenses && defensetype === "special") {
             return false; // Return false if the special does not apply to special defenses and this is a special defense
+        }
+    }
+    // Special rally check
+    if (rallycheck) {
+        if (special.appliesToRallying === false) {
+            return false; // Return false if the check is a rally and the special specifically does not apply to rallying
         }
     }
     // Item-specific checks

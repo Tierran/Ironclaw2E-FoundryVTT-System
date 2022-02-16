@@ -226,6 +226,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         html.find('.roll-item-change').click(this._onItemChangeStat.bind(this));
         html.find('.roll-soak').click(this._onSoakRoll.bind(this));
         html.find('.roll-defense').click(this._onDefenseRoll.bind(this));
+        html.find('.roll-rally').click(this._onRallyRoll.bind(this));
         html.find('.roll-enc-effect').click(this._onEncumbranceChange.bind(this));
         html.find('.roll-damage').click(this._onDamageRoll.bind(this));
         html.find('.roll-effects-reset').click(this._onEffectsReset.bind(this));
@@ -537,6 +538,30 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         }
 
         this.actor.popupDefenseRoll({ "prechecked": selected }, { directroll });
+    }
+
+    /**
+     * Handle the rally roll special case
+     * @param {Event} event   The originating click event
+     * @private
+     */
+    _onRallyRoll(event) {
+        event.preventDefault();
+        const element = event.currentTarget;
+        const dataset = element.dataset;
+        const data = this.actor.data.data;
+        let selected = [];
+        const directroll = checkQuickModifierKey();
+
+        if (dataset.roll) {
+            selected = splitStatString(dataset.roll);
+        } else {
+            selected = CommonSystemInfo.rallyBaseStats;
+        }
+
+        const [target] = (game.user.targets?.size > 0 ? game.user.targets : [null]);
+
+        this.actor.popupRallyAlliesRoll({ "prechecked": selected, "tnyes": true, "tnnum": 3 }, { directroll, "targetpos": target });
     }
 
     /**

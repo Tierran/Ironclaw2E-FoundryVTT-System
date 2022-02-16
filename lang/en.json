@@ -63,6 +63,7 @@
   "ironclaw2e.ui.itemUpdateInProgress": "Item update in progress, please wait...",
   "ironclaw2e.ui.itemUpdateComplete": "Item update complete!",
   "ironclaw2e.ui.askRollNotAllowed": "Not allowed to ask for rolls",
+  "ironclaw2e.ui.askRollEmpty": "No stats or dice were asked.",
 
 
   "ironclaw2e.actor.traits": "Traits",
@@ -90,6 +91,7 @@
   "ironclaw2e.command.itemuse": "Use an item",
   "ironclaw2e.command.actordamage": "Apply damage",
   "ironclaw2e.command.askroll": "Ask for a roll",
+  "ironclaw2e.command.whisperask": "Secretly ask for a roll",
 
 
   "ironclaw2e.combat.sideBasedInitiative": "Use side-based initiative",
@@ -226,6 +228,8 @@
   "ironclaw2e.dialog.dicePool.soakWeak": "Soak against Weak damage, double dice rolled",
   "ironclaw2e.dialog.dicePool.rangePenaltyAttacker": "{range} Range penalty for attacker: {penalty}",
   "ironclaw2e.dialog.dicePool.rangeOverMax": "Attacker over horizon range, attack should be impossible!",
+  "ironclaw2e.dialog.dicePool.rangePenaltyDistance": "{range} Range penalty for distance: {penalty}",
+  "ironclaw2e.dialog.dicePool.rangeRollTitle": "{range} Range Roll",
 
   "ironclaw2e.dialog.damageCalc.title": "Damage Calculation for {name}",
   "ironclaw2e.dialog.damageCalc.header": "Add damage to {name}",
@@ -397,6 +401,7 @@
   "ironclaw2e.sheets.actor.flyingSprint": "Flying Sprint",
   "ironclaw2e.sheets.actor.flyingRun": "Flying Run",
   "ironclaw2e.sheets.actor.dodgeRoll": "Dodge Roll",
+  "ironclaw2e.sheets.actor.rallyRoll": "Rallying Roll",
   "ironclaw2e.sheets.actor.soakRoll": "Soak Roll",
   "ironclaw2e.sheets.actor.attackTitle": "Attack with {name}",
   "ironclaw2e.sheets.actor.sparkTitle": "Spark Die",

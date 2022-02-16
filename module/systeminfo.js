@@ -10,7 +10,8 @@ import { makeCompareReady } from "./helpers.js";
 /**
  * @typedef {{
  *   rangeDice: string,
- *   rangeBand: string
+ *   rangeBandUsed: string
+ *   rangeBandOriginal: string
  * }} RangeDiceReturn
  */
 
@@ -28,6 +29,10 @@ export class CommonSystemInfo {
      * The standard stats used for dodge defense rolls
      */
     static dodgingBaseStats = ["speed", "dodge"];
+    /**
+     * The standard stats used for dodge defense rolls
+     */
+    static rallyBaseStats = ["will", "leadership"];
     /**
      * The standard stats used for initiative rolls
      */
@@ -210,7 +215,7 @@ export function getSpecialOptionPrototype(option) {
 
         case ("rangePenaltyReduction"):
             return mergeObject(special, {
-                "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState",
+                "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState", "appliesToRallying": false,
                 "penaltyReductionNumber": 0, "replaceNameField": ""
             });
             break;
@@ -301,9 +306,10 @@ export function getRangeBandFromDistance(distance, readable = false) {
  * Get the range dice for the matching band
  * @param {string} band The range band
  * @param {number} reduction The degree of range reduction
+ * @param {boolean} readable Whether the range band names are compare-ready keys or human-readable names
  * @returns {RangeDiceReturn} The range dice and range band
  */
-export function getRangeDiceFromBand(band, reduction = 0) {
+export function getRangeDiceFromBand(band, reduction = 0, readable = false) {
     let usedBand = band;
     if (reduction > 0) { // If there is usable range reduction, get the actual penalty 
         const index = CommonSystemInfo.rangeBandsArray.indexOf(band);
@@ -311,7 +317,7 @@ export function getRangeDiceFromBand(band, reduction = 0) {
     }
     return {
         "rangeDice": (CommonSystemInfo.rangeDice.hasOwnProperty(usedBand) ? CommonSystemInfo.rangeDice[usedBand] : ""),
-        "rangeBand": usedBand
+        "rangeBandUsed": readable ? CommonSystemInfo.rangeBands[usedBand] : usedBand, "rangeBandOriginal": readable ? CommonSystemInfo.rangeBands[band] : band
     };
 }
 
@@ -320,21 +326,22 @@ export function getRangeDiceFromBand(band, reduction = 0) {
  * @param {number} distance The range band
  * @param {number} reduction The degree of range reduction
  * @param {boolean} allowovermax Whether to allow a dice penatly for over maximum distance, or just return an error
+ * @param {boolean} readable Whether the range band names are compare-ready keys or human-readable names
  * @returns {RangeDiceReturn} The range dice and range band
  */
-export function getRangeDiceFromDistance(distance, reduction = 0, allowovermax = false) {
+export function getRangeDiceFromDistance(distance, reduction = 0, allowovermax = false, readable = false) {
     const band = getRangeBandFromDistance(distance);
     // A very complicated-looking get, which gets the distance for the last range band in the system info, to compare against the distance given
     if (distance > CommonSystemInfo.rangePaces[CommonSystemInfo.rangeBandsArray[CommonSystemInfo.rangeBandsArray.length - 1]]) {
         // If the distance is longer than the maximum range band, return either an error message or a max range dice setting
         return {
             "rangeDice": (allowovermax ? CommonSystemInfo.rangeOverMaxDice : "error"),
-            "rangeBand": "overmax"
+            "rangeBandUsed": readable ? "Over Maximum" : "overmax", "rangeBandOriginal": readable ? "Over Maximum" : "overmax"
         };
     }
     if (band)
-        return getRangeDiceFromBand(band, reduction);
-    return { "rangeDice": "", "rangeBand": "" };
+        return getRangeDiceFromBand(band, reduction, readable);
+    return { "rangeDice": "", "rangeBandUsed": "", "rangeBandOriginal": "" };
 }
 
 /**
