@@ -1,8 +1,14 @@
 // Utilities and Macros
 // Random non-helper stuff that are substantial, relatively self-contained, and I couldn't really think of another place to dump into
-import { getMacroSpeaker, getSpeakerActor, splitStatsAndBonus } from "./helpers.js";
+import { findActorToken, getDistanceBetweenPositions, getMacroSpeaker, getSpeakerActor, splitStatsAndBonus } from "./helpers.js";
 import { Ironclaw2EActor } from "./actor/actor.js";
+import { getRangeBandFromDistance } from "./systeminfo.js";
 
+/* -------------------------------------------- */
+/*  Hooks                                       */
+/* -------------------------------------------- */
+
+// Chat Message Button Handler
 Hooks.on("renderChatMessage", function (message, html, data) {
     // 'Who to show stuff to' system settings
     const noButtons = game.settings.get("ironclaw2e", "chatButtons") === false;
@@ -57,6 +63,46 @@ Hooks.on("renderChatMessage", function (message, html, data) {
         }
     }
 });
+
+// Distance Text Handlers
+Hooks.on("targetToken", function (user, token, targeted) {
+    const showRange = game.settings.get("ironclaw2e", "showRangeWhenTargeting");
+    if (!(showRange && user.id === game.userId)) {
+        // Unless the option is on and the user this triggered to is the current one, return out
+        return;
+    }
+    // Only show the text when the token is targeted, not un-targeted
+    if (targeted) {
+        const foundToken = findActorToken(getSpeakerActor());
+        showScrollingDistanceText(foundToken, token);
+    }
+});
+
+Hooks.on("updateToken", function (token, data, options, userid) {
+    const showRange = game.settings.get("ironclaw2e", "showRangeWhenTargeting");
+    if (!showRange || game.user.targets.size === 0) {
+        // If the option is turned off or the current user does not have any targets, return out
+        return;
+    }
+    if (!data.hasOwnProperty("x") && !data.hasOwnProperty("y") && !data.hasOwnProperty("elevation")) {
+        // If the update has nothing to do with position, return out
+        return;
+    }
+    const isTargeted = game.user.targets.ids.includes(token.id);
+    const foundToken = findActorToken(getSpeakerActor());
+    if (isTargeted || token.id === foundToken.id) {
+        if (isTargeted) {
+            showScrollingDistanceText(foundToken, token);
+        } else {
+            for (let target of game.user.targets)
+                showScrollingDistanceText(foundToken, target);
+        }
+    }
+});
+
+/* -------------------------------------------- */
+/*  Request Roll Functions                      */
+/* -------------------------------------------- */
 
 /**
  * Trigger a popup to specify what roll to request
@@ -217,4 +263,26 @@ async function onRequestRollTrigger(event) {
         "tnyes": messageFlags.requestTNYes, "tnnum": messageFlags.requestTNNum, "prechecked": splitStats[0],
         "extradice": splitStats[1], "otherlabel": game.i18n.format("ironclaw2e.chatInfo.requestRoll.rollLabel", { "user": messageFlags.requestSpeaker })
     });
+}
+
+/* -------------------------------------------- */
+/*  Distance Showing Functions                  */
+/* -------------------------------------------- */
+
+/**
+ * Function that pops up a text showing the distance band to the targettoken from the origintoken
+ * @param {Token | TokenDocument} origintoken
+ * @param {Token | TokenDocument} targettoken
+ */
+export function showScrollingDistanceText(origintoken, targettoken) {
+    // Only show the text if the origin and target exist, and are not the same token
+    if (origintoken && targettoken && origintoken.id !== targettoken.id) {
+        // Double-check that everything that should exist does
+        if (targettoken.hud && targettoken.data && origintoken.data) {
+            const distance = getDistanceBetweenPositions(origintoken.data, targettoken.data);
+            const range = getRangeBandFromDistance(distance, true);
+            const text = game.i18n.format("ironclaw2e.ui.rangeScrolling", { "range": range });
+            targettoken.hud.createScrollingText(text, { anchor: CONST.TEXT_ANCHOR_POINTS.BOTTOM, direction: CONST.TEXT_ANCHOR_POINTS.TOP, duration: 3000, jitter: 0.1, fontSize: 28, stroke: 0x000000, strokeThickness: 4 });
+        }
+    }
 }

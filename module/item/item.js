@@ -1114,6 +1114,7 @@ export class Ironclaw2EItem extends Item {
         }
 
         const canQuickroll = data.hasResist && !ignoreresist;
+        const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
         const callback = (x => {
             if (exhaust) exhaust.giftSetExhaust("true", sendToChat);
             item.automaticDamageCalculation(x, ignoreresist, donotdisplay, opposingsuccesses);
@@ -1121,7 +1122,6 @@ export class Ironclaw2EItem extends Item {
 
         const donotdisplay = game.settings.get("ironclaw2e", "calculateDoesNotDisplay");
         const exhaust = this.weaponGetGiftToExhaust();
-        const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
         if (data.exhaustGift && !exhaust) {
             ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
         } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift

@@ -63,6 +63,7 @@ export class WorldSettingsConfig extends FormApplication {
         settings.preferTokenName = game.settings.get("ironclaw2e", "preferTokenName");
         settings.autoPrototypeSetup = game.settings.get("ironclaw2e", "autoPrototypeSetup");
         settings.allowNonGMRequestRolls = game.settings.get("ironclaw2e", "allowNonGMRequestRolls");
+        settings.sendWeaponExhaustMessage = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
         settings.chatButtons = game.settings.get("ironclaw2e", "chatButtons");
         settings.showDefenseButtons = game.settings.get("ironclaw2e", "showDefenseButtons");
         settings.autoInitiativeConditions = game.settings.get("ironclaw2e", "autoInitiativeConditions");

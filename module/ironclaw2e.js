@@ -136,6 +136,14 @@ Hooks.once('init', async function () {
         default: true,
         config: false
     });
+    game.settings.register("ironclaw2e", "sendWeaponExhaustMessage", {
+        name: "ironclaw2e.config.sendWeaponExhaustMessage",
+        hint: "ironclaw2e.config.sendWeaponExhaustMessageHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: false
+    });
     // Chat button configs
     game.settings.register("ironclaw2e", "chatButtons", {
         name: "ironclaw2e.config.chatButtons",
@@ -319,12 +327,12 @@ Hooks.once('init', async function () {
         default: false,
         config: true
     });
-    game.settings.register("ironclaw2e", "sendWeaponExhaustMessage", {
-        name: "ironclaw2e.config.sendWeaponExhaustMessage",
-        hint: "ironclaw2e.config.sendWeaponExhaustMessageHint",
+    game.settings.register("ironclaw2e", "showRangeWhenTargeting", {
+        name: "ironclaw2e.config.showRangeWhenTargeting",
+        hint: "ironclaw2e.config.showRangeWhenTargetingHint",
         scope: "client",
         type: Boolean,
-        default: false,
+        default: true,
         config: true
     });
 

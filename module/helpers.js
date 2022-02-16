@@ -572,7 +572,6 @@ export function getRangeBandMinMax(range, shorterOkay = false, longerOkay = fals
  * @param {boolean} autocheck Whether to autocheck the penalty, only really false for when a wand is used
  * @param {boolean} allowovermax Whether to allow a range penalty over the maximum distance to exist (true), or to show it as an error (false)
  * @returns {object} Returns a holder object which returns the inputs with the added bonuses
- * @private
  */
 export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs, otherbools, distance, { reduction = 0, autocheck = true, allowovermax = false } = {}) {
     const usePenalties = game.settings.get("ironclaw2e", "rangePenalties");
