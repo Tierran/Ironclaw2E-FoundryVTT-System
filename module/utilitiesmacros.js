@@ -278,9 +278,9 @@ export function showScrollingDistanceText(origintoken, targettoken) {
     // Only show the text if the origin and target exist, and are not the same token
     if (origintoken && targettoken && origintoken.id !== targettoken.id) {
         const combatRule = game.settings.get("ironclaw2e", "showRangeCombatRules");
-        let usecombatrules = combatRule >= 2;
+        let usecombatrules = combatRule === 2;
         if (combatRule === 1) {
-            if (game.combat.getCombatantByToken(origintoken.id))
+            if (game.combat?.getCombatantByToken(origintoken.id))
                 usecombatrules = true;
         }
         // Double-check that everything that should exist does
