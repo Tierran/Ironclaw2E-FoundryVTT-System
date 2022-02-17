@@ -178,6 +178,8 @@
   "ironclaw2e.config.allowNonGMRequestRollsHint": "If checked, the system will allow users without GM status to request rolls.",
   "ironclaw2e.config.sendWeaponExhaustMessage": "Send weapon gift exhaustion to chat",
   "ironclaw2e.config.sendWeaponExhaustMessageHint": "If checked, weapons that have a gift to auto-exhaust when used will also confirm gift exhaustion with a separate chat message.",
+  "ironclaw2e.config.showRangeCombatRules": "When 'Show range' uses combat rules",
+  "ironclaw2e.config.showRangeCombatRulesHint": "When, if ever, will the client setting 'Show range when targeting' option use combat range measurements. That is, when will height difference simply be calculated into the final result, and when will the vertical range rules apply to it.",
 
   "ironclaw2e.config.defaultSendDamage": "Damage to chat by default",
   "ironclaw2e.config.defaultSendDamageHint": "If checked, the damage-applying dialog will have the 'Send to chat' option checked by default.",
@@ -185,8 +187,6 @@
   "ironclaw2e.config.confirmItemInfoHint": "If checked, the system will pop a confirmation dialog before actually sending information about items to the chat.",
   "ironclaw2e.config.showRangeWhenTargeting": "Show range when targeting",
   "ironclaw2e.config.showRangeWhenTargetingHint": "If checked, targeting a token will show a quick scrolling text that tells the current range band it is at from the controlled token. The text will also show up if either the target or the controlled token move.",
-  "ironclaw2e.config.showRangeCombatRules": "When range uses combat rules",
-  "ironclaw2e.config.showRangeCombatRulesHint": "When, if ever, will the 'Show range when targeting' option use combat range measurements. That is, when will height difference simply be calculated into the final result, and when will the vertical range rules apply to it.",
 
 
   "ironclaw2e.dialog.roll": "Roll!",

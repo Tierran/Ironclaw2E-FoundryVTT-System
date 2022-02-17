@@ -31,9 +31,11 @@ export class WorldSettingsConfig extends FormApplication {
     async getData(options) {
         const settings = WorldSettingsConfig.getWorldSettingsObject;
         const diagonals = CommonSystemInfo.diagonalRules;
+        const rangeCombatRules = CommonSystemInfo.rangeCombatRules;
         return {
             settings,
-            diagonals
+            diagonals,
+            rangeCombatRules
         };
     }
 
@@ -78,6 +80,7 @@ export class WorldSettingsConfig extends FormApplication {
         settings.rangePenalties = game.settings.get("ironclaw2e", "rangePenalties");
         settings.matchStandardRuler = game.settings.get("ironclaw2e", "matchStandardRuler");
         settings.requireSpecialRangeFound = game.settings.get("ironclaw2e", "requireSpecialRangeFound");
+        settings.showRangeCombatRules = game.settings.get("ironclaw2e", "showRangeCombatRules");
         return settings;
     }
 }

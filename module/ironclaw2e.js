@@ -144,6 +144,15 @@ Hooks.once('init', async function () {
         default: false,
         config: false
     });
+    game.settings.register("ironclaw2e", "showRangeCombatRules", {
+        name: "ironclaw2e.config.showRangeCombatRules",
+        hint: "ironclaw2e.config.showRangeCombatRulesHint",
+        scope: "world",
+        type: Number,
+        default: 1,
+        config: false,
+        choices: CommonSystemInfo.rangeCombatRules
+    });
     // Chat button configs
     game.settings.register("ironclaw2e", "chatButtons", {
         name: "ironclaw2e.config.chatButtons",
@@ -334,15 +343,6 @@ Hooks.once('init', async function () {
         type: Boolean,
         default: true,
         config: true
-    });
-    game.settings.register("ironclaw2e", "showRangeCombatRules", {
-        name: "ironclaw2e.config.showRangeCombatRules",
-        hint: "ironclaw2e.config.showRangeCombatRulesHint",
-        scope: "client",
-        type: Number,
-        default: 0,
-        config: true,
-        choices: CommonSystemInfo.rangeCombatRules
     });
 
     // Register a version number that was used last time to allow determining if a new version is being used, client-scope for potential update logs and such
