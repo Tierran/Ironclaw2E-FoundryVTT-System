@@ -12,8 +12,8 @@
   "scripts": [],
   "packs": [
     {
-      "name": "customrolls",
-      "label": "Customizable Rolls",
+      "name": "macrospack",
+      "label": "Pre-Packaged Macros",
       "system": "ironclaw2e",
       "module": "ironclaw2e",
       "path": "packs/customizable-rolls.db",

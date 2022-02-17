@@ -121,6 +121,7 @@ export class CommonSystemInfo {
         "ONTW": "One-Two Diagonals",
         "SAME": "Equidistant"
     };
+    static rangeCombatRules = { 0: "Never", 1: "In Combat", 2: "Always" };
 }
 
 /**

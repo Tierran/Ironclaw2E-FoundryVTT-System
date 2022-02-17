@@ -183,8 +183,10 @@
   "ironclaw2e.config.defaultSendDamageHint": "If checked, the damage-applying dialog will have the 'Send to chat' option checked by default.",
   "ironclaw2e.config.confirmItemInfo": "Confirm sending item info",
   "ironclaw2e.config.confirmItemInfoHint": "If checked, the system will pop a confirmation dialog before actually sending information about items to the chat.",
-  "ironclaw2e.config.showRangeWhenTargeting": "Show Range When Targeting",
+  "ironclaw2e.config.showRangeWhenTargeting": "Show range when targeting",
   "ironclaw2e.config.showRangeWhenTargetingHint": "If checked, targeting a token will show a quick scrolling text that tells the current range band it is at from the controlled token. The text will also show up if either the target or the controlled token move.",
+  "ironclaw2e.config.showRangeCombatRules": "When range uses combat rules",
+  "ironclaw2e.config.showRangeCombatRulesHint": "When, if ever, will the 'Show range when targeting' option use combat range measurements. That is, when will height difference simply be calculated into the final result, and when will the vertical range rules apply to it.",
 
 
   "ironclaw2e.dialog.roll": "Roll!",

@@ -335,6 +335,15 @@ Hooks.once('init', async function () {
         default: true,
         config: true
     });
+    game.settings.register("ironclaw2e", "showRangeCombatRules", {
+        name: "ironclaw2e.config.showRangeCombatRules",
+        hint: "ironclaw2e.config.showRangeCombatRulesHint",
+        scope: "client",
+        type: Number,
+        default: 0,
+        config: true,
+        choices: CommonSystemInfo.rangeCombatRules
+    });
 
     // Register a version number that was used last time to allow determining if a new version is being used, client-scope for potential update logs and such
     game.settings.register("ironclaw2e", "lastSystemVersionClient", {
