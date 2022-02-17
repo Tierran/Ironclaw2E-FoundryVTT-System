@@ -266,7 +266,7 @@ export class Ironclaw2EActor extends Actor {
                     } else if (defensetype === "extra") {
                         const extra = findTotalDice(EXTRA);
                         const rollresult = await CardinalDiceRoller.rollHighestArray(extra, rollLabel, actor);
-                        if (rollresult.message) Ironclaw2EActor.addCallbackToAttackMessage(rollresult.message, otheritem.messageId);
+                        if (rollresult.message) Ironclaw2EActor.addCallbackToAttackMessage(rollresult.message, otheritem?.messageId);
                     }
                 }
             }
@@ -1623,11 +1623,14 @@ export class Ironclaw2EActor extends Actor {
                 const dist = getDistanceBetweenPositions(foundToken.data, targetpos);
                 const reduction = this.getRangePenaltyReduction(null, true).reduction;
                 const penalty = getRangeDiceFromDistance(dist, reduction, false, true);
-                const foundDice = findTotalDice(penalty.rangeDice);
-                const rangeLabel = game.i18n.format("ironclaw2e.dialog.dicePool.rangePenaltyDistance", { "range": penalty.rangeBandOriginal, "penalty": penalty.rangeDice });
-                const rangeTitle = game.i18n.format("ironclaw2e.dialog.dicePool.rangeRollTitle", { "range": penalty.rangeBandOriginal });
-                const rolled = await (directroll ? CardinalDiceRoller.rollHighestArray(foundDice, rangeLabel, this) : rollHighestOneLine(penalty.rangeDice, rangeLabel, rangeTitle, this));
-                if (rolled && usedTn < rolled.highest) usedTn = rolled.highest;
+                // Check if the penalty even exists before popping up the roll field
+                if (penalty?.rangeDice) {
+                    const foundDice = findTotalDice(penalty.rangeDice);
+                    const rangeLabel = game.i18n.format("ironclaw2e.dialog.dicePool.rangePenaltyDistance", { "range": penalty.rangeBandOriginal, "penalty": penalty.rangeDice });
+                    const rangeTitle = game.i18n.format("ironclaw2e.dialog.dicePool.rangeRollTitle", { "range": penalty.rangeBandOriginal });
+                    const rolled = await (directroll ? CardinalDiceRoller.rollHighestArray(foundDice, rangeLabel, this) : rollHighestOneLine(penalty.rangeDice, rangeLabel, rangeTitle, this));
+                    if (rolled && usedTn < rolled.highest) usedTn = rolled.highest;
+                }
             }
         }
 

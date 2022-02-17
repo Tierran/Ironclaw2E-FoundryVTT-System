@@ -248,18 +248,17 @@ async function onRequestRollTrigger(event) {
     const element = event.currentTarget;
     const dataset = element.dataset;
     const message = game.messages.get($(event.currentTarget).closest('.chat-message')[0]?.dataset?.messageId);
-    const defenseActor = getSpeakerActor();
+    const requestActor = getSpeakerActor();
 
-    if (!defenseActor) {
+    if (!requestActor) {
         ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
         return null;
     }
 
-    const messageId = message.id;
     const messageFlags = message?.data?.flags?.ironclaw2e;
-    const splitStats = splitStatsAndBonus(messageFlags.requestDicePool);
+    const splitStats = splitStatsAndBonus(messageFlags?.requestDicePool);
 
-    defenseActor.popupSelectRolled({
+    requestActor.popupSelectRolled({
         "tnyes": messageFlags.requestTNYes, "tnnum": messageFlags.requestTNNum, "prechecked": splitStats[0],
         "extradice": splitStats[1], "otherlabel": game.i18n.format("ironclaw2e.chatInfo.requestRoll.rollLabel", { "user": messageFlags.requestSpeaker })
     });

@@ -1146,7 +1146,7 @@ export class Ironclaw2EItem extends Item {
         }
 
         this.genericItemRoll(data.defenseStats, -1, itemData.name, data.defenseArray, 1, { directroll, otheritem, extradice },
-            (x => { Ironclaw2EActor.addCallbackToAttackMessage(x?.message, otheritem.messageId); }));
+            (x => { Ironclaw2EActor.addCallbackToAttackMessage(x?.message, otheritem?.messageId); }));
     }
 
     counterRoll(directroll = false, otheritem = null, extradice = "") {
@@ -1172,7 +1172,7 @@ export class Ironclaw2EItem extends Item {
             exhaust?.popupRefreshGift();
         } else {
             this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, 3, { directroll, otheritem, extradice },
-                (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); item.automaticDamageCalculation(x); Ironclaw2EActor.addCallbackToAttackMessage(x?.message, otheritem.messageId); }));
+                (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); item.automaticDamageCalculation(x); Ironclaw2EActor.addCallbackToAttackMessage(x?.message, otheritem?.messageId); }));
         }
     }
 
