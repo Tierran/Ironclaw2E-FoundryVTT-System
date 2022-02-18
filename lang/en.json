@@ -344,6 +344,8 @@
   "ironclaw2e.chatInfo.itemInfo.parryRoll": "parry roll",
   "ironclaw2e.chatInfo.itemInfo.counterRoll": "counter roll",
 
+  "ironclaw2e.chatInfo.itemInfo.rallyRoll": "{name} rallying roll: ",
+
   "ironclaw2e.chatInfo.itemInfo.dimLight": "Dim Light",
   "ironclaw2e.chatInfo.itemInfo.brightLight": "Bright Light",
   "ironclaw2e.chatInfo.itemInfo.angle": "Angle",

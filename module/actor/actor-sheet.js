@@ -1,4 +1,4 @@
-import { checkApplicability, checkDiceArrayEmpty, diceFieldUpgrade, findTotalDice, getMacroSpeaker, makeCompareReady, parseSingleDiceString, reformDiceString, splitStatString, checkQuickModifierKey } from "../helpers.js";
+import { checkApplicability, checkDiceArrayEmpty, diceFieldUpgrade, findTotalDice, getMacroSpeaker, makeCompareReady, reformDiceString, splitStatString, checkQuickModifierKey } from "../helpers.js";
 import { CommonSystemInfo } from "../systeminfo.js";
 import { getBaseConditionIronclaw } from "../conditions.js";
 import { hasConditionsIronclaw } from "../conditions.js";
@@ -560,8 +560,9 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         }
 
         const [target] = (game.user.targets?.size > 0 ? game.user.targets : [null]);
+        const otherlabel = game.i18n.format("ironclaw2e.chatInfo.itemInfo.rallyRoll", { name: getMacroSpeaker(this.actor)?.alias });
 
-        this.actor.popupRallyAlliesRoll({ "prechecked": selected, "tnyes": true, "tnnum": 3 }, { directroll, "targetpos": target });
+        this.actor.popupRallyAlliesRoll({ "prechecked": selected, "tnyes": true, "tnnum": 3, otherlabel }, { directroll, "targetpos": target });
     }
 
     /**

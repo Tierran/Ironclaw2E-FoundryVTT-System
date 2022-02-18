@@ -24,6 +24,7 @@ The Combat Tracker will show the result of the initiative check before the initi
 The system has support for the Drag Ruler module (https://github.com/manuelVo/foundryvtt-drag-ruler). The distance colors represent Stride (blue), Stride+Dash (green), Run (yellow) and over max distance (red).  
 The system has support for the Chat Commands module (https://github.com/League-of-Foundry-Developers/Chat-Commands-Lib). If present and active, the system will register different commands that can be called directly from chat. The commands listed and explained below.  
 The system has support for the Combat Utility Belt module (https://github.com/death-save/combat-utility-belt), specifically for its Enhanced Conditions system. If present and active, the system will try to use the EC for conditions. Proper setup explained below.  
+The system has an importable calendar configuration for Simple Calendar (https://github.com/vigoren/foundryvtt-simple-calendar). Found under "systems/ironclaw2e/calendars", the configuration sets the names correctly and the start date to the spring of the corebook current year. Moon phases are based on actual historical data of year 881 and not in-universe lore.  
 
 #### Options
 

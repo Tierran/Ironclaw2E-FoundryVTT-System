@@ -1,3 +1,9 @@
+### 0.5.9 Diagonal release
+ - Fixed some potential bugs
+ - Added a new diagonal rule, as some modules behave differently under the standard Euclidean rule
+ - Added a ready calendar config for Simple Calendar
+ - Rallying rolls have a proper label
+
 ### 0.5.8 Measuring release
  - Added options to define how the system measures distance, defaulting to Euclidean measurements
  - Added a system where targeting a token displays the range band it is at from the controlled one, as well as when either of the tokens moves
