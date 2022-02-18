@@ -12,6 +12,9 @@
                 <strong>{{localize "ironclaw2e.chatInfo.itemInfo.refresh"}}:</strong> {{itemData.refresh}}, <strong>{{localize "ironclaw2e.chatInfo.itemInfo.exhausted"}}:</strong>
                 {{#if itemData.exhaustWhenUsed}}{{#if itemData.exhausted}} {{localize "ironclaw2e.yes"}}{{else}}{{localize "ironclaw2e.no"}}{{/if}}{{else}}{{localize "ironclaw2e.never"}}{{/if}}
             </p>
+            {{#if itemData.grantsMark}}<p>
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.grantsMark"}}:</strong> {{itemData.markSkill}}
+            </p>{{/if}}
             {{/if}}
             {{#if (typeCheck item.type "extraCareer")}}
             <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.name"}}:</strong> {{itemData.careerName}}</p>
