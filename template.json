@@ -211,7 +211,7 @@
       "exhausted": false,
       "exhaustWhenUsed": false,
       "grantsMark": false,
-	  "markSkill": "",
+      "markSkill": "",
       "useDice": "",
       "defaultTN": 3,
       "specialSettings": []

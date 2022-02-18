@@ -461,6 +461,13 @@ export function getDistanceBetweenPositions(origin, target, { measurevertical = 
     const useRulerMeasurement = game.settings.get("ironclaw2e", "matchStandardRuler"); // Whether to use the same imprecise ruler measurement, rather than the full-precision measurements
     const diagonalRule = game.settings.get("ironclaw2e", "diagonalRule");
 
+    // Null check for the two positions, this should never happen
+    if (!origin || !target) {
+        // Return a NaN in this case, and send an error to the log
+        console.error("The 'getDistanceBetweenPositions' helper received null values for either or both positions: " + origin + " " + target);
+        return NaN;
+    }
+
     // Get the distance from the map grid, which gets the pure horizontal distance
     let distance = canvas.grid.measureDistance(origin, target, { gridSpaces: useRulerMeasurement });
     // See if the vertical distance can even be measured, or that there is a point to it

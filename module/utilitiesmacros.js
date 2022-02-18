@@ -256,12 +256,15 @@ async function onRequestRollTrigger(event) {
     }
 
     const messageFlags = message?.data?.flags?.ironclaw2e;
-    const splitStats = splitStatsAndBonus(messageFlags?.requestDicePool);
 
-    requestActor.popupSelectRolled({
-        "tnyes": messageFlags.requestTNYes, "tnnum": messageFlags.requestTNNum, "prechecked": splitStats[0],
-        "extradice": splitStats[1], "otherlabel": game.i18n.format("ironclaw2e.chatInfo.requestRoll.rollLabel", { "user": messageFlags.requestSpeaker })
-    });
+    // Check to make sure the flags actually exist
+    if (messageFlags) {
+        const splitStats = splitStatsAndBonus(messageFlags.requestDicePool);
+        requestActor.popupSelectRolled({
+            "tnyes": messageFlags.requestTNYes, "tnnum": messageFlags.requestTNNum, "prechecked": splitStats[0],
+            "extradice": splitStats[1], "otherlabel": game.i18n.format("ironclaw2e.chatInfo.requestRoll.rollLabel", { "user": messageFlags.requestSpeaker })
+        });
+    }
 }
 
 /* -------------------------------------------- */
