@@ -1,0 +1,4 @@
+The "simple-calendar-s-allumers.json" contains material from the Ironclaw corebook, copyright of Sanguine Productions. The MIT License at the root directory does not apply to this material.
+Ironclaw © SanguineGames.com
+
+This material is covered under Fair Use.
