@@ -1,3 +1,12 @@
+### 0.5.8 Measuring release
+ - Added options to define how the system measures distance, defaulting to Euclidean measurements
+ - Added a system where targeting a token displays the range band it is at from the controlled one, as well as when either of the tokens moves
+ - Attackers can right click a defense against their attack to pick the correct TN / opposing resistance immediately
+ - Added a way for GM's and potentially other players to request a certain roll through a chat message
+ - Added a rally roll to the character sheet that lets a character roll a rally directly
+ - Gifts can now grant a skill Mark directly, only works for actors that normally feature Marks
+ - Extra Careers now take their name directly from the item, unless overridden
+
 ### 0.5.7 Ranged release
  - Added penalties from range as a bonus when defending or resisting against attacks from long-enough range
  - Added a new "Range Penalty Reduction" special bonus type that reduces the range penalty applied
