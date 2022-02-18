@@ -344,6 +344,15 @@ Hooks.once('init', async function () {
         default: true,
         config: true
     });
+    game.settings.register("ironclaw2e", "showRangeDuration", {
+        name: "ironclaw2e.config.showRangeDuration",
+        hint: "ironclaw2e.config.showRangeDurationHint",
+        scope: "client",
+        type: Number,
+        default: 3000,
+        range: {min: 1000, max: 4000, step: 200},
+        config: true
+    });
 
     // Register a version number that was used last time to allow determining if a new version is being used, client-scope for potential update logs and such
     game.settings.register("ironclaw2e", "lastSystemVersionClient", {

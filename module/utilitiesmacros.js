@@ -280,6 +280,7 @@ export function showScrollingDistanceText(origintoken, targettoken) {
     // Only show the text if the origin and target exist, and are not the same token
     if (origintoken && targettoken && origintoken.id !== targettoken.id) {
         const combatRule = game.settings.get("ironclaw2e", "showRangeCombatRules");
+        const duration = game.settings.get("ironclaw2e", "showRangeDuration") ?? 3000;
         let usecombatrules = combatRule === 2;
         if (combatRule === 1) {
             if (game.combat?.getCombatantByToken(origintoken.id))
@@ -290,7 +291,7 @@ export function showScrollingDistanceText(origintoken, targettoken) {
             const distance = getDistanceBetweenPositions(origintoken.data, targettoken.data, { usecombatrules });
             const range = getRangeBandFromDistance(distance, true);
             const text = game.i18n.format("ironclaw2e.ui.rangeScrolling", { "range": range });
-            targettoken.hud.createScrollingText(text, { anchor: CONST.TEXT_ANCHOR_POINTS.BOTTOM, direction: CONST.TEXT_ANCHOR_POINTS.TOP, duration: 3000, jitter: 0.1, fontSize: 28, stroke: 0x000000, strokeThickness: 4 });
+            targettoken.hud.createScrollingText(text, { anchor: CONST.TEXT_ANCHOR_POINTS.BOTTOM, direction: CONST.TEXT_ANCHOR_POINTS.TOP, duration, jitter: 0.1, fontSize: 28, stroke: 0x000000, strokeThickness: 4 });
         }
     }
 }

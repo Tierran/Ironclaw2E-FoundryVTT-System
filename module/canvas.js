@@ -22,7 +22,7 @@ export const measureDistances = function (segments, options = {}) {
         nDiagonal += nd;
 
         // Standard Euclidean measurement
-        if (rule === "EUCL") {
+        if (rule === "EUCL" || rule === "RDCL") {
             return Math.round(Math.hypot(nx, ny) * canvas.scene.data.gridDistance);
         }
 

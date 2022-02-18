@@ -118,6 +118,7 @@ export class CommonSystemInfo {
      */
     static diagonalRules = {
         "EUCL": "Euclidean",
+        "RDCL": "Rounded Euclidean",
         "ONTW": "One-Two Diagonals",
         "SAME": "Equidistant"
     };
