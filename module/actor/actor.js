@@ -103,6 +103,8 @@ export class Ironclaw2EActor extends Actor {
             otheritem.stats = messageFlags.weaponAttackStats;
             otheritem.equip = messageFlags.weaponEquip;
             otheritem.range = messageFlags.weaponRange;
+            otheritem.multiAttack = messageFlags.weaponMultiAttack;
+            otheritem.multiRange = messageFlags.weaponMultiRange;
             otheritem.attackerPos = messageFlags.itemUserPos;
             otheritem.attackerRangeReduction = messageFlags.itemUserRangeReduction;
             otheritem.attackerRangeAutocheck = !(messageFlags.itemUserRangeAutocheck === false); // If and only if the the value is false, will the value be false; if it is true, undefined or something else, value will be true
@@ -157,8 +159,8 @@ export class Ironclaw2EActor extends Actor {
         const dataset = element.dataset;
         const holderset = $(event.currentTarget).closest('.button-holder')[0]?.dataset;
 
-        if (!holderset) {
-            return console.warn("onChatSoakClick somehow failed to get proper data.")
+        if (!holderset || !dataset) {
+            return console.warn("onChatSoakClick somehow failed to get proper data.");
         }
 
         // Get the actor, either through the sceneid if synthetic, or actorid if a full one
@@ -166,15 +168,18 @@ export class Ironclaw2EActor extends Actor {
 
         const directroll = checkQuickModifierKey();
         const usedDamage = Number.parseInt(dataset.damage);
+        const autoHits = holderset.autohits === "true";
+        const readySoak = Number.parseInt(holderset.readysoak);
 
         // If the soak actor is found and the data necessary for it exists, roll the soak
         if (soakActor && dataset.soaktype) {
             let wait = function (x) {
                 if (x.tnData) {
                     const verybad = (x.highest === 1 ? 1 : 0); // In case of botch, increase damage by one
+                    const soaks = x.tnData.successes + (autoHits ? readySoak : 0);
                     if (!directroll)
-                        soakActor.popupDamage(usedDamage + verybad, x.tnData.successes, holderset.conditions);
-                    else soakActor.silentDamage(usedDamage + verybad, x.tnData.successes, holderset.conditions);
+                        soakActor.popupDamage(usedDamage + verybad, soaks, holderset.conditions);
+                    else soakActor.silentDamage(usedDamage + verybad, soaks, holderset.conditions);
                 }
             };
             if (dataset.soaktype != "conditional") {
@@ -1797,8 +1802,17 @@ export class Ironclaw2EActor extends Actor {
         let constructionarray = [...otherdice];
         let constructionbools = [...otherbools];
 
-        // Attacker range penalty
         if (otheritem) {
+            // Explosion shield cover
+            if (otheritem.multiAttack === "explosion") {
+                const shield = this._getShieldConstruction(constructionkeys, constructionarray, formconstruction, constructionbools);
+                formconstruction = shield.otherinputs;
+                constructionkeys = shield.otherkeys;
+                constructionarray = shield.otherdice;
+                constructionbools = shield.otherbools;
+            }
+
+            // Attacker range penalty
             const foundToken = findActorToken(this);
             if (foundToken) {
                 const dist = getDistanceBetweenPositions(otheritem.attackerPos, foundToken.data, { usecombatrules: true });

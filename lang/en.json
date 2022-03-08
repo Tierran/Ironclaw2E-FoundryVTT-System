@@ -373,6 +373,7 @@
   "ironclaw2e.chatInfo.damageCalcInfo.attackTied": "Tied, if tie is broken favorably",
   "ironclaw2e.chatInfo.damageCalcInfo.attackResisted": "Attack was resisted completely!",
   "ironclaw2e.chatInfo.damageCalcInfo.attackFailed": "Attack did not hit at all!",
+  "ironclaw2e.chatInfo.damageCalcInfo.attackAutoHits": "Attack automatically hits",
 
   "ironclaw2e.chatInfo.damageCalcInfo.slayingDamage": "Slaying Damage",
   "ironclaw2e.chatInfo.damageCalcInfo.criticalDamage": "Critical Damage",
@@ -380,6 +381,7 @@
   "ironclaw2e.chatInfo.damageCalcInfo.impalingDamage": "Impaling Damage",
   "ironclaw2e.chatInfo.damageCalcInfo.impalingNote": "unless target retreats",
   "ironclaw2e.chatInfo.damageCalcInfo.conditionalDamage": "Causes conditions",
+  "ironclaw2e.chatInfo.damageCalcInfo.resistSoaked": "Extra Soak from Resist",
 
   "ironclaw2e.chatInfo.damageCalcInfo.penetratingAttack": "Penetrating Attack, no armor for Soak",
   "ironclaw2e.chatInfo.damageCalcInfo.weakAttack": "Weak Attack, roll Soak twice",

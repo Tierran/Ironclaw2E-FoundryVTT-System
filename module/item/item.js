@@ -310,6 +310,7 @@ export class Ironclaw2EItem extends Item {
         // Effects
         if (data.effect.length > 0) {
             data.effectsSplit = splitStatString(data.effect);
+            // Damage
             const foo = data.effectsSplit.findIndex(element => element.includes("damage"));
             if (foo >= 0) {
                 const bar = data.effectsSplit[foo];
@@ -318,7 +319,38 @@ export class Ironclaw2EItem extends Item {
                     data.damageEffect = isNaN(damage) ? -1 : damage;
                 } else { data.damageEffect = -1; }
             } else { data.damageEffect = -1; }
-
+            //Multi-attack
+            let multiType = "";
+            const multi = data.effectsSplit.findIndex(element => {
+                if (element.includes("group")) {
+                    multiType = "group";
+                    return true;
+                } else if (element.includes("sweep")) {
+                    multiType = "sweep";
+                    return true;
+                } else if (element.includes("explosion")) {
+                    multiType = "explosion";
+                    return true;
+                } else if (element.includes("crowd")) {
+                    multiType = "crowd";
+                    return true;
+                } else if (element.includes("landscape")) {
+                    multiType = "landscape";
+                    return true;
+                }
+                return false;
+            });
+            if (multi > 0) {
+                data.multiAttackType = multiType;
+                if (multiType === "sweep" || multiType === "explosion") {
+                    const multiString = data.effectsSplit[multi].replaceAll(/([:;])/g, "");
+                    const distString = multiString.substring(multiType.length);
+                    if (CommonSystemInfo.rangeBandsArray.includes(distString)) {
+                        data.multiAttackRange = distString;
+                    }
+                }
+            } else { data.multiAttackType = ""; }
+            // Condition effects
             const conds = CommonConditionInfo.getMatchedConditions(data.effectsSplit);
             data.effectConditions = "";
             data.effectConditionsLabel = "";
@@ -729,6 +761,11 @@ export class Ironclaw2EItem extends Item {
                 "ironclaw2e.weaponName": item.name, "ironclaw2e.weaponDescriptors": itemData.descriptorsSplit, "ironclaw2e.weaponEffects": itemData.effectsSplit,
                 "ironclaw2e.weaponAttackStats": itemData.attackStats, "ironclaw2e.weaponEquip": itemData.equip, "ironclaw2e.weaponRange": itemData.range
             });
+            if (itemData.multiAttackType) {
+                flags = mergeObject(flags, {
+                    "ironclaw2e.weaponMultiAttack": itemData.multiAttackType, "ironclaw2e.weaponMultiRange": itemData.multiAttackRange ?? null,
+                });
+            }
         }
         const foundToken = findActorToken(actor);
         if (foundToken) {
@@ -847,20 +884,12 @@ export class Ironclaw2EItem extends Item {
             info.message?.update(updatedata);
         }
 
-        // If the weapon's attack is resisted and the resists have been rolled, subtract the resistance successes from the attack
-        if (itemData.hasResist && opposingsuccesses > 0)
-            usedsuccesses -= opposingsuccesses;
-
+        // Send to chat if there are successes, failures are displayed as well, or the attack is an explosion
+        const toChat = usedsuccesses > 0 || game.settings.get("ironclaw2e", "calculateDisplaysFailed") || itemData.multiAttackType === "explosion";
         if (onlyupdate) {
             return; // Return out to not send anything in update mode
-        }
-        else if (usedsuccesses <= 0) { // Ignore a complete failure, only display something if the setting is on
-            if (game.settings.get("ironclaw2e", "calculateDisplaysFailed")) {
-                this.failedAttackToChat();
-            }
-        }
-        else {
-            this.successfulAttackToChat(success, usedsuccesses);
+        } else if (toChat) {
+            this.attackToChat({ success, "rawsuccesses": usedsuccesses, "opposingsuccesses": opposingsuccesses > 0 ? opposingsuccesses : 0 });
         }
     }
 
@@ -926,12 +955,7 @@ export class Ironclaw2EItem extends Item {
         let opposingsuccesses = await resolvedopfor;
         if (opposingsuccesses === null) return; // Return out if the user just cancels the prompt
 
-        if (successes > opposingsuccesses) {
-            this.successfulAttackToChat(true, successes - opposingsuccesses);
-        }
-        else {
-            this.failedAttackToChat();
-        }
+        this.attackToChat({ "success": successes > opposingsuccesses, "rawsuccesses": successes, "opposingsuccesses": opposingsuccesses });
     }
 
     /**
@@ -941,12 +965,7 @@ export class Ironclaw2EItem extends Item {
         const success = message.getFlag("ironclaw2e", "resistSuccess");
         const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
 
-        if (successes > 0) {
-            this.successfulAttackToChat(success, successes);
-        }
-        else {
-            this.failedAttackToChat();
-        }
+        this.attackToChat({ "success": success, "rawsuccesses": successes });
     }
 
     /**
@@ -956,77 +975,44 @@ export class Ironclaw2EItem extends Item {
         const success = message.getFlag("ironclaw2e", "attackSuccess");
         const successes = message.getFlag("ironclaw2e", "attackSuccessCount");
 
-        if (successes > 0) {
-            this.successfulAttackToChat(success, successes);
-        }
-        else {
-            this.failedAttackToChat();
-        }
+        this.attackToChat({ "success": success, "rawsuccesses": successes });
     }
 
     /**
      * Send the attack damage to chat, calculating damage based on the given successes
      * @param {boolean} success Whether the attack was a success, or a tie
-     * @param {number} usedsuccesses The number of successes, or ties in case the attack was a tie
+     * @param {number} rawsuccesses The number of successes, or ties in case the attack was a tie
+     * @param {number} opposingsuccesses The opposing successes
      */
-    async successfulAttackToChat(success, usedsuccesses) {
+    async attackToChat({ success = false, rawsuccesses = 0, opposingsuccesses = 0 } = {}) {
         if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
             return; // If the system is turned off, return out
         }
         const item = this.data;
         const itemData = item.data;
+        const autoHits = itemData.multiAttackType === "explosion";
+
+        const usedsuccesses = autoHits ? rawsuccesses : rawsuccesses - opposingsuccesses;
+        const successfulAttack = usedsuccesses > 0 || autoHits;
+        const negativeSuccesses = usedsuccesses <= 0; // More like non-positive, but I prefer two-word variable names
 
         const templateData = {
             "item": item,
             "itemData": itemData,
-            "successfulAttack": true,
+            "successfulAttack": successfulAttack,
+            "autoHits": autoHits,
             "hasResist": itemData.hasResist,
             "success": success,
-            "resultStyle": "color:" + (success ? CommonSystemInfo.resultColors.success : CommonSystemInfo.resultColors.tie),
+            "negativeSuccesses": negativeSuccesses,
+            "resultStyle": "color:" + (successfulAttack ? (success || autoHits ? CommonSystemInfo.resultColors.success : CommonSystemInfo.resultColors.tie) : CommonSystemInfo.resultColors.failure),
             "damageType": (itemData.effectsSplit.includes("slaying") ? "slaying" : (itemData.effectsSplit.includes("critical") ? "critical" : (itemData.damageEffect >= 0 ? "normal" : "conditional"))),
             "isImpaling": itemData.effectsSplit.includes("impaling"),
             "isPenetrating": itemData.effectsSplit.includes("penetrating"),
             "isWeak": itemData.effectsSplit.includes("weak"),
             "doubleDamage": itemData.damageEffect + (usedsuccesses * 2),
             "criticalDamage": itemData.damageEffect + Math.floor(usedsuccesses * 1.5),
-            "normalDamage": itemData.damageEffect + usedsuccesses
-        };
-
-        const contents = await renderTemplate("systems/ironclaw2e/templates/chat/damage-info.html", templateData);
-
-        let chatData = {
-            content: contents,
-            speaker: getMacroSpeaker(this.actor),
-            flags: { "ironclaw2e.attackDamageInfo": true }
-        };
-        ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
-        CONFIG.ChatMessage.documentClass.create(chatData);
-    }
-
-    /**
-     * Send a message to chat simply to report that the attack failed
-     */
-    async failedAttackToChat() { // This function is mostly used for resist rolls to specifically note if the resistance check failed for the attacker
-        if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
-            return; // If the system is turned off, return out
-        }
-        const item = this.data;
-        const itemData = item.data;
-
-        const templateData = {
-            "item": item,
-            "itemData": itemData,
-            "successfulAttack": false,
-            "hasResist": itemData.hasResist,
-            "success": false,
-            "resultStyle": "color:" + CommonSystemInfo.resultColors.failure,
-            "damageType": (itemData.effectsSplit.includes("slaying") ? "slaying" : (itemData.effectsSplit.includes("critical") ? "critical" : (itemData.damageEffect ? "normal" : "conditional"))),
-            "isImpaling": itemData.effectsSplit.includes("impaling"),
-            "isPenetrating": itemData.effectsSplit.includes("penetrating"),
-            "isWeak": itemData.effectsSplit.includes("weak"),
-            "doubleDamage": 0,
-            "criticalDamage": 0,
-            "normalDamage": 0
+            "normalDamage": itemData.damageEffect + usedsuccesses,
+            "resistSoaked": autoHits ? opposingsuccesses : 0
         };
 
         const contents = await renderTemplate("systems/ironclaw2e/templates/chat/damage-info.html", templateData);

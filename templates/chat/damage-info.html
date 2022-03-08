@@ -6,8 +6,9 @@
     <div class="chat-content">
         <div class="chat-item">
             {{#if successfulAttack}}
+            {{#if autoHits}}<p style="{{resultStyle}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.attackAutoHits"}}:</p>{{else}}
             {{#if success}}<p style="{{resultStyle}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.attackSuccess"}}:</p>{{else}}
-            <p style="{{resultStyle}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.attackTied"}}:</p>{{/if}}
+            <p style="{{resultStyle}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.attackTied"}}:</p>{{/if}}{{/if}}
             {{#if (typeCheck damageType "slaying")}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.slayingDamage"}}: <strong>{{doubleDamage}}</strong></p>{{/if}}
             {{#if (typeCheck damageType "critical")}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.criticalDamage"}}: <strong>{{criticalDamage}}</strong></p>{{/if}}
             {{#if (typeCheck damageType "normal")}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.normalDamage"}}: <strong>{{normalDamage}}</strong></p>{{/if}}
@@ -15,6 +16,7 @@
             {{#if isImpaling}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.impalingDamage"}}: <strong>{{doubleDamage}}</strong></p>{{/if}}
             {{#if isPenetrating}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.penetratingAttack"}}</p>{{/if}}
             {{#if isWeak}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.weakAttack"}}</p>{{/if}}
+            {{#if autoHits}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.resistSoaked"}}: <strong>{{resistSoaked}}</strong></p>{{/if}}
             {{else}}
             {{#if hasResist}}<p style="{{resultStyle}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.attackResisted"}}</p>{{else}}
             <p style="{{resultStyle}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.attackFailed"}}</p>{{/if}}
@@ -22,14 +24,15 @@
 
             <p class="small-text">{{localize "ironclaw2e.chatInfo.damageCalcInfo.allEffects"}}: {{itemData.effect}}</p>
 
-            {{#if successfulAttack}}<div class="chat-item button-holder" data-damagetype="{{damageType}}" data-conditions="{{itemData.effectConditionsLabel}}" data-penetrating="{{isPenetrating}}" data-weak="{{isWeak}}">
+            {{#if successfulAttack}}
+            <div class="chat-item button-holder" data-damagetype="{{damageType}}" data-conditions="{{itemData.effectConditionsLabel}}" data-penetrating="{{isPenetrating}}" data-weak="{{isWeak}}" data-autohits="{{autoHits}}" data-readysoak="{{resistSoaked}}">
                 <span class="normal-label">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakHeader"}}</span>
                 <div class="flexrow">
                     {{#if isImpaling}}<button class="soak-button" data-soaktype="impaling" data-damage="{{doubleDamage}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakImpaling"}}</button>{{/if}}
                     {{#if (typeCheck damageType "slaying")}}<button class="soak-button" data-soaktype="slaying" data-damage="{{doubleDamage}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakSlaying"}}</button>{{/if}}
                     {{#if (typeCheck damageType "critical")}}<button class="soak-button" data-soaktype="critical" data-damage="{{criticalDamage}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakCritical"}}</button>{{/if}}
                     {{#unless (typeCheck damageType "conditional")}}<button class="soak-button" data-soaktype="normal" data-damage="{{normalDamage}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakNormal"}}</button>{{else}}
-                    <button class="soak-button" data-soaktype="conditional" data-damage="0">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakConditional"}}</button>{{/unless}}
+                    <button class="soak-button" data-soaktype="conditional" data-damage="-4">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakConditional"}}</button>{{/unless}}
                 </div>
             </div>
             {{/if}}
