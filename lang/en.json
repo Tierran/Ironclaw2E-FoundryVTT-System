@@ -225,7 +225,7 @@
   "ironclaw2e.dialog.dicePool.giftExhausted": "Gift to auto-exhaust is already exhausted!",
   "ironclaw2e.dialog.dicePool.extraDice": "Extra dice",
   "ironclaw2e.dialog.dicePool.limitAllLabel": "Limit All Dice Pools",
-  "ironclaw2e.dialog.dicePool.limitAllPlaceholder": "Max die type",
+  "ironclaw2e.dialog.dicePool.limitAllPlaceholder": "Limit stat or die type",
 
   "ironclaw2e.dialog.dicePool.guardSoak": "Guard soak",
   "ironclaw2e.dialog.dicePool.guardSoakVeteran": "Veteran guard soak",
@@ -237,6 +237,9 @@
   "ironclaw2e.dialog.dicePool.rangeOverMax": "Attacker over horizon range, attack should be impossible!",
   "ironclaw2e.dialog.dicePool.rangePenaltyDistance": "{range} Range penalty for distance: {penalty}",
   "ironclaw2e.dialog.dicePool.rangeRollTitle": "{range} Range Roll",
+
+  "ironclaw2e.dialog.dicePool.soakAgainst": "Soak against {name}",
+  "ironclaw2e.dialog.dicePool.explosionResist": "Explosion resistance against {name}",
 
   "ironclaw2e.dialog.damageCalc.title": "Damage Calculation for {name}",
   "ironclaw2e.dialog.damageCalc.header": "Add damage to {name}",

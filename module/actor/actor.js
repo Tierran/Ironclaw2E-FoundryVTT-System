@@ -182,11 +182,13 @@ export class Ironclaw2EActor extends Actor {
                 }
             };
             if (dataset.soaktype != "conditional") {
-                if (autoHits && defenseStats) {
-                    const resist = await soakActor.popupResistRoll({ "prechecked": defenseStats }, { directroll, otheritem });
-                    resistSoak = resist?.tnData?.successes;
+                if (autoHits && defenseStats) { // For when resistance roll is added to the soak directly
+                    const resist = await soakActor.popupResistRoll({ "prechecked": defenseStats, "otherlabel": game.i18n.format("ironclaw2e.dialog.dicePool.explosionResist", { "name": otheritem.name }) },
+                        { directroll, otheritem });
+                    resistSoak = resist?.tnData?.successes; // Only successes count
                 }
-                soakActor.popupSoakRoll({ "prechecked": CommonSystemInfo.soakBaseStats }, { directroll, "checkweak": (holderset.weak == "true"), "checkarmor": (holderset.penetrating == "false") }, wait);
+                soakActor.popupSoakRoll({ "prechecked": CommonSystemInfo.soakBaseStats, "otherlabel": game.i18n.format("ironclaw2e.dialog.dicePool.soakAgainst", { "name": otheritem.name }) },
+                    { directroll, "checkweak": (holderset.weak == "true"), "checkarmor": (holderset.penetrating == "false") }, wait);
             } else {
                 if (!directroll)
                     soakActor.popupDamage(-4, 0, holderset.conditions);
@@ -2217,11 +2219,19 @@ export class Ironclaw2EActor extends Actor {
 
                         let IFLIMIT = html.find('[name=iflimit]')[0];
                         let uselimit = IFLIMIT.checked;
-                        let LIMIT = html.find('[name=limit]')[0].value;
+                        let LIMIT = html.find('[name=limit]')[0].value?.trim();
                         let limit = 0;
-                        let limitparsed = parseSingleDiceString(LIMIT.trim()); // Check if the limit field is a die, in which case, parse what value it's meant to limit to
-                        if (Array.isArray(limitparsed)) limit = checkDiceArrayIndex(limitparsed[1]);
-                        else if (LIMIT.length > 0) limit = parseInt(LIMIT);
+                        // If there's something in the limit
+                        if (LIMIT?.length > 0) {
+                            const limitskill = makeCompareReady(LIMIT);
+                            const limitdicepool = this._getDicePools([limitskill], [limitskill], isburdened).totalDice; // See if the actor can get any dice pools from the limit
+                            const limitparsed = parseSingleDiceString(LIMIT); // Check if the limit field is a die, in which case, parse what value it's meant to limit to
+                            const limitnumber = parseInt(LIMIT); // Just parse the limit as a number
+                            // If the dice pool has stuff, use it as the limit, else use the parsed dice side, else try and use the parsed limit
+                            if (Array.isArray(limitdicepool) && checkDiceArrayEmpty(limitdicepool)) limit = checkDiceArrayIndex(getDiceArrayMaxValue(limitdicepool));
+                            else if (Array.isArray(limitparsed)) limit = checkDiceArrayIndex(limitparsed[1]);
+                            else if (!isNaN(limitnumber)) limit = limitnumber;
+                        }
 
                         let IFTNSS = html.find('[name=iftn]')[0];
                         let IFTN = IFTNSS.checked;
