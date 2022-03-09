@@ -381,7 +381,7 @@
   "ironclaw2e.chatInfo.damageCalcInfo.impalingDamage": "Impaling Damage",
   "ironclaw2e.chatInfo.damageCalcInfo.impalingNote": "unless target retreats",
   "ironclaw2e.chatInfo.damageCalcInfo.conditionalDamage": "Causes conditions",
-  "ironclaw2e.chatInfo.damageCalcInfo.resistSoaked": "Extra Soak from Resist",
+  "ironclaw2e.chatInfo.damageCalcInfo.resistSoak": "Resist to be added to Soak",
 
   "ironclaw2e.chatInfo.damageCalcInfo.penetratingAttack": "Penetrating Attack, no armor for Soak",
   "ironclaw2e.chatInfo.damageCalcInfo.weakAttack": "Weak Attack, roll Soak twice",

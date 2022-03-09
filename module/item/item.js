@@ -349,6 +349,7 @@ export class Ironclaw2EItem extends Item {
                         data.multiAttackRange = distString;
                     }
                 }
+                data.attackAutoHits = (multiType === "explosion") && data.hasResist;
             } else { data.multiAttackType = ""; }
             // Condition effects
             const conds = CommonConditionInfo.getMatchedConditions(data.effectsSplit);
@@ -732,6 +733,40 @@ export class Ironclaw2EItem extends Item {
         }
     }
 
+    /**
+     * Get the chat message flags for this item
+     */
+    getItemFlags() {
+        const item = this.data;
+        const itemData = item.data;
+        const actor = this.actor;
+
+        let flags = { "ironclaw2e.itemId": this.id, "ironclaw2e.itemActorId": actor.id, "ironclaw2e.itemTokenId": actor.token?.id, "ironclaw2e.itemSceneId": actor.token?.parent?.id };
+        if (item.type === "weapon") {
+            flags = mergeObject(flags, {
+                "ironclaw2e.weaponName": item.name, "ironclaw2e.weaponDescriptors": itemData.descriptorsSplit, "ironclaw2e.weaponEffects": itemData.effectsSplit,
+                "ironclaw2e.weaponAttackStats": itemData.attackStats, "ironclaw2e.weaponEquip": itemData.equip, "ironclaw2e.weaponRange": itemData.range
+            });
+            if (itemData.multiAttackType) {
+                flags = mergeObject(flags, {
+                    "ironclaw2e.weaponMultiAttack": itemData.multiAttackType, "ironclaw2e.weaponMultiRange": itemData.multiAttackRange ?? null,
+                });
+            }
+        }
+        const foundToken = findActorToken(actor);
+        if (foundToken) {
+            const rangePenalty = actor.getRangePenaltyReduction(this);
+            let userPos = { "x": foundToken.data.x, "y": foundToken.data.y };
+            if (foundToken.data.elevation) userPos.elevation = foundToken.data.elevation;
+            flags = mergeObject(flags, {
+                "ironclaw2e.itemUserPos": userPos,
+                "ironclaw2e.itemUserRangeReduction": rangePenalty.reduction, "ironclaw2e.itemUserRangeAutocheck": rangePenalty.autocheck
+            });
+        }
+
+        return flags;
+    }
+
     /** 
      *  Send information about the item to the chat as a message
      */
@@ -755,28 +790,8 @@ export class Ironclaw2EItem extends Item {
 
         const contents = await renderTemplate("systems/ironclaw2e/templates/chat/item-info.html", templateData);
 
-        let flags = { "ironclaw2e.itemInfo": true, "ironclaw2e.itemId": this.id, "ironclaw2e.itemActorId": actor.id, "ironclaw2e.itemTokenId": actor.token?.id, "ironclaw2e.itemSceneId": actor.token?.parent?.id };
-        if (item.type === "weapon") {
-            flags = mergeObject(flags, {
-                "ironclaw2e.weaponName": item.name, "ironclaw2e.weaponDescriptors": itemData.descriptorsSplit, "ironclaw2e.weaponEffects": itemData.effectsSplit,
-                "ironclaw2e.weaponAttackStats": itemData.attackStats, "ironclaw2e.weaponEquip": itemData.equip, "ironclaw2e.weaponRange": itemData.range
-            });
-            if (itemData.multiAttackType) {
-                flags = mergeObject(flags, {
-                    "ironclaw2e.weaponMultiAttack": itemData.multiAttackType, "ironclaw2e.weaponMultiRange": itemData.multiAttackRange ?? null,
-                });
-            }
-        }
-        const foundToken = findActorToken(actor);
-        if (foundToken) {
-            const rangePenalty = actor.getRangePenaltyReduction(this);
-            let userPos = { "x": foundToken.data.x, "y": foundToken.data.y };
-            if (foundToken.data.elevation) userPos.elevation = foundToken.data.elevation;
-            flags = mergeObject(flags, {
-                "ironclaw2e.itemUserPos": userPos,
-                "ironclaw2e.itemUserRangeReduction": rangePenalty.reduction, "ironclaw2e.itemUserRangeAutocheck": rangePenalty.autocheck
-            });
-        }
+        let flags = { "ironclaw2e.itemInfo": true };
+        flags = mergeObject(flags, this.getItemFlags());
 
         let chatData = {
             content: contents,
@@ -860,7 +875,7 @@ export class Ironclaw2EItem extends Item {
         const successes = (isNaN(info.tnData.successes) ? 0 : info.tnData.successes);
         const ties = (isNaN(info.tnData.ties) ? 0 : info.tnData.ties);
         const success = successes > 0;
-        let usedsuccesses = (success ? successes : ties);
+        let usedsuccesses = (success || itemData.hasResist ? successes : ties); // Ties don't count for resisted weapons
 
         if (ignoreresist === false && itemData.hasResist) { // If the weapon's attack is a resisted one, set the flags accordingly
             let updatedata = {
@@ -871,7 +886,7 @@ export class Ironclaw2EItem extends Item {
             };
             info.message?.update(updatedata);
             // If the resist has not yet been rolled, return out after setting the resist flags
-            if (opposingsuccesses < 0)
+            if (opposingsuccesses < 0 && !itemData.attackAutoHits)
                 return;
         }
         else { // Else, treat it as a normal attack and set the flags to store the information for future reference
@@ -885,11 +900,11 @@ export class Ironclaw2EItem extends Item {
         }
 
         // Send to chat if there are successes, failures are displayed as well, or the attack is an explosion
-        const toChat = usedsuccesses > 0 || game.settings.get("ironclaw2e", "calculateDisplaysFailed") || itemData.multiAttackType === "explosion";
+        const toChat = usedsuccesses > 0 || game.settings.get("ironclaw2e", "calculateDisplaysFailed") || itemData.attackAutoHits;
         if (onlyupdate) {
             return; // Return out to not send anything in update mode
         } else if (toChat) {
-            this.attackToChat({ success, "rawsuccesses": usedsuccesses, "opposingsuccesses": opposingsuccesses > 0 ? opposingsuccesses : 0 });
+            this.attackToChat({ success, "rawsuccesses": usedsuccesses, "opposingrolled": opposingsuccesses >= 0, "opposingsuccesses": opposingsuccesses });
         }
     }
 
@@ -955,7 +970,7 @@ export class Ironclaw2EItem extends Item {
         let opposingsuccesses = await resolvedopfor;
         if (opposingsuccesses === null) return; // Return out if the user just cancels the prompt
 
-        this.attackToChat({ "success": successes > opposingsuccesses, "rawsuccesses": successes, "opposingsuccesses": opposingsuccesses });
+        this.attackToChat({ "success": successes > opposingsuccesses, "rawsuccesses": successes, "opposingrolled": true, "opposingsuccesses": opposingsuccesses });
     }
 
     /**
@@ -982,45 +997,46 @@ export class Ironclaw2EItem extends Item {
      * Send the attack damage to chat, calculating damage based on the given successes
      * @param {boolean} success Whether the attack was a success, or a tie
      * @param {number} rawsuccesses The number of successes, or ties in case the attack was a tie
+     * @param {boolean} opposingrolled Whether the opposing successes have been rolled
      * @param {number} opposingsuccesses The opposing successes
      */
-    async attackToChat({ success = false, rawsuccesses = 0, opposingsuccesses = 0 } = {}) {
+    async attackToChat({ success = false, rawsuccesses = 0, opposingrolled = false, opposingsuccesses = 0 } = {}) {
         if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
             return; // If the system is turned off, return out
         }
         const item = this.data;
         const itemData = item.data;
-        const autoHits = itemData.multiAttackType === "explosion";
 
-        const usedsuccesses = autoHits ? rawsuccesses : rawsuccesses - opposingsuccesses;
-        const successfulAttack = usedsuccesses > 0 || autoHits;
+        const usedsuccesses = opposingrolled ? rawsuccesses - opposingsuccesses : rawsuccesses;
+        const successfulAttack = usedsuccesses > 0 || itemData.attackAutoHits;
         const negativeSuccesses = usedsuccesses <= 0; // More like non-positive, but I prefer two-word variable names
 
         const templateData = {
             "item": item,
             "itemData": itemData,
             "successfulAttack": successfulAttack,
-            "autoHits": autoHits,
             "hasResist": itemData.hasResist,
             "success": success,
             "negativeSuccesses": negativeSuccesses,
-            "resultStyle": "color:" + (successfulAttack ? (success || autoHits ? CommonSystemInfo.resultColors.success : CommonSystemInfo.resultColors.tie) : CommonSystemInfo.resultColors.failure),
+            "resultStyle": "color:" + (successfulAttack ? (success || itemData.attackAutoHits ? CommonSystemInfo.resultColors.success : CommonSystemInfo.resultColors.tie) : CommonSystemInfo.resultColors.failure),
             "damageType": (itemData.effectsSplit.includes("slaying") ? "slaying" : (itemData.effectsSplit.includes("critical") ? "critical" : (itemData.damageEffect >= 0 ? "normal" : "conditional"))),
             "isImpaling": itemData.effectsSplit.includes("impaling"),
             "isPenetrating": itemData.effectsSplit.includes("penetrating"),
             "isWeak": itemData.effectsSplit.includes("weak"),
             "doubleDamage": itemData.damageEffect + (usedsuccesses * 2),
             "criticalDamage": itemData.damageEffect + Math.floor(usedsuccesses * 1.5),
-            "normalDamage": itemData.damageEffect + usedsuccesses,
-            "resistSoaked": autoHits ? opposingsuccesses : 0
+            "normalDamage": itemData.damageEffect + usedsuccesses
         };
 
         const contents = await renderTemplate("systems/ironclaw2e/templates/chat/damage-info.html", templateData);
 
+        let flags = { "ironclaw2e.attackDamageInfo": true, "ironclaw2e.attackDamageAutoHits": itemData.attackAutoHits, "ironclaw2e.attackDamageDefense": itemData.opposingDefenseStats };
+        flags = mergeObject(flags, this.getItemFlags());
+
         let chatData = {
             content: contents,
             speaker: getMacroSpeaker(this.actor),
-            flags: { "ironclaw2e.attackDamageInfo": true }
+            flags
         };
         ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
         CONFIG.ChatMessage.documentClass.create(chatData);

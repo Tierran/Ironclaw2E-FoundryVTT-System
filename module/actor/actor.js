@@ -95,19 +95,7 @@ export class Ironclaw2EActor extends Actor {
         const messageId = message.id;
         const messageFlags = message?.data?.flags?.ironclaw2e;
         if (messageFlags) {
-            // Grab the message flags
-            otheritem.messageId = messageId;
-            otheritem.name = messageFlags.weaponName;
-            otheritem.descriptors = messageFlags.weaponDescriptors;
-            otheritem.effects = messageFlags.weaponEffects;
-            otheritem.stats = messageFlags.weaponAttackStats;
-            otheritem.equip = messageFlags.weaponEquip;
-            otheritem.range = messageFlags.weaponRange;
-            otheritem.multiAttack = messageFlags.weaponMultiAttack;
-            otheritem.multiRange = messageFlags.weaponMultiRange;
-            otheritem.attackerPos = messageFlags.itemUserPos;
-            otheritem.attackerRangeReduction = messageFlags.itemUserRangeReduction;
-            otheritem.attackerRangeAutocheck = !(messageFlags.itemUserRangeAutocheck === false); // If and only if the the value is false, will the value be false; if it is true, undefined or something else, value will be true
+            otheritem = Ironclaw2EActor.getOtherItemFlags(messageFlags, messageId);
         }
 
         const directroll = checkQuickModifierKey();
@@ -158,6 +146,7 @@ export class Ironclaw2EActor extends Actor {
         const element = event.currentTarget;
         const dataset = element.dataset;
         const holderset = $(event.currentTarget).closest('.button-holder')[0]?.dataset;
+        const message = game.messages.get($(event.currentTarget).closest('.chat-message')[0]?.dataset?.messageId);
 
         if (!holderset || !dataset) {
             return console.warn("onChatSoakClick somehow failed to get proper data.");
@@ -166,23 +155,37 @@ export class Ironclaw2EActor extends Actor {
         // Get the actor, either through the sceneid if synthetic, or actorid if a full one
         let soakActor = getSpeakerActor();
 
+        let autoHits = false;
+        let defenseStats = null;
+        let otheritem = {};
+        const messageId = message.id;
+        const messageFlags = message?.data?.flags?.ironclaw2e;
+        if (messageFlags) {
+            autoHits = messageFlags.attackDamageAutoHits;
+            defenseStats = messageFlags.attackDamageDefense;
+            otheritem = Ironclaw2EActor.getOtherItemFlags(messageFlags, messageId);
+        }
+
         const directroll = checkQuickModifierKey();
         const usedDamage = Number.parseInt(dataset.damage);
-        const autoHits = holderset.autohits === "true";
-        const readySoak = Number.parseInt(holderset.readysoak);
+        let resistSoak = 0;
 
         // If the soak actor is found and the data necessary for it exists, roll the soak
         if (soakActor && dataset.soaktype) {
             let wait = function (x) {
                 if (x.tnData) {
                     const verybad = (x.highest === 1 ? 1 : 0); // In case of botch, increase damage by one
-                    const soaks = x.tnData.successes + (autoHits ? readySoak : 0);
+                    const soaks = x.tnData.successes + resistSoak;
                     if (!directroll)
                         soakActor.popupDamage(usedDamage + verybad, soaks, holderset.conditions);
                     else soakActor.silentDamage(usedDamage + verybad, soaks, holderset.conditions);
                 }
             };
             if (dataset.soaktype != "conditional") {
+                if (autoHits && defenseStats) {
+                    const resist = await soakActor.popupResistRoll({ "prechecked": defenseStats }, { directroll, otheritem });
+                    resistSoak = resist?.tnData?.successes;
+                }
                 soakActor.popupSoakRoll({ "prechecked": CommonSystemInfo.soakBaseStats }, { directroll, "checkweak": (holderset.weak == "true"), "checkarmor": (holderset.penetrating == "false") }, wait);
             } else {
                 if (!directroll)
@@ -336,6 +339,33 @@ export class Ironclaw2EActor extends Actor {
             flags: { "ironclaw2e.defenseForAttack": messageid }
         };
         return await message.update(updateData);
+    }
+
+    /**
+     * Get the item flags from a message
+     * @param {object} flags
+     * @param {string} messageId
+     */
+    static getOtherItemFlags(flags, messageId = "") {
+        if (!flags) {
+            return null;
+        }
+        let otheritem = {};
+        // Grab the message flags
+        otheritem.messageId = messageId;
+        otheritem.name = flags.weaponName;
+        otheritem.descriptors = flags.weaponDescriptors;
+        otheritem.effects = flags.weaponEffects;
+        otheritem.stats = flags.weaponAttackStats;
+        otheritem.equip = flags.weaponEquip;
+        otheritem.range = flags.weaponRange;
+        otheritem.multiAttack = flags.weaponMultiAttack;
+        otheritem.multiRange = flags.weaponMultiRange;
+        otheritem.attackerPos = flags.itemUserPos;
+        otheritem.attackerRangeReduction = flags.itemUserRangeReduction;
+        otheritem.attackerRangeAutocheck = !(flags.itemUserRangeAutocheck === false); // If and only if the the value is false, will the value be false; if it is true, undefined or something else, value will be true
+
+        return otheritem;
     }
 
     /* -------------------------------------------- */
@@ -1605,9 +1635,9 @@ export class Ironclaw2EActor extends Actor {
     /** A simple selector to pick the correct roll function based whether directroll is set to true */
     basicRollSelector(holder, { directroll = false } = {}, successfunc = null, autocondition = null) {
         if (directroll) {
-            this.silentSelectRolled(holder, successfunc, autocondition);
+            return this.silentSelectRolled(holder, successfunc, autocondition);
         } else {
-            this.popupSelectRolled(holder, successfunc, autocondition);
+            return this.popupSelectRolled(holder, successfunc, autocondition);
         }
     }
 
@@ -1639,10 +1669,8 @@ export class Ironclaw2EActor extends Actor {
             }
         }
 
-        if (directroll)
-            this.silentSelectRolled({ "prechecked": checkedstats, tnyes, "tnnum": usedTn, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherbools": constructionbools, otherlabel }, successfunc);
-        else
-            this.popupSelectRolled({ "prechecked": checkedstats, tnyes, "tnnum": usedTn, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc);
+        return this.basicRollSelector({ "prechecked": checkedstats, tnyes, "tnnum": usedTn, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, "otherbools": constructionbools, otherlabel },
+            { directroll }, successfunc);
     }
 
     popupSoakRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherbools = [], otherlabel = "" } = {}, { directroll = false, checkweak = false, checkarmor = true } = {}, successfunc = null) {
@@ -1675,10 +1703,8 @@ export class Ironclaw2EActor extends Actor {
        <input type="checkbox" id="doubledice" name="doubledice" value="1" ${(checkweak ? "checked" : "")}></input>
       </div>`;
 
-        if (directroll)
-            this.silentSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherbools": constructionbools, otherlabel }, successfunc);
-        else
-            this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc);
+        return this.basicRollSelector({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, "otherbools": constructionbools, otherlabel },
+            { directroll }, successfunc);
     }
 
     popupDefenseRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherbools = [], otherlabel = "" } = {}, { directroll = false, isparry = false, isspecial = false, otheritem = null } = {},
@@ -1726,10 +1752,8 @@ export class Ironclaw2EActor extends Actor {
         constructionarray = bonuses.otherdice;
         constructionbools = bonuses.otherbools;
 
-        if (directroll)
-            this.silentSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherbools": constructionbools, otherlabel }, successfunc);
-        else
-            this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc);
+        return this.basicRollSelector({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, "otherbools": constructionbools, otherlabel },
+            { directroll }, successfunc);
     }
 
     popupAttackRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherbools = [], otherlabel = "" } = {}, { directroll = false } = {}, item = null, successfunc = null) {
@@ -1759,10 +1783,8 @@ export class Ironclaw2EActor extends Actor {
         const actor = this;
         const autoremove = (x => { actor.deleteEffect("aiming"); });
 
-        if (directroll)
-            this.silentSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherbools": constructionbools, otherlabel }, successfunc, autoremove);
-        else
-            this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc, autoremove);
+        return this.basicRollSelector({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, "otherbools": constructionbools, otherlabel },
+            { directroll }, successfunc, autoremove);
     }
 
     popupCounterRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherbools = [], otherlabel = "" } = {}, { directroll = false, otheritem = null } = {}, item = null, successfunc = null) {
@@ -1788,10 +1810,8 @@ export class Ironclaw2EActor extends Actor {
         constructionarray = bonuses.otherdice;
         constructionbools = bonuses.otherbools;
 
-        if (directroll)
-            this.silentSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherbools": constructionbools, otherlabel }, successfunc);
-        else
-            this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc);
+        return this.basicRollSelector({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, "otherbools": constructionbools, otherlabel },
+            { directroll }, successfunc);
     }
 
     popupResistRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherbools = [], otherlabel = "" } = {}, { directroll = false, otheritem = null } = {}, item = null, successfunc = null) {
@@ -1832,10 +1852,8 @@ export class Ironclaw2EActor extends Actor {
         constructionarray = bonuses.otherdice;
         constructionbools = bonuses.otherbools;
 
-        if (directroll)
-            this.silentSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherbools": constructionbools, otherlabel }, successfunc);
-        else
-            this.popupSelectRolled({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, otherlabel }, successfunc);
+        return this.basicRollSelector({ "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, "otherbools": constructionbools, otherlabel },
+            { directroll }, successfunc);
     }
 
     /* -------------------------------------------- */
@@ -2039,6 +2057,7 @@ export class Ironclaw2EActor extends Actor {
      * @param {string} [otherlabel] Text to postpend to the label
      * @param successfunc Callback to execute after going through with the macro, will not execute if cancelled out
      * @param autocondition Callback to a condition auto-removal function, executed if the setting is on, will not execute if cancelled out
+     * @returns {Promise<DiceReturn> | Promise<null>}
      */
     popupSelectRolled({ tnyes = false, tnnum = 3, prechecked = [], otherkeys = [], otherdice = [], otherinputs = "", extradice = "", otherlabel = "" } = {}, successfunc = null, autocondition = null) {
         const data = this.data.data;
@@ -2129,10 +2148,13 @@ export class Ironclaw2EActor extends Actor {
             return null;
         }
 
+        // Actual dialog handling
         let confirmed = false;
-        let dlog = new Dialog({
-            title: game.i18n.localize("ironclaw2e.dialog.dicePool.title"),
-            content: `
+        let resolvedroll = new Promise((resolve) => {
+            let rollreturn = null;
+            let dlog = new Dialog({
+                title: game.i18n.localize("ironclaw2e.dialog.dicePool.title"),
+                content: `
      <form class="ironclaw2e">
      <h1>${game.i18n.format("ironclaw2e.dialog.dicePool.header", { "name": this.data.name })}</h1>
      ${labelNotice}
@@ -2156,124 +2178,126 @@ export class Ironclaw2EActor extends Actor {
      </div>
      </form>
      `,
-            buttons: {
-                one: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.roll"),
-                    callback: () => confirmed = true
+                buttons: {
+                    one: {
+                        icon: '<i class="fas fa-check"></i>',
+                        label: game.i18n.localize("ironclaw2e.dialog.roll"),
+                        callback: () => confirmed = true
+                    },
+                    two: {
+                        icon: '<i class="fas fa-times"></i>',
+                        label: game.i18n.localize("ironclaw2e.dialog.cancel"),
+                        callback: () => confirmed = false
+                    }
                 },
-                two: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
-                    callback: () => confirmed = false
-                }
-            },
-            default: "one",
-            render: html => {
-                if (tnyes)
-                    document.getElementById("tn").focus();
-                else
-                    document.getElementById("iftn").focus();
-            },
-            close: async html => {
-                if (confirmed) {
-                    let traitchecks = html.find('input:checkbox[name=trait]:checked');
-                    let skillchecks = html.find('input:checkbox[name=skill]:checked');
-                    let traitvalues = [];
-                    let skillvalues = [];
-                    let totaldice = [0, 0, 0, 0, 0];
-
-                    for (let i = 0; i < traitchecks.length; ++i) { // Go through all the traits and skills, see which ones are checked and grab those
-                        traitvalues.push(traitchecks[i].value);
-                    }
-                    for (let i = 0; i < skillchecks.length; ++i) {
-                        skillvalues.push(skillchecks[i].value);
-                    }
-
-                    let IFBURDENED = html.find('[name=burdened]');
-                    let isburdened = IFBURDENED.length > 0 ? IFBURDENED[0].checked : false;
-
-                    let IFLIMIT = html.find('[name=iflimit]')[0];
-                    let uselimit = IFLIMIT.checked;
-                    let LIMIT = html.find('[name=limit]')[0].value;
-                    let limit = 0;
-                    let limitparsed = parseSingleDiceString(LIMIT.trim()); // Check if the limit field is a die, in which case, parse what value it's meant to limit to
-                    if (Array.isArray(limitparsed)) limit = checkDiceArrayIndex(limitparsed[1]);
-                    else if (LIMIT.length > 0) limit = parseInt(LIMIT);
-
-                    let IFTNSS = html.find('[name=iftn]')[0];
-                    let IFTN = IFTNSS.checked;
-                    let TNSS = html.find('[name=tn]')[0].value;
-                    let TN = 0; if (TNSS.length > 0) TN = parseInt(TNSS);
-                    let DICES = html.find('[name=dices]')[0].value;
-                    let DICE = findTotalDice(DICES);
-
-                    let DOUBLE = html.find('[name=doubledice]')?.[0];
-                    let doubleDice = (DOUBLE ? DOUBLE.checked : false);
-
-                    let labelgiven = false;
-                    let label = "";
-                    if (IFTN)
-                        label = game.i18n.localize("ironclaw2e.chat.rollingTN") + ": ";
+                default: "one",
+                render: html => {
+                    if (tnyes)
+                        document.getElementById("tn").focus();
                     else
-                        label = game.i18n.localize("ironclaw2e.chat.rollingHighest") + ": ";
+                        document.getElementById("iftn").focus();
+                },
+                close: async html => {
+                    if (confirmed) {
+                        let traitchecks = html.find('input:checkbox[name=trait]:checked');
+                        let skillchecks = html.find('input:checkbox[name=skill]:checked');
+                        let traitvalues = [];
+                        let skillvalues = [];
+                        let totaldice = [0, 0, 0, 0, 0];
 
-                    if (hastraits || hasskills) { // Get the dice pools from the checked traits and skills and add them to the roll
-                        let statfoobar = this._getDicePools(traitvalues, skillvalues, isburdened, labelgiven);
-                        totaldice = statfoobar.totalDice;
-                        label += statfoobar.label;
-                        labelgiven = statfoobar.labelGiven;
-                    }
-                    if (Array.isArray(otherdice) && Array.isArray(otherkeys) && otherdice.length > 0 && otherdice.length == otherkeys.length) {
-                        for (let i = 0; i < otherdice.length; i++) { // Check whether the listed bonus dice are checked into the roll, then add those to the roll
-                            let OTHER = html.find(`[name=${makeCompareReady(otherkeys[i])}]`);
-                            let otherchecked = (hashtml && OTHER.length > 0 ? OTHER[0].checked : true);
-                            if (otherchecked) {
-                                totaldice = addArrays(totaldice, otherdice[i]);
-                                if (labelgiven)
-                                    label += " + ";
-                                label += otherkeys[i];
-                                labelgiven = true;
+                        for (let i = 0; i < traitchecks.length; ++i) { // Go through all the traits and skills, see which ones are checked and grab those
+                            traitvalues.push(traitchecks[i].value);
+                        }
+                        for (let i = 0; i < skillchecks.length; ++i) {
+                            skillvalues.push(skillchecks[i].value);
+                        }
+
+                        let IFBURDENED = html.find('[name=burdened]');
+                        let isburdened = IFBURDENED.length > 0 ? IFBURDENED[0].checked : false;
+
+                        let IFLIMIT = html.find('[name=iflimit]')[0];
+                        let uselimit = IFLIMIT.checked;
+                        let LIMIT = html.find('[name=limit]')[0].value;
+                        let limit = 0;
+                        let limitparsed = parseSingleDiceString(LIMIT.trim()); // Check if the limit field is a die, in which case, parse what value it's meant to limit to
+                        if (Array.isArray(limitparsed)) limit = checkDiceArrayIndex(limitparsed[1]);
+                        else if (LIMIT.length > 0) limit = parseInt(LIMIT);
+
+                        let IFTNSS = html.find('[name=iftn]')[0];
+                        let IFTN = IFTNSS.checked;
+                        let TNSS = html.find('[name=tn]')[0].value;
+                        let TN = 0; if (TNSS.length > 0) TN = parseInt(TNSS);
+                        let DICES = html.find('[name=dices]')[0].value;
+                        let DICE = findTotalDice(DICES);
+
+                        let DOUBLE = html.find('[name=doubledice]')?.[0];
+                        let doubleDice = (DOUBLE ? DOUBLE.checked : false);
+
+                        let labelgiven = false;
+                        let label = "";
+                        if (IFTN)
+                            label = game.i18n.localize("ironclaw2e.chat.rollingTN") + ": ";
+                        else
+                            label = game.i18n.localize("ironclaw2e.chat.rollingHighest") + ": ";
+
+                        if (hastraits || hasskills) { // Get the dice pools from the checked traits and skills and add them to the roll
+                            let statfoobar = this._getDicePools(traitvalues, skillvalues, isburdened, labelgiven);
+                            totaldice = statfoobar.totalDice;
+                            label += statfoobar.label;
+                            labelgiven = statfoobar.labelGiven;
+                        }
+                        if (Array.isArray(otherdice) && Array.isArray(otherkeys) && otherdice.length > 0 && otherdice.length == otherkeys.length) {
+                            for (let i = 0; i < otherdice.length; i++) { // Check whether the listed bonus dice are checked into the roll, then add those to the roll
+                                let OTHER = html.find(`[name=${makeCompareReady(otherkeys[i])}]`);
+                                let otherchecked = (hashtml && OTHER.length > 0 ? OTHER[0].checked : true);
+                                if (otherchecked) {
+                                    totaldice = addArrays(totaldice, otherdice[i]);
+                                    if (labelgiven)
+                                        label += " + ";
+                                    label += otherkeys[i];
+                                    labelgiven = true;
+                                }
                             }
                         }
-                    }
-                    if (DICE.some(element => element != 0)) { // Get the extra dice field and add it to the roll if there is anything in it
-                        label += " + " + game.i18n.localize("ironclaw2e.chat.extraDice");
-                        totaldice = addArrays(totaldice, DICE);
-                    }
+                        if (DICE.some(element => element != 0)) { // Get the extra dice field and add it to the roll if there is anything in it
+                            label += " + " + game.i18n.localize("ironclaw2e.chat.extraDice");
+                            totaldice = addArrays(totaldice, DICE);
+                        }
 
-                    if (doubleDice) {
-                        label += ", " + game.i18n.localize("ironclaw2e.chat.doubleDice");
-                    } // Set the labels
-                    label += ".";
-                    if (typeof (otherlabel) === 'string' && otherlabel.length > 0)
-                        label += `<p style="color:black">${otherlabel}</p>`;
+                        if (doubleDice) {
+                            label += ", " + game.i18n.localize("ironclaw2e.chat.doubleDice");
+                        } // Set the labels
+                        label += ".";
+                        if (typeof (otherlabel) === 'string' && otherlabel.length > 0)
+                            label += `<p style="color:black">${otherlabel}</p>`;
 
-                    if (doubleDice) { // See if the dicepool will be rolled twice (doubled dicepool), like in case of a Weak Soak
-                        totaldice = addArrays(totaldice, totaldice);
-                    }
-                    if (uselimit) { // See if a special limit has been set to all dice
-                        totaldice = enforceLimit(totaldice, limit);
-                    }
+                        if (doubleDice) { // See if the dicepool will be rolled twice (doubled dicepool), like in case of a Weak Soak
+                            totaldice = addArrays(totaldice, totaldice);
+                        }
+                        if (uselimit) { // See if a special limit has been set to all dice
+                            totaldice = enforceLimit(totaldice, limit);
+                        }
 
-                    let rollreturn;
-                    if (IFTN) // Do and get the actual roll
-                        rollreturn = await CardinalDiceRoller.rollTargetNumberArray(TN, totaldice, label, this);
-                    else
-                        rollreturn = await CardinalDiceRoller.rollHighestArray(totaldice, label, this);
+                        if (IFTN) // Do and get the actual roll
+                            rollreturn = await CardinalDiceRoller.rollTargetNumberArray(TN, totaldice, label, this);
+                        else
+                            rollreturn = await CardinalDiceRoller.rollHighestArray(totaldice, label, this);
 
-                    if (successfunc && typeof (successfunc) == "function") {
-                        successfunc(rollreturn); // Then do the special callback function of the roll if it is set
-                    }
+                        if (successfunc && typeof (successfunc) == "function") {
+                            successfunc(rollreturn); // Then do the special callback function of the roll if it is set
+                        }
 
-                    // The automated condition removal callback
-                    if (conditionRemoval && autocondition && typeof (autocondition) == "function") {
-                        autocondition(); // Automatic condition removal after a successful roll
+                        // The automated condition removal callback
+                        if (conditionRemoval && autocondition && typeof (autocondition) == "function") {
+                            autocondition(); // Automatic condition removal after a successful roll
+                        }
                     }
+                    resolve(rollreturn);
                 }
-            }
-        }, { width: 600 });
-        dlog.render(true);
+            }, { width: 600 });
+            dlog.render(true);
+        });
+        return resolvedroll;
     }
 
     /** Function to silently roll the given prechecked dice pools and extra dice, instead of popping a dialog for it
@@ -2287,6 +2311,7 @@ export class Ironclaw2EActor extends Actor {
      * @param {string} [otherlabel] Text to postpend to the label
      * @param successfunc Callback to execute after going through with the macro, executed unless an error happens
      * @param autocondition Callback to a condition auto-removal function, executed if the setting is on, executed unless an error happens
+     * @returns {Promise<DiceReturn> | Promise<null>}
      */
     async silentSelectRolled({ tnyes = false, tnnum = 3, prechecked = [], otherkeys = [], otherdice = [], otherbools = [], extradice = "", otherlabel = "" } = {}, successfunc = null, autocondition = null) {
         const burdened = hasConditionsIronclaw("burdened", this);
@@ -2301,7 +2326,7 @@ export class Ironclaw2EActor extends Actor {
         if (typeof (otherlabel) === 'string' && otherlabel.length > 0)
             label += `<p style="color:black">${otherlabel}</p>`;
 
-        let rollreturn;
+        let rollreturn = null;
         if (tnyes) // Do the actual roll, either TN or Highest based on tnyes
             rollreturn = await CardinalDiceRoller.rollTargetNumberArray(tnnum, all.totalDice, label, this);
         else
@@ -2316,5 +2341,7 @@ export class Ironclaw2EActor extends Actor {
         if (conditionRemoval && autocondition && typeof (autocondition) == "function") {
             autocondition();
         }
+
+        return rollreturn;
     }
 }
