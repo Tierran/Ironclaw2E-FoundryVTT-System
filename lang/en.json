@@ -248,6 +248,7 @@
   "ironclaw2e.dialog.damageCalc.conditionDamage": "Condition Damage",
   "ironclaw2e.dialog.damageCalc.conditionDamageAdded": "Damage added by {conditions}",
   "ironclaw2e.dialog.damageCalc.conditionDamageNothing": "No damage added by conditions",
+  "ironclaw2e.dialog.damageCalc.reduceWard": "Reduce the damage by Ward, max {value}",
   "ironclaw2e.dialog.damageCalc.knockoutStrike": "Knockout Strike?",
   "ironclaw2e.dialog.damageCalc.nonLethal": "Non-lethal attack?",
   "ironclaw2e.dialog.damageCalc.damageConditions": "Other conditions to add:",

@@ -122,6 +122,9 @@ export class CommonSystemInfo {
         "ONTW": "One-Two Diagonals",
         "SAME": "Equidistant"
     };
+    /**
+     * The rule settings used to determine whether combat rules are used in distance measuring
+     */
     static rangeCombatRules = { 0: "Never", 1: "In Combat", 2: "Always" };
 }
 

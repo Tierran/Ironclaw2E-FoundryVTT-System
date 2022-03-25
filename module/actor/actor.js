@@ -17,7 +17,7 @@ import { getSpeakerActor } from "../helpers.js";
 import { getDistancePenaltyConstruction } from "../helpers.js";
 import { checkQuickModifierKey } from "../helpers.js";
 import { getDistanceBetweenPositions } from "../helpers.js";
-import { CommonConditionInfo } from "../conditions.js";
+import { CommonConditionInfo, getSingleConditionIronclaw, getTargetConditionQuota, setTargetConditionQuota } from "../conditions.js";
 import { checkStandardDefense, CommonSystemInfo, getRangeDiceFromDistance } from "../systeminfo.js";
 // For condition management
 import { hasConditionsIronclaw } from "../conditions.js";
@@ -1419,7 +1419,25 @@ export class Ironclaw2EActor extends Actor {
      * @param {boolean} knockout
      * @param {boolean} nonlethal
      */
-    async applyDamage(damage, knockout = false, nonlethal = false) {
+    async applyDamage(damage, knockout = false, nonlethal = false, applyWard = true) {
+
+        if (applyWard) {
+            const cond = getSingleConditionIronclaw("temp-ward", this);
+            if (cond) {
+                let ward = getTargetConditionQuota(cond, this);
+                if (ward > damage) {
+                    // If there is more ward than damage, reduce the damage from ward, set damage to zero and update the ward with the reduced value
+                    ward -= damage;
+                    damage = 0;
+                    await this.updateEffectQuota(cond, ward);
+                } else {
+                    // Else, reduce the damage by the ward and remove the ward condition
+                    damage -= ward;
+                    await this.deleteEffect(cond.id, true);
+                }
+            }
+        }
+
         let adding = ["reeling"];
         if (damage >= 1) {
             adding.push("hurt");
@@ -1443,6 +1461,16 @@ export class Ironclaw2EActor extends Actor {
      */
     async addEffect(condition) {
         await addConditionsIronclaw(condition, this);
+    }
+
+    /**
+     * Update the quota of the condition
+     * @param {ActiveEffect | string} condition
+     * @param {number} value
+     */
+    async updateEffectQuota(condition, value) {
+        const usedcond = (typeof (condition) === "string" ? getSingleConditionIronclaw(condition, this) : condition);
+        await setTargetConditionQuota(usedcond, value);
     }
 
     /**
@@ -1873,7 +1901,7 @@ export class Ironclaw2EActor extends Actor {
      * @param {number} readysoak
      * @param {string} damageconditions
      */
-    popupDamage(readydamage = 0, readysoak = 0, damageconditions = "") {
+    async popupDamage(readydamage = 0, readysoak = 0, damageconditions = "") {
         let confirmed = false;
         let speaker = getMacroSpeaker(this);
         let addeddamage = 0;
@@ -1888,43 +1916,25 @@ export class Ironclaw2EActor extends Actor {
             addedconditions += (addedconditions ? ", " : "") + game.i18n.localize(CommonConditionInfo.getConditionLabel("injured"));
         }
         const confirmSend = game.settings.get("ironclaw2e", "defaultSendDamage");
+        const ward = getTargetConditionQuota("temp-ward", this);
+
+        const templateData = {
+            "actor": this,
+            "addeddamage": addeddamage,
+            "addedconditions": addedconditions,
+            "confirmSend": confirmSend,
+            "readydamage": readydamage,
+            "readysoak": readysoak,
+            "damageconditions": damageconditions,
+            "temporaryWard": ward,
+            "hasWard": ward >= 0
+        };
+
+        const contents = await renderTemplate("systems/ironclaw2e/templates/popup/damage-popup.html", templateData);
 
         let dlog = new Dialog({
             title: game.i18n.format("ironclaw2e.dialog.damageCalc.title", { "name": speaker.alias }),
-            content: `
-     <form class="ironclaw2e">
-      <h1>${game.i18n.format("ironclaw2e.dialog.damageCalc.header", { "name": this.data.name })}</h1>
-      <div class="form-group">
-       <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.damageCalc.received")}:</label>
-	   <input type="text" id="damage" name="damage" value="${readydamage}" onfocus="this.select();"></input>
-      </div>
-      <div class="form-group">
-       <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.damageCalc.soaked")}:</label>
-	   <input type="text" id="soak" name="soak" value="${readysoak}" onfocus="this.select();"></input>
-      </div>
-      <div class="form-group">
-       <span class="normal-label" title="${addeddamage ? game.i18n.format("ironclaw2e.dialog.damageCalc.conditionDamageAdded", { "conditions": addedconditions }) : game.i18n.localize("ironclaw2e.dialog.damageCalc.conditionDamageNothing")}">
-        ${game.i18n.localize("ironclaw2e.dialog.damageCalc.conditionDamage")}: ${addeddamage}</span>
-       <input type="checkbox" id="hurt" name="hurt" value="1" checked></input>
-      </div>
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.damageCalc.knockoutStrike")}</label>
-       <input type="checkbox" id="knockout" name="knockout" value="1"></input>
-      </div>
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.damageCalc.nonLethal")}</label>
-       <input type="checkbox" id="nonlethal" name="nonlethal" value="1"></input>
-      </div>
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.damageCalc.damageConditions")}</label>
-       <input type="text" id="cond" name="cond" value="${damageconditions}"></input>
-      </div>
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.sendToChat")}</label>
-       <input type="checkbox" id="send" name="send" value="1" ${confirmSend ? "checked" : ""}></input>
-      </div>
-     </form>
-     `,
+            content: contents,
             buttons: {
                 one: {
                     icon: '<i class="fas fa-check"></i>',
@@ -1951,12 +1961,14 @@ export class Ironclaw2EActor extends Actor {
                     let knockout = KNOCKOUT.checked;
                     let ALLOW = html.find('[name=nonlethal]')[0];
                     let allow = ALLOW.checked;
+                    let WARD = html.find('[name=reduceward]')[0];
+                    let ward = WARD?.checked ?? false;
                     let COND = html.find('[name=cond]')[0].value;
                     let conds = ""; if (COND.length > 0) conds = COND;
                     let SEND = html.find('[name=send]')[0];
                     let send = SEND.checked;
 
-                    let statuses = await this.applyDamage(damage + (hurt ? addeddamage : 0) - soak, knockout, allow);
+                    let statuses = await this.applyDamage(damage + (hurt ? addeddamage : 0) - soak, knockout, allow, ward);
                     let conditions = splitStatString(conds);
                     if (conditions.length > 0) await this.addEffect(conditions);
 

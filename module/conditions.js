@@ -69,7 +69,7 @@ export function getConditionsIronclaw(target, warn = false) {
         let raw = game.cub.getConditionEffects(target, { "warn": warn });
         if (raw) {
             if (Array.isArray(raw)) {
-                raw.conditions.forEach(x => conds.push(x));
+                raw.forEach(x => conds.push(x));
             }
             else {
                 conds.push(raw);
@@ -84,6 +84,39 @@ export function getConditionsIronclaw(target, warn = false) {
     }
 
     return conds;
+}
+
+/**
+ * Unified function to get a single condition the target has for Ironclaw2E
+ * @param {string} name The name of the condition to get
+ * @param {Actor | Token} target The actor or token in question
+ * @param {boolean} warn Whether to use CUB's warnings
+ * @returns {Object | null} The asked condition, or null if the asked condition does not exist in the actor
+ */
+export function getSingleConditionIronclaw(name, target, warn = false) {
+    let cond = null;
+
+    if (game.ironclaw2e.useCUBConditions) {
+        let raw = game.cub.getConditionEffects(target, { "warn": warn });
+        const usedname = CommonConditionInfo.convertToCub(name);
+        if (raw) {
+            if (Array.isArray(raw)) {
+                cond = raw.find(x => usedname.includes(x?.data.label));
+            }
+            else {
+                if (usedname.includes(raw?.data.label))
+                    cond = raw;
+            }
+        }
+    }
+    else {
+        let actor = getTargetActor(target);
+        if (!actor) return false;
+
+        cond = actor.data.effects.find((value) => value?.data.flags?.core?.statusId === name);
+    }
+
+    return cond ?? null;
 }
 
 /**
@@ -195,12 +228,58 @@ export function checkConditionIronclaw(condition, name, warn = false) {
  * @returns {boolean} Returns true if the quota field should be there
  */
 export function checkConditionQuota(condition) {
+    if (!condition) { // If nullable, just return false
+        return false;
+    }
     const usedcond = condition instanceof ActiveEffect ? condition.data : condition;
     if (game.ironclaw2e.useCUBConditions) {
         return CommonConditionInfo.quotaCubList.has(usedcond?.label);
     } else {
         return CommonConditionInfo.quotaList.has(usedcond?.flags?.core?.statusId);
     }
+}
+
+/**
+ * Get the current quota from a condition
+ * @param {ActiveEffect | string} condition The condition or the name of the condition to get the quota for
+ * @param {Actor | Token} target The target to get the condition from
+ * @returns {number} Returns the current quota, or -1 if nothing found
+ */
+export function getTargetConditionQuota(condition, target) {
+    if (typeof (condition) === "string") {
+        if (!CommonConditionInfo.quotaList.has(condition)) {
+            console.error("getTargetConditionQuota was asked to get the quota of a condition that has no quota: " + condition);
+            return -1;
+        }
+    } else {
+        if (!checkConditionQuota(condition)) {
+            console.error("getTargetConditionQuota was asked to get the quota of a condition that has no quota: " + condition);
+            return -1;
+        }
+    }
+
+    // Get the used condition from either the name or the given condition
+    const usedcond = (typeof (condition) === "string" ? getSingleConditionIronclaw(condition, target) : condition)?.data;
+    if (usedcond) {
+        return usedcond?.flags?.ironclaw2e?.quota ?? 0;
+    }
+
+    return -1;
+}
+
+/**
+ * Set the current quota on a condition
+ * @param {ActiveEffect} condition The condition which quota to update
+ * @param {number} value The value to update the quota to
+ */
+export async function setTargetConditionQuota(condition, value) {
+    if (!checkConditionQuota(condition)) {
+        console.error("setTargetConditionQuota was asked to set the quota of a condition that has no quota: " + condition);
+        return;
+    }
+
+    const inputvalue = Math.max(value, 0); // Clamp the input to zero and above
+    return await condition.update({ "_id": condition.id, "flags.ironclaw2e.quota": inputvalue });
 }
 
 /* -------------------------------------------- */

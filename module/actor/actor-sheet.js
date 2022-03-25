@@ -1,6 +1,6 @@
 import { checkApplicability, checkDiceArrayEmpty, diceFieldUpgrade, findTotalDice, getMacroSpeaker, makeCompareReady, reformDiceString, splitStatString, checkQuickModifierKey } from "../helpers.js";
 import { CommonSystemInfo } from "../systeminfo.js";
-import { getBaseConditionIronclaw } from "../conditions.js";
+import { getBaseConditionIronclaw, setTargetConditionQuota } from "../conditions.js";
 import { hasConditionsIronclaw } from "../conditions.js";
 import { Ironclaw2EItem } from "../item/item.js";
 
@@ -834,7 +834,8 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         if (dataset.id) {
             const effect = this.actor.effects.get(dataset.id);
-            effect.update({ "_id": effect.id,  "flags.ironclaw2e.quota": element.value });
+            const inputvalue = (isNaN(element.value) ? parseInt(element.value) : element.value);
+            setTargetConditionQuota(effect, inputvalue);
         }
     }
 }
