@@ -608,32 +608,6 @@ export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs
     return { "otherinputs": otherinputs, "otherbools": otherbools, "otherkeys": otherkeys, "otherdice": otherdice };
 }
 
-/**
- * Apply combat advantage for the attacker based on the target's condition
- * @param {any} otherkeys
- * @param {any} otherdice
- * @param {any} otherinputs
- * @param {any} otherbools
- * @param {Token} target
- * @param {boolean} autocheck Whether to autocheck the penalty, only really false for when a wand is used
- * @returns {object} Returns a holder object which returns the inputs with the added bonuses
- */
-export function getCombatAdvantageConstruction(otherkeys, otherdice, otherinputs, otherbools, target, { autocheck = true } = {}) {
-    if (target && checkIfDisadvantagedIronclaw(target)) {
-        const diceArray = findTotalDice(CommonSystemInfo.combatAdvantageDice);
-        const advKey = "Combat Advantage";
-        otherkeys.push(advKey);
-        otherdice.push(diceArray);
-        otherinputs += `<div class="form-group flexrow">
-                <label class="normal-label">${game.i18n.format("ironclaw2e.dialog.dicePool.combatAdvantage", { "bonus": CommonSystemInfo.combatAdvantageDice })}</label>
-	            <input type="checkbox" id="${makeCompareReady(advKey)}" name="${makeCompareReady(advKey)}" ${(autocheck ? "checked" : "")}></input>
-                </div>`+ "\n";
-        otherbools.push(autocheck);
-    }
-
-    return { "otherinputs": otherinputs, "otherbools": otherbools, "otherkeys": otherkeys, "otherdice": otherdice };
-}
-
 /* -------------------------------------------- */
 /*  Gift Special Bonus Helpers                  */
 /* -------------------------------------------- */
@@ -824,6 +798,32 @@ export function diceFieldUpgrade(dicearray, upgrade) {
 /* -------------------------------------------- */
 /*  Misc Helpers                                */
 /* -------------------------------------------- */
+
+/**
+ * Apply combat advantage for the attacker based on the target's condition
+ * @param {any} otherkeys
+ * @param {any} otherdice
+ * @param {any} otherinputs
+ * @param {any} otherbools
+ * @param {Token} target
+ * @param {boolean} autocheck Whether to autocheck the penalty, only really false for when a wand is used
+ * @returns {object} Returns a holder object which returns the inputs with the added bonuses
+ */
+export function getCombatAdvantageConstruction(otherkeys, otherdice, otherinputs, otherbools, target, { autocheck = true } = {}) {
+    if (target && checkIfDisadvantagedIronclaw(target)) {
+        const diceArray = findTotalDice(CommonSystemInfo.combatAdvantageDice);
+        const advKey = "Combat Advantage";
+        otherkeys.push(advKey);
+        otherdice.push(diceArray);
+        otherinputs += `<div class="form-group flexrow">
+                <label class="normal-label">${game.i18n.format("ironclaw2e.dialog.dicePool.combatAdvantage", { "bonus": CommonSystemInfo.combatAdvantageDice })}</label>
+	            <input type="checkbox" id="${makeCompareReady(advKey)}" name="${makeCompareReady(advKey)}" ${(autocheck ? "checked" : "")}></input>
+                </div>`+ "\n";
+        otherbools.push(autocheck);
+    }
+
+    return { "otherinputs": otherinputs, "otherbools": otherbools, "otherkeys": otherkeys, "otherdice": otherdice };
+}
 
 /**
  * Helper function to search through a given item list for any items matching the name given

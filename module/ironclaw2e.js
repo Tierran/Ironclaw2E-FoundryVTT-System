@@ -394,11 +394,14 @@ Hooks.once('init', async function () {
 
 Hooks.once('setup', async function () {
     // Combat Utility Belt check
-    let cubActive = game.modules.get("combat-utility-belt")?.active == true;
+    let cubActive = game.modules.get("combat-utility-belt")?.active === true;
     let conditionsActive = cubActive ? game.settings.get("combat-utility-belt", "enableEnhancedConditions") : false; // Since get throws an error if the key does not exist, first check if CUB is even active
     if (cubActive && conditionsActive) {
         game.ironclaw2e.useCUBConditions = true;
         console.log("CUB detected and Enhanced Conditions active! Using CUB Conditions.");
+
+        // Prepare condition lists for CUB
+        CommonConditionInfo.prepareCUBLists();
     }
 
     console.log("Ironclaw2E System setup complete");

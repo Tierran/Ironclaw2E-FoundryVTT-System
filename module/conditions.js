@@ -617,7 +617,7 @@ export class CommonConditionInfo {
     /**
      * Set of CUB condition names that should have a quota field
      */
-    static quotaCubList = new Set(["Injured", "Sick", "Temporary Ward"]);
+    static quotaCubList = new Set();
 
     /**
      * Set of conditions that mark the combatant as defeated
@@ -627,7 +627,7 @@ export class CommonConditionInfo {
     /**
      * Set of CUB conditions that mark the combatant as defeated
      */
-    static defeatedCubList = new Set(["Dying", "Dead", "Overkilled", "Asleep", "Unconscious"]);
+    static defeatedCubList = new Set();
 
     /**
      * Set of conditions that give attackers combat advantage against the character
@@ -637,7 +637,17 @@ export class CommonConditionInfo {
     /**
      * Set of CUB conditions that give attackers combat advantage against the character
      */
-    static combatAdvantageCubList = new Set(["Reeling", "Blinded", "Knockdown", "Slowed", "Half-Buried", "Immobilized", "Confused", "Mesmerized", "On Fire"]);
+    static combatAdvantageCubList = new Set();
+
+
+    /**
+     * Prepare the Combat Utility Belt side sets for checking things
+     */
+    static prepareCUBLists() {
+        this.quotaCubList = new Set(this.convertToCub(Array.from(this.quotaList)));
+        this.defeatedCubList = new Set(this.convertToCub(Array.from(this.defeatedList)));
+        this.combatAdvantageCubList = new Set(this.convertToCub(Array.from(this.combatAdvantageList)));
+    }
 
     /**
      * Convert a single or a list of conditions from id's into CUB condition names
