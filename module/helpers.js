@@ -569,6 +569,22 @@ export function getRangeBandMinMax(range, shorterOkay = false, longerOkay = fals
 }
 
 /**
+ * Get the template position based on the attacking message's flag data
+ * @returns {TokenPosition | null}
+ */
+export function getTemplatePosition({ weaponTemplatePos = null, weaponTemplateId = "", weaponTemplateSceneId = "" }) {
+    if (weaponTemplateId && weaponTemplateSceneId) {
+        const templateScene = game.scenes.get(weaponTemplateSceneId);
+        if (templateScene) {
+            const template = templateScene.templates.get(weaponTemplateId);
+            return { "x": template.data.x, "y": template.data.y };
+        }
+    }
+
+    return weaponTemplatePos;
+}
+
+/**
  * Apply range penalty from the raw distance in paces to the roll
  * @param {any} otherinputs
  * @param {any} otherbools
@@ -580,7 +596,7 @@ export function getRangeBandMinMax(range, shorterOkay = false, longerOkay = fals
  * @param {boolean} allowovermax Whether to allow a range penalty over the maximum distance to exist (true), or to show it as an error (false)
  * @returns {object} Returns a holder object which returns the inputs with the added bonuses
  */
-export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs, otherbools, distance, { reduction = 0, autocheck = true, allowovermax = false } = {}) {
+export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs, otherbools, distance, { reduction = 0, autocheck = true, allowovermax = false, explosionpenalty = false } = {}) {
     const usePenalties = game.settings.get("ironclaw2e", "rangePenalties");
     if (!usePenalties) {
         // If the penalties are turned off, just return out with the inputs as they were
@@ -600,7 +616,8 @@ export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs
         otherkeys.push(distKey);
         otherdice.push(diceArray);
         otherinputs += `<div class="form-group flexrow">
-                <label class="normal-label">${game.i18n.format("ironclaw2e.dialog.dicePool.rangePenaltyAttacker", { "range": rangeBand, "penalty": distanceDice })}</label>
+                <label class="normal-label">${game.i18n.format((explosionpenalty ? "ironclaw2e.dialog.dicePool.rangePenaltyExplosion" : "ironclaw2e.dialog.dicePool.rangePenaltyAttacker"),
+                    { "range": rangeBand, "penalty": distanceDice })}</label>
 	            <input type="checkbox" id="${makeCompareReady(distKey)}" name="${makeCompareReady(distKey)}" ${(autocheck ? "checked" : "")}></input>
                 </div>`+ "\n";
         otherbools.push(autocheck);

@@ -236,6 +236,7 @@
   "ironclaw2e.dialog.dicePool.aiming": "Aiming",
   "ironclaw2e.dialog.dicePool.soakWeak": "Soak against Weak damage, double dice rolled",
   "ironclaw2e.dialog.dicePool.rangePenaltyAttacker": "{range} Range penalty for attacker: {penalty}",
+  "ironclaw2e.dialog.dicePool.rangePenaltyExplosion": "{range} Range penalty from the explosion: {penalty}",
   "ironclaw2e.dialog.dicePool.rangeOverMax": "Attacker over horizon range, attack should be impossible!",
   "ironclaw2e.dialog.dicePool.rangePenaltyDistance": "{range} Range penalty for distance: {penalty}",
   "ironclaw2e.dialog.dicePool.rangeRollTitle": "{range} Range Roll",
@@ -368,6 +369,7 @@
   "ironclaw2e.chatInfo.itemInfo.attackBasic": "Basic",
   "ironclaw2e.chatInfo.itemInfo.attackBasicHint": "Attack with {name} while skipping the Resistance step",
   "ironclaw2e.chatInfo.itemInfo.attackSpark": "Spark",
+  "ironclaw2e.chatInfo.itemInfo.placeTemplate": "Place AoE Template",
 
   "ironclaw2e.chatInfo.itemInfo.dodgeDefense": "Dodge",
   "ironclaw2e.chatInfo.itemInfo.parryDefense": "Parry with...",

@@ -2,8 +2,10 @@
 // Random non-helper stuff that are substantial, relatively self-contained, and I couldn't really think of another place to dump into
 import { findActorToken, getDistanceBetweenPositions, getMacroSpeaker, getSpeakerActor, splitStatsAndBonus } from "./helpers.js";
 import { Ironclaw2EActor } from "./actor/actor.js";
+import { Ironclaw2EItem } from "./item/item.js";
 import { getRangeBandFromDistance } from "./systeminfo.js";
 import { hasConditionsIronclaw } from "./conditions.js";
+import { AbilityTemplateIronclaw } from "./ability-template.js";
 
 /* -------------------------------------------- */
 /*  Hooks                                       */
@@ -34,8 +36,12 @@ Hooks.on("renderChatMessage", function (message, html, data) {
                 attackHolder.find('.default-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
                 attackHolder.find('.skip-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
                 attackHolder.find('.spark-attack').click(Ironclaw2EActor.onChatSparkClick.bind(this));
+
+                const templateHolder = buttons.find('.template-buttons');
+                templateHolder.find('.place-template').click(onPlaceExplosionTemplate.bind(this));
             } else {
                 buttons.find('.attack-buttons').remove();
+                buttons.find('.template-buttons').remove();
             }
             if (showOthers) {
                 const defenseHolder = buttons.find('.defense-buttons');
@@ -266,6 +272,35 @@ async function onRequestRollTrigger(event) {
             "extradice": splitStats[1], "otherlabel": game.i18n.format("ironclaw2e.chatInfo.requestRoll.rollLabel", { "user": messageFlags.requestSpeaker })
         });
     }
+}
+
+/**
+ * The function to trigger when a user presses the "Place Template" button
+ * @param {any} event
+ */
+async function onPlaceExplosionTemplate(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+    const dataset = element.dataset;
+    const message = game.messages.get($(event.currentTarget).closest('.chat-message')[0]?.dataset?.messageId);
+
+    if (!dataset || !message) {
+        console.error("Placing a template didn't get the correct data: " + dataset + " " + message);
+        return;
+    }
+
+    // Function to execute on success, setting the proper flags to the item data message
+    const onSuccess = async (x) => {
+        const flags = {
+            "ironclaw2e.weaponTemplatePos": { "x": x.data.x, "y": x.data.y },
+            "ironclaw2e.weaponTemplateId": x.id,
+            "ironclaw2e.weaponTemplateSceneId": x.parent?.id
+        };
+        message.update({ "_id": x.id, "flags": flags });
+    };
+
+    const template = AbilityTemplateIronclaw.fromRange(dataset.arearange, onSuccess);
+    if (template) template.drawPreview();
 }
 
 /* -------------------------------------------- */

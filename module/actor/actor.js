@@ -1,4 +1,4 @@
-import { checkDiceArrayEmpty, getCombatAdvantageConstruction } from "../helpers.js";
+import { checkDiceArrayEmpty, getCombatAdvantageConstruction, getTemplatePosition } from "../helpers.js";
 import { addArrays } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -319,7 +319,7 @@ export class Ironclaw2EActor extends Actor {
         // Trigger the actual roll if the attacker is found and the weapon id is listed
         if (attackActor && otheritem.weaponId) {
             if (rolltype === "attack")
-                attackActor.items.get(otheritem.weaponId).attackRoll(directroll, skipresist, presettn, resists);
+                attackActor.items.get(otheritem.weaponId).attackRoll(directroll, skipresist, presettn, resists, message);
             else if (rolltype === "spark")
                 attackActor.items.get(otheritem.weaponId).sparkRoll(directroll);
         } else if (!attackActor) {
@@ -364,6 +364,7 @@ export class Ironclaw2EActor extends Actor {
         otheritem.multiAttack = flags.weaponMultiAttack;
         otheritem.multiRange = flags.weaponMultiRange;
         otheritem.attackerPos = flags.itemUserPos;
+        otheritem.templatePos = getTemplatePosition(flags);
         otheritem.attackerRangeReduction = flags.itemUserRangeReduction;
         otheritem.attackerRangeAutocheck = !(flags.itemUserRangeAutocheck === false); // If and only if the the value is false, will the value be false; if it is true, undefined or something else, value will be true
 
@@ -1879,12 +1880,24 @@ export class Ironclaw2EActor extends Actor {
             // Attacker range penalty
             const foundToken = findActorToken(this);
             if (foundToken) {
-                const dist = getDistanceBetweenPositions(otheritem.attackerPos, foundToken.data, { usecombatrules: true });
+                // Use either the template if it exists, or the token data if the attack explosion spot is not indicated, or the attack is direct
+                const dist = getDistanceBetweenPositions(otheritem.attackerPos, otheritem.templatePos || foundToken.data, { usecombatrules: true });
                 const range = getDistancePenaltyConstruction(constructionkeys, constructionarray, formconstruction, constructionbools, dist, { "reduction": otheritem.attackerRangeReduction, "autocheck": otheritem.attackerRangeAutocheck });
                 formconstruction = range.otherinputs;
                 constructionkeys = range.otherkeys;
                 constructionarray = range.otherdice;
                 constructionbools = range.otherbools;
+
+                // Potential extra range penalty from explosion
+                if (otheritem.templatePos) {
+                    const exploDist = getDistanceBetweenPositions(otheritem.templatePos, foundToken.data, { usecombatrules: true });
+                    const exploRange = getDistancePenaltyConstruction(constructionkeys, constructionarray, formconstruction, constructionbools, exploDist, { "autocheck": otheritem.attackerRangeAutocheck, "explosionpenalty": true });
+                    formconstruction = exploRange.otherinputs;
+                    constructionkeys = exploRange.otherkeys;
+                    constructionarray = exploRange.otherdice;
+                    constructionbools = exploRange.otherbools;
+
+                }
             }
         }
 

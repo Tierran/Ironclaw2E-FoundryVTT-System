@@ -8,7 +8,7 @@ import { getMacroSpeaker } from "../helpers.js";
 import { checkDiceArrayEmpty } from "../helpers.js";
 import { checkQuickModifierKey } from "../helpers.js";
 
-import { checkStandardDefense, CommonSystemInfo } from "../systeminfo.js";
+import { checkStandardDefense, CommonSystemInfo, getRangeDistanceFromBand } from "../systeminfo.js";
 import { getSpecialOptionPrototype } from "../systeminfo.js";
 
 import { CommonConditionInfo } from "../conditions.js"
@@ -23,6 +23,32 @@ import { Ironclaw2EActor } from "../actor/actor.js";
  * @extends {Item}
  */
 export class Ironclaw2EItem extends Item {
+
+    /* -------------------------------------------- */
+    /* Static Functions                             */
+    /* -------------------------------------------- */
+
+    /**
+     * Transfer template flags from one object to another
+     * @param {object} source
+     * @param {object} target
+     */
+    static transferTemplateFlags(source, target) {
+        const sourceFlags = source?.data.flags?.ironclaw2e;
+        if ("weaponTemplatePos" in sourceFlags) {
+            const flags = {
+                "ironclaw2e.weaponTemplatePos": sourceFlags.weaponTemplatePos,
+                "ironclaw2e.weaponTemplateId": sourceFlags.weaponTemplateId,
+                "ironclaw2e.weaponTemplateSceneId": sourceFlags.weaponTemplateSceneId
+            };
+            target.update({ "_id": target.id, "flags": flags });
+        }
+    }
+
+    /* -------------------------------------------- */
+    /* Overrides                                    */
+    /* -------------------------------------------- */
+
     /** @override
      * Perform any last data modifications after super.prepareData has finished executing
      */
@@ -844,20 +870,20 @@ export class Ironclaw2EItem extends Item {
      */
     automaticDamageCalculation(info, ignoreresist = false, onlyupdate = false, opposingsuccesses = -1) {
         if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
-            return; // If the system is turned off, return out
+            return null; // If the system is turned off, return out
         }
         if (!info) { // Return out in case the info turns out blank
-            return;
+            return null;
         }
 
         const item = this.data;
         const itemData = item.data;
         if (item.type !== 'weapon') {
             console.error("A non-weapon type attempted to send Attack Data: " + item.name);
-            return;
+            return null;
         }
         if (itemData.effect.length == 0) {
-            return; // If the weapon has no effects listed, return out
+            return null; // If the weapon has no effects listed, return out
         }
 
 
@@ -869,7 +895,7 @@ export class Ironclaw2EItem extends Item {
                 }
             };
             info.message?.update(updatedata);
-            return; // Return out of a counter-attack
+            return null; // Return out of a counter-attack
         }
 
         const successes = (isNaN(info.tnData.successes) ? 0 : info.tnData.successes);
@@ -887,7 +913,7 @@ export class Ironclaw2EItem extends Item {
             info.message?.update(updatedata);
             // If the resist has not yet been rolled, return out after setting the resist flags
             if (opposingsuccesses < 0 && !itemData.attackAutoHits)
-                return;
+                return null;
         }
         else { // Else, treat it as a normal attack and set the flags to store the information for future reference
             let updatedata = {
@@ -902,9 +928,9 @@ export class Ironclaw2EItem extends Item {
         // Send to chat if there are successes, failures are displayed as well, or the attack is an explosion
         const toChat = usedsuccesses > 0 || game.settings.get("ironclaw2e", "calculateDisplaysFailed") || itemData.attackAutoHits;
         if (onlyupdate) {
-            return; // Return out to not send anything in update mode
+            return null; // Return out to not send anything in update mode
         } else if (toChat) {
-            this.attackToChat({ success, "rawsuccesses": usedsuccesses, "opposingrolled": opposingsuccesses >= 0, "opposingsuccesses": opposingsuccesses });
+            return this.attackToChat({ success, "rawsuccesses": usedsuccesses, "opposingrolled": opposingsuccesses >= 0, "opposingsuccesses": opposingsuccesses });
         }
     }
 
@@ -1013,7 +1039,7 @@ export class Ironclaw2EItem extends Item {
      */
     async attackToChat({ success = false, rawsuccesses = 0, opposingrolled = false, opposingsuccesses = 0, forceslaying = false } = {}) {
         if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
-            return; // If the system is turned off, return out
+            return null; // If the system is turned off, return out
         }
         const item = this.data;
         const itemData = item.data;
@@ -1081,7 +1107,7 @@ export class Ironclaw2EItem extends Item {
             flags
         };
         ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
-        CONFIG.ChatMessage.documentClass.create(chatData);
+        return CONFIG.ChatMessage.documentClass.create(chatData);
     }
 
     /* -------------------------------------------- */
@@ -1149,7 +1175,7 @@ export class Ironclaw2EItem extends Item {
      * @param {number} presettn The TN to use
      * @param {number} opposingsuccesses The number of opposing successes for resisted attacks
      */
-    attackRoll(directroll = false, ignoreresist = false, presettn = 3, opposingsuccesses = -1) {
+    attackRoll(directroll = false, ignoreresist = false, presettn = 3, opposingsuccesses = -1, sourcemessage = null) {
         const item = this;
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
@@ -1173,9 +1199,10 @@ export class Ironclaw2EItem extends Item {
         const canQuickroll = data.hasResist && !ignoreresist;
         const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
         const donotdisplay = game.settings.get("ironclaw2e", "calculateDoesNotDisplay");
-        const callback = (x => {
+        const callback = (async x => {
             if (exhaust) exhaust.giftSetExhaust("true", sendToChat);
-            item.automaticDamageCalculation(x, ignoreresist, donotdisplay, opposingsuccesses);
+            const foo = await item.automaticDamageCalculation(x, ignoreresist, donotdisplay, opposingsuccesses);
+            if (sourcemessage && foo) Ironclaw2EItem.transferTemplateFlags(sourcemessage, foo);
         });
 
         // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively instead of the roll
