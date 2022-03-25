@@ -1131,6 +1131,13 @@ export class Ironclaw2EItem extends Item {
         }
     }
 
+    /**
+     * Weapon attack roll function
+     * @param {boolean} directroll Whether to attempt to roll without a dialog
+     * @param {boolean} ignoreresist Ignore the resisted aspect of the attack
+     * @param {number} presettn The TN to use
+     * @param {number} opposingsuccesses The number of opposing successes for resisted attacks
+     */
     attackRoll(directroll = false, ignoreresist = false, presettn = 3, opposingsuccesses = -1) {
         const item = this;
         const itemData = this.data;
@@ -1142,21 +1149,25 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
+        // Make sure this weapon can actually attack
         if (data.canAttack == false) {
             return;
         }
 
+        // Grab the user's target
         const [target] = (game.user.targets?.size > 0 ? game.user.targets : [null]);
 
+        // Prepare the relevant data
+        const exhaust = this.weaponGetGiftToExhaust();
         const canQuickroll = data.hasResist && !ignoreresist;
         const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
+        const donotdisplay = game.settings.get("ironclaw2e", "calculateDoesNotDisplay");
         const callback = (x => {
             if (exhaust) exhaust.giftSetExhaust("true", sendToChat);
             item.automaticDamageCalculation(x, ignoreresist, donotdisplay, opposingsuccesses);
         });
 
-        const donotdisplay = game.settings.get("ironclaw2e", "calculateDoesNotDisplay");
-        const exhaust = this.weaponGetGiftToExhaust();
+        // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively instead of the roll
         if (data.exhaustGift && !exhaust) {
             ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
         } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
@@ -1166,6 +1177,12 @@ export class Ironclaw2EItem extends Item {
         }
     }
 
+    /**
+     * Weapon defense roll function
+     * @param {boolean} directroll Whether to attempt to roll without a dialog
+     * @param {object} otheritem The other side's data
+     * @param {string} extradice Extra dice
+     */
     defenseRoll(directroll = false, otheritem = null, extradice = "") {
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
@@ -1176,14 +1193,22 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
+        // Make sure the weapon can actually defend
         if (data.canDefend == false) {
             return;
         }
 
+        // Pop the roll
         this.genericItemRoll(data.defenseStats, -1, itemData.name, data.defenseArray, 1, { directroll, otheritem, extradice },
             (x => { Ironclaw2EActor.addCallbackToAttackMessage(x?.message, otheritem?.messageId); }));
     }
 
+    /**
+     * Weapon counter roll function
+     * @param {boolean} directroll Whether to attempt to roll without a dialog
+     * @param {object} otheritem The other side's data
+     * @param {string} extradice Extra dice
+     */
     counterRoll(directroll = false, otheritem = null, extradice = "") {
         const item = this;
         const itemData = this.data;
@@ -1195,12 +1220,16 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
+        // Make sure the weapon can actually counter
         if (data.canCounter == false) {
             return;
         }
 
+        // Grab the relevant data
         const exhaust = this.weaponGetGiftToExhaust();
         const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
+
+        // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively instead of the roll
         if (data.exhaustGift && !exhaust) {
             ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
         } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
@@ -1211,6 +1240,10 @@ export class Ironclaw2EItem extends Item {
         }
     }
 
+    /**
+     * Weapon spark roll function
+     * @param {boolean} directroll Whether to attempt to roll without a dialog
+     */
     sparkRoll(directroll = false) {
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
@@ -1221,10 +1254,12 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
+        // Make sure the weapon has a spark roll
         if (data.canSpark == false) {
             return;
         }
 
+        // Depending on the directroll setting, either show the simple dialog or do the roll automatically
         if (!directroll) {
             rollHighestOneLine(data.sparkDie, game.i18n.localize("ironclaw2e.dialog.sparkRoll.label"), "ironclaw2e.dialog.sparkRoll.title", this.actor);
         } else {
@@ -1248,6 +1283,7 @@ export class Ironclaw2EItem extends Item {
         let tnyes = (tn > 0);
         let usedtn = (tn > 0 ? tn : 3);
         if (this.actor) {
+            // If the weapon has separate dice, add a new dice field to the popup dialog construction
             let formconstruction = ``;
             let usesmoredice = false;
             if (Array.isArray(dicearray)) {
@@ -1258,7 +1294,7 @@ export class Ironclaw2EItem extends Item {
                 usesmoredice = true;
             }
 
-            let label = "";
+            // Prepare the actual dice input object separately from the roll types
             const diceinput = {
                 "prechecked": stats, "tnyes": tnyes, "tnnum": usedtn, "otherkeys": (usesmoredice ? [diceid] : []), "otherdice": (usesmoredice ? [dicearray] : []),
                 "otherinputs": formconstruction, "otherbools": (usesmoredice ? [true] : []), "otherlabel": "", "extradice": extradice
