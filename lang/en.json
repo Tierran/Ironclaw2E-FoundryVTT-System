@@ -237,6 +237,7 @@
   "ironclaw2e.dialog.dicePool.rangeOverMax": "Attacker over horizon range, attack should be impossible!",
   "ironclaw2e.dialog.dicePool.rangePenaltyDistance": "{range} Range penalty for distance: {penalty}",
   "ironclaw2e.dialog.dicePool.rangeRollTitle": "{range} Range Roll",
+  "ironclaw2e.dialog.dicePool.combatAdvantage": "Combat Advantage bonus for attacker: {bonus}",
 
   "ironclaw2e.dialog.dicePool.soakAgainst": "Soak against {name}",
   "ironclaw2e.dialog.dicePool.explosionResist": "Explosion resistance against {name}",

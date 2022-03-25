@@ -126,6 +126,10 @@ export class CommonSystemInfo {
      * The rule settings used to determine whether combat rules are used in distance measuring
      */
     static rangeCombatRules = { 0: "Never", 1: "In Combat", 2: "Always" };
+    /**
+     * The combat advantage bonus
+     */
+    static combatAdvantageDice = "d8";
 }
 
 /**

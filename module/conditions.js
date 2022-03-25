@@ -230,13 +230,13 @@ export function checkConditionIronclaw(condition, name, warn = false) {
 export function checkIfDefeatedIronclaw(target) {
 
     if (game.ironclaw2e.useCUBConditions) {
-        let raw = game.cub.getConditionEffects(target, { "warn": warn });
+        let raw = game.cub.getConditionEffects(target, { "warn": false });
         if (raw) {
             if (Array.isArray(raw)) {
-                return raw.some(x => CommonConditionInfo.defeatedCubList.includes(x?.data.label));
+                return raw.some(x => CommonConditionInfo.defeatedCubList.has(x?.data.label));
             }
             else {
-                return CommonConditionInfo.defeatedCubList.includes(raw?.data.label);
+                return CommonConditionInfo.defeatedCubList.has(raw?.data.label);
             }
         }
     }
@@ -244,7 +244,35 @@ export function checkIfDefeatedIronclaw(target) {
         let actor = getTargetActor(target);
         if (!actor) return false;
 
-        return actor.data.effects.some((value) => CommonConditionInfo.defeatedList.includes(value?.data.flags?.core?.statusId));
+        return actor.data.effects.some((value) => CommonConditionInfo.defeatedList.has(value?.data.flags?.core?.statusId));
+    }
+
+    return false;
+}
+
+/**
+ * Check if the target gives others combat advantage
+ * @param {Actor | Token} target
+ * @returns {boolean} Returns true if the actor would give combat advantage
+ */
+export function checkIfDisadvantagedIronclaw(target) {
+
+    if (game.ironclaw2e.useCUBConditions) {
+        let raw = game.cub.getConditionEffects(target, { "warn": false });
+        if (raw) {
+            if (Array.isArray(raw)) {
+                return raw.some(x => CommonConditionInfo.combatAdvantageCubList.has(x?.data.label));
+            }
+            else {
+                return CommonConditionInfo.combatAdvantageCubList.has(raw?.data.label);
+            }
+        }
+    }
+    else {
+        let actor = getTargetActor(target);
+        if (!actor) return false;
+
+        return actor.data.effects.some((value) => CommonConditionInfo.combatAdvantageList.has(value?.data.flags?.core?.statusId));
     }
 
     return false;
@@ -600,6 +628,16 @@ export class CommonConditionInfo {
      * Set of CUB conditions that mark the combatant as defeated
      */
     static defeatedCubList = new Set(["Dying", "Dead", "Overkilled", "Asleep", "Unconscious"]);
+
+    /**
+     * Set of conditions that give attackers combat advantage against the character
+     */
+    static combatAdvantageList = new Set(["reeling", "blinded", "knockdown", "slowed", "half-buried", "immobilized", "confused", "mesmerized", "onfire"]);
+
+    /**
+     * Set of CUB conditions that give attackers combat advantage against the character
+     */
+    static combatAdvantageCubList = new Set(["Reeling", "Blinded", "Knockdown", "Slowed", "Half-Buried", "Immobilized", "Confused", "Mesmerized", "On Fire"]);
 
     /**
      * Convert a single or a list of conditions from id's into CUB condition names

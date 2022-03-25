@@ -1,4 +1,4 @@
-import { checkDiceArrayEmpty } from "../helpers.js";
+import { checkDiceArrayEmpty, getCombatAdvantageConstruction } from "../helpers.js";
 import { addArrays } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -1791,7 +1791,7 @@ export class Ironclaw2EActor extends Actor {
             { directroll }, successfunc);
     }
 
-    popupAttackRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherbools = [], otherlabel = "" } = {}, { directroll = false } = {}, item = null, successfunc = null) {
+    popupAttackRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = [], otherdice = [], otherinputs = "", otherbools = [], otherlabel = "" } = {}, { directroll = false, target = null } = {}, item = null, successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
         let formconstruction = otherinputs;
@@ -1813,6 +1813,15 @@ export class Ironclaw2EActor extends Actor {
         constructionkeys = bonuses.otherkeys;
         constructionarray = bonuses.otherdice;
         constructionbools = bonuses.otherbools;
+
+        // Combat Advantage
+        if (target) {
+            const advantage = getCombatAdvantageConstruction(constructionkeys, constructionarray, formconstruction, constructionbools, target);
+            formconstruction = advantage.otherinputs;
+            constructionkeys = advantage.otherkeys;
+            constructionarray = advantage.otherdice;
+            constructionbools = advantage.otherbools;
+        }
 
         // Aiming auto-remove
         const actor = this;

@@ -1146,6 +1146,8 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
+        const [target] = (game.user.targets?.size > 0 ? game.user.targets : [null]);
+
         const canQuickroll = data.hasResist && !ignoreresist;
         const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
         const callback = (x => {
@@ -1160,7 +1162,7 @@ export class Ironclaw2EItem extends Item {
         } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust?.popupRefreshGift();
         } else {
-            this.genericItemRoll(data.attackStats, presettn, itemData.name, data.attackArray, 2, { "directroll": canQuickroll && directroll }, callback);
+            this.genericItemRoll(data.attackStats, presettn, itemData.name, data.attackArray, 2, { "directroll": canQuickroll && directroll, target }, callback);
         }
     }
 
@@ -1242,7 +1244,7 @@ export class Ironclaw2EItem extends Item {
      * @param {Object} otheritem The opposing item for this roll
      * @param {Function} callback The function to execute after the dice are rolled
      */
-    genericItemRoll(stats, tn, diceid, dicearray, rolltype = 0, { directroll = false, otheritem = null, extradice = "" } = {}, callback = null) {
+    genericItemRoll(stats, tn, diceid, dicearray, rolltype = 0, { directroll = false, otheritem = null, target = null, extradice = "" } = {}, callback = null) {
         let tnyes = (tn > 0);
         let usedtn = (tn > 0 ? tn : 3);
         if (this.actor) {
@@ -1275,7 +1277,7 @@ export class Ironclaw2EItem extends Item {
                     diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect +
                         (this.data.data.opposingDefenseStats?.length > 0 ? ", " + (this.data.data.hasResist ? game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith") + " " + this.data.data.defendWith + " vs. 3 " : game.i18n.localize("ironclaw2e.chatInfo.itemInfo.opposingDefense") + ": " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attack") + " vs. " + this.data.data.defendWith) : "") : ": ");
                     if (this.weaponGetGiftToExhaust()?.giftUsable() === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
-                    this.actor.popupAttackRoll(diceinput, { directroll }, this, callback);
+                    this.actor.popupAttackRoll(diceinput, { directroll, target }, this, callback);
                     break;
                 case 3: // Counter roll
                     diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.counterRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect : ": ");
