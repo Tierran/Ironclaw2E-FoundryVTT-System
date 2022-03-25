@@ -1011,6 +1011,28 @@ export class Ironclaw2EItem extends Item {
         const successfulAttack = usedsuccesses > 0 || itemData.attackAutoHits;
         const negativeSuccesses = usedsuccesses <= 0; // More like non-positive, but I prefer two-word variable names
 
+        const slaying = itemData.effectsSplit?.includes("slaying") ?? false;
+        const impaling = itemData.effectsSplit?.includes("impaling") ?? false;
+        const critical = itemData.effectsSplit?.includes("critical") ?? false;
+        const penetrating = itemData.effectsSplit?.includes("penetrating") ?? false;
+        const weak = itemData.effectsSplit?.includes("weak") ?? false;
+
+        // Account for multiple damage-multiplying effects
+        const effectCount = (slaying ? 1 : 0) + (impaling ? 1 : 0) + (critical ? 1 : 0);
+        let hasMultipleBaseEffects = false;
+        let combinedDamage = 0;
+        let combinedImpalingDamage = 0;
+        if (effectCount >= 2) {
+            // The damage calculcations might look a little off, it's to avoid calculating the default damage increase from successes more than once
+            if (slaying && critical) {
+                hasMultipleBaseEffects = true;
+                combinedDamage = itemData.damageEffect + (usedsuccesses * 2) + Math.floor(usedsuccesses * 0.5);
+            }
+            if (impaling) {
+                combinedImpalingDamage = itemData.damageEffect + (usedsuccesses * 2) + (slaying ? (usedsuccesses) : 0) + (critical ? Math.floor(usedsuccesses * 0.5) : 0);
+            }
+        }
+
         const templateData = {
             "item": item,
             "itemData": itemData,
@@ -1019,18 +1041,27 @@ export class Ironclaw2EItem extends Item {
             "success": success,
             "negativeSuccesses": negativeSuccesses,
             "resultStyle": "color:" + (successfulAttack ? (success || itemData.attackAutoHits ? CommonSystemInfo.resultColors.success : CommonSystemInfo.resultColors.tie) : CommonSystemInfo.resultColors.failure),
-            "damageType": (itemData.effectsSplit.includes("slaying") ? "slaying" : (itemData.effectsSplit.includes("critical") ? "critical" : (itemData.damageEffect >= 0 ? "normal" : "conditional"))),
-            "isImpaling": itemData.effectsSplit.includes("impaling"),
-            "isPenetrating": itemData.effectsSplit.includes("penetrating"),
-            "isWeak": itemData.effectsSplit.includes("weak"),
+
+            "isSlaying": slaying,
+            "isImpaling": impaling,
+            "isCritical": critical,
+            "isNormal": itemData.damageEffect >= 0,
+            "isConditional": itemData.damageEffect < 0,
+            "isPenetrating": penetrating,
+            "isWeak": weak,
             "doubleDamage": itemData.damageEffect + (usedsuccesses * 2),
             "criticalDamage": itemData.damageEffect + Math.floor(usedsuccesses * 1.5),
-            "normalDamage": itemData.damageEffect + usedsuccesses
+            "normalDamage": itemData.damageEffect + usedsuccesses,
+
+            "hasMultipleMultipliers": effectCount >= 2,
+            hasMultipleBaseEffects,
+            combinedDamage,
+            combinedImpalingDamage
         };
 
         const contents = await renderTemplate("systems/ironclaw2e/templates/chat/damage-info.html", templateData);
 
-        let flags = { "ironclaw2e.attackDamageInfo": true, "ironclaw2e.attackDamageAutoHits": itemData.attackAutoHits, "ironclaw2e.attackDamageDefense": itemData.opposingDefenseStats };
+        let flags = { "ironclaw2e.attackDamageInfo": true, "ironclaw2e.attackDamageAutoHits": itemData.attackAutoHits, "ironclaw2e.attackDamageDefense": itemData.opposingDefenseStats, "ironclaw2e.attackDamageSlaying": slaying };
         flags = mergeObject(flags, this.getItemFlags());
 
         let chatData = {
