@@ -501,8 +501,8 @@ export class CommonConditionInfo {
         icon: "icons/svg/mystery-man.svg"
     },
     {
-        id: "temp-ward",
-        label: "ironclaw2e.effect.status.temp-ward",
+        id: "temporaryward",
+        label: "ironclaw2e.effect.status.temporaryward",
         icon: "icons/svg/aura.svg"
     },
     {
@@ -550,13 +550,13 @@ export class CommonConditionInfo {
     ["confused", "Confused"], ["terrified", "Terrified"], ["enraged", "Enraged"], ["knockdown", "Knockdown"], ["berserk", "Berserk"],
     ["blinded", "Blinded"], ["silenced", "Silenced"], ["fulltilt", "Full Tilt"], ["slowed", "Slowed"], ["immobilized", "Immobilized"],
     ["half-buried", "Half-Buried"], ["onfire", "On Fire"], ["mesmerized", "Mesmerized"], ["marionette", "Marionette"], ["controlled", "Controlled"],
-    ["allfours", "All Fours"], ["flying", "Flying"], ["grappled", "Grappled"], ["hiding", "Hiding"], ["temp-ward", "Temporary Ward"], ["misc-a", "Misc-A"], ["misc-b", "Misc-B"], ["misc-c", "Misc-C"],
+    ["allfours", "All Fours"], ["flying", "Flying"], ["grappled", "Grappled"], ["hiding", "Hiding"], ["temporaryward", "Temporary Ward"], ["misc-a", "Misc-A"], ["misc-b", "Misc-B"], ["misc-c", "Misc-C"],
     ["misc-d", "Misc-D"], ["misc-e", "Misc-E"], ["misc-f", "Misc-F"], ["misc-g", "Misc-G"]]);
 
     /**
      * Set of conditions that should have a quota field
      */
-    static quotaList = new Set(["injured", "sick", "temp-ward"]);
+    static quotaList = new Set(["injured", "sick", "temporaryward"]);
 
     /**
      * Set of CUB condition names that should have a quota field

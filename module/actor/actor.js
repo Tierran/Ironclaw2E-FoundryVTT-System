@@ -1422,7 +1422,7 @@ export class Ironclaw2EActor extends Actor {
     async applyDamage(damage, knockout = false, nonlethal = false, applyWard = true) {
 
         if (applyWard) {
-            const cond = getSingleConditionIronclaw("temp-ward", this);
+            const cond = getSingleConditionIronclaw("temporaryward", this);
             if (cond) {
                 let ward = getTargetConditionQuota(cond, this);
                 if (ward > damage) {
@@ -1916,7 +1916,7 @@ export class Ironclaw2EActor extends Actor {
             addedconditions += (addedconditions ? ", " : "") + game.i18n.localize(CommonConditionInfo.getConditionLabel("injured"));
         }
         const confirmSend = game.settings.get("ironclaw2e", "defaultSendDamage");
-        const ward = getTargetConditionQuota("temp-ward", this);
+        const ward = getTargetConditionQuota("temporaryward", this);
 
         const templateData = {
             "actor": this,
