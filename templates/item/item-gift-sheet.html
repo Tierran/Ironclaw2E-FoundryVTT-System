@@ -130,6 +130,7 @@
                                     <label class="normal-label" style="min-width: 25%">Bonus Dash</label><input class="special-change-number" type="number" name="bonusDashNumber" value="{{special.bonusDashNumber}}" data-dtype="Number" />
                                     <label class="normal-label" style="min-width: 25%">Bonus Run</label><input class="special-change-number" type="number" name="bonusRunNumber" value="{{special.bonusRunNumber}}" data-dtype="Number" />
                                 </div>{{/if}}
+                                {{#if (propertyExists special "ignoreBadFooting")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Ignore Bad Footing</label><input class="special-change-boolean" type="checkbox" name="ignoreBadFooting" {{checked special.ignoreBadFooting}} data-dtype="Boolean" /></div>{{/if}}
                                 {{#if (propertyExists special "changeFromField")}}<div class="flexrow flex-center">
                                     <label class="normal-label">Change From</label><input style="min-width: 30%" class="special-change-field" type="text" name="changeFromField" value="{{special.changeFromField}}" data-dtype="String" />
                                     <label class="normal-label">Change To</label><input style="min-width: 30%" class="special-change-field" type="text" name="changeToField" value="{{special.changeToField}}" data-dtype="String" />

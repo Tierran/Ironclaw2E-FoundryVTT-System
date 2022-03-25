@@ -7,6 +7,7 @@ import { CommonSystemInfo } from "./systeminfo.js";
 import { requestRollToMessage } from "./utilitiesmacros.js";
 
 export function chatCommandsIntegration(chatCommands) {
+// Using async and delays to ensure the same press of enter does not also automatically close the dialog
 
     // Basic command to trigger a one-line highest or TN roll from the chat, with the dice included after the command
     chatCommands.registerCommand(chatCommands.createCommandFromData({

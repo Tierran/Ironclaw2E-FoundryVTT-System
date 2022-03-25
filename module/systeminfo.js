@@ -204,7 +204,7 @@ export function getSpecialOptionPrototype(option) {
         case ("moveBonus"):
             return mergeObject(special, {
                 "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
-                "bonusStrideNumber": 0, "bonusDashNumber": 0, "bonusRunNumber": 0, "replaceNameField": ""
+                "bonusStrideNumber": 0, "bonusDashNumber": 0, "bonusRunNumber": 0, "ignoreBadFooting": false, "replaceNameField": ""
             });
             break;
 

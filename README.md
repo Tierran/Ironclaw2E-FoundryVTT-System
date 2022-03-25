@@ -137,6 +137,7 @@ If the special bonus applies, it's applied where relevant, with the bonus depend
  - **Bonus Dice**: Dice to add with the bonus as an extra field. If empty, the bonus uses its gift's dice. A dash "-" will make the special skip the bonus dice entirely and not use anything.
  - **Replaces the Base Bonus**: Whether the bonus to Guarding/Aiming replaces or adds to the Guarding/Aiming dice.
  - **Bonus Stride/Dash/Run**: The amount of respective movement capability to add to the actor.
+ - **Ignore Bad Footing**: Whether the gift allows the actor to ignore bad footing / difficult terrain.
  - **Change From/To**: List of stats to change from and what to change them to. Both fields must have the same number of stats or the system will ignore it.
  - **Penalty Reduction**: The number of range bands the range penalty is reduced by.
  - **Encumbrance Bonus**: The bonus added to the carrying capacity of the actor. Note that this bonus should be for the "None" encumbrance limit, the system will multiply it accordingly for the higher limits.

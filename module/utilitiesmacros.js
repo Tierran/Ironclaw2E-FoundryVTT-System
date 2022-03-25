@@ -3,6 +3,7 @@
 import { findActorToken, getDistanceBetweenPositions, getMacroSpeaker, getSpeakerActor, splitStatsAndBonus } from "./helpers.js";
 import { Ironclaw2EActor } from "./actor/actor.js";
 import { getRangeBandFromDistance } from "./systeminfo.js";
+import { hasConditionsIronclaw } from "./conditions.js";
 
 /* -------------------------------------------- */
 /*  Hooks                                       */
@@ -294,4 +295,54 @@ export function showScrollingDistanceText(origintoken, targettoken) {
             targettoken.hud.createScrollingText(text, { anchor: CONST.TEXT_ANCHOR_POINTS.BOTTOM, direction: CONST.TEXT_ANCHOR_POINTS.TOP, duration, jitter: 0.1, fontSize: 28, stroke: 0x000000, strokeThickness: 4 });
         }
     }
+}
+
+
+/* -------------------------------------------- */
+/*  Drag Ruler Integration                      */
+/* -------------------------------------------- */
+
+/**
+ * Drag Ruler integration for the Ironclaw system
+ * @param {SpeedProvider} SpeedProvider
+ */
+export function ironclawDragRulerIntegration(SpeedProvider) {
+    class Ironclaw2ESpeedProvider extends SpeedProvider {
+        get colors() {
+            return [
+                { id: "stride", default: 0x0000FF, name: "ironclaw2e.speeds.stride" },
+                { id: "dash", default: 0x00DE00, name: "ironclaw2e.speeds.dash" },
+                { id: "run", default: 0xFFFF00, name: "ironclaw2e.speeds.run" }
+            ];
+        }
+
+        getRanges(token) {
+            const stridespeed = token.actor?.data.data.stride || 0;
+            const dashspeed = token.actor?.data.data.dash || 0;
+            const runspeed = token.actor?.data.data.run || 0;
+
+            const ranges = [
+                { range: stridespeed, color: "stride" },
+                { range: dashspeed + stridespeed, color: "dash" },
+                { range: runspeed, color: "run" }
+            ];
+
+            return ranges;
+        }
+
+        getCostForStep(token, area, options = {}) {
+            // Lookup the cost for each square occupied by the token
+            options.token = token;
+            const costs = area.map(space => terrainRuler.getCost(space.x, space.y, options));
+            // If the token has flying or the actor ignores bad footing, it ignores all difficult terrain
+            const ignored = hasConditionsIronclaw("flying", token) || token?.actor?.data.data.ignoreBadFooting;
+            if (ignored) {
+                return 1;
+            }
+            // Return the maximum of the costs
+            return costs.reduce((max, current) => Math.max(max, current));
+        }
+    }
+
+    dragRuler.registerSystem("ironclaw2e", Ironclaw2ESpeedProvider);
 }

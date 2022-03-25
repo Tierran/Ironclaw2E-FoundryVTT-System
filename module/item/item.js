@@ -193,7 +193,7 @@ export class Ironclaw2EItem extends Item {
                 }
 
                 // Gift Exhaust check
-                if (data.usedSpecialSettings[i].worksWhenState === false) {
+                if (data.usedSpecialSettings[i].worksWhenState !== "anyState") {
                     // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored refreshedState as true, otherwise it is false
                     data.usedSpecialSettings[i].refreshedState = (data.exhaustWhenUsed === false || !data.exhausted);
                 }

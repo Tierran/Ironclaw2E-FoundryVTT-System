@@ -727,6 +727,7 @@ export class Ironclaw2EActor extends Actor {
         if (speedint > 8 && hasConditionsIronclaw("burdened", this)) speedint = 8;
 
         // Apply normal move bonuses
+        let badFooting = false; // Ignore bad footing check
         if (data.processingLists?.moveBonus) { // Check if move bonuses even exist
             for (let setting of data.processingLists.moveBonus) { // Loop through them
                 if (checkApplicability(setting, null, this)) { // Check initial applicability
@@ -741,12 +742,16 @@ export class Ironclaw2EActor extends Actor {
                         stridebonus += used.bonusStrideNumber;
                         dashbonus += used.bonusDashNumber;
                         runbonus += used.bonusRunNumber;
+
+                        if (used.ignoreBadFooting)
+                            badFooting = true;
                     } else { // If used somehow turns out unsuable, send an error
                         console.error("Somehow, the used setting came up unusable: " + used);
                     }
                 }
             }
         }
+        data.ignoreBadFooting = badFooting;
 
         // Flying-related bonuses
         if (hasConditionsIronclaw("flying", this)) {

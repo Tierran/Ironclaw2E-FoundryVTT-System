@@ -6,6 +6,7 @@ import { Ironclaw2EItem } from "./item/item.js";
 import { Ironclaw2EItemSheet } from "./item/item-sheet.js";
 
 import { requestRollPopup } from "./utilitiesmacros.js";
+import { ironclawDragRulerIntegration } from "./utilitiesmacros.js";
 
 import { Ironclaw2ECombat } from "./combat.js";
 import { Ironclaw2ECombatant } from "./combat.js";
@@ -685,36 +686,9 @@ async function waitUntilReady(resolve) {
 /* -------------------------------------------- */
 
 // Drag Ruler integration
-Hooks.once("dragRuler.ready", (SpeedProvider) => {
-    class Ironclaw2ESpeedProvider extends SpeedProvider {
-        get colors() {
-            return [
-                { id: "stride", default: 0x0000FF, name: "ironclaw2e.speeds.stride" },
-                { id: "dash", default: 0x00DE00, name: "ironclaw2e.speeds.dash" },
-                { id: "run", default: 0xFFFF00, name: "ironclaw2e.speeds.run" }
-            ];
-        }
-
-        getRanges(token) {
-            const stridespeed = token.actor?.data.data.stride || 0;
-            const dashspeed = token.actor?.data.data.dash || 0;
-            const runspeed = token.actor?.data.data.run || 0;
-
-            const ranges = [
-                { range: stridespeed, color: "stride" },
-                { range: dashspeed + stridespeed, color: "dash" },
-                { range: runspeed, color: "run" }
-            ];
-
-            return ranges;
-        }
-    }
-
-    dragRuler.registerSystem("ironclaw2e", Ironclaw2ESpeedProvider);
-});
+Hooks.once("dragRuler.ready", (SpeedProvider) => ironclawDragRulerIntegration(SpeedProvider));
 
 // ChatCommands integration
-// Using async and delays to ensure the same press of enter does not also automatically close the dialog
 Hooks.on("chatCommandsReady", chatCommandsIntegration);
 
 /* -------------------------------------------- */
