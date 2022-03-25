@@ -48,7 +48,7 @@ export function getConditionNamesIronclaw(target, warn = false) {
     }
     else {
         let actor = getTargetActor(target);
-        if (!actor) return false;
+        if (!actor) return [];
 
         actor.data.effects.forEach((value) => names.push(value.data.label));
     }
@@ -78,7 +78,7 @@ export function getConditionsIronclaw(target, warn = false) {
     }
     else {
         let actor = getTargetActor(target);
-        if (!actor) return false;
+        if (!actor) return null;
 
         actor.data.effects.forEach((value) => conds.push(value));
     }
@@ -111,7 +111,7 @@ export function getSingleConditionIronclaw(name, target, warn = false) {
     }
     else {
         let actor = getTargetActor(target);
-        if (!actor) return false;
+        if (!actor) return null;
 
         cond = actor.data.effects.find((value) => value?.data.flags?.core?.statusId === name);
     }
@@ -132,11 +132,11 @@ export async function addConditionsIronclaw(conditions, target, warn = false) {
 
     if (game.ironclaw2e.useCUBConditions) {
         let cubconditions = CommonConditionInfo.convertToCub(conditions);
-        return game.cub.addCondition(cubconditions, target, { "warn": warn });
+        return await game.cub.addCondition(cubconditions, target, { "warn": warn });
     }
     else {
         let actor = getTargetActor(target);
-        if (!actor) return false;
+        if (!actor) return;
         let usedconditions = Array.isArray(conditions) ? conditions : [conditions];
         if (hasConditionsIronclaw(conditions, target, warn)) {
             const existingeffects = getConditionsIronclaw(target, warn);
@@ -144,7 +144,7 @@ export async function addConditionsIronclaw(conditions, target, warn = false) {
         }
         const effects = prepareEffects(CommonConditionInfo.getMatchedConditions(usedconditions));
         if (effects.length > 0) {
-            await actor.createEmbeddedDocuments("ActiveEffect", effects);
+            return await actor.createEmbeddedDocuments("ActiveEffect", effects);
         }
     }
 }
@@ -164,18 +164,18 @@ export async function removeConditionsIronclaw(conditions, target, checkfirst = 
     if (game.ironclaw2e.useCUBConditions) {
         if (checkfirst === false || (hasConditionsIronclaw(conditions, target))) {
             let cubconditions = CommonConditionInfo.convertToCub(conditions);
-            return game.cub.removeCondition(cubconditions, target, { "warn": warn });
+            return await game.cub.removeCondition(cubconditions, target, { "warn": warn });
         }
     }
     else {
         let actor = getTargetActor(target);
-        if (!actor) return false;
+        if (!actor) return;
         conditions = Array.isArray(conditions) ? conditions : [conditions];
 
         let removals = [];
         actor.data.effects.forEach((value) => { if (conditions.includes(value.getFlag("core", "statusId"))) removals.push(value.id); });
         if (removals.length > 0)
-            await actor.deleteEmbeddedDocuments("ActiveEffect", removals);
+            return await actor.deleteEmbeddedDocuments("ActiveEffect", removals);
     }
 }
 
@@ -220,6 +220,34 @@ export function checkConditionIronclaw(condition, name, warn = false) {
     } else {
         return usedcond?.flags?.core?.statusId === name;
     }
+}
+
+/**
+ * Check if the target is defeated
+ * @param {Actor | Token} target
+ * @returns {boolean} Returns true if the actor has a defeat condition
+ */
+export function checkIfDefeatedIronclaw(target) {
+
+    if (game.ironclaw2e.useCUBConditions) {
+        let raw = game.cub.getConditionEffects(target, { "warn": warn });
+        if (raw) {
+            if (Array.isArray(raw)) {
+                return raw.some(x => CommonConditionInfo.defeatedCubList.includes(x?.data.label));
+            }
+            else {
+                return CommonConditionInfo.defeatedCubList.includes(raw?.data.label);
+            }
+        }
+    }
+    else {
+        let actor = getTargetActor(target);
+        if (!actor) return false;
+
+        return actor.data.effects.some((value) => CommonConditionInfo.defeatedList.includes(value?.data.flags?.core?.statusId));
+    }
+
+    return false;
 }
 
 /**
@@ -562,6 +590,16 @@ export class CommonConditionInfo {
      * Set of CUB condition names that should have a quota field
      */
     static quotaCubList = new Set(["Injured", "Sick", "Temporary Ward"]);
+
+    /**
+     * Set of conditions that mark the combatant as defeated
+     */
+    static defeatedList = new Set(["dying", "dead", "overkilled", "asleep", "unconscious"]);
+
+    /**
+     * Set of CUB conditions that mark the combatant as defeated
+     */
+    static defeatedCubList = new Set(["Dying", "Dead", "Overkilled", "Asleep", "Unconscious"]);
 
     /**
      * Convert a single or a list of conditions from id's into CUB condition names

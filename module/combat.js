@@ -1,3 +1,4 @@
+import { checkIfDefeatedIronclaw } from "./conditions.js";
 import { getDistanceBetweenPositions } from "./helpers.js";
 
 /**
@@ -281,6 +282,11 @@ export class Ironclaw2ECombat extends Combat {
 export class Ironclaw2ECombatant extends Combatant {
     constructor(data, context) {
         super(data, context);
+    }
+
+    /** @override */
+    get isDefeated() {
+        return this.data.defeated || checkIfDefeatedIronclaw(this.actor);
     }
 
     /**
