@@ -566,6 +566,31 @@ function addIronclawChatLogContext(html, entryOptions) {
             }
         },
         {
+            name: "ironclaw2e.showAttackSlaying",
+            icon: '<i class="fas fa-fist-raised"></i>',
+            condition: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const active = game.settings.get("ironclaw2e", "calculateAttackEffects");
+                const type = message.getFlag("ironclaw2e", "hangingAttack");
+                const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
+                const isslaying = message.getFlag("ironclaw2e", "hangingSlaying");
+                const successes = message.getFlag("ironclaw2e", "attackSuccessCount");
+                // Check whether the attack effect calculation is active, the message has a roll, doesn't already have slaying, has a weapon id and a positive number of successes set and has explicitly been set to have a hanging normal attack
+                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && !isslaying && weaponid && successes > 0 && type === "attack";
+                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+            },
+            callback: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
+                const actorid = message.getFlag("ironclaw2e", "hangingActor");
+                const tokenid = message.getFlag("ironclaw2e", "hangingToken");
+                const sceneid = message.getFlag("ironclaw2e", "hangingScene");
+                const actor = game.scenes.get(sceneid)?.tokens.get(tokenid)?.actor || game.actors.get(actorid);
+                const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
+                weapon?.resendNormalAttack?.(message, true);
+            }
+        },
+        {
             name: "ironclaw2e.resolveCounter",
             icon: '<i class="fas fa-fist-raised"></i>',
             condition: li => {
@@ -634,6 +659,31 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const actor = game.scenes.get(sceneid)?.tokens.get(tokenid)?.actor || game.actors.get(actorid);
                 const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
                 weapon?.resolveAsNormalAttack?.(message);
+            }
+        },
+        {
+            name: "ironclaw2e.resolveAsSlaying",
+            icon: '<i class="fas fa-fist-raised"></i>',
+            condition: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const active = game.settings.get("ironclaw2e", "calculateAttackEffects");
+                const type = message.getFlag("ironclaw2e", "hangingAttack");
+                const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
+                const isslaying = message.getFlag("ironclaw2e", "hangingSlaying");
+                const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
+                // Check whether the attack effect calculation is active, the message has a roll, doesn't already have slaying, has a weapon id and a positive number of successes set and has explicitly been set to have a hanging resist attack
+                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && !isslaying && weaponid && successes > 0 && type === "resist";
+                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+            },
+            callback: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
+                const actorid = message.getFlag("ironclaw2e", "hangingActor");
+                const tokenid = message.getFlag("ironclaw2e", "hangingToken");
+                const sceneid = message.getFlag("ironclaw2e", "hangingScene");
+                const actor = game.scenes.get(sceneid)?.tokens.get(tokenid)?.actor || game.actors.get(actorid);
+                const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
+                weapon?.resolveAsNormalAttack?.(message, true);
             }
         },
         {

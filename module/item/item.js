@@ -865,7 +865,7 @@ export class Ironclaw2EItem extends Item {
             let updatedata = {
                 flags: {
                     "ironclaw2e.hangingAttack": "counter", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
-                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id
+                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.hangingSlaying": itemData.effectsSplit?.includes("slaying") ?? false
                 }
             };
             info.message?.update(updatedata);
@@ -881,7 +881,7 @@ export class Ironclaw2EItem extends Item {
             let updatedata = {
                 flags: {
                     "ironclaw2e.hangingAttack": "resist", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
-                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses
+                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.hangingSlaying": itemData.effectsSplit?.includes("slaying") ?? false, "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses
                 }
             };
             info.message?.update(updatedata);
@@ -893,7 +893,7 @@ export class Ironclaw2EItem extends Item {
             let updatedata = {
                 flags: {
                     "ironclaw2e.hangingAttack": "attack", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
-                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.attackSuccess": success, "ironclaw2e.attackSuccessCount": usedsuccesses
+                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.hangingSlaying": itemData.effectsSplit?.includes("slaying") ?? false, "ironclaw2e.attackSuccess": success, "ironclaw2e.attackSuccessCount": usedsuccesses
                 }
             };
             info.message?.update(updatedata);
@@ -921,8 +921,10 @@ export class Ironclaw2EItem extends Item {
      */
     async resolveResistedAttack(message) {
         let confirmed = false;
+        let forceSlaying = false;
         const success = message.getFlag("ironclaw2e", "resistSuccess");
         const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
+        const isSlaying = this.data.data.effectsSplit?.includes("slaying") ?? false;
 
         let resolvedopfor = new Promise((resolve) => {
             let dlog = new Dialog({
@@ -939,6 +941,12 @@ export class Ironclaw2EItem extends Item {
        <label class="normal-label" for="opfor">${game.i18n.localize("ironclaw2e.dialog.resistResolve.opposing")}:</label>
 	   <input id="opfor" name="opfor" value="" onfocus="this.select();"></input>
       </div>
+      ${!isSlaying /* A bit confusing-looking, but simply, only add this part if the weapon isn't already a slaying weapon*/ ? `
+      <div class="form-group">
+        <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.resistResolve.slaying")}</label>
+        <input type="checkbox" id="slaying" name="slaying" value="1"></input>
+      </div>
+      ` : ""}
      </form>
      `,
                 buttons: {
@@ -959,6 +967,8 @@ export class Ironclaw2EItem extends Item {
                     if (confirmed) {
                         let OPFOR = html.find('[name=opfor]')[0].value;
                         let opposing = 0; if (OPFOR.length > 0) opposing = parseInt(OPFOR);
+                        let SLAYING = html.find('[name=slaying]')[0];
+                        forceSlaying = SLAYING?.checked ?? false;
                         resolve(opposing);
                     } else {
                         resolve(null);
@@ -970,27 +980,27 @@ export class Ironclaw2EItem extends Item {
         let opposingsuccesses = await resolvedopfor;
         if (opposingsuccesses === null) return; // Return out if the user just cancels the prompt
 
-        this.attackToChat({ "success": successes > opposingsuccesses, "rawsuccesses": successes, "opposingrolled": true, "opposingsuccesses": opposingsuccesses });
+        this.attackToChat({ "success": successes > opposingsuccesses, "rawsuccesses": successes, "opposingrolled": true, "opposingsuccesses": opposingsuccesses, "forceslaying": forceSlaying });
     }
 
     /**
      * Resolve a resisted attack as if it were just an ordinary attack roll, in case it was countered and turned into one
      */
-    resolveAsNormalAttack(message) {
+    resolveAsNormalAttack(message, forceslaying = false) {
         const success = message.getFlag("ironclaw2e", "resistSuccess");
         const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
 
-        this.attackToChat({ "success": success, "rawsuccesses": successes });
+        this.attackToChat({ "success": success, "rawsuccesses": successes, forceslaying });
     }
 
     /**
      * Resend a normal attack to chat
      */
-    resendNormalAttack(message) {
+    resendNormalAttack(message, forceslaying = false) {
         const success = message.getFlag("ironclaw2e", "attackSuccess");
         const successes = message.getFlag("ironclaw2e", "attackSuccessCount");
 
-        this.attackToChat({ "success": success, "rawsuccesses": successes });
+        this.attackToChat({ "success": success, "rawsuccesses": successes, forceslaying });
     }
 
     /**
@@ -999,8 +1009,9 @@ export class Ironclaw2EItem extends Item {
      * @param {number} rawsuccesses The number of successes, or ties in case the attack was a tie
      * @param {boolean} opposingrolled Whether the opposing successes have been rolled
      * @param {number} opposingsuccesses The opposing successes
+     * @param {boolean} forceslaying Whether to force the attack to have the slaying trait, for resolving attacks against vulnerabilities
      */
-    async attackToChat({ success = false, rawsuccesses = 0, opposingrolled = false, opposingsuccesses = 0 } = {}) {
+    async attackToChat({ success = false, rawsuccesses = 0, opposingrolled = false, opposingsuccesses = 0, forceslaying = false } = {}) {
         if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
             return; // If the system is turned off, return out
         }
@@ -1011,7 +1022,7 @@ export class Ironclaw2EItem extends Item {
         const successfulAttack = usedsuccesses > 0 || itemData.attackAutoHits;
         const negativeSuccesses = usedsuccesses <= 0; // More like non-positive, but I prefer two-word variable names
 
-        const slaying = itemData.effectsSplit?.includes("slaying") ?? false;
+        const slaying = forceslaying || (itemData.effectsSplit?.includes("slaying") ?? false);
         const impaling = itemData.effectsSplit?.includes("impaling") ?? false;
         const critical = itemData.effectsSplit?.includes("critical") ?? false;
         const penetrating = itemData.effectsSplit?.includes("penetrating") ?? false;
@@ -1358,7 +1369,7 @@ export class Ironclaw2EItem extends Item {
      <form>
       <h1>${game.i18n.format("ironclaw2e.dialog.refreshGift.header", { "item": this.data.name, "actor": this.actor?.data.name })}</h1>
      <div class="form-group">
-       <label class="normal-label">Send to chat?</label>
+       <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.sendToChat")}</label>
        <input type="checkbox" id="send" name="send" value="1" checked></input>
      </div>
      </form>
@@ -1407,7 +1418,7 @@ export class Ironclaw2EItem extends Item {
      <form>
       <h1>${game.i18n.format("ironclaw2e.dialog.exhaustGift.header", { "item": this.data.name, "actor": this.actor?.data.name })}</h1>
      <div class="form-group">
-       <label class="normal-label">Send to chat?</label>
+       <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.sendToChat")}</label>
        <input type="checkbox" id="send" name="send" value="1" checked></input>
      </div>
      </form>
