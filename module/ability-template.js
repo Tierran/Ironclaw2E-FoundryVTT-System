@@ -1,3 +1,4 @@
+import { getCorrectElevationFlag } from "./helpers.js";
 import { CommonSystemInfo, getRangeDistanceFromBand } from "./systeminfo.js";
 
 /**
@@ -12,7 +13,7 @@ export class AbilityTemplateIronclaw extends MeasuredTemplate {
      * @param {Function} successfunc Function called when the template is successfully placed
      * @returns {AbilityTemplate | null} The template object, or null if the range given is invalid
      */
-    static fromRange(range, successfunc = null) {
+    static fromRange(range, elevation = 0, successfunc = null) {
         const usedNumber = (typeof (range) === "string" ? getRangeDistanceFromBand(range) : range);
         if (isNaN(usedNumber) || usedNumber < 0) {
             console.warn("The given range is invalid for templates: " + range);
@@ -35,6 +36,7 @@ export class AbilityTemplateIronclaw extends MeasuredTemplate {
         const template = new cls(templateData, { parent: canvas.scene });
         const foo = new this(template);
         foo.successFunc = successfunc;
+        foo.elevation = elevation;
         return foo;
     }
 
@@ -90,6 +92,8 @@ export class AbilityTemplateIronclaw extends MeasuredTemplate {
             const destination = canvas.grid.getSnappedPosition(this.data.x, this.data.y, 2);
             await this.data.update(destination);
             const [finished] = await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.data]);
+            const flagfoo = getCorrectElevationFlag();
+            await finished?.setFlag(flagfoo.modId, flagfoo.flagId, this.elevation);
             if (this.successFunc) this.successFunc(finished);
         };
 

@@ -294,27 +294,14 @@ export class Ironclaw2EActor extends Actor {
      * @param {number} resists
      */
     static triggerAttackerRoll(message, rolltype, directroll = false, skipresist = false, presettn = 3, resists = -1) {
-        let otheritem = {};
         const messageFlags = message?.data?.flags?.ironclaw2e;
-        if (messageFlags) {
-            // Grab the message flags
-            otheritem.weaponId = messageFlags.itemId;
-            otheritem.actorId = messageFlags.itemActorId;
-            otheritem.tokenId = messageFlags.itemTokenId;
-            otheritem.sceneId = messageFlags.itemSceneId;
-        } else {
+        const otheritem = Ironclaw2EActor.getAttackerItemFlags(messageFlags);
+        if (!otheritem) {
             console.error("Attacker chat roll failed to get the proper information from message flags: " + message);
             return;
         }
 
-        // Get the actor, either through the sceneid if synthetic, or actorid if a full one
-        let attackActor = null;
-        if (otheritem.sceneId && otheritem.tokenId) {
-            const foo = game.scenes.get(otheritem.sceneId)?.tokens.get(otheritem.tokenId);
-            attackActor = foo?.actor;
-        } else if (otheritem.actorId) {
-            attackActor = game.actors.get(otheritem.actorId);
-        }
+        const attackActor = Ironclaw2EActor.getAttackerActor(otheritem);
 
         // Trigger the actual roll if the attacker is found and the weapon id is listed
         if (attackActor && otheritem.weaponId) {
@@ -369,6 +356,86 @@ export class Ironclaw2EActor extends Actor {
         otheritem.attackerRangeAutocheck = !(flags.itemUserRangeAutocheck === false); // If and only if the the value is false, will the value be false; if it is true, undefined or something else, value will be true
 
         return otheritem;
+    }
+
+    /**
+     * Get the attacker flags from a message
+     * @param {object} flags
+     */
+    static getAttackerItemFlags(flags) {
+        if (!flags) {
+            return null;
+        }
+        let otheritem = {};
+        if (flags) {
+            // Grab the message flags
+            otheritem.weaponId = flags.itemId;
+            otheritem.actorId = flags.itemActorId;
+            otheritem.tokenId = flags.itemTokenId;
+            otheritem.sceneId = flags.itemSceneId;
+        } else {
+            console.error("Attacker flag get failed to get the proper information from message flags: " + flags);
+            return null;
+        }
+        return otheritem;
+    }
+
+    /**
+     * Get the attacker actor from the otheritem data
+     * @param {object} otheritem
+     */
+    static getAttackerActor(otheritem) {
+        if (!otheritem) {
+            return null;
+        }
+
+        // Get the actor, either through the sceneid if synthetic, or actorid if a full one
+        let attackActor = null;
+        if (otheritem.sceneId && otheritem.tokenId) {
+            const foo = game.scenes.get(otheritem.sceneId)?.tokens.get(otheritem.tokenId);
+            attackActor = foo?.actor;
+        } else if (otheritem.actorId) {
+            attackActor = game.actors.get(otheritem.actorId);
+        }
+
+        // Make sure the current user actually has a permission for the actor
+        if (attackActor) {
+            if (game.user.isGM || attackActor.isOwner) {
+                return attackActor;
+            } else {
+                ui.notifications.warn("ironclaw2e.ui.ownershipInsufficient", { localize: true, thing: "actor" });
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the attacker token from the otheritem data
+     * @param {object} otheritem
+     */
+    static getAttackerToken(otheritem) {
+        if (!otheritem) {
+            return null;
+        }
+
+        // Get the actor, either through the sceneid if synthetic, or actorid if a full one
+        let attackToken = null;
+        if (otheritem.sceneId && otheritem.tokenId) {
+            attackToken= game.scenes.get(otheritem.sceneId)?.tokens.get(otheritem.tokenId);
+        } else if (otheritem.actorId) {
+            const foo = game.actors.get(otheritem.actorId);
+            attackToken = findActorToken(foo);
+        }
+
+        // Make sure the current user actually has a permission for the actor
+        if (attackToken) {
+            if (game.user.isGM || attackToken.isOwner) {
+                return attackToken;
+            } else {
+                ui.notifications.warn("ironclaw2e.ui.ownershipInsufficient", { localize: true, thing: "token" });
+            }
+        }
+        return null;
     }
 
     /* -------------------------------------------- */

@@ -52,6 +52,7 @@
   "ironclaw2e.ui.macroOwnedItemsWarning": "You can only create macro buttons for owned Items.",
   "ironclaw2e.ui.actorDoesNotHaveItem": "Your controlled Actor does not have an item named {itemName}.",
   "ironclaw2e.ui.actorNotFoundForMacro": "No actor found to popup macro for.",
+  "ironclaw2e.ui.ownershipInsufficient": "Insufficient ownership of the {thing} to perform action.",
   "ironclaw2e.ui.popupNotFoundForMacro": "No specific popup command found for {popup}.",
   "ironclaw2e.ui.actorNotSelectedActorroll": "No actor selected for a chat roll.",
   "ironclaw2e.ui.actorNotFoundForSpeaker": "No actor found for speaker: {name}",

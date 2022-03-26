@@ -577,52 +577,12 @@ export function getTemplatePosition({ weaponTemplatePos = null, weaponTemplateId
         const templateScene = game.scenes.get(weaponTemplateSceneId);
         if (templateScene) {
             const template = templateScene.templates.get(weaponTemplateId);
-            return { "x": template.data.x, "y": template.data.y };
+            const flagfoo = getCorrectElevationFlag();
+            return { "x": template.data.x, "y": template.data.y, "elevation": template.getFlag(flagfoo.modId, flagfoo.flagId) };
         }
     }
 
     return weaponTemplatePos;
-}
-
-/**
- * Apply range penalty from the raw distance in paces to the roll
- * @param {any} otherinputs
- * @param {any} otherbools
- * @param {any} otherkeys
- * @param {any} otherdice
- * @param {number} distance The distance to get a penalty for, in paces
- * @param {number} reduction The degree of penalty reduction
- * @param {boolean} autocheck Whether to autocheck the penalty, only really false for when a wand is used
- * @param {boolean} allowovermax Whether to allow a range penalty over the maximum distance to exist (true), or to show it as an error (false)
- * @returns {object} Returns a holder object which returns the inputs with the added bonuses
- */
-export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs, otherbools, distance, { reduction = 0, autocheck = true, allowovermax = false, explosionpenalty = false } = {}) {
-    const usePenalties = game.settings.get("ironclaw2e", "rangePenalties");
-    if (!usePenalties) {
-        // If the penalties are turned off, just return out with the inputs as they were
-        return { "otherinputs": otherinputs, "otherbools": otherbools, "otherkeys": otherkeys, "otherdice": otherdice };
-    }
-
-    const foobar = getRangeDiceFromDistance(distance, reduction, allowovermax, true);
-    const distanceDice = foobar.rangeDice;
-    const rangeBand = foobar.rangeBandOriginal;
-    const distKey = "Range Penalty";
-    if (distanceDice === "error") {
-        otherinputs += `<div class="form-group flexrow">
-                <label class="normal-label"><strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.rangeOverMax")}</strong></label>
-                </div>`+ "\n";
-    } else if (distanceDice) {
-        const diceArray = findTotalDice(distanceDice);
-        otherkeys.push(distKey);
-        otherdice.push(diceArray);
-        otherinputs += `<div class="form-group flexrow">
-                <label class="normal-label">${game.i18n.format((explosionpenalty ? "ironclaw2e.dialog.dicePool.rangePenaltyExplosion" : "ironclaw2e.dialog.dicePool.rangePenaltyAttacker"),
-                    { "range": rangeBand, "penalty": distanceDice })}</label>
-	            <input type="checkbox" id="${makeCompareReady(distKey)}" name="${makeCompareReady(distKey)}" ${(autocheck ? "checked" : "")}></input>
-                </div>`+ "\n";
-        otherbools.push(autocheck);
-    }
-    return { "otherinputs": otherinputs, "otherbools": otherbools, "otherkeys": otherkeys, "otherdice": otherdice };
 }
 
 /* -------------------------------------------- */
@@ -813,8 +773,49 @@ export function diceFieldUpgrade(dicearray, upgrade) {
 }
 
 /* -------------------------------------------- */
-/*  Misc Helpers                                */
+/*  Bonus Construction Helpers                  */
 /* -------------------------------------------- */
+
+/**
+ * Apply range penalty from the raw distance in paces to the roll
+ * @param {any} otherinputs
+ * @param {any} otherbools
+ * @param {any} otherkeys
+ * @param {any} otherdice
+ * @param {number} distance The distance to get a penalty for, in paces
+ * @param {number} reduction The degree of penalty reduction
+ * @param {boolean} autocheck Whether to autocheck the penalty, only really false for when a wand is used
+ * @param {boolean} allowovermax Whether to allow a range penalty over the maximum distance to exist (true), or to show it as an error (false)
+ * @returns {object} Returns a holder object which returns the inputs with the added bonuses
+ */
+export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs, otherbools, distance, { reduction = 0, autocheck = true, allowovermax = false, explosionpenalty = false } = {}) {
+    const usePenalties = game.settings.get("ironclaw2e", "rangePenalties");
+    if (!usePenalties) {
+        // If the penalties are turned off, just return out with the inputs as they were
+        return { "otherinputs": otherinputs, "otherbools": otherbools, "otherkeys": otherkeys, "otherdice": otherdice };
+    }
+
+    const foobar = getRangeDiceFromDistance(distance, reduction, allowovermax, true);
+    const distanceDice = foobar.rangeDice;
+    const rangeBand = foobar.rangeBandOriginal;
+    const distKey = "Range Penalty";
+    if (distanceDice === "error") {
+        otherinputs += `<div class="form-group flexrow">
+                <label class="normal-label"><strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.rangeOverMax")}</strong></label>
+                </div>`+ "\n";
+    } else if (distanceDice) {
+        const diceArray = findTotalDice(distanceDice);
+        otherkeys.push(distKey);
+        otherdice.push(diceArray);
+        otherinputs += `<div class="form-group flexrow">
+                <label class="normal-label">${game.i18n.format((explosionpenalty ? "ironclaw2e.dialog.dicePool.rangePenaltyExplosion" : "ironclaw2e.dialog.dicePool.rangePenaltyAttacker"),
+            { "range": rangeBand, "penalty": distanceDice })}</label>
+	            <input type="checkbox" id="${makeCompareReady(distKey)}" name="${makeCompareReady(distKey)}" ${(autocheck ? "checked" : "")}></input>
+                </div>`+ "\n";
+        otherbools.push(autocheck);
+    }
+    return { "otherinputs": otherinputs, "otherbools": otherbools, "otherkeys": otherkeys, "otherdice": otherdice };
+}
 
 /**
  * Apply combat advantage for the attacker based on the target's condition
@@ -841,6 +842,10 @@ export function getCombatAdvantageConstruction(otherkeys, otherdice, otherinputs
 
     return { "otherinputs": otherinputs, "otherbools": otherbools, "otherkeys": otherkeys, "otherdice": otherdice };
 }
+
+/* -------------------------------------------- */
+/*  Misc Helpers                                */
+/* -------------------------------------------- */
 
 /**
  * Helper function to search through a given item list for any items matching the name given
@@ -949,4 +954,16 @@ export function checkQuickModifierKey() {
     }
 
     return false;
+}
+
+/**
+ * Get the correct flag identifiers to use for non-core elevation
+ */
+export function getCorrectElevationFlag() {
+    let modId = "ironclaw2e";
+    let flagId = "elevation";
+    if (game.ironclaw2e.useETLElevation) {
+        modId = "enhanced-terrain-layer";
+    }
+    return { modId, flagId };
 }
