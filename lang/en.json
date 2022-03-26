@@ -183,6 +183,8 @@
   "ironclaw2e.config.sendWeaponExhaustMessageHint": "If checked, weapons that have a gift to auto-exhaust when used will also confirm gift exhaustion with a separate chat message.",
   "ironclaw2e.config.showRangeCombatRules": "When 'Show range' uses combat rules",
   "ironclaw2e.config.showRangeCombatRulesHint": "When, if ever, will the client setting 'Show range when targeting' option use combat range measurements. That is, when will height difference simply be calculated into the final result, and when will the vertical range rules apply to it.",
+  "ironclaw2e.config.showTokenExtraButtons": "Show Ironclaw-specific token buttons",
+  "ironclaw2e.config.showTokenExtraButtonsHint": "If checked, tokens will have two additional buttons underneath them, one to open the default dice pool popup, other to open the damage popup.",
 
   "ironclaw2e.config.defaultSendDamage": "Damage to chat by default",
   "ironclaw2e.config.defaultSendDamageHint": "If checked, the damage-applying dialog will have the 'Send to chat' option checked by default.",

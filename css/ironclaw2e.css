@@ -192,6 +192,20 @@ input.center-text {
     display: block;
 }
 
+.placeable-hud .row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 100%;
+}
+
+.placeable-hud .control-icon.quick {
+    margin: 8px 4px 8px 4px;
+}
+
 /* Styles limited to ironclaw2e sheets */
 .ironclaw2e .item-form {
   font-family: "Roboto", sans-serif;

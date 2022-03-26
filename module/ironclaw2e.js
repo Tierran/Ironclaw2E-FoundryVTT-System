@@ -5,6 +5,8 @@ import { Ironclaw2EActorSheet } from "./actor/actor-sheet.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { Ironclaw2EItemSheet } from "./item/item-sheet.js";
 
+import { } from"./token/token-hud-extender.js"
+
 import { requestRollPopup } from "./utilitiesmacros.js";
 import { ironclawDragRulerIntegration } from "./utilitiesmacros.js";
 
@@ -152,6 +154,15 @@ Hooks.once('init', async function () {
         scope: "world",
         type: Number,
         default: 1,
+        config: false,
+        choices: CommonSystemInfo.rangeCombatRules
+    });
+    game.settings.register("ironclaw2e", "showTokenExtraButtons", {
+        name: "ironclaw2e.config.showTokenExtraButtons",
+        hint: "ironclaw2e.config.showTokenExtraButtonsHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
         config: false,
         choices: CommonSystemInfo.rangeCombatRules
     });
