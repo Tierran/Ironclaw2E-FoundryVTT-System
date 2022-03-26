@@ -143,7 +143,7 @@
   "ironclaw2e.config.coinageConfig.currencySign": "Currency Sign",
   "ironclaw2e.config.coinageConfig.currencySignHint": "The sign for the currency.",
   "ironclaw2e.config.coinageConfig.currencyUsed": "Currency is Used",
-  "ironclaw2e.config.coinageConfig.currencyUsedHint": "Whether the currency is shown and properly tracked for players.",
+  "ironclaw2e.config.coinageConfig.currencyUsedHint": "Whether the currency is shown and properly tracked for characters.",
 
   "ironclaw2e.config.preferTokenName": "Use token names",
   "ironclaw2e.config.preferTokenNameHint": "If checked, dice rollers will not use actor's own names and will instead use the name and presentation of their tokens, when available. Always works for synthetic actors, whereas linked actors require an active scene.",

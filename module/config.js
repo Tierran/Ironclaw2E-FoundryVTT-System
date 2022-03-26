@@ -192,8 +192,31 @@ export class CoinageSettingsConfig extends FormApplication {
      */
     async resetSettings(event) {
         event.preventDefault();
-        const parsesigns = true;
 
+        const defaultSettings = CoinageSettingsConfig.getCoinageDefaultSettings(true);
+
+        return this._onSubmit(event, { "updateData": defaultSettings });
+    }
+
+    /**
+     * Get a settings object that is filled with all the world settings
+     */
+    static getCoinageSettingsObject(parsesigns = false) {
+        let settings = {};
+        settings = game.settings.get("ironclaw2e", "currencySettings");
+        if (parsesigns) {
+            settings.baseCurrency.parsedSign = String.fromCodePoint([settings.baseCurrency.sign]);
+            settings.addedCurrency1.parsedSign = String.fromCodePoint([settings.addedCurrency1.sign]);
+            settings.addedCurrency2.parsedSign = String.fromCodePoint([settings.addedCurrency2.sign]);
+            settings.addedCurrency3.parsedSign = String.fromCodePoint([settings.addedCurrency3.sign]);
+        }
+        return settings;
+    }
+
+    /**
+     * Get the default currency settings
+     */
+    static getCoinageDefaultSettings(parsesigns = false) {
         const defaultSettings = {
             baseCurrency: {
                 "name": "denar",
@@ -233,21 +256,6 @@ export class CoinageSettingsConfig extends FormApplication {
             defaultSettings.addedCurrency3.parsedSign = String.fromCodePoint([defaultSettings.addedCurrency3.sign]);
         }
 
-        return this._onSubmit(event, { "updateData": defaultSettings });
-    }
-
-    /**
-     * Get a settings object that is filled with all the world settings
-     */
-    static getCoinageSettingsObject(parsesigns = false) {
-        let settings = {};
-        settings = game.settings.get("ironclaw2e", "currencySettings");
-        if (parsesigns) {
-            settings.baseCurrency.parsedSign = String.fromCodePoint([settings.baseCurrency.sign]);
-            settings.addedCurrency1.parsedSign = String.fromCodePoint([settings.addedCurrency1.sign]);
-            settings.addedCurrency2.parsedSign = String.fromCodePoint([settings.addedCurrency2.sign]);
-            settings.addedCurrency3.parsedSign = String.fromCodePoint([settings.addedCurrency3.sign]);
-        }
-        return settings;
+        return defaultSettings;
     }
 }

@@ -280,37 +280,7 @@ Hooks.once('init', async function () {
     game.settings.register("ironclaw2e", "currencySettings", {
         scope: "world",
         type: Object,
-        default: {
-            baseCurrency: {
-                "name": "denar",
-                "plural": "denarii",
-                "weight": 4.5,
-                "value": "1",
-                "sign": 208,
-                "used": true
-            }, addedCurrency1: {
-                "name": "orichalk",
-                "plural": "orichalks",
-                "weight": 3.5,
-                "value": "1/12",
-                "sign": 415,
-                "used": true
-            }, addedCurrency2: {
-                "name": "aureal",
-                "plural": "aureals",
-                "weight": 6.3,
-                "value": "24",
-                "sign": 8371,
-                "used": true
-            }, addedCurrency3: {
-                "name": "quinqunx",
-                "plural": "quinqunxes",
-                "weight": 13.5,
-                "value": "3",
-                "sign": 81,
-                "used": true
-            }
-        },
+        default: CoinageSettingsConfig.getCoinageDefaultSettings(false),
         config: false
     });
     // Register a version number that was used last time to allow determining if a new version is being used, world-scope for system function updates
