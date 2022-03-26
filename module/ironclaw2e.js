@@ -428,11 +428,6 @@ Hooks.once("ready", async function () {
         });
     }
 
-    // CUB remove defaults nag
-    if (game.ironclaw2e.useCUBConditions && game.settings.get("combat-utility-belt", "removeDefaultEffects") === false) {
-        ui.notifications.info(game.i18n.localize("ironclaw2e.ui.removeDefaultConditionsNag"), { permanent: true });
-    }
-
     // World Version checks 
     if (game.user.isGM) {
         // TO BE REMOVED
