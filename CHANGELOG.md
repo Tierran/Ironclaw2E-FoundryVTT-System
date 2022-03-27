@@ -1,3 +1,15 @@
+### 0.5.10 Explosive exhausting release
+ - Added proper handling of explosive weapons and added a button to create AoE marker for them
+ - Added checkboxes to automatically ready and stow weapons on use
+ - Added an option to exhaust the weapon's gift on ready instead of use
+ - Applying damage to someone with a temporary ward now first subtracts damage from the ward
+ - Targeting someone granting combat advantage now adds that to the attacker's roll
+ - Added support for multiple damage-multiplier effects in weapons
+ - GM's can now copy weapons from the directory as well as gifts, from a weapon sheet's advanced settings
+ - Added buttons to token HUD to quickly popup the default roll dialog or damage dialog
+ - Flying tokens and tokens with 'ignore bad footing' bonus now ignore difficult terrain
+ - Roll popup dialog accepts a trait or a skill as the roll's limit
+
 ### 0.5.9 Diagonal release
  - Fixed some potential bugs
  - Added a new diagonal rule, as some modules behave differently under the standard Euclidean rule
