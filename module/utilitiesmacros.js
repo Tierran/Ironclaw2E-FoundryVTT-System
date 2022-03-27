@@ -6,6 +6,7 @@ import { Ironclaw2EItem } from "./item/item.js";
 import { getRangeBandFromDistance } from "./systeminfo.js";
 import { hasConditionsIronclaw } from "./conditions.js";
 import { AbilityTemplateIronclaw } from "./ability-template.js";
+import { CardinalDiceRoller, copyToRollTNDialog } from "./dicerollers.js";
 
 /* -------------------------------------------- */
 /*  Hooks                                       */

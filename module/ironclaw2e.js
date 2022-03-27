@@ -19,7 +19,6 @@ import { rollTargetNumberDialog } from "./dicerollers.js";
 import { rollHighestDialog } from "./dicerollers.js";
 import { rollTargetNumberOneLine } from "./dicerollers.js";
 import { rollHighestOneLine } from "./dicerollers.js";
-import { copyToRollTNDialog } from "./dicerollers.js";
 
 import { getSpeakerActor, makeCompareReady } from "./helpers.js";
 
