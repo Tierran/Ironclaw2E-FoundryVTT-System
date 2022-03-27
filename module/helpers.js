@@ -983,13 +983,13 @@ export function getCorrectElevationFlag() {
  * @param {boolean} localize
  * @returns {Promise<ConfirmationReturn>}
  */
-export function popupConfirmationBox(title, message, button, { localize = true, actorname = "", itemname = "", includesend = false } = {}) {
+export function popupConfirmationBox(title, message, button, { localize = true, actorname = "", itemname = "", includesend = false, senddefault = true } = {}) {
     let confirmed = false;
     const usedTitle = (localize ? game.i18n.format(title, { "actor": actorname, "item": itemname }) : title);
     const sendPart = `
      <div class="form-group">
        <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.sendToChat")}</label>
-       <input type="checkbox" id="send" name="send" value="1" checked></input>
+       <input type="checkbox" id="send" name="send" value="1" ${senddefault ? "checked" : ""}></input>
      </div>`;
     let contents = `
      <form class="ironclaw2e">

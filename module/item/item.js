@@ -472,58 +472,73 @@ export class Ironclaw2EItem extends Item {
 
     /**
      * Set or toggle exhaustion in a gift, if able
-     * @param {string} mode If given a string of "true" or "false", force-set the exhausted state to that, otherwise toggle it
+     * @param {string} toggle "toggle" changes the state to the opposite, "true" or "false" set it to that state, otherwise errors out
      * @param {boolean} sendToChat If true, send a message to chat about the new gift exhaust state
+     * @returns {Promise<boolean | null>} Returns either whether gift is exhausted or not, or null in case of an error
      */
-    async giftSetExhaust(mode = "", sendToChat = false) {
+    async giftToggleExhaust(toggle = "toggle", sendToChat = false) {
         const itemData = this.data;
         const data = itemData.data;
         if (!(itemData.type === 'gift')) {
             console.error("Gift exhaust toggle attempted on a non-gift item: " + itemData.name);
-            return;
+            return null;
         }
 
         // If the gift does not exhaust when used, return out
         if (data.exhaustWhenUsed === false) {
-            return;
+            return null;
         }
 
-        let foo = true;
-        if (mode == "true") {
-            foo = true;
-        } else if (mode == "false") {
-            foo = false;
-        } else {
-            foo = !data.exhausted;
+        let endState = null;
+        switch (toggle) {
+            case "toggle":
+                endState = !data.readied;
+                break;
+            case "true": // Exhausted
+                endState = true;
+                break;
+            case "false": // Refreshed
+                endState = false;
+                break;
+            default:
+                console.error("Gift exhaust toggle defaulted! " + toggle);
+                break;
         }
 
-        const statechanging = (foo !== data.exhausted);
+        if (endState === null) {
+            return null;
+        }
 
-        await this.update({ "data.exhausted": foo });
+        const statechanging = (endState !== data.exhausted);
+        if (statechanging) {
+            await this.update({ "_id": this.id, "data.exhausted": endState });
 
-        if (sendToChat && statechanging) {
-            let speaker = getMacroSpeaker(this.actor);
-            let contents = "";
-            if (foo) {
-                contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
+            if (sendToChat) {
+                let speaker = getMacroSpeaker(this.actor);
+                let contents = "";
+                if (endState) {
+                    contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
                 <img class="item-image" src="${itemData.img}" title="${itemData.name}" width="20" height="20"/>
-                <div class="chat-header-small">${game.i18n.format("ironclaw2e.dialog.exhaustGift.chatMessage", { "name": itemData.name })}</div>
+                <div class="chat-header-small">${game.i18n.format("ironclaw2e.dialog.exhaustGift.chatMessage", { "item": itemData.name })}</div>
                 </header>
                 </div>`;
-            } else {
-                contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
+                } else {
+                    contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
                 <img class="item-image" src="${itemData.img}" title="${itemData.name}" width="20" height="20"/>
-                <div class="chat-header-small">${game.i18n.format("ironclaw2e.dialog.refreshGift.chatMessage", { "name": itemData.name })}</div>
+                <div class="chat-header-small">${game.i18n.format("ironclaw2e.dialog.refreshGift.chatMessage", { "item": itemData.name })}</div>
                 </header>
                 </div>`;
+                }
+                let chatData = {
+                    "content": contents,
+                    "speaker": speaker
+                };
+                ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
+                CONFIG.ChatMessage.documentClass.create(chatData);
             }
-            let chatData = {
-                "content": contents,
-                "speaker": speaker
-            };
-            ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
-            CONFIG.ChatMessage.documentClass.create(chatData);
         }
+
+        return endState;
     }
 
     /**
@@ -712,9 +727,9 @@ export class Ironclaw2EItem extends Item {
     /**
      * Toggle the readiness of the weapon
      * @param {string} toggle The state to toggle to
-     * @returns {boolean | null} Returns either the state the weapon was set to, or null in case of an error
+     * @returns {Promise<boolean | null>} Returns either the state the weapon was set to, or null in case of an error
      */
-    async weaponToggleReadiness(toggle = "toggle") {
+    async weaponToggleReady(toggle = "toggle") {
         const itemData = this.data;
         const data = itemData.data;
         if (!(itemData.type === 'weapon')) {
@@ -739,6 +754,28 @@ export class Ironclaw2EItem extends Item {
         }
 
         if (endState !== null) {
+            if (endState === true && data.exhaustGift && data.exhaustGiftWhenReadied) {
+                const sendToChat = game.settings.get("ironclaw2e", "sendWeaponReadyExhaustMessage");
+                const exhaust = this.weaponGetGiftToExhaust();
+
+                // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively
+                if (!exhaust) {
+                    ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
+                    return null;
+                } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
+                    const confirmation = await exhaust?.popupGiftExhaustToggle(false);
+                    if (confirmation !== false) {
+                        return null;
+                    }
+                }
+
+                const worked = await exhaust.giftToggleExhaust("true", sendToChat);
+                if (worked !== true) {
+                    return null;
+                }
+            }
+
+            // Actually update
             await this.update({ "_id": this.id, "data.readied": endState });
         }
 
@@ -757,13 +794,13 @@ export class Ironclaw2EItem extends Item {
         }
 
         if (data.autoStow) {
-            await this.weaponToggleReadiness("false");
+            await this.weaponToggleReady("false");
         }
     }
 
     /**
      * Ready the weapon when it is used
-     * @returns {boolean} Returns whether the weapon is ready to use
+     * @returns {Promise<boolean>} Returns whether the weapon is ready to use
      */
     async weaponReadyWhenUsed() {
         const itemData = this.data;
@@ -791,8 +828,8 @@ export class Ironclaw2EItem extends Item {
             }
         }
 
-        await this.weaponToggleReadiness("true");
-        return true;
+        const state = (await this.weaponToggleReady("true")) === true;
+        return state;
     }
 
     /* -------------------------------------------- */
@@ -1216,7 +1253,7 @@ export class Ironclaw2EItem extends Item {
         }
         if (data.exhaustWhenUsed == false || data.exhausted == false) {
             if (data.giftStats || data.giftArray)
-                this.genericItemRoll(data.giftStats, data.defaultTN, itemData.name, data.giftArray, 0, { directroll }, (data.exhaustWhenUsed ? (x => { this.giftSetExhaust("true"); }) : null));
+                this.genericItemRoll(data.giftStats, data.defaultTN, itemData.name, data.giftArray, 0, { directroll }, (data.exhaustWhenUsed ? (x => { this.giftToggleExhaust("true"); }) : null));
             else if (data.exhaustWhenUsed) // Check just in case, even though there should never be a situation where canUse is set, but neither rollable stats / dice nor exhaustWhenUsed aren't
                 this.popupExhaustGift();
         }
@@ -1293,18 +1330,20 @@ export class Ironclaw2EItem extends Item {
         const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
         const donotdisplay = game.settings.get("ironclaw2e", "calculateDoesNotDisplay");
         const callback = (async x => {
-            if (exhaust) exhaust.giftSetExhaust("true", sendToChat);
+            if (exhaust) exhaust.giftToggleExhaust("true", sendToChat);
             await item.weaponAutoStow();
             const foo = await item.automaticDamageCalculation(x, ignoreresist, donotdisplay, opposingsuccesses);
             if (sourcemessage && foo) Ironclaw2EItem.transferTemplateFlags(sourcemessage, foo);
         });
 
         // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively instead of the roll
-        if (data.exhaustGift && !exhaust) {
+        if (data.exhaustGift && !data.exhaustGiftWhenReadied && !exhaust) {
             ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
-        } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
-            exhaust?.popupRefreshGift();
+        } else if (data.exhaustGift && !data.exhaustGiftWhenReadied && data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) {
+            // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
+            exhaust.popupRefreshGift();
         } else {
+            // Actually roll
             this.genericItemRoll(data.attackStats, presettn, itemData.name, data.attackArray, 2, { "directroll": canQuickroll && directroll, target }, callback);
         }
     }
@@ -1373,21 +1412,25 @@ export class Ironclaw2EItem extends Item {
             }
         }
 
-        // Grab the relevant data
+        // Prepare the relevant data
         const exhaust = this.weaponGetGiftToExhaust();
         const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
+        const callback = (async x => {
+            if (exhaust) exhaust.giftToggleExhaust("true", sendToChat);
+            await item.weaponAutoStow();
+            await item.automaticDamageCalculation(x);
+            Ironclaw2EActor.addCallbackToAttackMessage(x?.message, otheritem?.messageId);
+        });
 
         // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively instead of the roll
-        if (data.exhaustGift && !exhaust) {
+        if (data.exhaustGift && !data.exhaustGiftWhenReadied && !exhaust) {
             ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
-        } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
-            exhaust?.popupRefreshGift();
+        } else if (data.exhaustGift && !data.exhaustGiftWhenReadied && data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) {
+            // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
+            exhaust.popupRefreshGift();
         } else {
-            this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, 3, { directroll, otheritem, extradice },
-                (async x => {
-                    if (exhaust) exhaust.giftSetExhaust("true", sendToChat); await item.weaponAutoStow(); await item.automaticDamageCalculation(x);
-                    Ironclaw2EActor.addCallbackToAttackMessage(x?.message, otheritem?.messageId);
-                }));
+            // Actually roll
+            this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, 3, { directroll, otheritem, extradice }, callback);
         }
     }
 
@@ -1500,101 +1543,44 @@ export class Ironclaw2EItem extends Item {
     /* -------------------------------------------- */
 
     /**
-     * Pop up a dialog box to confirm refreshing a gift
+     * Pop up a dialog box to confirm changing the exhaustion state of the gift
+     * @param {boolean} mode What state to change to
      */
-    popupRefreshGift() {
-        if (this.data.type != "gift")
-            return console.error("Tried to refresh a non-gift item: " + this);
+    async popupGiftExhaustToggle(mode) {
+        if (this.data.type != "gift") {
+            console.error("Tried to set exhaust on a non-gift item: " + this);
+            return null;
+        }
 
         const item = this.data;
         const itemData = item.data;
+        const speaker = getMacroSpeaker(this.actor);
 
-        let confirmed = false;
-        let speaker = getMacroSpeaker(this.actor);
-        let dlog = new Dialog({
-            title: game.i18n.format("ironclaw2e.dialog.refreshGift.title", { "name": speaker.alias }),
-            content: `
-     <form>
-      <h1>${game.i18n.format("ironclaw2e.dialog.refreshGift.header", { "item": this.data.name, "actor": this.actor?.data.name })}</h1>
-     <div class="form-group">
-       <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.sendToChat")}</label>
-       <input type="checkbox" id="send" name="send" value="1" checked></input>
-     </div>
-     </form>
-     `,
-            buttons: {
-                one: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.refresh"),
-                    callback: () => confirmed = true
-                },
-                two: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
-                    callback: () => confirmed = false
-                }
-            },
-            default: "one",
-            render: html => { },
-            close: html => {
-                if (confirmed) {
-                    let SEND = html.find('[name=send]');
-                    let sent = SEND.length > 0 ? SEND[0].checked : false;
+        const sendToChat = game.settings.get("ironclaw2e", "defaultSendGiftExhaust");
+        const title = mode ? "ironclaw2e.dialog.exhaustGift.title" : "ironclaw2e.dialog.refreshGift.title";
+        const message = mode ? "ironclaw2e.dialog.exhaustGift.header" : "ironclaw2e.dialog.refreshGift.header";
+        const button = mode ? "ironclaw2e.dialog.exhaust" : "ironclaw2e.dialog.refresh";
 
-                    this.giftSetExhaust("false", sent);
-                }
-            }
-        });
-        dlog.render(true);
+        const confirmation = await popupConfirmationBox(title, message, button, { "includesend": true, "senddefault": sendToChat, "itemname": item.name, "actorname": speaker.alias });
+
+        if (confirmation.confirmed) {
+            return await this.giftToggleExhaust(mode.toString(), confirmation.chatSent);
+        }
+        return null;
+    }
+
+    /**
+     * Pop up a dialog box to confirm refreshing a gift
+     */
+    popupRefreshGift() {
+        return this.popupGiftExhaustToggle(false);
     }
 
     /**
      * Pop up a dialog box to confirm exhausting a gift
      */
     popupExhaustGift() {
-        if (this.data.type != "gift")
-            return console.error("Tried to exhaust a non-gift item: " + this);
-
-        const item = this.data;
-        const itemData = item.data;
-
-        let confirmed = false;
-        let speaker = getMacroSpeaker(this.actor);
-        let dlog = new Dialog({
-            title: game.i18n.format("ironclaw2e.dialog.exhaustGift.title", { "name": speaker.alias }),
-            content: `
-     <form>
-      <h1>${game.i18n.format("ironclaw2e.dialog.exhaustGift.header", { "item": this.data.name, "actor": this.actor?.data.name })}</h1>
-     <div class="form-group">
-       <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.sendToChat")}</label>
-       <input type="checkbox" id="send" name="send" value="1" checked></input>
-     </div>
-     </form>
-     `,
-            buttons: {
-                one: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.exhaust"),
-                    callback: () => confirmed = true
-                },
-                two: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
-                    callback: () => confirmed = false
-                }
-            },
-            default: "one",
-            render: html => { },
-            close: html => {
-                if (confirmed) {
-                    let SEND = html.find('[name=send]');
-                    let sent = SEND.length > 0 ? SEND[0].checked : false;
-
-                    this.giftSetExhaust("true", sent);
-                }
-            }
-        });
-        dlog.render(true);
+        return this.popupGiftExhaustToggle(true);
     }
 
     /**

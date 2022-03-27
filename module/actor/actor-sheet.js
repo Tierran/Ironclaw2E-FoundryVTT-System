@@ -760,7 +760,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                 case 4:
                     if (!item.data.data.hasOwnProperty("readied"))
                         break;
-                    item.weaponToggleReadiness();
+                    item.weaponToggleReady();
                     break;
                 default:
                     console.warn("_onItemChangeStat got an unknown value: " + dataset.roll);

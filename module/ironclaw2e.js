@@ -167,6 +167,14 @@ Hooks.once('init', async function () {
         default: false,
         config: false
     });
+    game.settings.register("ironclaw2e", "sendWeaponReadyExhaustMessage", {
+        name: "ironclaw2e.config.sendWeaponReadyExhaustMessage",
+        hint: "ironclaw2e.config.sendWeaponReadyExhaustMessageHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: false
+    });
     game.settings.register("ironclaw2e", "askReadyWhenUsed", {
         name: "ironclaw2e.config.askReadyWhenUsed",
         hint: "ironclaw2e.config.askReadyWhenUsedHint",
@@ -315,6 +323,14 @@ Hooks.once('init', async function () {
     game.settings.register("ironclaw2e", "defaultSendDamage", {
         name: "ironclaw2e.config.defaultSendDamage",
         hint: "ironclaw2e.config.defaultSendDamageHint",
+        scope: "client",
+        type: Boolean,
+        default: true,
+        config: true
+    });
+    game.settings.register("ironclaw2e", "defaultSendGiftExhaust", {
+        name: "ironclaw2e.config.defaultSendGiftExhaust",
+        hint: "ironclaw2e.config.defaultSendGiftExhaustHint",
         scope: "client",
         type: Boolean,
         default: true,
