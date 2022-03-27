@@ -1,0 +1,11 @@
+<div class="ironclaw2e">
+    <div class="chat-content">
+        <div class="chat-item">
+            <p>{{{localize "ironclaw2e.chatInfo.damageEffect.chatMessage" name=speaker condition=reportedCondition}}}</p>
+            {{#if wardChanged}}
+            <p>{{localize "ironclaw2e.chatInfo.damageEffect.wardDamage" damage=wardDamage}}</p>
+            {{#if wardDestroyed}}<p><strong>{{localize "ironclaw2e.chatInfo.damageEffect.wardDestroyed"}}</strong></p>{{/if}}
+            {{/if}}
+        </div>
+    </div>
+</div>

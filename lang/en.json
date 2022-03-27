@@ -267,7 +267,6 @@
   "ironclaw2e.dialog.damageCalc.knockoutStrike": "Knockout Strike?",
   "ironclaw2e.dialog.damageCalc.nonLethal": "Non-lethal attack?",
   "ironclaw2e.dialog.damageCalc.damageConditions": "Other conditions to add:",
-  "ironclaw2e.dialog.damageCalc.chatMessage": "{name} is {condition}!",
 
   "ironclaw2e.dialog.addCondition.title": "Adding Condition to {name}",
   "ironclaw2e.dialog.addCondition.header": "Add condition to {name}?",
@@ -423,6 +422,10 @@
 
   "ironclaw2e.chatInfo.damageCalcInfo.soakCombined": "Combined",
   "ironclaw2e.chatInfo.damageCalcInfo.soakCombinedImpaling": "Combined Impaling",
+
+  "ironclaw2e.chatInfo.damageEffect.chatMessage": "{name} is <strong>{condition}!</strong>",
+  "ironclaw2e.chatInfo.damageEffect.wardDamage": "Ward took {damage} damage!",
+  "ironclaw2e.chatInfo.damageEffect.wardDestroyed": "Ward was destroyed!",
 
   "ironclaw2e.chatInfo.requestRoll.requestRollHeader": "{user} Requested a Roll",
   "ironclaw2e.chatInfo.requestRoll.requestRollType": "Roll Type",

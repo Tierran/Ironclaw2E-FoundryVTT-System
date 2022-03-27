@@ -1482,26 +1482,39 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /**
+     * @typedef {{
+     *   conditionArray: string[],
+     *   wardDamage: number,
+     *   wardDestroyed: boolean
+     * }} DamageReturn
+     */
+
+    /**
      * Apply damage conditions to the actor
      * @param {number} damage
      * @param {boolean} knockout
      * @param {boolean} nonlethal
+     * @returns {Promise<DamageReturn>}
      */
     async applyDamage(damage, knockout = false, nonlethal = false, applyWard = true) {
-
-        if (applyWard) {
+        let wardDamage = -1;
+        let wardDestroyed = false;
+        if (applyWard && damage >= 0) {
             const cond = getSingleConditionIronclaw("temporaryward", this);
             if (cond) {
                 let ward = getTargetConditionQuota(cond, this);
                 if (ward > damage) {
                     // If there is more ward than damage, reduce the damage from ward, set damage to zero and update the ward with the reduced value
                     ward -= damage;
+                    wardDamage = damage;
                     damage = 0;
                     await this.updateEffectQuota(cond, ward);
                 } else {
                     // Else, reduce the damage by the ward and remove the ward condition
                     damage -= ward;
+                    wardDamage = ward;
                     await this.deleteEffect(cond.id, true);
+                    wardDestroyed = true;
                 }
             }
         }
@@ -1520,7 +1533,7 @@ export class Ironclaw2EActor extends Actor {
         if (damage >= 5 && !nonlethal) adding.push("dead");
         if (damage >= 6 && !nonlethal) adding.push("overkilled");
         await this.addEffect(adding);
-        return adding;
+        return { "conditionArray": adding, wardDamage, wardDestroyed };
     }
 
     /**
@@ -2062,9 +2075,18 @@ export class Ironclaw2EActor extends Actor {
                     if (conditions.length > 0) await this.addEffect(conditions);
 
                     if (send) {
-                        const reportedStatus = statuses[statuses.length - 1];
+                        const reportedStatus = statuses.conditionArray[statuses.conditionArray.length - 1];
+                        const chatTemplateData = {
+                            "speaker": speaker.alias,
+                            "reportedCondition": game.i18n.localize(CommonConditionInfo.getConditionLabel(reportedStatus)),
+                            "wardChanged": statuses.wardDamage > 0,
+                            "wardDamage": statuses.wardDamage,
+                            "wardDestroyed": statuses.wardDestroyed
+                        };
+                        const chatContents = await renderTemplate("systems/ironclaw2e/templates/chat/damage-effect.html", chatTemplateData);
+
                         let chatData = {
-                            "content": game.i18n.format("ironclaw2e.dialog.damageCalc.chatMessage", { "name": speaker.alias, "condition": game.i18n.localize(CommonConditionInfo.getConditionLabel(reportedStatus)) }),
+                            "content": chatContents,
                             "speaker": speaker
                         };
                         ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
@@ -2099,9 +2121,18 @@ export class Ironclaw2EActor extends Actor {
         if (conditions.length > 0) await this.addEffect(conditions);
 
         if (confirmSend) {
-            const reportedStatus = statuses[statuses.length - 1];
+            const reportedStatus = statuses.conditionArray[statuses.conditionArray.length - 1];
+            const chatTemplateData = {
+                "speaker": speaker.alias,
+                "reportedCondition": game.i18n.localize(CommonConditionInfo.getConditionLabel(reportedStatus)),
+                "wardChanged": statuses.wardDamage > 0,
+                "wardDamage": statuses.wardDamage,
+                "wardDestroyed": statuses.wardDestroyed
+            };
+            const chatContents = await renderTemplate("systems/ironclaw2e/templates/chat/damage-effect.html", chatTemplateData);
+
             let chatData = {
-                "content": game.i18n.format("ironclaw2e.dialog.damageCalc.chatMessage", { "name": speaker.alias, "condition": game.i18n.localize(CommonConditionInfo.getConditionLabel(reportedStatus)) }),
+                "content": chatContents,
                 "speaker": speaker
             };
             ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
