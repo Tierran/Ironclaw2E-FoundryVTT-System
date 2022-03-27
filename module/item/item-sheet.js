@@ -174,7 +174,8 @@ export class Ironclaw2EItemSheet extends ItemSheet {
      * @param {Event} event Originationg event
      */
     _onCopyAllAspects(event) {
-        const data = this.item.data.data;
+        const itemData = this.item.data;
+        const data = itemData.data;
         if (game.user.isGM) {
             // Pop a dialog to confirm
             let confirmed = false;
@@ -207,7 +208,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
                         for (let item of items) {
                             if (item.name === this.item.name) {
                                 console.log(item); // Log all potential changes to console, just in case
-                                await item.update({ "data": data });
+                                await item.update({ "data": data, "img": itemData.img });
                             }
                         }
                         ui.notifications.info("ironclaw2e.ui.itemUpdateComplete", { localize: true, permanent: true });

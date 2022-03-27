@@ -31,6 +31,7 @@
     <nav class="sheet-tabs tabs" data-group="primary">
         <a class="item" data-tab="description">Description</a>
         <a class="item" data-tab="attributes">Attributes</a>
+        {{#if showDirectoryOptions}}<a class="item" data-tab="special">Advanced Settings</a>{{/if}}
     </nav>
 
     {{!-- Sheet Body --}}
@@ -114,6 +115,21 @@
                     <label class="resource-label">Counter Pool:</label>
                     <input type="text" name="data.counterDice" value="{{data.counterDice}}" data-dtype="String" />
                 </div>
+            </div>
+        </div>
+
+        {{!-- Specials Tab --}}
+        <div class="tab" data-group="primary" data-tab="special">
+            <div class="flexcol">
+                {{#if showDirectoryOptions}}
+                <div>
+                    <h3 class="normal-label flex-center">GM Directory Settings</h3>
+                    <div class="rollable copy-all-aspects flex-group-center">
+                        <span class="normal-label">Copy Weapon to every Weapon with same name</span>
+                    </div>
+                </div>
+                <div style="min-height: 1em"></div>
+                {{/if}}
             </div>
         </div>
     </section>
