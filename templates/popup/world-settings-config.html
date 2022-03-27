@@ -85,6 +85,20 @@
     </div>
 
     <div>
+        <h2 class="header-label">{{localize 'ironclaw2e.config.worldConfig.item'}}</h2>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.sendWeaponExhaustMessage'}}</label>
+            <input type="checkbox" name="sendWeaponExhaustMessage" {{checked settings.sendWeaponExhaustMessage}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.sendWeaponExhaustMessageHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.askReadyWhenUsed'}}</label>
+            <input type="checkbox" name="askReadyWhenUsed" {{checked settings.askReadyWhenUsed}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.askReadyWhenUsedHint'}}</p>
+        </div>
+    </div>
+
+    <div>
         <h2 class="header-label">{{localize 'ironclaw2e.config.worldConfig.misc'}}</h2>
         <div class="form-group">
             <label>{{localize 'ironclaw2e.config.preferTokenName'}}</label>
@@ -115,11 +129,6 @@
             <label>{{localize 'ironclaw2e.config.coinsHaveWeight'}}</label>
             <input type="checkbox" name="coinsHaveWeight" {{checked settings.coinsHaveWeight}} data-dtype="Boolean" />
             <p class="notes">{{localize 'ironclaw2e.config.coinsHaveWeightHint'}}</p>
-        </div>
-        <div class="form-group">
-            <label>{{localize 'ironclaw2e.config.sendWeaponExhaustMessage'}}</label>
-            <input type="checkbox" name="sendWeaponExhaustMessage" {{checked settings.sendWeaponExhaustMessage}} data-dtype="Boolean" />
-            <p class="notes">{{localize 'ironclaw2e.config.sendWeaponExhaustMessageHint'}}</p>
         </div>
     </div>
 

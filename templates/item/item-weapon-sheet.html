@@ -74,17 +74,23 @@
                     <input type="checkbox" name="data.useSpark" {{checked data.useSpark}} data-dtype="Boolean" />
                     <label class="resource-label">Defense is Resist:</label>
                     <input type="checkbox" name="data.hasResist" {{checked data.hasResist}} data-dtype="Boolean" />
+                    <label class="resource-label">Auto-Stow:</label>
+                    <input type="checkbox" name="data.autoStow" {{checked data.autoStow}} data-dtype="Boolean" />
+                    <label class="resource-label">Ready on Use:</label>
+                    <input type="checkbox" name="data.readyWhenUsed" {{checked data.readyWhenUsed}} data-dtype="Boolean" />
+                </div>
+                <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Exhausts a Gift:</label>
                     <input type="checkbox" name="data.exhaustGift" {{checked data.exhaustGift}} data-dtype="Boolean" />
+                    {{#if data.exhaustGift}}
+                    <label class="resource-label">Need refreshed Gift:</label>
+                    <input type="checkbox" name="data.exhaustGiftNeedsRefresh" {{checked data.exhaustGiftNeedsRefresh}} data-dtype="Boolean" />
+                    {{/if}}
                 </div>
                 {{#if data.exhaustGift}}
                 <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Auto-Exhaust Gift Name:</label>
                     <input type="text" name="data.exhaustGiftName" value="{{data.exhaustGiftName}}" data-dtype="String" />
-                    <div class="resource flexrow flex-center">
-                        <label class="resource-label">Need refreshed Gift:</label>
-                        <input type="checkbox" name="data.exhaustGiftNeedsRefresh" {{checked data.exhaustGiftNeedsRefresh}} data-dtype="Boolean" />
-                    </div>
                 </div>
                 {{/if}}
                 <h3 class="header-label">Dice Pools</h3>

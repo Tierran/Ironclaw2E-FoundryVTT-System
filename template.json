@@ -239,7 +239,10 @@
       "useSpark": false,
       "sparkDie": "",
       "readied": false,
+      "readyWhenUsed": true,
+      "autoStow": false,
       "exhaustGift": false,
+      "exhaustGiftWhenReadied": false,
       "exhaustGiftNeedsRefresh": true,
       "exhaustGiftName": ""
     },

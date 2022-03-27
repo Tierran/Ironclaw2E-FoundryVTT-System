@@ -82,6 +82,7 @@ export class WorldSettingsConfig extends FormApplication {
         settings.requireSpecialRangeFound = game.settings.get("ironclaw2e", "requireSpecialRangeFound");
         settings.showRangeCombatRules = game.settings.get("ironclaw2e", "showRangeCombatRules");
         settings.showTokenExtraButtons = game.settings.get("ironclaw2e", "showTokenExtraButtons");
+        settings.askReadyWhenUsed = game.settings.get("ironclaw2e", "askReadyWhenUsed");
         return settings;
     }
 }

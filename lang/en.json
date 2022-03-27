@@ -122,6 +122,7 @@
   "ironclaw2e.config.worldConfig.conditions": "Auto Condition Settings",
   "ironclaw2e.config.worldConfig.calculate": "Auto-Attack Calculation Settings",
   "ironclaw2e.config.worldConfig.range": "Range & Distance Measurement Settings",
+  "ironclaw2e.config.worldConfig.item": "Item Related Settings",
   "ironclaw2e.config.worldConfig.misc": "Miscellaneous Settings",
 
   "ironclaw2e.config.coinageConfig.menuName": "Ironclaw Currency Settings Config",
@@ -185,6 +186,8 @@
   "ironclaw2e.config.showRangeCombatRulesHint": "When, if ever, will the client setting 'Show range when targeting' option use combat range measurements. That is, when will height difference simply be calculated into the final result, and when will the vertical range rules apply to it.",
   "ironclaw2e.config.showTokenExtraButtons": "Show Ironclaw-specific token buttons",
   "ironclaw2e.config.showTokenExtraButtonsHint": "If checked, tokens will have two additional buttons underneath them, one to open the default dice pool popup, other to open the damage popup.",
+  "ironclaw2e.config.askReadyWhenUsed": "Ask to ready a weapon on use",
+  "ironclaw2e.config.askReadyWhenUsedHint": "If checked, weapons that automatically ready when they are used will ask to confirm it first.",
 
   "ironclaw2e.config.defaultSendDamage": "Damage to chat by default",
   "ironclaw2e.config.defaultSendDamageHint": "If checked, the damage-applying dialog will have the 'Send to chat' option checked by default.",
@@ -207,6 +210,7 @@
   "ironclaw2e.dialog.cancel": "Cancel",
   "ironclaw2e.dialog.sendToChat": "Send to Chat?",
   "ironclaw2e.dialog.request": "Request",
+  "ironclaw2e.dialog.ready": "Ready",
 
   "ironclaw2e.dialog.macroDefault.titleTN": "Target Number Roll for {name}",
   "ironclaw2e.dialog.macroDefault.titleCopyTN": "Change Roll to TN",
@@ -281,6 +285,9 @@
 
   "ironclaw2e.dialog.sparkRoll.title": "Roll Spark die",
   "ironclaw2e.dialog.sparkRoll.label": "Rolling Spark die...",
+
+  "ironclaw2e.dialog.readyWhenUsed.title": "Ready Weapon",
+  "ironclaw2e.dialog.readyWhenUsed.header": "Ready {item} for {actor}?",
 
   "ironclaw2e.dialog.refreshGift.title": "Refresh Gift for {name}",
   "ironclaw2e.dialog.refreshGift.header": "Refresh {item} for {actor}?",

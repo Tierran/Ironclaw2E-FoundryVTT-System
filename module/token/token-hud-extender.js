@@ -2,7 +2,7 @@ Hooks.on("renderTokenHUD", addIronclawTokenButtons);
 
 function addIronclawTokenButtons(hud, html, data) {
     if (!game.settings.get("ironclaw2e", "showTokenExtraButtons")) {
-        return null; // If the buttons are turned off, return out
+        return; // If the buttons are turned off, return out
     }
 
     const buttonSize = (hud.object.w < 70 ? `style="max-width:30px;max-height:30px"` : "");

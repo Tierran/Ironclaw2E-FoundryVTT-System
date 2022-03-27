@@ -1,4 +1,4 @@
-import { findActorToken, findInItems, findTotalDice } from "../helpers.js";
+import { findActorToken, findInItems, findTotalDice, popupConfirmationBox } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -709,6 +709,91 @@ export class Ironclaw2EItem extends Item {
         }
     }
 
+    /**
+     * Toggle the readiness of the weapon
+     * @param {string} toggle The state to toggle to
+     * @returns {boolean | null} Returns either the state the weapon was set to, or null in case of an error
+     */
+    async weaponToggleReadiness(toggle = "toggle") {
+        const itemData = this.data;
+        const data = itemData.data;
+        if (!(itemData.type === 'weapon')) {
+            console.error("Weapon ready toggle attempted on a non-weapon item: " + itemData.name);
+            return null;
+        }
+
+        let endState = null;
+        switch (toggle) {
+            case "toggle":
+                endState = !data.readied;
+                break;
+            case "true":
+                endState = true;
+                break;
+            case "false":
+                endState = false;
+                break;
+            default:
+                console.error("Weapon ready toggle defaulted! " + toggle);
+                break;
+        }
+
+        if (endState !== null) {
+            await this.update({ "_id": this.id, "data.readied": endState });
+        }
+
+        return endState;
+    }
+
+    /**
+     * Weapon auto-stow
+     */
+    async weaponAutoStow() {
+        const itemData = this.data;
+        const data = itemData.data;
+        if (!(itemData.type === 'weapon')) {
+            console.error("Weapon ready toggle attempted on a non-weapon item: " + itemData.name);
+            return;
+        }
+
+        if (data.autoStow) {
+            await this.weaponToggleReadiness("false");
+        }
+    }
+
+    /**
+     * Ready the weapon when it is used
+     * @returns {boolean} Returns whether the weapon is ready to use
+     */
+    async weaponReadyWhenUsed() {
+        const itemData = this.data;
+        const data = itemData.data;
+        if (!(itemData.type === 'weapon')) {
+            console.error("Weapon ready toggle attempted on a non-weapon item: " + itemData.name);
+            return false;
+        }
+
+        // If the weapon is already readied, return true
+        if (data.readied) {
+            return true;
+        }
+
+        // If the weapon doesn't need to be readied, return true
+        if (!data.readyWhenUsed) {
+            return true;
+        }
+
+        const confirm = game.settings.get("ironclaw2e", "askReadyWhenUsed");
+        if (confirm) {
+            const confirmation = await popupConfirmationBox("ironclaw2e.dialog.readyWhenUsed.title", "ironclaw2e.dialog.readyWhenUsed.header", "ironclaw2e.dialog.ready", { "itemname": itemData.name, "actorname": this.actor.name });
+            if (!confirmation.confirmed) {
+                return false;
+            }
+        }
+
+        await this.weaponToggleReadiness("true");
+        return true;
+    }
 
     /* -------------------------------------------- */
     /* Roll and Chat Functions                      */
@@ -1175,7 +1260,7 @@ export class Ironclaw2EItem extends Item {
      * @param {number} presettn The TN to use
      * @param {number} opposingsuccesses The number of opposing successes for resisted attacks
      */
-    attackRoll(directroll = false, ignoreresist = false, presettn = 3, opposingsuccesses = -1, sourcemessage = null) {
+    async attackRoll(directroll = false, ignoreresist = false, presettn = 3, opposingsuccesses = -1, sourcemessage = null) {
         const item = this;
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
@@ -1191,6 +1276,14 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
+        // If the weapon isn't readied and auto-ready is toggled on
+        if (!data.readied && data.readyWhenUsed) {
+            const usable = await this.weaponReadyWhenUsed();
+            if (!usable) {
+                return; // If the weapon is not usable, return out
+            }
+        }
+
         // Grab the user's target
         const [target] = (game.user.targets?.size > 0 ? game.user.targets : [null]);
 
@@ -1201,6 +1294,7 @@ export class Ironclaw2EItem extends Item {
         const donotdisplay = game.settings.get("ironclaw2e", "calculateDoesNotDisplay");
         const callback = (async x => {
             if (exhaust) exhaust.giftSetExhaust("true", sendToChat);
+            await item.weaponAutoStow();
             const foo = await item.automaticDamageCalculation(x, ignoreresist, donotdisplay, opposingsuccesses);
             if (sourcemessage && foo) Ironclaw2EItem.transferTemplateFlags(sourcemessage, foo);
         });
@@ -1221,7 +1315,7 @@ export class Ironclaw2EItem extends Item {
      * @param {object} otheritem The other side's data
      * @param {string} extradice Extra dice
      */
-    defenseRoll(directroll = false, otheritem = null, extradice = "") {
+    async defenseRoll(directroll = false, otheritem = null, extradice = "") {
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
         const data = itemData.data;
@@ -1236,6 +1330,14 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
+        // If the weapon isn't readied and auto-ready is toggled on
+        if (!data.readied && data.readyWhenUsed) {
+            const usable = await this.weaponReadyWhenUsed();
+            if (!usable) {
+                return; // If the weapon is not usable, return out
+            }
+        }
+
         // Pop the roll
         this.genericItemRoll(data.defenseStats, -1, itemData.name, data.defenseArray, 1, { directroll, otheritem, extradice },
             (x => { Ironclaw2EActor.addCallbackToAttackMessage(x?.message, otheritem?.messageId); }));
@@ -1247,7 +1349,7 @@ export class Ironclaw2EItem extends Item {
      * @param {object} otheritem The other side's data
      * @param {string} extradice Extra dice
      */
-    counterRoll(directroll = false, otheritem = null, extradice = "") {
+    async counterRoll(directroll = false, otheritem = null, extradice = "") {
         const item = this;
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
@@ -1263,6 +1365,14 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
+        // If the weapon isn't readied and auto-ready is toggled on
+        if (!data.readied && data.readyWhenUsed) {
+            const usable = await this.weaponReadyWhenUsed();
+            if (!usable) {
+                return; // If the weapon is not usable, return out
+            }
+        }
+
         // Grab the relevant data
         const exhaust = this.weaponGetGiftToExhaust();
         const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
@@ -1274,7 +1384,10 @@ export class Ironclaw2EItem extends Item {
             exhaust?.popupRefreshGift();
         } else {
             this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, 3, { directroll, otheritem, extradice },
-                (x => { if (exhaust) exhaust.giftSetExhaust("true", sendToChat); item.automaticDamageCalculation(x); Ironclaw2EActor.addCallbackToAttackMessage(x?.message, otheritem?.messageId); }));
+                (async x => {
+                    if (exhaust) exhaust.giftSetExhaust("true", sendToChat); await item.weaponAutoStow(); await item.automaticDamageCalculation(x);
+                    Ironclaw2EActor.addCallbackToAttackMessage(x?.message, otheritem?.messageId);
+                }));
         }
     }
 
@@ -1282,7 +1395,7 @@ export class Ironclaw2EItem extends Item {
      * Weapon spark roll function
      * @param {boolean} directroll Whether to attempt to roll without a dialog
      */
-    sparkRoll(directroll = false) {
+    async sparkRoll(directroll = false) {
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
         const data = itemData.data;
@@ -1295,6 +1408,14 @@ export class Ironclaw2EItem extends Item {
         // Make sure the weapon has a spark roll
         if (data.canSpark == false) {
             return;
+        }
+
+        // If the weapon isn't readied and auto-ready is toggled on
+        if (!data.readied && data.readyWhenUsed) {
+            const usable = await this.weaponReadyWhenUsed();
+            if (!usable) {
+                return; // If the weapon is not usable, return out
+            }
         }
 
         // Depending on the directroll setting, either show the simple dialog or do the roll automatically

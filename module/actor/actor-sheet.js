@@ -734,7 +734,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         if (dataset.roll && dataset.item) {
             const item = this.actor.items.get(dataset.item);
-            let foobar;
+            let foobar = null;
 
             switch (parseInt(dataset.roll)) {
                 case 0:
@@ -760,7 +760,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                 case 4:
                     if (!item.data.data.hasOwnProperty("readied"))
                         break;
-                    foobar = { "_id": item.id, "data.readied": !item.data.data.readied };
+                    item.weaponToggleReadiness();
                     break;
                 default:
                     console.warn("_onItemChangeStat got an unknown value: " + dataset.roll);

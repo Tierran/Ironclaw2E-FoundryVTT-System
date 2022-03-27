@@ -967,3 +967,66 @@ export function getCorrectElevationFlag() {
     }
     return { modId, flagId };
 }
+
+/**
+ * @typedef {{
+ *   confirmed: boolean,
+ *   chatSent: boolean
+ * }} ConfirmationReturn
+ */
+
+/**
+ * Pop up a confirmation box and return a promise to how it is resolved
+ * @param {string} title
+ * @param {string} message
+ * @param {string} button
+ * @param {boolean} localize
+ * @returns {Promise<ConfirmationReturn>}
+ */
+export function popupConfirmationBox(title, message, button, { localize = true, actorname = "", itemname = "", includesend = false } = {}) {
+    let confirmed = false;
+    const usedTitle = (localize ? game.i18n.format(title, { "actor": actorname, "item": itemname }) : title);
+    const sendPart = `
+     <div class="form-group">
+       <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.sendToChat")}</label>
+       <input type="checkbox" id="send" name="send" value="1" checked></input>
+     </div>`;
+    let contents = `
+     <form class="ironclaw2e">
+      <h1>${(localize ? game.i18n.format(message, { "actor": actorname, "item": itemname }) : message)}</h1>
+      ${(includesend ? sendPart : "")}
+     </form>
+     `;
+    let resolvedroll = new Promise((resolve) => {
+        let dlog = new Dialog({
+            title: usedTitle,
+            content: contents,
+            buttons: {
+                one: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: (localize ? game.i18n.localize(button) : button),
+                    callback: () => confirmed = true
+                },
+                two: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
+                    callback: () => confirmed = false
+                }
+            },
+            default: "one",
+            render: html => { },
+            close: html => {
+                let sent = false;
+                if (confirmed) {
+                    if (includesend) {
+                        let SEND = html.find('[name=send]');
+                        sent = SEND.length > 0 ? SEND[0].checked : false;
+                    }
+                }
+                resolve({ "confirmed": confirmed, "chatSent": sent });
+            }
+        });
+        dlog.render(true);
+    });
+    return resolvedroll;
+}
