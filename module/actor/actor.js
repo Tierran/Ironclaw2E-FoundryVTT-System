@@ -421,7 +421,7 @@ export class Ironclaw2EActor extends Actor {
         // Get the actor, either through the sceneid if synthetic, or actorid if a full one
         let attackToken = null;
         if (otheritem.sceneId && otheritem.tokenId) {
-            attackToken= game.scenes.get(otheritem.sceneId)?.tokens.get(otheritem.tokenId);
+            attackToken = game.scenes.get(otheritem.sceneId)?.tokens.get(otheritem.tokenId);
         } else if (otheritem.actorId) {
             const foo = game.actors.get(otheritem.actorId);
             attackToken = findActorToken(foo);
@@ -1497,24 +1497,31 @@ export class Ironclaw2EActor extends Actor {
      * @returns {Promise<DamageReturn>}
      */
     async applyDamage(damage, knockout = false, nonlethal = false, applyWard = true) {
+        const conditionRemoval = game.settings.get("ironclaw2e", "autoConditionRemoval");
         let wardDamage = -1;
         let wardDestroyed = false;
-        if (applyWard && damage >= 0) {
+        if (applyWard && damage > 0) {
             const cond = getSingleConditionIronclaw("temporaryward", this);
             if (cond) {
                 let ward = getTargetConditionQuota(cond, this);
-                if (ward > damage) {
-                    // If there is more ward than damage, reduce the damage from ward, set damage to zero and update the ward with the reduced value
-                    ward -= damage;
-                    wardDamage = damage;
-                    damage = 0;
-                    await this.updateEffectQuota(cond, ward);
-                } else {
-                    // Else, reduce the damage by the ward and remove the ward condition
-                    damage -= ward;
-                    wardDamage = ward;
-                    await this.deleteEffect(cond.id, true);
-                    wardDestroyed = true;
+                if (ward > 0) {
+                    if (ward > damage) {
+                        // If there is more ward than damage, reduce the damage from ward, set damage to zero and update the ward with the reduced value
+                        ward -= damage;
+                        wardDamage = damage;
+                        damage = 0;
+                        await this.updateEffectQuota(cond, ward);
+                    } else {
+                        // Else, reduce the damage by the ward and either remove the ward condition or reduce it to zero
+                        damage -= ward;
+                        wardDamage = ward;
+                        ward = 0;
+                        if (conditionRemoval)
+                            await this.deleteEffect(cond.id, true);
+                        else
+                            await this.updateEffectQuota(cond, ward);
+                        wardDestroyed = true;
+                    }
                 }
             }
         }
