@@ -756,13 +756,14 @@ export class Ironclaw2EItem extends Item {
         if (endState !== null) {
             if (endState === true && data.exhaustGift && data.exhaustGiftWhenReadied) {
                 const sendToChat = game.settings.get("ironclaw2e", "sendWeaponReadyExhaustMessage");
+                const needsRefreshed = game.settings.get("ironclaw2e", "weaponExhaustNeedsRefreshed");
                 const exhaust = this.weaponGetGiftToExhaust();
 
                 // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively
                 if (!exhaust) {
                     ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
                     return null;
-                } else if (data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
+                } else if (needsRefreshed && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
                     const confirmation = await exhaust?.popupGiftExhaustToggle(false);
                     if (confirmation !== false) {
                         return null;
@@ -1329,6 +1330,7 @@ export class Ironclaw2EItem extends Item {
         const canQuickroll = data.hasResist && !ignoreresist;
         const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
         const donotdisplay = game.settings.get("ironclaw2e", "calculateDoesNotDisplay");
+        const needsRefreshed = game.settings.get("ironclaw2e", "weaponExhaustNeedsRefreshed");
         const callback = (async x => {
             if (exhaust) exhaust.giftToggleExhaust("true", sendToChat);
             await item.weaponAutoStow();
@@ -1339,7 +1341,7 @@ export class Ironclaw2EItem extends Item {
         // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively instead of the roll
         if (data.exhaustGift && !data.exhaustGiftWhenReadied && !exhaust) {
             ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
-        } else if (data.exhaustGift && !data.exhaustGiftWhenReadied && data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) {
+        } else if (data.exhaustGift && !data.exhaustGiftWhenReadied && needsRefreshed && exhaust?.giftUsable() === false) {
             // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust.popupRefreshGift();
         } else {
@@ -1415,6 +1417,7 @@ export class Ironclaw2EItem extends Item {
         // Prepare the relevant data
         const exhaust = this.weaponGetGiftToExhaust();
         const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
+        const needsRefreshed = game.settings.get("ironclaw2e", "weaponExhaustNeedsRefreshed");
         const callback = (async x => {
             if (exhaust) exhaust.giftToggleExhaust("true", sendToChat);
             await item.weaponAutoStow();
@@ -1425,7 +1428,7 @@ export class Ironclaw2EItem extends Item {
         // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively instead of the roll
         if (data.exhaustGift && !data.exhaustGiftWhenReadied && !exhaust) {
             ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
-        } else if (data.exhaustGift && !data.exhaustGiftWhenReadied && data.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) {
+        } else if (data.exhaustGift && !data.exhaustGiftWhenReadied && needsRefreshed && exhaust?.giftUsable() === false) {
             // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust.popupRefreshGift();
         } else {
@@ -1601,8 +1604,9 @@ export class Ironclaw2EItem extends Item {
 
         // Check if the weapon has an auto-exhaust gift and whether all possible uses would exhaust the gift
         if (exhaust && !itemData.canDefend && !itemData.canSpark) {
+            const needsRefreshed = game.settings.get("ironclaw2e", "weaponExhaustNeedsRefreshed");
             // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
-            if (itemData.exhaustGiftNeedsRefresh && exhaust?.giftUsable() === false) {
+            if (needsRefreshed && exhaust?.giftUsable() === false) {
                 exhaust?.popupRefreshGift();
                 return;
             }

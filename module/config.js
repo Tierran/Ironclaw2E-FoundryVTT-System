@@ -84,6 +84,7 @@ export class WorldSettingsConfig extends FormApplication {
         settings.showTokenExtraButtons = game.settings.get("ironclaw2e", "showTokenExtraButtons");
         settings.askReadyWhenUsed = game.settings.get("ironclaw2e", "askReadyWhenUsed");
         settings.sendWeaponReadyExhaustMessage = game.settings.get("ironclaw2e", "sendWeaponReadyExhaustMessage");
+        settings.weaponExhaustNeedsRefreshed = game.settings.get("ironclaw2e", "weaponExhaustNeedsRefreshed");
         return settings;
     }
 }

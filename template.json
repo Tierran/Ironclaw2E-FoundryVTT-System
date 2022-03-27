@@ -243,7 +243,6 @@
       "autoStow": false,
       "exhaustGift": false,
       "exhaustGiftWhenReadied": false,
-      "exhaustGiftNeedsRefresh": true,
       "exhaustGiftName": ""
     },
     "armor": {

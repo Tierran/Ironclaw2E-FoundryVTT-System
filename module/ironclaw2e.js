@@ -182,6 +182,14 @@ Hooks.once('init', async function () {
         default: true,
         config: false
     });
+    game.settings.register("ironclaw2e", "weaponExhaustNeedsRefreshed", {
+        name: "ironclaw2e.config.weaponExhaustNeedsRefreshed",
+        hint: "ironclaw2e.config.weaponExhaustNeedsRefreshedHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
     // Chat button configs
     game.settings.register("ironclaw2e", "chatButtons", {
         name: "ironclaw2e.config.chatButtons",

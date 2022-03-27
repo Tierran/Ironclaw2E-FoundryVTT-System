@@ -190,6 +190,8 @@
   "ironclaw2e.config.askReadyWhenUsedHint": "If checked, weapons that automatically ready when they are used will ask to confirm it first.",
   "ironclaw2e.config.sendWeaponReadyExhaustMessage": "Send weapon readying gift exhaustion to chat",
   "ironclaw2e.config.sendWeaponReadyExhaustMessageHint": "If checked, weapons that have a gift to auto-exhaust when readied will also confirm gift exhaustion with a chat message.",
+  "ironclaw2e.config.weaponExhaustNeedsRefreshed": "Weapons ask to refresh their gifts",
+  "ironclaw2e.config.weaponExhaustNeedsRefreshedHint": "If checked, weapons that have a gift to auto-exhaust will ask to refresh that gift when the weapon is used with the gift exhausted. Unchecked, the weapons will instead ignore the gift's state and work regardless.",
 
   "ironclaw2e.config.defaultSendDamage": "Damage to chat by default",
   "ironclaw2e.config.defaultSendDamageHint": "If checked, the damage-applying dialog will have the 'Send to chat' option checked by default.",
