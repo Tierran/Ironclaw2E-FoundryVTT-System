@@ -454,6 +454,16 @@
   "ironclaw2e.sheets.actor.parryTitle": "Parry with {name}",
   "ironclaw2e.sheets.actor.counterTitle": "Counter with {name}",
   "ironclaw2e.sheets.actor.giftTitle": "Use Gift",
+  "ironclaw2e.sheets.actor.putAwayTitle": "Put away {name}",
+  "ironclaw2e.sheets.actor.readyTitle": "Ready {name}",
+
+  "ironclaw2e.sheets.actor.readied": "Readied",
+  "ironclaw2e.sheets.actor.stowed": "Stowed",
+  "ironclaw2e.sheets.actor.off": "Off",
+  "ironclaw2e.sheets.actor.worn": "Worn",
+  "ironclaw2e.sheets.actor.held": "Held",
+  "ironclaw2e.sheets.actor.exhausted": "Exhausted",
+  "ironclaw2e.sheets.actor.refreshed": "Refreshed",
 
   "ironclaw2e.sheets.actor.wear": "Wear",
   "ironclaw2e.sheets.actor.takeOff": "Take Off",
@@ -463,6 +473,18 @@
   "ironclaw2e.sheets.actor.refresh": "Refresh",
   "ironclaw2e.sheets.actor.light": "Light",
   "ironclaw2e.sheets.actor.douse": "Douse",
+
+  "ironclaw2e.sheets.actor.details.species": "Species",
+  "ironclaw2e.sheets.actor.details.speciesName": "Species Name",
+  "ironclaw2e.sheets.actor.details.speciesSkills": "Species Skills:",
+  "ironclaw2e.sheets.actor.details.career": "Career",
+  "ironclaw2e.sheets.actor.details.careerName": "Career Name",
+  "ironclaw2e.sheets.actor.details.careerSkills": "Career Skills:",
+  "ironclaw2e.sheets.actor.details.skills": "Skills",
+  "ironclaw2e.sheets.actor.details.totalDice": "Total Dice: {dice}",
+  "ironclaw2e.sheets.actor.details.marks": "Marks:",
+  "ironclaw2e.sheets.actor.details.marksDice": "Mark Dice: {dice}",
+  "ironclaw2e.sheets.actor.details.favoredUse": "Favored use",
 
 
   "ironclaw2e.effect.status.focused": "Focused",

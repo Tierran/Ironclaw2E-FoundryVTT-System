@@ -25,25 +25,24 @@
             {{/if}}
 
             <p class="small-text">{{localize "ironclaw2e.chatInfo.damageCalcInfo.allEffects"}}: {{itemData.effect}}</p>
-
-            {{#if successfulAttack}}
-            <div class="chat-item button-holder" data-conditions="{{itemData.effectConditionsLabel}}" data-penetrating="{{isPenetrating}}" data-weak="{{isWeak}}">
-                <span class="normal-label">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakHeader"}}</span>
-                {{#if hasMultipleMultipliers}}
-                <div class="flexrow">
-                    {{#if hasMultipleBaseEffects}}<button class="soak-button" data-soaktype="combined" data-damage="{{combinedDamage}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakCombined"}}</button>{{/if}}
-                    {{#if isImpaling}}<button class="soak-button {{#if hasMultipleBaseEffects}}small-text{{/if}}" data-soaktype="combined" data-damage="{{combinedImpalingDamage}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakCombinedImpaling"}}</button>{{/if}}
-                </div>
-                {{/if}}
-                <div class="flexrow">
-                    {{#if isImpaling}}<button class="soak-button {{#if hasMultipleBaseEffects}}small-text{{/if}}" data-soaktype="impaling" data-damage="{{doubleDamage}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakImpaling"}}</button>{{/if}}
-                    {{#if isSlaying}}<button class="soak-button" data-soaktype="slaying" data-damage="{{doubleDamage}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakSlaying"}}</button>{{/if}}
-                    {{#if isCritical}}<button class="soak-button" data-soaktype="critical" data-damage="{{criticalDamage}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakCritical"}}</button>{{/if}}
-                    {{#unless isConditional}}<button class="soak-button" data-soaktype="normal" data-damage="{{normalDamage}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakNormal"}}</button>{{else}}
-                    <button class="soak-button" data-soaktype="conditional" data-damage="-4">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakConditional"}}</button>{{/unless}}
-                </div>
+        </div>
+        {{#if successfulAttack}}
+        <div class="chat-item button-holder" data-conditions="{{itemData.effectConditionsLabel}}" data-penetrating="{{isPenetrating}}" data-weak="{{isWeak}}">
+            <span class="normal-label">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakHeader"}}</span>
+            {{#if hasMultipleMultipliers}}
+            <div class="flexrow">
+                {{#if hasMultipleBaseEffects}}<button class="soak-button" data-soaktype="combined" data-damage="{{combinedDamage}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakCombined"}}</button>{{/if}}
+                {{#if isImpaling}}<button class="soak-button {{#if hasMultipleBaseEffects}}small-text{{/if}}" data-soaktype="combined" data-damage="{{combinedImpalingDamage}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakCombinedImpaling"}}</button>{{/if}}
             </div>
             {{/if}}
+            <div class="flexrow">
+                {{#if isImpaling}}<button class="soak-button {{#if hasMultipleBaseEffects}}small-text{{/if}}" data-soaktype="impaling" data-damage="{{doubleDamage}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakImpaling"}}</button>{{/if}}
+                {{#if isSlaying}}<button class="soak-button" data-soaktype="slaying" data-damage="{{doubleDamage}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakSlaying"}}</button>{{/if}}
+                {{#if isCritical}}<button class="soak-button" data-soaktype="critical" data-damage="{{criticalDamage}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakCritical"}}</button>{{/if}}
+                {{#unless isConditional}}<button class="soak-button" data-soaktype="normal" data-damage="{{normalDamage}}">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakNormal"}}</button>{{else}}
+                <button class="soak-button" data-soaktype="conditional" data-damage="-4">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakConditional"}}</button>{{/unless}}
+            </div>
         </div>
+        {{/if}}
     </div>
 </div>
