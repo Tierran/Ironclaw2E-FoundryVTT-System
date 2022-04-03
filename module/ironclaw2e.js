@@ -20,7 +20,7 @@ import { rollHighestDialog } from "./dicerollers.js";
 import { rollTargetNumberOneLine } from "./dicerollers.js";
 import { rollHighestOneLine } from "./dicerollers.js";
 
-import { getSpeakerActor, makeCompareReady } from "./helpers.js";
+import { checkQuickModifierKey, getSpeakerActor, makeCompareReady } from "./helpers.js";
 
 import { getVersionNumbers } from "./versionupgrade.js";
 import { checkIfNewerVersion } from "./versionupgrade.js";
@@ -528,13 +528,14 @@ async function createIronclaw2EMacro(data, slot) {
     if (data.type !== "Item") return;
     if (!("data" in data)) return ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.macroOwnedItemsWarning"));
     const item = data.data;
+    const justInfo = checkQuickModifierKey();
 
     // Create the macro command
-    const command = `game.ironclaw2e.rollItemMacro("${item.name}");`;
-    let macro = game.macros.entities.find(m => (m.name === item.name) && (m.command === command));
+    const command = `game.ironclaw2e.rollItemMacro("${item.name}", ${justInfo ? "true" : "false"});`;
+    let macro = game.macros.find(m => (m.name === item.name) && (m.command === command));
     if (!macro) {
         macro = await Macro.create({
-            name: item.name,
+            name: item.name + (justInfo ? " To Chat" : ""),
             type: "script",
             img: item.img,
             command: command,
@@ -550,13 +551,13 @@ async function createIronclaw2EMacro(data, slot) {
  * @param {string} itemName
  * @return {Promise}
  */
-function rollItemMacro(itemName) {
+function rollItemMacro(itemName, justInfo = false) {
     const actor = getSpeakerActor();
     const item = actor ? actor.items.find(i => i.name === itemName) : null;
     if (!item) return ui.notifications.warn(game.i18n.format("ironclaw2e.ui.actorDoesNotHaveItem", { "itemName": itemName }));
 
     // Trigger the item roll
-    return item.roll();
+    return (justInfo ? item.sendInfoToChat() : item.roll());
 }
 
 /**
