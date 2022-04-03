@@ -430,6 +430,36 @@ export function getSpeakerActor() {
     return actor;
 }
 
+/**
+ * Get the actor from a chat message's speaker field
+ */
+export function getActorFromSpeaker({ actor = "", scene = "", token = "" }) {
+    // Get the actor, either through the scene if synthetic, or actor if a full one
+    let actualActor = null;
+    if (scene && token) {
+        const foo = game.scenes.get(scene)?.tokens.get(token);
+        actualActor = foo?.actor;
+    } else if (actor) {
+        actualActor = game.actors.get(actor);
+    }
+    return actualActor;
+}
+
+/**
+ * Get the token from a chat message's speaker field
+ */
+export function getTokenFromSpeaker({ actor = "", scene = "", token = "" }) {
+    // Get the token, either through the scene if possible, or by finding one for the actor
+    let actualToken = null;
+    if (scene && token) {
+        actualToken = game.scenes.get(scene)?.tokens.get(token);
+    } else if (actor) {
+        const foo = game.actors.get(actor);
+        actualToken = findActorToken(foo);
+    }
+    return actualToken;
+}
+
 /* -------------------------------------------- */
 /*  Range & Distance Helpers                    */
 /* -------------------------------------------- */

@@ -1,4 +1,4 @@
-import { findActorToken, findInItems, findTotalDice, popupConfirmationBox } from "../helpers.js";
+import { findActorToken, findInItems, findTotalDice, getTokenFromSpeaker, popupConfirmationBox } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -1307,7 +1307,7 @@ export class Ironclaw2EItem extends Item {
      * @param {number} presettn The TN to use
      * @param {number} opposingsuccesses The number of opposing successes for resisted attacks
      */
-    async attackRoll(directroll = false, ignoreresist = false, presettn = 3, opposingsuccesses = -1, sourcemessage = null) {
+    async attackRoll(directroll = false, ignoreresist = false, presettn = 3, opposingsuccesses = -1, sourcemessage = null, defendermessage = null) {
         const item = this;
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
@@ -1332,7 +1332,12 @@ export class Ironclaw2EItem extends Item {
         }
 
         // Grab the user's target
-        const [target] = (game.user.targets?.size > 0 ? game.user.targets : [null]);
+        let target = null;
+        if (defendermessage) {
+            target = getTokenFromSpeaker(defendermessage.data.speaker);
+        } else if (game.user.targets?.size > 0) {
+            [target] = game.user.targets;
+        }
 
         // Prepare the relevant data
         const exhaust = this.weaponGetGiftToExhaust();

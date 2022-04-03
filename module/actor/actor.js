@@ -293,7 +293,7 @@ export class Ironclaw2EActor extends Actor {
      * @param {number} presettn
      * @param {number} resists
      */
-    static triggerAttackerRoll(message, rolltype, directroll = false, skipresist = false, presettn = 3, resists = -1) {
+    static triggerAttackerRoll(message, rolltype, directroll = false, skipresist = false, defenders = null, presettn = 3, resists = -1) {
         const messageFlags = message?.data?.flags?.ironclaw2e;
         const otheritem = Ironclaw2EActor.getAttackerItemFlags(messageFlags);
         if (!otheritem) {
@@ -306,7 +306,7 @@ export class Ironclaw2EActor extends Actor {
         // Trigger the actual roll if the attacker is found and the weapon id is listed
         if (attackActor && otheritem.weaponId) {
             if (rolltype === "attack")
-                attackActor.items.get(otheritem.weaponId).attackRoll(directroll, skipresist, presettn, resists, message);
+                attackActor.items.get(otheritem.weaponId).attackRoll(directroll, skipresist, presettn, resists, message, defenders);
             else if (rolltype === "spark")
                 attackActor.items.get(otheritem.weaponId).sparkRoll(directroll);
         } else if (!attackActor) {
@@ -418,7 +418,7 @@ export class Ironclaw2EActor extends Actor {
             return null;
         }
 
-        // Get the actor, either through the sceneid if synthetic, or actorid if a full one
+        // Get the token, either through the sceneid if possible, or actorid if not
         let attackToken = null;
         if (otheritem.sceneId && otheritem.tokenId) {
             attackToken = game.scenes.get(otheritem.sceneId)?.tokens.get(otheritem.tokenId);
