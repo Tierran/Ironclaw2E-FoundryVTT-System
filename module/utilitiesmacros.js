@@ -17,18 +17,16 @@ Hooks.on("renderChatMessage", function (message, html, data) {
     // 'Who to show stuff to' system settings
     const noButtons = game.settings.get("ironclaw2e", "chatButtons") === false;
     const showOthersToAll = game.settings.get("ironclaw2e", "showDefenseButtons");
-    const showDesc = game.settings.get("ironclaw2e", "npcItemHasDescription");
+    const showDescription = game.settings.get("ironclaw2e", "npcItemHasDescription");
     const buttons = html.find('.button-holder');
-    const actor = getActorFromSpeaker(message.data.speaker);
 
+    // Chat message button system
     if (noButtons) {
         // If buttons are disabled, remove the buttons from the visible messages
         buttons.remove();
     } else {
         const showAuthor = game.user.isGM || message.isAuthor;
         const showOthers = game.user.isGM || !message.isAuthor || showOthersToAll;
-        // If the actor does not exist or has a player owner, or if NPC's have descriptions too, show the description
-        const showDescription = (!actor || actor?.hasPlayerOwner === true) || showDesc;
 
         // Get the flags of the message that determine what type of message it is
         const itemInfo = message.getFlag("ironclaw2e", "itemInfo");
@@ -36,9 +34,6 @@ Hooks.on("renderChatMessage", function (message, html, data) {
         const requestRoll = message.getFlag("ironclaw2e", "requestRoll");
 
         if (itemInfo) {
-            if (!showDescription) {
-                html.find('.item-description').remove();
-            }
             if (showAuthor) {
                 const attackHolder = buttons.find('.attack-buttons');
                 attackHolder.find('.default-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
@@ -75,6 +70,17 @@ Hooks.on("renderChatMessage", function (message, html, data) {
             } else {
                 buttons.remove();
             }
+        }
+    }
+
+    // Description hiding system, only go here if some descriptions should be hidden
+    if (showDescription == false && !game.user.isGM) {
+        const actor = getActorFromSpeaker(message.data.speaker);
+        // If the actor exists and has no player owner
+        const hideDescription = (actor && actor?.hasPlayerOwner === false);
+        if (hideDescription) {
+            // If description should be hidden, remove it
+            html.find('.item-description').remove();
         }
     }
 });
