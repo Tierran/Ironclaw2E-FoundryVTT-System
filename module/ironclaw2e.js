@@ -540,10 +540,11 @@ async function createIronclaw2EMacro(data, slot) {
 
     // Create the macro command
     const command = `game.ironclaw2e.rollItemMacro("${item.name}", ${justInfo ? "true" : "false"});`;
-    let macro = game.macros.find(m => (m.name === item.name) && (m.command === command));
+    const usedName = item.name + (justInfo ? " To Chat" : "");
+    let macro = game.macros.find(m => (m?.data.name === usedName) && (m?.data.command === command));
     if (!macro) {
         macro = await Macro.create({
-            name: item.name + (justInfo ? " To Chat" : ""),
+            name: usedName,
             type: "script",
             img: item.img,
             command: command,
