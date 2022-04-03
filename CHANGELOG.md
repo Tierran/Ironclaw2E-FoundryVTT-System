@@ -1,3 +1,9 @@
+### 0.5.11 Flat fixes release
+ - Added detection for flat damage to weapons
+ - Attackers now use the information for the defender's token through the chat if rolling directly against a damage, used for combat advantage detection
+ - Added a setting to hide NPC item descriptions from players
+ - Fixed an old bug with item macro creation
+
 ### 0.5.10 Explosive exhausting release
  - Added proper handling of explosive weapons and added a button to create AoE marker for them
  - Added checkboxes to automatically ready and stow weapons on use
