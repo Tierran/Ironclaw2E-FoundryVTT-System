@@ -19,7 +19,7 @@ export function getVersionNumbers(version) {
     if (versiontest.test(version)) {
         const result = version.match(versiontest);
         for (let i = 1; i < result.length; ++i) {
-            versionarray.push(result[i]); // Push each separate number in the version to a separate index in the array
+            versionarray.push(parseInt(result[i])); // Push each separate number in the version to a separate index in the array
         }
     } else {
         console.error("System version splitter given something which could not be split: " + version);
