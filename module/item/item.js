@@ -339,10 +339,16 @@ export class Ironclaw2EItem extends Item {
             // Damage
             const foo = data.effectsSplit.findIndex(element => element.includes("damage"));
             if (foo >= 0) {
-                const bar = data.effectsSplit[foo];
+                let bar = data.effectsSplit[foo];
+                let flat = false;
+                if (bar.includes("flat")) {
+                    bar = bar.replaceAll("flat", "");
+                    flat = true;
+                }
                 if (bar.length > 0) {
                     const damage = parseInt(bar.slice(-1));
                     data.damageEffect = isNaN(damage) ? -1 : damage;
+                    data.damageFlat = flat && data.damageEffect >= 0;
                 } else { data.damageEffect = -1; }
             } else { data.damageEffect = -1; }
             //Multi-attack
@@ -1171,6 +1177,7 @@ export class Ironclaw2EItem extends Item {
         const successfulAttack = usedsuccesses > 0 || itemData.attackAutoHits;
         const negativeSuccesses = usedsuccesses <= 0; // More like non-positive, but I prefer two-word variable names
 
+        const flat = itemData.damageFlat ?? false;
         const slaying = forceslaying || (itemData.effectsSplit?.includes("slaying") ?? false);
         const impaling = itemData.effectsSplit?.includes("impaling") ?? false;
         const critical = itemData.effectsSplit?.includes("critical") ?? false;
@@ -1202,6 +1209,7 @@ export class Ironclaw2EItem extends Item {
             "negativeSuccesses": negativeSuccesses,
             "resultStyle": "color:" + (successfulAttack ? (success || itemData.attackAutoHits ? CommonSystemInfo.resultColors.success : CommonSystemInfo.resultColors.tie) : CommonSystemInfo.resultColors.failure),
 
+            "isFlat": flat,
             "isSlaying": slaying,
             "isImpaling": impaling,
             "isCritical": critical,
@@ -1212,6 +1220,7 @@ export class Ironclaw2EItem extends Item {
             "doubleDamage": itemData.damageEffect + (usedsuccesses * 2),
             "criticalDamage": itemData.damageEffect + Math.floor(usedsuccesses * 1.5),
             "normalDamage": itemData.damageEffect + usedsuccesses,
+            "flatDamage": itemData.damageEffect,
 
             "hasMultipleMultipliers": effectCount >= 2,
             hasMultipleBaseEffects,

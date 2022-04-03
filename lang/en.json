@@ -408,6 +408,7 @@
   "ironclaw2e.chatInfo.damageCalcInfo.conditionalDamage": "Causes conditions",
   "ironclaw2e.chatInfo.damageCalcInfo.combinedDamage": "Combined Damage",
   "ironclaw2e.chatInfo.damageCalcInfo.combinedImpalingDamage": "Combined Impaling Damage",
+  "ironclaw2e.chatInfo.damageCalcInfo.flatDamage": "Flat Damage",
   "ironclaw2e.chatInfo.damageCalcInfo.resistSoak": "Resist to be added to Soak",
 
   "ironclaw2e.chatInfo.damageCalcInfo.penetratingAttack": "Penetrating Attack, no armor for Soak",
@@ -420,6 +421,7 @@
   "ironclaw2e.chatInfo.damageCalcInfo.soakCritical": "Critical",
   "ironclaw2e.chatInfo.damageCalcInfo.soakNormal": "Normal",
   "ironclaw2e.chatInfo.damageCalcInfo.soakImpaling": "Impaling",
+  "ironclaw2e.chatInfo.damageCalcInfo.soakFlat": "Flat",
   "ironclaw2e.chatInfo.damageCalcInfo.soakConditional": "Condition Effect",
 
   "ironclaw2e.chatInfo.damageCalcInfo.soakCombined": "Combined",
