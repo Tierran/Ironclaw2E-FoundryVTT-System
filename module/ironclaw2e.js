@@ -190,6 +190,14 @@ Hooks.once('init', async function () {
         default: true,
         config: false
     });
+    game.settings.register("ironclaw2e", "npcItemHasDescription", {
+        name: "ironclaw2e.config.npcItemHasDescription",
+        hint: "ironclaw2e.config.npcItemHasDescriptionHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
     // Chat button configs
     game.settings.register("ironclaw2e", "chatButtons", {
         name: "ironclaw2e.config.chatButtons",

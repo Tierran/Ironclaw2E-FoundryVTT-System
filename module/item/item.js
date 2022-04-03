@@ -896,6 +896,7 @@ export class Ironclaw2EItem extends Item {
         const itemData = item.data;
         const actor = this.actor;
 
+        // TODO: Make the system use speaker rather than these flags
         let flags = { "ironclaw2e.itemId": this.id, "ironclaw2e.itemActorId": actor.id, "ironclaw2e.itemTokenId": actor.token?.id, "ironclaw2e.itemSceneId": actor.token?.parent?.id };
         if (item.type === "weapon") {
             flags = mergeObject(flags, {
@@ -936,9 +937,9 @@ export class Ironclaw2EItem extends Item {
             "itemData": itemData,
             "hasButtons": item.type === "weapon",
             "standardDefense": checkStandardDefense(itemData.defendWith),
-            "actorId": actor.id,
-            "tokenId": actor.token?.id ?? null,
-            "sceneId": actor.token?.parent?.id ?? null,
+            "actorId": actor?.id ?? null,
+            "tokenId": actor?.token?.id ?? null,
+            "sceneId": actor?.token?.parent?.id ?? null,
             "equipHandedness": (item.type === 'weapon' ? CommonSystemInfo.equipHandedness[itemData.equip] : ""),
             "equipRange": (item.type === 'weapon' ? CommonSystemInfo.rangeBands[itemData.range] : "")
         };

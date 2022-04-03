@@ -4,7 +4,7 @@
         <h3 class="chat-header">{{item.name}}</h3>
     </header>
     <div class="chat-content">
-        <div class="chat-item">{{{itemData.description}}}</div>
+        <div class="chat-item item-description">{{{itemData.description}}}</div>
         <div class="chat-item">
             {{#if (typeCheck item.type "gift")}}
             <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.tags"}}:</strong> {{itemData.giftTags}}</p>
