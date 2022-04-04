@@ -1,4 +1,4 @@
-import { checkDiceArrayEmpty, getCombatAdvantageConstruction, getTemplatePosition } from "../helpers.js";
+import { checkDiceArrayEmpty, getCombatAdvantageConstruction, getTemplatePosition, popupConfirmationBox } from "../helpers.js";
 import { addArrays } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -39,6 +39,26 @@ export class Ironclaw2EActor extends Actor {
     /* -------------------------------------------- */
     /* Static Functions                             */
     /* -------------------------------------------- */
+
+    /**
+     * Function to hook on item pre-create, checks 
+     * @param {Ironclaw2EItem} item
+     * @param {object} data
+     * @param {object} options
+     * @param {string} user
+     */
+    static onActorPreCreateItem(item, data, options, user) {
+        // The hook is only really relevant for template items
+        // If the item is a template item, grab the data from it and update the actor with it, then prevent the item's creation by returning false
+        if (item.type === "speciesTemplate" || item.type === "careerTemplate") {
+            const actor = item.actor;
+            // Only applies if the actor actually exists
+            if (actor) {
+                actor.applyTemplate(data, { "confirm": options?.confirmCreation ?? false });
+                return false;
+            }
+        }
+    }
 
     /**
      * Handle the chat button event for clicking attack
@@ -1608,6 +1628,66 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /**
+     * Apply a template item to this actor
+     * @param {object | Ironclaw2EItem} item
+     */
+    async applyTemplate(item, { wait = -1, confirm = true } = {}) {
+        const actorData = this.data;
+        const data = actorData.data;
+        const itemData = (item instanceof Ironclaw2EItem ? item.data : item);
+        let updateData = {};
+
+        // Optional sleep to help avert race conditions
+        if (wait > 0) await sleep(wait);
+
+        // Simple stat updates
+        const usedName = (itemData.data.forcedName ? itemData.data.forcedName : itemData.name);
+        if (itemData.type === "speciesTemplate") {
+            if (confirm && data.traits.species.name) {
+                // Confirmation on whether to replace the existing data
+                const confirmation = await popupConfirmationBox("ironclaw2e.dialog.templateReplacementSpecies.title", "ironclaw2e.dialog.templateReplacementSpecies.note", "ironclaw2e.dialog.replace",
+                    { "actorname": actorData.name, "itemname": usedName });
+                if (confirmation.confirmed === false) return;
+            }
+            updateData = {
+                "data.traits.species.name": usedName,
+                "data.traits.species.speciesSkill1": itemData.data.skill1,
+                "data.traits.species.speciesSkill2": itemData.data.skill2,
+                "data.traits.species.speciesSkill3": itemData.data.skill3,
+
+                "data.attributes.habitat": itemData.data.attributes.habitat,
+                "data.attributes.diet": itemData.data.attributes.diet,
+                "data.attributes.cycle": itemData.data.attributes.cycle,
+                "data.attributes.senses": itemData.data.attributes.senses,
+            };
+        } else if (itemData.type === "careerTemplate") {
+            if (confirm && data.traits.career.name) {
+                // Confirmation on whether to replace the existing data
+                const confirmation = await popupConfirmationBox("ironclaw2e.dialog.templateReplacementCareer.title", "ironclaw2e.dialog.templateReplacementCareer.note", "ironclaw2e.dialog.replace",
+                    { "actorname": actorData.name, "itemname": usedName });
+                if (confirmation.confirmed === false) return;
+            }
+            updateData = {
+                "data.traits.career.name": usedName,
+                "data.traits.career.careerSkill1": itemData.data.skill1,
+                "data.traits.career.careerSkill2": itemData.data.skill2,
+                "data.traits.career.careerSkill3": itemData.data.skill3
+            };
+        }
+
+        // Actual update
+        await this.update(updateData);
+
+        // Getting and making the embedded documents, if the actor doesn't yet have them
+        // TODO: Actually do this
+
+    }
+
+    /* -------------------------------------------- */
+    /*  Actor Information Getters                   */
+    /* -------------------------------------------- */
+
+    /**
      * Get the degree of range penalty reduction this actor has for the given item
      * @param {Ironclaw2EItem} item
      * @returns {{reduction: number, autocheck: boolean}}
@@ -2499,3 +2579,6 @@ export class Ironclaw2EActor extends Actor {
         return rollreturn;
     }
 }
+
+// Actual Hooks
+Hooks.on("preCreateItem", Ironclaw2EActor.onActorPreCreateItem);

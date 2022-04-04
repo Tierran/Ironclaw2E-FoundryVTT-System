@@ -425,7 +425,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                 }
             }
         }
-        return this.actor.createEmbeddedDocuments("Item", itemData);
+        return this.actor.createEmbeddedDocuments("Item", itemData, { confirmCreation: true });
     }
 
 

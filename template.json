@@ -193,7 +193,7 @@
     }
   },
   "Item": {
-    "types": [ "gift", "weapon", "armor", "shield", "illumination", "extraCareer", "item" ],
+    "types": [ "gift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "item" ],
     "templates": {
       "base": {
         "description": "",
@@ -202,6 +202,15 @@
       "physical": {
         "quantity": 1,
         "weight": "0.0"
+      },
+      "traitTemplate": {
+        "forcedName": "",
+        "skill1": "",
+        "skill2": "",
+        "skill3": "",
+        "gift1": "",
+        "gift2": "",
+        "gift3": ""
       }
     },
     "gift": {
@@ -269,6 +278,23 @@
     },
     "item": {
       "templates": [ "base", "physical" ]
+    },
+    "speciesTemplate": {
+      "templates": [ "traitTemplate" ],
+      "weapons": {
+        "weapon1": "",
+        "weapon2": "",
+        "weapon3": ""
+      },
+      "attributes": {
+        "habitat": "",
+        "diet": "",
+        "cycle": "",
+        "senses": ""
+      }
+    },
+    "careerTemplate": {
+      "templates": [ "traitTemplate" ]
     }
   }
 }

@@ -1,0 +1,55 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <header class="sheet-header">
+        <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
+        <div class="header-fields">
+            <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
+            <div class="resource flexrow flex-group-center flex-tight">
+                <label for="data.forcedName" class="resource-label">Species Name:</label>
+                <input type="text" name="data.forcedName" value="{{data.forcedName}}" placeholder="{{item.name}}" data-dtype="String" />
+            </div>
+        </div>
+    </header>
+
+    {{!-- Sheet Tab Navigation --}}
+    <nav class="sheet-tabs tabs" data-group="primary">
+        <a class="item" data-tab="description">Description</a>
+    </nav>
+
+    {{!-- Sheet Body --}}
+    <section class="sheet-body sheet-body-small">
+
+        {{!-- Description Tab --}}
+        <div class="tab attributes" data-group="primary" data-tab="description">
+            <div class="flexcol">
+                <h2 class="normal-label">Species Template Data:</h2>
+                <div class="resource flexrow flex-group-center">
+                    <label class="normal-label">Species Skills:</label>
+                    <input type="text" name="data.skill1" value="{{data.skill1}}" data-dtype="String" />
+                    <input type="text" name="data.skill2" value="{{data.skill2}}" data-dtype="String" />
+                    <input type="text" name="data.skill3" value="{{data.skill3}}" data-dtype="String" />
+                </div>
+                <div class="resource flexrow flex-group-center">
+                    <label class="normal-label">Species Gifts:</label>
+                    <input type="text" name="data.gift1" value="{{data.gift1}}" data-dtype="String" />
+                    <input type="text" name="data.gift2" value="{{data.gift2}}" data-dtype="String" />
+                    <input type="text" name="data.gift3" value="{{data.gift3}}" data-dtype="String" />
+                </div>
+                <div class="resource flexrow flex-group-center">
+                    <label class="normal-label">Species Weapons:</label>
+                    <input type="text" name="data.weapons.weapon1" value="{{data.weapons.weapon1}}" data-dtype="String" />
+                    <input type="text" name="data.weapons.weapon2" value="{{data.weapons.weapon2}}" data-dtype="String" />
+                    <input type="text" name="data.weapons.weapon3" value="{{data.weapons.weapon3}}" data-dtype="String" />
+                </div>
+            </div>
+
+            <div class="attributes grid grid-4col grid-minimal">
+                {{#each data.attributes as |attribute key|}}
+                <div class="trait flexrow flex-center flex-tight arrange-vertically">
+                    <label for="data.attributes.{{key}}" class="normal-label">{{key}}</label>
+                    <input type="text" name="data.attributes.{{key}}" value="{{attribute}}" data-dtype="String" />
+                </div>
+                {{/each}}
+            </div>
+        </div>
+    </section>
+</form>

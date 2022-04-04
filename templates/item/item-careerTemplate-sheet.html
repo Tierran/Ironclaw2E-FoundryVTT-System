@@ -1,0 +1,40 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <header class="sheet-header">
+        <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
+        <div class="header-fields">
+            <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
+            <div class="resource flexrow flex-group-center flex-tight">
+                <label for="data.forcedName" class="resource-label">Career Name:</label>
+                <input type="text" name="data.forcedName" value="{{data.forcedName}}" placeholder="{{item.name}}" data-dtype="String" />
+            </div>
+        </div>
+    </header>
+
+    {{!-- Sheet Tab Navigation --}}
+    <nav class="sheet-tabs tabs" data-group="primary">
+        <a class="item" data-tab="description">Description</a>
+    </nav>
+
+    {{!-- Sheet Body --}}
+    <section class="sheet-body sheet-body-small">
+
+        {{!-- Description Tab --}}
+        <div class="tab attributes" data-group="primary" data-tab="description">
+            <div class="flexcol">
+                <h2 class="normal-label">Career Template Data:</h2>
+                <div class="resource flexrow flex-group-center">
+                    <label class="normal-label">Career Skills:</label>
+                    <input type="text" name="data.skill1" value="{{data.skill1}}" data-dtype="String" />
+                    <input type="text" name="data.skill2" value="{{data.skill2}}" data-dtype="String" />
+                    <input type="text" name="data.skill3" value="{{data.skill3}}" data-dtype="String" />
+                </div>
+                <div class="resource flexrow flex-group-center">
+                    <label class="normal-label">Career Gifts:</label>
+                    <input type="text" name="data.gift1" value="{{data.gift1}}" data-dtype="String" />
+                    <input type="text" name="data.gift2" value="{{data.gift2}}" data-dtype="String" />
+                    <input type="text" name="data.gift3" value="{{data.gift3}}" data-dtype="String" />
+                </div>
+            </div>
+        </div>
+    </section>
+</form>

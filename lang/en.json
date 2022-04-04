@@ -9,6 +9,8 @@
   "ITEM.TypeShield": "Shield",
   "ITEM.TypeIllumination": "Light Source",
   "ITEM.TypeExtracareer": "Extra Career",
+  "ITEM.TypeSpeciestemplate": "Species Template",
+  "ITEM.TypeCareertemplate": "Career Template",
   "ITEM.TypeItem": "Item",
 
 
@@ -219,6 +221,7 @@
   "ironclaw2e.dialog.sendToChat": "Send to Chat?",
   "ironclaw2e.dialog.request": "Request",
   "ironclaw2e.dialog.ready": "Ready",
+  "ironclaw2e.dialog.replace": "Replace",
 
   "ironclaw2e.dialog.macroDefault.titleTN": "Target Number Roll for {name}",
   "ironclaw2e.dialog.macroDefault.titleCopyTN": "Change Roll to TN",
@@ -278,6 +281,12 @@
 
   "ironclaw2e.dialog.statusResetConfirmation.title": "Status Condition Reset",
   "ironclaw2e.dialog.statusResetConfirmation.note": "Are you sure you want to reset all status effects?",
+
+  "ironclaw2e.dialog.templateReplacementSpecies.title": "Replace Species",
+  "ironclaw2e.dialog.templateReplacementSpecies.note": "Replace existing species for {actor} with {item}?",
+
+  "ironclaw2e.dialog.templateReplacementCareer.title": "Replace Career",
+  "ironclaw2e.dialog.templateReplacementCareer.note": "Replace existing career for {actor} with {item}?",
 
   "ironclaw2e.dialog.itemInfo.title": "Send item info for {name}",
   "ironclaw2e.dialog.itemInfo.header": "Send {name} info to chat?",
