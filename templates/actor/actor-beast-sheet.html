@@ -57,41 +57,7 @@
 
         {{!-- Status Effects Tab --}}
         <div class="tab statuseffects" data-group="primary" data-tab="statuseffects">
-            <div class="statuseffects">
-                <div class="flexrow">
-                    <h3 class="header-label flexrow flex-center">Status Effects:</h3>
-                    <div class="rollable roll-effects-add flex-group-center flex-tight">
-                        <span class="normal-label">Add effect</span>
-                    </div>
-                    <div class="rollable roll-effects-reset flex-group-center flex-tight">
-                        <span class="normal-label">Reset effects</span>
-                    </div>
-                </div>
-                <ol class="items-list">
-                    <li class="item flexrow item-header">
-                        <div class="item-image"></div>
-                        <div class="item-name">Effect</div>
-                        <div class="item-controls">
-                        </div>
-                    </li>
-                    {{#each actor.effects as |effect id|}}
-                    <li class="item effect flexrow" data-effect-id="{{effect._id}}">
-                        <div class="item-image"><img src="{{effect.icon}}" title="{{effect.label}}" width="24" height="24" /></div>
-                        <h4 class="item-name double-clickable roll-double-info-cond">{{effect.label}}</h4>
-                        {{#if (conditionQuotaCheck effect)}}
-                        <div class="item-controls flexrow">
-                            <span class="normal-label">{{#if (conditionCheck effect "temporaryward")}}Ward:{{else}}Quota:{{/if}}</span>
-                            <div></div>
-                            <input class="roll-effects-quota-change" type="text" value="{{effect.flags.ironclaw2e.quota}}" data-id="{{effect._id}}" data-dtype="Number" onfocus="this.select();" />
-                        </div>
-                        {{/if}}
-                        <div class="item-controls">
-                            <a class="rollable roll-effects-delete" title="Delete Effect" data-id="{{effect._id}}"><i class="fas fa-trash"></i></a>
-                        </div>
-                    </li>
-                    {{/each}}
-                </ol>
-            </div>
+            {{> 'systems/ironclaw2e/templates/parts/statuseffects.html'}}
         </div>
 
         {{!-- Species and Career Tab --}}
@@ -101,144 +67,17 @@
 
         {{!-- Owned Gifts Tab --}}
         <div class="tab gifts" data-group="primary" data-tab="gifts">
-            <ol class="items-list">
-                <li class="item flexrow item-header">
-                    <div class="item-image"></div>
-                    <div class="item-name">Gift</div>
-                    <div class="item-controls">
-                        <a class="item-control item-create" title="Create item" data-type="gift"><i class="fas fa-plus"></i> Add gift</a>
-                    </div>
-                </li>
-                {{#each actor.gifts as |item id|}}
-                <li class="item flexrow" data-item-id="{{item._id}}">
-                    <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
-                    <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
-                    <div class="item-controls">
-                        {{#if (usableGift item)}}<a class="rollable roll-item" title="Use Gift" data-roll="0" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/gift-use.svg" width="24" height="24" /></a>{{/if}}
-                    </div>
-                    <div class="item-controls">
-                        {{#if item.data.exhaustWhenUsed}}<a class="rollable roll-item-change" title="{{#if item.data.exhausted}}Refresh{{else}}Exhaust{{/if}}" data-roll="1" data-item="{{item._id}}"><span>{{#if item.data.exhausted}}Exhausted{{else}}Refreshed{{/if}}</span></a>{{/if}}
-                        <a class="rollable roll-item-change" title="{{#if item.data.showInBattleStats}}Hide in Battle Stats{{else}}Show in Battle Stats{{/if}}" data-roll="0" data-item="{{item._id}}"><span>{{#if item.data.showInBattleStats}}Shown{{else}}Hidden{{/if}}</span></a>
-                    </div>
-                    <div class="item-controls">
-                        <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
-                        <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
-                    </div>
-                </li>
-                {{/each}}
-            </ol>
-            <ol class="items-list">
-                <li class="item flexrow item-header">
-                    <div class="item-image"></div>
-                    <div class="item-name">Extra Careers</div>
-                    <div class="item-controls">
-                        <a class="item-control item-create" title="Create an Extra Career" data-type="extraCareer"><i class="fas fa-plus"></i> Add career</a>
-                    </div>
-                </li>
-                {{#each actor.extraCareers as |item id|}}
-                <li class="item flexrow" data-item-id="{{item._id}}">
-                    <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
-                    <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
-                    <div class="flexrow">
-                        <span class="small-text">{{item.data.careerSkill1}}, {{item.data.careerSkill2}}, {{item.data.careerSkill3}}</span>
-                    </div>
-                    <div class="item-controls flexrow">
-                        <span class="normal-label">Die:</span>
-                        <div></div>
-                        <input type="text" class="roll-career-dice-change" value="{{item.data.dice}}" data-item="{{item._id}}" data-dtype="String" onfocus="this.select();" />
-                    </div>
-                    <div class="item-controls">
-                        <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
-                        <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
-                    </div>
-                </li>
-                {{/each}}
-            </ol>
+            {{> 'systems/ironclaw2e/templates/parts/gifts.html'}}
         </div>
 
         {{!-- Owned Items Tab --}}
         <div class="tab items" data-group="primary" data-tab="items">
-            <h3 class="header-label">Items:</h3>
-            <div class="flexrow flex-group-left flex-tight">
-                <span class="resource-label">Encumbrance:</span>
-                <span class="normal-label rollable roll-enc-effect" data-removals="cannotmove,over-burdened,burdened" data-additions="">None: {{data.encumbranceNone}}</span>
-                <span class="normal-label rollable roll-enc-effect" data-removals="cannotmove,over-burdened" data-additions="burdened">Burdened: {{data.encumbranceBurdened}}</span>
-                <span class="normal-label rollable roll-enc-effect" data-removals="cannotmove" data-additions="burdened,over-burdened">Over-Burdened: {{data.encumbranceOverBurdened}}</span>
-            </div>
-            <span class="bold-text allow-selection">Total carried weight: {{valueRoundTo data.totalWeight 2}} stones</span>
-            <ol class="items-list">
-                <li class="item flexrow item-header">
-                    <div class="item-image"></div>
-                    <div class="item-name">Item</div>
-                    <div class="item-controls">
-                        <a class="item-control item-create" title="Create light item" data-type="illumination"><i class="fas fa-plus"></i></a>
-                        <a class="item-control item-create" title="Create item" data-type="item"><i class="fas fa-plus"></i></a>
-                    </div>
-                </li>
-                {{#each actor.lightItems as |item id|}}
-                <li class="item flexrow" data-item-id="{{item._id}}">
-                    <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
-                    <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
-                    <div class="item-controls flexrow">
-                        <a class="rollable roll-item" title="{{#if item.data.lighted}}Douse{{else}}Light{{/if}} {{item.name}}" data-roll="5" data-item="{{item._id}}"><img src="{{#if item.data.lighted}}systems/ironclaw2e/icons/illumination-light.svg{{else}}systems/ironclaw2e/icons/illumination-douse.svg{{/if}}" width="24" height="24" /></a>
-                    </div>
-                    <div class="item-controls">
-                        <a class="rollable roll-item-change" title="{{#if item.data.showInBattleStats}}Hide in Battle Stats{{else}}Show in Battle Stats{{/if}}" data-roll="0" data-item="{{item._id}}"><span>{{#if item.data.showInBattleStats}}Shown{{else}}Hidden{{/if}}</span></a>
-                    </div>
-                    <div class="item-controls">
-                        <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
-                        <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
-                    </div>
-                </li>
-                {{/each}}
-            </ol>
-            <ol class="items-list">
-                {{#each actor.gear as |item id|}}
-                <li class="item flexrow" data-item-id="{{item._id}}">
-                    <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
-                    <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
-                    <div class="item-controls">
-                        <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
-                        <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
-                    </div>
-                </li>
-                {{/each}}
-            </ol>
+            {{> 'systems/ironclaw2e/templates/parts/items.html'}}
         </div>
 
         {{!-- Owned Weapons Tab --}}
         <div class="tab weapons" data-group="primary" data-tab="weapons">
-            <ol class="items-list">
-                <li class="item flexrow item-header">
-                    <div class="item-image"></div>
-                    <div class="item-name">Weapon</div>
-                    <div class="item-controls">
-                        <a class="item-control item-create" title="Create item" data-type="weapon"><i class="fas fa-plus"></i> Add weapon</a>
-                    </div>
-                </li>
-                {{#each actor.weapons as |item id|}}
-                <li class="item flexrow" data-item-id="{{item._id}}">
-                    <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
-                    <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
-                    <div class="item-controls flexrow">
-                        {{#if item.data.attackDice}}<a class="rollable roll-item" title="Attack with {{item.name}}" data-roll="1" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-attack.svg" width="24" height="24" /></a>{{/if}}
-                        {{#if item.data.useSpark}}<a class="rollable roll-item" title="Spark Die: {{item.data.sparkDie}}" data-roll="4" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-spark.svg" width="24" height="24" /></a>{{/if}}
-                        <div></div>
-                        {{#if item.data.defenseDice}}<a class="rollable roll-item" title="Parry with {{item.name}}" data-roll="2" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-parry.svg" width="24" height="24" /></a>{{/if}}
-                        <div></div>
-                        {{#if item.data.counterDice}}<a class="rollable roll-item" title="Counter with {{item.name}}" data-roll="3" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-counter.svg" width="24" height="24" /></a>{{/if}}
-                    </div>
-                    <div class="item-controls">
-                        <a class="rollable roll-item-change" title="{{#if item.data.readied}}Put away {{item.name}}{{else}}Ready {{item.name}}{{/if}}" data-roll="4" data-item="{{item._id}}"><span>{{#if item.data.readied}}Readied{{else}}Stowed{{/if}}</span></a>
-                        <a class="rollable roll-item-change" title="{{#if item.data.showInBattleStats}}Hide in Battle Stats{{else}}Show in Battle Stats{{/if}}" data-roll="0" data-item="{{item._id}}"><span>{{#if item.data.showInBattleStats}}Shown{{else}}Hidden{{/if}}</span></a>
-                    </div>
-                    <div class="item-controls">
-                        <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
-                        <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
-                    </div>
-                </li>
-                {{/each}}
-            </ol>
+            {{> 'systems/ironclaw2e/templates/parts/combatgear.html'}}
         </div>
 
     </section>

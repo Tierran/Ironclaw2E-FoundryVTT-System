@@ -382,6 +382,7 @@ export class Ironclaw2EItem extends Item {
                     }
                 }
                 data.attackAutoHits = (multiType === "explosion") && data.hasResist;
+                data.attackHasTemplate = data.attackAutoHits && data.multiAttackRange;
             } else { data.multiAttackType = ""; }
             // Condition effects
             const conds = CommonConditionInfo.getMatchedConditions(data.effectsSplit);

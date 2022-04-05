@@ -64,11 +64,11 @@
                 </button>{{/if}}
                 {{#if itemData.canSpark}}<button class="spark-attack small-text" style="max-width:4em">{{localize "ironclaw2e.chatInfo.itemInfo.attackSpark"}}</button>{{/if}}
             </div>
-            {{#if itemData.attackAutoHits}}{{#if itemData.multiAttackRange}}
+            {{#if itemData.attackHasTemplate}}
             <div class="template-buttons flexrow">
                 <button class="place-template" data-arearange="{{itemData.multiAttackRange}}">{{localize "ironclaw2e.chatInfo.itemInfo.placeTemplate"}}</button>
             </div>
-            {{/if}}{{/if}}
+            {{/if}}
             <div class="defense-buttons flexrow" data-defense="{{itemData.defendWith}}" data-hasresist="{{itemData.hasResist}}" data-weaponname="{{item.name}}">
                 {{#unless itemData.hasResist}}
                 {{#if standardDefense}}

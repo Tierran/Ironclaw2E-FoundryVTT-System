@@ -184,7 +184,11 @@ export class Ironclaw2EActorSheet extends ActorSheet {
     _prepateTemplateHelp(sheetData) {
         let help = {
             "skillSystem": this.actor.data.type !== 'beast',
-            "favoredUse": this.actor.data.type === 'character'
+            "favoredUse": this.actor.data.type === 'character',
+            "encumbranceInItems": this.actor.data.type === 'beast',
+            "armorsDisabled": this.actor.data.type === 'beast',
+            "shieldsDisabled": this.actor.data.type === 'beast',
+            "coinageDisabled": this.actor.data.type === 'beast'
         };
         return help;
     }
@@ -425,6 +429,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                 }
             }
         }
+
         return this.actor.createEmbeddedDocuments("Item", itemData, { confirmCreation: true });
     }
 
@@ -695,23 +700,23 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             const item = this.actor.items.get(dataset.item);
             const directroll = checkQuickModifierKey();
 
-            switch (parseInt(dataset.roll)) {
-                case 0:
+            switch (dataset.roll) {
+                case "gift":
                     item.giftRoll(directroll);
                     break;
-                case 1:
+                case "attack":
                     item.attackRoll(directroll);
                     break;
-                case 2:
+                case "defense":
                     item.defenseRoll(directroll);
                     break;
-                case 3:
+                case "counter":
                     item.counterRoll(directroll);
                     break;
-                case 4:
+                case "spark":
                     item.sparkRoll(directroll);
                     break;
-                case 5:
+                case "light":
                     this.actor.changeLightSource(item);
                     break;
                 default:
@@ -732,39 +737,20 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const dataset = element.dataset;
         const data = this.actor.data.data;
 
-        if (dataset.roll && dataset.item) {
+        if (dataset.stat && dataset.item) {
             const item = this.actor.items.get(dataset.item);
             let foobar = null;
 
-            switch (parseInt(dataset.roll)) {
-                case 0:
-                    if (!item.data.data.hasOwnProperty("showInBattleStats"))
-                        break;
-                    foobar = { "_id": item.id, "data.showInBattleStats": !item.data.data.showInBattleStats };
-                    break;
-                case 1:
-                    if (!item.data.data.hasOwnProperty("exhausted"))
-                        break;
-                    foobar = { "_id": item.id, "data.exhausted": !item.data.data.exhausted };
-                    break;
-                case 2:
-                    if (!item.data.data.hasOwnProperty("worn"))
-                        break;
-                    foobar = { "_id": item.id, "data.worn": !item.data.data.worn };
-                    break;
-                case 3:
-                    if (!item.data.data.hasOwnProperty("held"))
-                        break;
-                    foobar = { "_id": item.id, "data.held": !item.data.data.held };
-                    break;
-                case 4:
-                    if (!item.data.data.hasOwnProperty("readied"))
-                        break;
+            if (dataset.stat === "readied") {
+                // Readied special case
+                if (item.data.data.hasOwnProperty("readied"))
                     item.weaponToggleReady();
-                    break;
-                default:
-                    console.warn("_onItemChangeStat got an unknown value: " + dataset.roll);
-                    break;
+            } else {
+                if (item.data.data.hasOwnProperty(dataset.stat)) {
+                    const propertyName = "data." + dataset.stat;
+                    foobar = { "_id": item.id };
+                    foobar[propertyName] = !item.data.data[dataset.stat];
+                }
             }
 
             if (foobar) {

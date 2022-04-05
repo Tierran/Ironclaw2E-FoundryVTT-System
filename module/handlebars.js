@@ -58,7 +58,11 @@ async function loadHandleBarTemplates() {
     // register templates parts
     const templatePaths = [
         "systems/ironclaw2e/templates/parts/battlestats.html",
-        "systems/ironclaw2e/templates/parts/details.html"
+        "systems/ironclaw2e/templates/parts/details.html",
+        "systems/ironclaw2e/templates/parts/statuseffects.html",
+        "systems/ironclaw2e/templates/parts/gifts.html",
+        "systems/ironclaw2e/templates/parts/combatgear.html",
+        "systems/ironclaw2e/templates/parts/items.html"
     ];
     return loadTemplates(templatePaths);
 }
