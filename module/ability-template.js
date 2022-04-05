@@ -13,7 +13,7 @@ export class AbilityTemplateIronclaw extends MeasuredTemplate {
      * @param {Function} successfunc Function called when the template is successfully placed
      * @returns {AbilityTemplate | null} The template object, or null if the range given is invalid
      */
-    static fromRange(range, elevation = 0, successfunc = null) {
+    static fromRange(range, { elevation = 0, successfunc = null, originSheet = null } = {}) {
         const usedNumber = (typeof (range) === "string" ? getRangeDistanceFromBand(range) : range);
         if (isNaN(usedNumber) || usedNumber < 0) {
             console.warn("The given range is invalid for templates: " + range);
@@ -37,6 +37,7 @@ export class AbilityTemplateIronclaw extends MeasuredTemplate {
         const foo = new this(template);
         foo.successFunc = successfunc;
         foo.elevation = elevation;
+        foo.originSheet = originSheet;
         return foo;
     }
 
@@ -50,6 +51,9 @@ export class AbilityTemplateIronclaw extends MeasuredTemplate {
         this.draw();
         this.layer.activate();
         this.layer.preview.addChild(this);
+
+        // Hide the sheet that originated the preview
+        this.originSheet?.minimize();
 
         // Activate interactivity
         this.activatePreviewListeners(initialLayer);
@@ -84,6 +88,7 @@ export class AbilityTemplateIronclaw extends MeasuredTemplate {
             canvas.stage.off("mousedown", handlers.lc);
             canvas.app.view.oncontextmenu = null;
             initialLayer.activate();
+            this.originSheet?.maximize();
         };
 
         // Confirm the workflow (left-click)

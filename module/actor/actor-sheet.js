@@ -1,8 +1,9 @@
-import { checkApplicability, checkDiceArrayEmpty, diceFieldUpgrade, findTotalDice, getMacroSpeaker, makeCompareReady, reformDiceString, splitStatString, checkQuickModifierKey } from "../helpers.js";
+import { checkApplicability, checkDiceArrayEmpty, diceFieldUpgrade, findTotalDice, getMacroSpeaker, makeCompareReady, reformDiceString, splitStatString, checkQuickModifierKey, findActorToken } from "../helpers.js";
 import { CommonSystemInfo } from "../systeminfo.js";
 import { getBaseConditionIronclaw, setTargetConditionQuota } from "../conditions.js";
 import { hasConditionsIronclaw } from "../conditions.js";
 import { Ironclaw2EItem } from "../item/item.js";
+import { AbilityTemplateIronclaw } from "../ability-template.js";
 
 /**
  * Extend the basic ActorSheet
@@ -718,6 +719,11 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                     break;
                 case "light":
                     this.actor.changeLightSource(item);
+                    break;
+                case "template":
+                    const attackToken = findActorToken(this.actor);
+                    const template = AbilityTemplateIronclaw.fromRange(item.data.data.multiAttackRange, { "elevation": attackToken.data.elevation, "originSheet": this });
+                    if (template) template.drawPreview();
                     break;
                 default:
                     console.warn("_onItemRoll got an unknown value: " + dataset.roll);

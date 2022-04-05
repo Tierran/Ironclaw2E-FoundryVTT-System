@@ -320,7 +320,7 @@ async function onPlaceExplosionTemplate(event) {
         message.update({ "_id": x.id, "flags": flags });
     };
 
-    const template = AbilityTemplateIronclaw.fromRange(dataset.arearange, attackToken.data.elevation, onSuccess);
+    const template = AbilityTemplateIronclaw.fromRange(dataset.arearange, { "elevation": attackToken.data.elevation, "successfunc": onSuccess });
     if (template) template.drawPreview();
 }
 
