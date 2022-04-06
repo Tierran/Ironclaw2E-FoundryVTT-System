@@ -1,5 +1,3 @@
-Hooks.on("renderTokenHUD", addIronclawTokenButtons);
-
 function addIronclawTokenButtons(hud, html, data) {
     if (!game.settings.get("ironclaw2e", "showTokenExtraButtons")) {
         return; // If the buttons are turned off, return out
@@ -24,6 +22,7 @@ function addIronclawTokenButtons(hud, html, data) {
     const buttons = html.find('.extra-controls');
     buttons.find('.control-icon').click(hud.object, onIronclawTokenButtonPress.bind(this));
 }
+Hooks.on("renderTokenHUD", addIronclawTokenButtons);
 
 function onIronclawTokenButtonPress(event) {
     event.preventDefault();

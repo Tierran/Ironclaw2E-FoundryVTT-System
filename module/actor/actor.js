@@ -41,7 +41,7 @@ export class Ironclaw2EActor extends Actor {
     /* -------------------------------------------- */
 
     /**
-     * Function to hook on item pre-create, checks 
+     * Function to hook on item pre-create, checks for template items to stop them from being added to actors
      * @param {Ironclaw2EItem} item
      * @param {object} data
      * @param {object} options
@@ -1638,7 +1638,7 @@ export class Ironclaw2EActor extends Actor {
         let updateData = {};
 
         // Optional sleep to help avert race conditions
-        if (wait > 0) await sleep(wait);
+        if (wait > 0) await game.ironclaw2e.sleep(wait);
 
         // Simple stat updates
         const usedName = (itemData.data.forcedName ? itemData.data.forcedName : itemData.name);

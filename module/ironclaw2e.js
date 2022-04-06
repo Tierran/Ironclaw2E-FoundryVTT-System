@@ -5,7 +5,8 @@ import { Ironclaw2EActorSheet } from "./actor/actor-sheet.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { Ironclaw2EItemSheet } from "./item/item-sheet.js";
 
-import { } from"./token/token-hud-extender.js"
+import { } from "./token/token-hud-extender.js"
+import { } from "./token/token-extender.js"
 
 import { requestRollPopup } from "./utilitiesmacros.js";
 import { ironclawDragRulerIntegration } from "./utilitiesmacros.js";
