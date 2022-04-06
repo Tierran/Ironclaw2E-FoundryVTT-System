@@ -27,7 +27,7 @@
                 {{#if item.data.attackDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.attackTooltip" name=item.name}}" data-roll="attack" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-attack.svg" width="24" height="24" /></a>{{/if}}
                 {{#if item.data.useSpark}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.sparkTooltip"}}: {{item.data.sparkDie}}" data-roll="spark" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-spark.svg" width="24" height="24" /></a>{{/if}}
                 <div></div>
-                {{#if item.data.attackHasTemplate}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.templateTooltip" name=item.name radius=item.data.multiAttackRange}}" data-roll="template" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-template.svg" width="24" height="24" /></a>{{/if}}
+                {{#if item.data.attackHasTemplate}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.templateTooltip" name=item.name radius=item.data.multiAttackRangeShown}}" data-roll="template" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-template.svg" width="24" height="24" /></a>{{/if}}
                 <div></div>
                 {{#if item.data.defenseDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.parryTooltip" name=item.name}}" data-roll="defense" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-parry.svg" width="24" height="24" /></a>{{/if}}
                 <div></div>

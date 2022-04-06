@@ -379,6 +379,7 @@ export class Ironclaw2EItem extends Item {
                     const distString = multiString.substring(multiType.length);
                     if (CommonSystemInfo.rangeBandsArray.includes(distString)) {
                         data.multiAttackRange = distString;
+                        data.multiAttackRangeShown = CommonSystemInfo.rangeBands[distString];
                     }
                 }
                 data.attackAutoHits = (multiType === "explosion") && data.hasResist;
