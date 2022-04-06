@@ -230,7 +230,7 @@ Hooks.once('init', function () {
         hint: "ironclaw2e.config.autoConditionRemovalHint",
         scope: "world",
         type: Boolean,
-        default: false,
+        default: true,
         config: false
     });
     game.settings.register("ironclaw2e", "autoConditionRemovalNoTurns", {

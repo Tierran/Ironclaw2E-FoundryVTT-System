@@ -67,6 +67,6 @@ async function loadHandleBarTemplates() {
     return loadTemplates(templatePaths);
 }
 
-Hooks.once("init", function () {
+Hooks.once("setup", function () {
     loadHandleBarTemplates();
 });
