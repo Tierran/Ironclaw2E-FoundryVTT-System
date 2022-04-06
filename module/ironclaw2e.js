@@ -42,7 +42,7 @@ import { measureDistances } from "./canvas.js";
 /*  Base Hooks                                  */
 /* -------------------------------------------- */
 
-Hooks.once('init', async function () {
+Hooks.once('init', function () {
 
     game.ironclaw2e = {
         // Document claases
@@ -414,7 +414,7 @@ Hooks.once('init', async function () {
     console.log("Ironclaw2E System init complete");
 });
 
-Hooks.once('setup', async function () {
+Hooks.once('setup', function () {
     // Enhanced Terrain Layer check
     const etlActive = game.modules.get("combat-utility-belt")?.active === true;
     game.ironclaw2e.useETLElevation = etlActive;
@@ -433,7 +433,7 @@ Hooks.once('setup', async function () {
     console.log("Ironclaw2E System setup complete");
 });
 
-Hooks.once("ready", async function () {
+Hooks.once("ready", function () {
     // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
     Hooks.on("hotbarDrop", (bar, data, slot) => createIronclaw2EMacro(data, slot));
 
@@ -461,7 +461,7 @@ Hooks.once("ready", async function () {
         // TO BE REMOVED END
         console.log("Last system version played: " + lastVersion);
         if (checkIfNewerVersion(game.system.data.version, lastVersion)) {
-            await upgradeVersion(lastVersion);
+            upgradeVersion(lastVersion);
         }
         game.settings.set("ironclaw2e", "lastSystemVersionWorld", game.system.data.version);
     }
