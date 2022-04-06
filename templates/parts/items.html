@@ -48,7 +48,7 @@
                 <a class="rollable roll-item" title="{{#if item.data.lighted}}{{localize "ironclaw2e.sheets.actor.douse"}}{{else}}{{localize "ironclaw2e.sheets.actor.light"}}{{/if}} {{item.name}}" data-roll="light" data-item="{{item._id}}"><img src="{{#if item.data.lighted}}systems/ironclaw2e/icons/illumination-light.svg{{else}}systems/ironclaw2e/icons/illumination-douse.svg{{/if}}" width="24" height="24" /></a>
             </div>
             <div class="item-controls">
-                <a class="rollable roll-item-change" title="{{#if item.data.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.hideBattleTitle" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.showBattleTitle" name=item.name}}{{/if}}" data-stat="showInBattleStats" data-item="{{item._id}}"><span>{{#if item.data.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.shown"}}{{else}}{{localize "ironclaw2e.sheets.actor.hidden"}}{{/if}}</span></a>
+                <a class="rollable roll-item-change" title="{{#if item.data.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.hideBattleTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.showBattleTooltip" name=item.name}}{{/if}}" data-stat="showInBattleStats" data-item="{{item._id}}"><span>{{#if item.data.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.shown"}}{{else}}{{localize "ironclaw2e.sheets.actor.hidden"}}{{/if}}</span></a>
             </div>
             <div class="item-controls-small">
                 <a class="item-control item-edit" title="{{localize "ironclaw2e.sheets.actor.gear.editItem"}}"><i class="fas fa-edit"></i></a>

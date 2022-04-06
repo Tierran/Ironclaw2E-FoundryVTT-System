@@ -12,11 +12,11 @@
             <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
             <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
             <div class="item-controls-small">
-                {{#if (usableGift item)}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.giftTitle"}}" data-roll="gift" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/gift-use.svg" width="24" height="24" /></a>{{/if}}
+                {{#if (usableGift item)}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.giftTooltip"}}" data-roll="gift" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/gift-use.svg" width="24" height="24" /></a>{{/if}}
             </div>
             <div class="item-controls">
                 {{#if item.data.exhaustWhenUsed}}<a class="rollable roll-item-change" title="{{#if item.data.exhausted}}{{localize "ironclaw2e.sheets.actor.refresh"}}{{else}}{{localize "ironclaw2e.sheets.actor.exhaust"}}{{/if}}" data-stat="exhausted" data-item="{{item._id}}"><span>{{#if item.data.exhausted}}{{localize "ironclaw2e.sheets.actor.exhausted"}}{{else}}{{localize "ironclaw2e.sheets.actor.refreshed"}}{{/if}}</span></a>{{/if}}
-                <a class="rollable roll-item-change" title="{{#if item.data.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.hideBattleTitle" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.showBattleTitle" name=item.name}}{{/if}}" data-stat="showInBattleStats" data-item="{{item._id}}"><span>{{#if item.data.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.shown"}}{{else}}{{localize "ironclaw2e.sheets.actor.hidden"}}{{/if}}</span></a>
+                <a class="rollable roll-item-change" title="{{#if item.data.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.hideBattleTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.showBattleTooltip" name=item.name}}{{/if}}" data-stat="showInBattleStats" data-item="{{item._id}}"><span>{{#if item.data.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.shown"}}{{else}}{{localize "ironclaw2e.sheets.actor.hidden"}}{{/if}}</span></a>
             </div>
             <div class="item-controls-small">
                 <a class="item-control item-edit" title="{{localize "ironclaw2e.sheets.actor.gear.editItem"}}"><i class="fas fa-edit"></i></a>
