@@ -21,11 +21,17 @@
                 </div>
             </div>
             <div class="flexrow flex-center">
+                {{#if templateHelp.showDirectoryOptions}}
+                <div class="flexrow flex-group-center">
+                    <label class="normal-label">{{localize "ironclaw2e.sheets.actor.applyWildcardTemplate"}}</label>
+                    <input class="tinybox" type="checkbox" name="data.applyTemplateOnSpawn" {{checked data.applyTemplateOnSpawn}} data-dtype="Boolean" />
+                </div>
+                {{/if}}
                 <div class="rollable roll-order flex-group-center">
-                    <span class="normal-label">Open dice pool roll popup</span>
+                    <span class="normal-label">{{localize "ironclaw2e.sheets.actor.openDicePool"}}</span>
                 </div>
                 <div class="rollable roll-damage flex-group-center">
-                    <span class="normal-label">Apply damage</span>
+                    <span class="normal-label">{{localize "ironclaw2e.sheets.actor.applyDamage"}}</span>
                 </div>
             </div>
         </div>
@@ -33,13 +39,13 @@
 
     {{!-- Sheet Tab Navigation --}}
     <nav class="sheet-tabs tabs" data-group="primary">
-        <a class="item" data-tab="description">Description</a>
-        <a class="item" data-tab="skills">Details</a>
-        <a class="item" data-tab="battlestats">Battle Stats</a>
-        <a class="item" data-tab="statuseffects">Status Effects</a>
-        <a class="item" data-tab="gifts">Gifts</a>
-        <a class="item" data-tab="weapons">Combat Gear</a>
-        <a class="item" data-tab="items">Items</a>
+        <a class="item" data-tab="description">{{localize "ironclaw2e.sheets.actor.description"}}</a>
+        <a class="item" data-tab="skills">{{localize "ironclaw2e.sheets.actor.details.title"}}</a>
+        <a class="item" data-tab="battlestats">{{localize "ironclaw2e.sheets.actor.battleStatistics"}}</a>
+        <a class="item" data-tab="statuseffects">{{localize "ironclaw2e.sheets.actor.status.title"}}</a>
+        <a class="item" data-tab="gifts">{{localize "ironclaw2e.sheets.actor.gear.gifts"}}</a>
+        <a class="item" data-tab="weapons">{{localize "ironclaw2e.sheets.actor.combatGear"}}</a>
+        <a class="item" data-tab="items">{{localize "ironclaw2e.sheets.actor.gear.items"}}</a>
     </nav>
 
     {{!-- Sheet Body --}}

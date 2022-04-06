@@ -430,6 +430,12 @@ input.center-text {
   display: block;
 }
 
+.ironclaw2e input.tinybox {
+    margin: 1px;
+    width: 15px;
+    height: 15px;
+}
+
 .ironclaw2e .items-list .item-name {
   margin: 0;
 }

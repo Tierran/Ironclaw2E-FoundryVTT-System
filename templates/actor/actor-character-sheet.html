@@ -21,15 +21,15 @@
                 </div>
             </div>
             <div class="flexrow flex-center">
-                <div class="flexrow flex-group-left" width="200">
-                    <label for="data.experience" class="resource-label">Experience</label>
+                <div class="flexrow flex-group-center flex-tight" width="200">
+                    <label for="data.experience" class="resource-label">{{localize "ironclaw2e.sheets.actor.experience"}}</label>
                     <input type="text" name="data.experience" value="{{data.experience}}" data-dtype="Number" />
                 </div>
                 <div class="rollable roll-order flex-group-center">
-                    <span class="normal-label">Open dice pool roll popup</span>
+                    <span class="normal-label">{{localize "ironclaw2e.sheets.actor.openDicePool"}}</span>
                 </div>
                 <div class="rollable roll-damage flex-group-center">
-                    <span class="normal-label">Apply damage</span>
+                    <span class="normal-label">{{localize "ironclaw2e.sheets.actor.applyDamage"}}</span>
                 </div>
             </div>
         </div>
@@ -37,13 +37,13 @@
 
     {{!-- Sheet Tab Navigation --}}
     <nav class="sheet-tabs tabs" data-group="primary">
-        <a class="item" data-tab="description">Biography</a>
-        <a class="item" data-tab="skills">Details</a>
-        <a class="item" data-tab="battlestats">Battle Stats</a>
-        <a class="item" data-tab="statuseffects">Status Effects</a>
-        <a class="item" data-tab="gifts">Gifts</a>
-        <a class="item" data-tab="weapons">Combat Gear</a>
-        <a class="item" data-tab="items">Items</a>
+        <a class="item" data-tab="description">{{localize "ironclaw2e.sheets.actor.biography"}}</a>
+        <a class="item" data-tab="skills">{{localize "ironclaw2e.sheets.actor.details.title"}}</a>
+        <a class="item" data-tab="battlestats">{{localize "ironclaw2e.sheets.actor.battleStatistics"}}</a>
+        <a class="item" data-tab="statuseffects">{{localize "ironclaw2e.sheets.actor.status.title"}}</a>
+        <a class="item" data-tab="gifts">{{localize "ironclaw2e.sheets.actor.gear.gifts"}}</a>
+        <a class="item" data-tab="weapons">{{localize "ironclaw2e.sheets.actor.combatGear"}}</a>
+        <a class="item" data-tab="items">{{localize "ironclaw2e.sheets.actor.gear.items"}}</a>
     </nav>
 
     {{!-- Sheet Body --}}
@@ -53,21 +53,21 @@
         <div class="tab biography" data-group="primary" data-tab="description">
             <div class="flex-group flex-tight flexcol">
                 <div class="flexrow">
-                    <label class="header-label" style="max-width:100px">Motto:</label>
+                    <label class="header-label" style="max-width:100px">{{localize "ironclaw2e.sheets.actor.motto"}}</label>
                     <input class="center-text" type="text" name="data.motto" value="{{data.motto}}" data-dtype="String" />
                 </div>
             </div>
             <div class="flex-group flex-tight flexcol">
                 <div class="flexrow">
-                    <label class="header-label" style="max-width:100px">Goal 1:</label>
+                    <label class="header-label" style="max-width:100px">{{localize "ironclaw2e.sheets.actor.goal" number="1"}}</label>
                     <input class="center-text" type="text" name="data.goal1" value="{{data.goal1}}" data-dtype="String" />
                 </div>
                 <div class="flexrow">
-                    <label class="header-label" style="max-width:100px">Goal 2:</label>
+                    <label class="header-label" style="max-width:100px">{{localize "ironclaw2e.sheets.actor.goal" number="2"}}</label>
                     <input class="center-text" type="text" name="data.goal2" value="{{data.goal2}}" data-dtype="String" />
                 </div>
                 <div class="flexrow">
-                    <label class="header-label" style="max-width:100px">Goal 3:</label>
+                    <label class="header-label" style="max-width:100px">{{localize "ironclaw2e.sheets.actor.goal" number="3"}}</label>
                     <input class="center-text" type="text" name="data.goal3" value="{{data.goal3}}" data-dtype="String" />
                 </div>
             </div>

@@ -450,6 +450,18 @@
   "ironclaw2e.chatInfo.requestRoll.rollLabel": "Roll requested by {user}.",
 
 
+  "ironclaw2e.sheets.actor.biography": "Biography",
+  "ironclaw2e.sheets.actor.description": "Description",
+  "ironclaw2e.sheets.actor.combatGear": "Combat Gear",
+  "ironclaw2e.sheets.actor.carriedItems": "Carried Items",
+  "ironclaw2e.sheets.actor.openDicePool": "Open Dice Pool Popup",
+  "ironclaw2e.sheets.actor.applyDamage": "Apply Damage",
+  "ironclaw2e.sheets.actor.experience": "Experience:",
+  "ironclaw2e.sheets.actor.motto": "Motto:",
+  "ironclaw2e.sheets.actor.goal": "Goal {number}:",
+  "ironclaw2e.sheets.actor.applyWildcardTemplate": "Apply Templates:",
+  "ironclaw2e.sheets.actor.applyWildcardTemplateTitle": "If checked, the system will attempt to give this actor the correct missing Species or Career template when dragged to the field, based on the token's wildcard image name.",
+
   "ironclaw2e.sheets.actor.battleStatistics": "Battle Statistics",
   "ironclaw2e.sheets.actor.initiative": "Initiative",
   "ironclaw2e.sheets.actor.stride": "Stride",
@@ -493,6 +505,7 @@
   "ironclaw2e.sheets.actor.light": "Light",
   "ironclaw2e.sheets.actor.douse": "Douse",
 
+  "ironclaw2e.sheets.actor.details.title": "Details",
   "ironclaw2e.sheets.actor.details.species": "Species",
   "ironclaw2e.sheets.actor.details.speciesName": "Species Name",
   "ironclaw2e.sheets.actor.details.speciesSkills": "Species Skills:",

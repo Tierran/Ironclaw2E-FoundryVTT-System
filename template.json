@@ -182,11 +182,13 @@
     },
     "mook": {
       "templates": [ "baseTraits", "baseSkills", "baseAttributes", "baseMoney" ],
-      "description": ""
+      "description": "",
+	  "applyTemplateOnSpawn": true
     },
     "beast": {
       "templates": [ "baseTraits", "baseAttributes" ],
-      "description": ""
+      "description": "",
+	  "applyTemplateOnSpawn": false
     },
     "marker": {
       "description": ""

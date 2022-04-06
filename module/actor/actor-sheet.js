@@ -189,7 +189,8 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             "encumbranceInItems": this.actor.data.type === 'beast',
             "armorsDisabled": this.actor.data.type === 'beast',
             "shieldsDisabled": this.actor.data.type === 'beast',
-            "coinageDisabled": this.actor.data.type === 'beast'
+            "coinageDisabled": this.actor.data.type === 'beast',
+            "showDirectoryOptions": (game.user.isGM && !this.actor.parent)
         };
         return help;
     }
