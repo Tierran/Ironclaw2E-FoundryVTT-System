@@ -1,0 +1,39 @@
+<form autocomplete="off" onsubmit="event.preventDefault();">
+    <div>
+        <h2 class="header-label">{{localize 'ironclaw2e.config.wildcardTemplateConfig.explanationTitle'}}</h2>
+        <div class="form-group">
+            <p class="notes">{{localize 'ironclaw2e.config.wildcardTemplateConfig.explanation'}}</p>
+            <p class="notes">{{localize 'ironclaw2e.config.wildcardTemplateConfig.useHint'}}</p>
+            <p class="notes">{{localize 'ironclaw2e.config.wildcardTemplateConfig.contextHint'}}</p>
+        </div>
+    </div>
+    <div>
+        <h2 class="header-label">{{localize 'ironclaw2e.config.wildcardTemplateConfig.actualSettings'}}</h2>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.templateSpeciesActive'}}</label>
+            <input type="checkbox" name="templateSpeciesActive" {{checked settings.templateSpeciesActive}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.templateSpeciesActiveHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.templateCareerActive'}}</label>
+            <input type="checkbox" name="templateCareerActive" {{checked settings.templateCareerActive}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.templateCareerActiveHint'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.templateSpeciesFolder'}}</label>
+            <input type="text" name="templateSpeciesFolder" value="{{settings.templateSpeciesFolder}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.templateSpeciesFolderHint'}}</p>
+            <p class="notes">{{localize 'ironclaw2e.config.wildcardTemplateConfig.changeWarning'}}</p>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.templateCareerFolder'}}</label>
+            <input type="text" name="templateCareerFolder" value="{{settings.templateCareerFolder}}" data-dtype="String" />
+            <p class="notes">{{localize 'ironclaw2e.config.templateCareerFolderHint'}}</p>
+            <p class="notes">{{localize 'ironclaw2e.config.wildcardTemplateConfig.changeWarning'}}</p>
+        </div>
+    </div>
+
+    <button type="submit" name="submit">
+        <i class="fas fa-save"></i> {{localize 'ironclaw2e.config.wildcardTemplateConfig.menuSave'}}
+    </button>
+</form>

@@ -34,7 +34,7 @@ import { CommonSystemInfo } from "./systeminfo.js";
 
 import { registerHandlebarsHelpers } from "./handlebars.js";
 
-import { WorldSettingsConfig } from "./config.js";
+import { WildcardTemplateConfig, WorldSettingsConfig } from "./config.js";
 import { CoinageSettingsConfig } from "./config.js";
 import { measureDistances } from "./canvas.js";
 
@@ -97,235 +97,6 @@ Hooks.once('init', function () {
     Items.unregisterSheet("core", ItemSheet);
     Items.registerSheet("ironclaw2e", Ironclaw2EItemSheet, { makeDefault: true });
 
-    // Register system world config menus
-    game.settings.registerMenu("ironclaw2e", "worldSettingsConfig", {
-        name: "ironclaw2e.config.worldConfig.menuName",
-        hint: "ironclaw2e.config.worldConfig.menuHint",
-        label: "ironclaw2e.config.worldConfig.menuLabel",
-        icon: "fas fa-globe",
-        type: WorldSettingsConfig,
-        restricted: true
-    });
-    game.settings.registerMenu("ironclaw2e", "coinageSettingsConfig", {
-        name: "ironclaw2e.config.coinageConfig.menuName",
-        hint: "ironclaw2e.config.coinageConfig.menuHint",
-        label: "ironclaw2e.config.coinageConfig.menuLabel",
-        icon: "fas fa-coins",
-        type: CoinageSettingsConfig,
-        restricted: true
-    });
-    // Register system world settings
-    game.settings.register("ironclaw2e", "preferTokenName", {
-        name: "ironclaw2e.config.preferTokenName",
-        hint: "ironclaw2e.config.preferTokenNameHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: false
-    });
-    game.settings.register("ironclaw2e", "autoPrototypeSetup", {
-        name: "ironclaw2e.config.autoPrototypeSetup",
-        hint: "ironclaw2e.config.autoPrototypeSetupHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: false
-    });
-    game.settings.register("ironclaw2e", "allowNonGMRequestRolls", {
-        name: "ironclaw2e.config.allowNonGMRequestRolls",
-        hint: "ironclaw2e.config.allowNonGMRequestRollsHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: false
-    });
-    game.settings.register("ironclaw2e", "showRangeCombatRules", {
-        name: "ironclaw2e.config.showRangeCombatRules",
-        hint: "ironclaw2e.config.showRangeCombatRulesHint",
-        scope: "world",
-        type: Number,
-        default: 1,
-        config: false,
-        choices: CommonSystemInfo.rangeCombatRules
-    });
-    game.settings.register("ironclaw2e", "showTokenExtraButtons", {
-        name: "ironclaw2e.config.showTokenExtraButtons",
-        hint: "ironclaw2e.config.showTokenExtraButtonsHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: false,
-        choices: CommonSystemInfo.rangeCombatRules
-    });
-    // Item configs
-    game.settings.register("ironclaw2e", "sendWeaponExhaustMessage", {
-        name: "ironclaw2e.config.sendWeaponExhaustMessage",
-        hint: "ironclaw2e.config.sendWeaponExhaustMessageHint",
-        scope: "world",
-        type: Boolean,
-        default: false,
-        config: false
-    });
-    game.settings.register("ironclaw2e", "sendWeaponReadyExhaustMessage", {
-        name: "ironclaw2e.config.sendWeaponReadyExhaustMessage",
-        hint: "ironclaw2e.config.sendWeaponReadyExhaustMessageHint",
-        scope: "world",
-        type: Boolean,
-        default: false,
-        config: false
-    });
-    game.settings.register("ironclaw2e", "askReadyWhenUsed", {
-        name: "ironclaw2e.config.askReadyWhenUsed",
-        hint: "ironclaw2e.config.askReadyWhenUsedHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: false
-    });
-    game.settings.register("ironclaw2e", "weaponExhaustNeedsRefreshed", {
-        name: "ironclaw2e.config.weaponExhaustNeedsRefreshed",
-        hint: "ironclaw2e.config.weaponExhaustNeedsRefreshedHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: false
-    });
-    game.settings.register("ironclaw2e", "npcItemHasDescription", {
-        name: "ironclaw2e.config.npcItemHasDescription",
-        hint: "ironclaw2e.config.npcItemHasDescriptionHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: false
-    });
-    // Chat button configs
-    game.settings.register("ironclaw2e", "chatButtons", {
-        name: "ironclaw2e.config.chatButtons",
-        hint: "ironclaw2e.config.chatButtonsHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: false
-    });
-    game.settings.register("ironclaw2e", "showDefenseButtons", {
-        name: "ironclaw2e.config.showDefenseButtons",
-        hint: "ironclaw2e.config.showDefenseButtonsHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: false
-    });
-    // Initiative condition config
-    game.settings.register("ironclaw2e", "autoInitiativeConditions", {
-        name: "ironclaw2e.config.autoInitiativeConditions",
-        hint: "ironclaw2e.config.autoInitiativeConditionsHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: false
-    });
-    // Auto condition removal configs
-    game.settings.register("ironclaw2e", "autoConditionRemoval", {
-        name: "ironclaw2e.config.autoConditionRemoval",
-        hint: "ironclaw2e.config.autoConditionRemovalHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: false
-    });
-    game.settings.register("ironclaw2e", "autoConditionRemovalNoTurns", {
-        name: "ironclaw2e.config.autoConditionRemovalNoTurns",
-        hint: "ironclaw2e.config.autoConditionRemovalNoTurnsHint",
-        scope: "world",
-        type: Boolean,
-        default: false,
-        config: false
-    });
-    // Encumbrance configs
-    game.settings.register("ironclaw2e", "manageEncumbranceAuto", {
-        name: "ironclaw2e.config.manageEncumbranceAuto",
-        hint: "ironclaw2e.config.manageEncumbranceAutoHint",
-        scope: "world",
-        type: Boolean,
-        default: false,
-        config: false
-    });
-    game.settings.register("ironclaw2e", "coinsHaveWeight", {
-        name: "ironclaw2e.config.coinsHaveWeight",
-        hint: "ironclaw2e.config.coinsHaveWeightHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: false
-    });
-    // Damage calculation configs
-    game.settings.register("ironclaw2e", "calculateAttackEffects", {
-        name: "ironclaw2e.config.calculateAttackEffects",
-        hint: "ironclaw2e.config.calculateAttackEffectsHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: false
-    });
-    game.settings.register("ironclaw2e", "calculateDisplaysFailed", {
-        name: "ironclaw2e.config.calculateDisplaysFailed",
-        hint: "ironclaw2e.config.calculateDisplaysFailedHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: false
-    });
-    game.settings.register("ironclaw2e", "calculateDoesNotDisplay", {
-        name: "ironclaw2e.config.calculateDoesNotDisplay",
-        hint: "ironclaw2e.config.calculateDoesNotDisplayHint",
-        scope: "world",
-        type: Boolean,
-        default: false,
-        config: false
-    });
-    // Range settings
-    game.settings.register("ironclaw2e", "diagonalRule", {
-        name: "ironclaw2e.config.diagonalRule",
-        hint: "ironclaw2e.config.diagonalRuleHint",
-        scope: "world",
-        config: false,
-        default: "EUCL",
-        type: String,
-        choices: CommonSystemInfo.diagonalRules,
-        onChange: rule => canvas.grid.diagonalRule = rule
-    });
-    game.settings.register("ironclaw2e", "rangePenalties", {
-        name: "ironclaw2e.config.rangePenalties",
-        hint: "ironclaw2e.config.rangePenaltiesHint",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: false
-    });
-    game.settings.register("ironclaw2e", "matchStandardRuler", {
-        name: "ironclaw2e.config.matchStandardRuler",
-        hint: "ironclaw2e.config.matchStandardRulerHint",
-        scope: "world",
-        type: Boolean,
-        default: false,
-        config: false
-    });
-    game.settings.register("ironclaw2e", "requireSpecialRangeFound", {
-        name: "ironclaw2e.config.requireSpecialRangeFound",
-        hint: "ironclaw2e.config.requireSpecialRangeFoundHint",
-        scope: "world",
-        type: Boolean,
-        default: false,
-        config: false
-    });
-
-    // Coinage settings
-    game.settings.register("ironclaw2e", "currencySettings", {
-        scope: "world",
-        type: Object,
-        default: CoinageSettingsConfig.getCoinageDefaultSettings(false),
-        config: false
-    });
     // Register a version number that was used last time to allow determining if a new version is being used, world-scope for system function updates
     game.settings.register("ironclaw2e", "lastSystemVersionWorld", {
         scope: "world",
@@ -334,48 +105,11 @@ Hooks.once('init', function () {
         config: false
     });
 
+    // Register system world settins
+    registerWorldSettings();
+
     // Register system client settings
-    game.settings.register("ironclaw2e", "defaultSendDamage", {
-        name: "ironclaw2e.config.defaultSendDamage",
-        hint: "ironclaw2e.config.defaultSendDamageHint",
-        scope: "client",
-        type: Boolean,
-        default: true,
-        config: true
-    });
-    game.settings.register("ironclaw2e", "defaultSendGiftExhaust", {
-        name: "ironclaw2e.config.defaultSendGiftExhaust",
-        hint: "ironclaw2e.config.defaultSendGiftExhaustHint",
-        scope: "client",
-        type: Boolean,
-        default: true,
-        config: true
-    });
-    game.settings.register("ironclaw2e", "confirmItemInfo", {
-        name: "ironclaw2e.config.confirmItemInfo",
-        hint: "ironclaw2e.config.confirmItemInfoHint",
-        scope: "client",
-        type: Boolean,
-        default: false,
-        config: true
-    });
-    game.settings.register("ironclaw2e", "showRangeWhenTargeting", {
-        name: "ironclaw2e.config.showRangeWhenTargeting",
-        hint: "ironclaw2e.config.showRangeWhenTargetingHint",
-        scope: "client",
-        type: Boolean,
-        default: true,
-        config: true
-    });
-    game.settings.register("ironclaw2e", "showRangeDuration", {
-        name: "ironclaw2e.config.showRangeDuration",
-        hint: "ironclaw2e.config.showRangeDurationHint",
-        scope: "client",
-        type: Number,
-        default: 3000,
-        range: {min: 1000, max: 4000, step: 200},
-        config: true
-    });
+    registerClientSettings();
 
     // Register a version number that was used last time to allow determining if a new version is being used, client-scope for potential update logs and such
     game.settings.register("ironclaw2e", "lastSystemVersionClient", {
@@ -477,6 +211,345 @@ Hooks.once("ready", function () {
     console.log("Ironclaw2E System ready");
 });
 
+/* -------------------------------------------- */
+/*  Settings Registers                          */
+/* -------------------------------------------- */
+
+/**
+ * Separate function to register the world-scope menus and settings, for clarity
+ * @private
+ */
+function registerWorldSettings() {
+    // Register the system world configuration menus
+    // Every world setting should be in these, so no need to make any of them appear in the base configuration menu
+    game.settings.registerMenu("ironclaw2e", "worldSettingsConfig", {
+        name: "ironclaw2e.config.worldConfig.menuName",
+        hint: "ironclaw2e.config.worldConfig.menuHint",
+        label: "ironclaw2e.config.worldConfig.menuLabel",
+        icon: "fas fa-globe",
+        type: WorldSettingsConfig,
+        restricted: true
+    });
+    game.settings.registerMenu("ironclaw2e", "coinageSettingsConfig", {
+        name: "ironclaw2e.config.coinageConfig.menuName",
+        hint: "ironclaw2e.config.coinageConfig.menuHint",
+        label: "ironclaw2e.config.coinageConfig.menuLabel",
+        icon: "fas fa-coins",
+        type: CoinageSettingsConfig,
+        restricted: true
+    });
+    game.settings.registerMenu("ironclaw2e", "templateSettingsConfig", {
+        name: "ironclaw2e.config.wildcardTemplateConfig.menuName",
+        hint: "ironclaw2e.config.wildcardTemplateConfig.menuHint",
+        label: "ironclaw2e.config.wildcardTemplateConfig.menuLabel",
+        icon: "fas fa-user-circle",
+        type: WildcardTemplateConfig,
+        restricted: true
+    });
+
+    // General configurations
+    // Damage calculation configs
+    game.settings.register("ironclaw2e", "calculateAttackEffects", {
+        name: "ironclaw2e.config.calculateAttackEffects",
+        hint: "ironclaw2e.config.calculateAttackEffectsHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "calculateDisplaysFailed", {
+        name: "ironclaw2e.config.calculateDisplaysFailed",
+        hint: "ironclaw2e.config.calculateDisplaysFailedHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "calculateDoesNotDisplay", {
+        name: "ironclaw2e.config.calculateDoesNotDisplay",
+        hint: "ironclaw2e.config.calculateDoesNotDisplayHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: false
+    });
+
+    // Chat button configs
+    game.settings.register("ironclaw2e", "chatButtons", {
+        name: "ironclaw2e.config.chatButtons",
+        hint: "ironclaw2e.config.chatButtonsHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "showDefenseButtons", {
+        name: "ironclaw2e.config.showDefenseButtons",
+        hint: "ironclaw2e.config.showDefenseButtonsHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+
+    // Initiative condition configs
+    game.settings.register("ironclaw2e", "autoInitiativeConditions", {
+        name: "ironclaw2e.config.autoInitiativeConditions",
+        hint: "ironclaw2e.config.autoInitiativeConditionsHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "autoConditionRemoval", {
+        name: "ironclaw2e.config.autoConditionRemoval",
+        hint: "ironclaw2e.config.autoConditionRemovalHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "autoConditionRemovalNoTurns", {
+        name: "ironclaw2e.config.autoConditionRemovalNoTurns",
+        hint: "ironclaw2e.config.autoConditionRemovalNoTurnsHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: false
+    });
+
+    // Range settings
+    game.settings.register("ironclaw2e", "diagonalRule", {
+        name: "ironclaw2e.config.diagonalRule",
+        hint: "ironclaw2e.config.diagonalRuleHint",
+        scope: "world",
+        config: false,
+        default: "EUCL",
+        type: String,
+        choices: CommonSystemInfo.diagonalRules,
+        onChange: rule => canvas.grid.diagonalRule = rule
+    });
+    game.settings.register("ironclaw2e", "rangePenalties", {
+        name: "ironclaw2e.config.rangePenalties",
+        hint: "ironclaw2e.config.rangePenaltiesHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "matchStandardRuler", {
+        name: "ironclaw2e.config.matchStandardRuler",
+        hint: "ironclaw2e.config.matchStandardRulerHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "requireSpecialRangeFound", {
+        name: "ironclaw2e.config.requireSpecialRangeFound",
+        hint: "ironclaw2e.config.requireSpecialRangeFoundHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "showRangeCombatRules", {
+        name: "ironclaw2e.config.showRangeCombatRules",
+        hint: "ironclaw2e.config.showRangeCombatRulesHint",
+        scope: "world",
+        type: Number,
+        default: 1,
+        config: false,
+        choices: CommonSystemInfo.rangeCombatRules
+    });
+
+    // Item configs
+    game.settings.register("ironclaw2e", "sendWeaponExhaustMessage", {
+        name: "ironclaw2e.config.sendWeaponExhaustMessage",
+        hint: "ironclaw2e.config.sendWeaponExhaustMessageHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "sendWeaponReadyExhaustMessage", {
+        name: "ironclaw2e.config.sendWeaponReadyExhaustMessage",
+        hint: "ironclaw2e.config.sendWeaponReadyExhaustMessageHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "askReadyWhenUsed", {
+        name: "ironclaw2e.config.askReadyWhenUsed",
+        hint: "ironclaw2e.config.askReadyWhenUsedHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "weaponExhaustNeedsRefreshed", {
+        name: "ironclaw2e.config.weaponExhaustNeedsRefreshed",
+        hint: "ironclaw2e.config.weaponExhaustNeedsRefreshedHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "npcItemHasDescription", {
+        name: "ironclaw2e.config.npcItemHasDescription",
+        hint: "ironclaw2e.config.npcItemHasDescriptionHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+
+    // Register misc world settings
+    game.settings.register("ironclaw2e", "preferTokenName", {
+        name: "ironclaw2e.config.preferTokenName",
+        hint: "ironclaw2e.config.preferTokenNameHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "showTokenExtraButtons", {
+        name: "ironclaw2e.config.showTokenExtraButtons",
+        hint: "ironclaw2e.config.showTokenExtraButtonsHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "autoPrototypeSetup", {
+        name: "ironclaw2e.config.autoPrototypeSetup",
+        hint: "ironclaw2e.config.autoPrototypeSetupHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "allowNonGMRequestRolls", {
+        name: "ironclaw2e.config.allowNonGMRequestRolls",
+        hint: "ironclaw2e.config.allowNonGMRequestRollsHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+
+    // Encumbrance configs
+    game.settings.register("ironclaw2e", "manageEncumbranceAuto", {
+        name: "ironclaw2e.config.manageEncumbranceAuto",
+        hint: "ironclaw2e.config.manageEncumbranceAutoHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "coinsHaveWeight", {
+        name: "ironclaw2e.config.coinsHaveWeight",
+        hint: "ironclaw2e.config.coinsHaveWeightHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+
+    // Coinage settings
+    // Just one here
+    game.settings.register("ironclaw2e", "currencySettings", {
+        scope: "world",
+        type: Object,
+        default: CoinageSettingsConfig.getCoinageDefaultSettings(false),
+        config: false
+    });
+
+    // Template settings
+    // 
+    game.settings.register("ironclaw2e", "templateSpeciesActive", {
+        name: "ironclaw2e.config.templateSpeciesActive",
+        hint: "ironclaw2e.config.templateSpeciesActiveHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "templateCareerActive", {
+        name: "ironclaw2e.config.templateCareerActive",
+        hint: "ironclaw2e.config.templateCareerActiveHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "templateSpeciesFolder", {
+        name: "ironclaw2e.config.templateSpeciesFolder",
+        hint: "ironclaw2e.config.templateSpeciesFolderHint",
+        scope: "world",
+        type: String,
+        default: "",
+        config: false
+    });
+    game.settings.register("ironclaw2e", "templateCareerFolder", {
+        name: "ironclaw2e.config.templateCareerFolder",
+        hint: "ironclaw2e.config.templateCareerFolderHint",
+        scope: "world",
+        type: String,
+        default: "",
+        config: false
+    });
+}
+
+/**
+ * Separate function to register the client-scope settings, for clarity
+ * @private
+ */
+function registerClientSettings() {
+    // Client settings, all in the base configuration menu
+    game.settings.register("ironclaw2e", "defaultSendDamage", {
+        name: "ironclaw2e.config.defaultSendDamage",
+        hint: "ironclaw2e.config.defaultSendDamageHint",
+        scope: "client",
+        type: Boolean,
+        default: true,
+        config: true
+    });
+    game.settings.register("ironclaw2e", "defaultSendGiftExhaust", {
+        name: "ironclaw2e.config.defaultSendGiftExhaust",
+        hint: "ironclaw2e.config.defaultSendGiftExhaustHint",
+        scope: "client",
+        type: Boolean,
+        default: true,
+        config: true
+    });
+    game.settings.register("ironclaw2e", "confirmItemInfo", {
+        name: "ironclaw2e.config.confirmItemInfo",
+        hint: "ironclaw2e.config.confirmItemInfoHint",
+        scope: "client",
+        type: Boolean,
+        default: false,
+        config: true
+    });
+    game.settings.register("ironclaw2e", "showRangeWhenTargeting", {
+        name: "ironclaw2e.config.showRangeWhenTargeting",
+        hint: "ironclaw2e.config.showRangeWhenTargetingHint",
+        scope: "client",
+        type: Boolean,
+        default: true,
+        config: true
+    });
+    game.settings.register("ironclaw2e", "showRangeDuration", {
+        name: "ironclaw2e.config.showRangeDuration",
+        hint: "ironclaw2e.config.showRangeDurationHint",
+        scope: "client",
+        type: Number,
+        default: 3000,
+        range: { min: 1000, max: 4000, step: 200 },
+        config: true
+    });
+}
 
 /* -------------------------------------------- */
 /*  Canvas Initialization                       */

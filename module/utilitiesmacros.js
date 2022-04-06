@@ -415,7 +415,7 @@ export function ironclawDragRulerIntegration(SpeedProvider) {
 function addIronclawChatLogContext(html, entryOptions) {
     entryOptions.push(
         {
-            name: "ironclaw2e.copyToTN",
+            name: "ironclaw2e.context.chatLog.copyToTN",
             icon: '<i class="fas fa-bullseye"></i>',
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
@@ -429,7 +429,7 @@ function addIronclawChatLogContext(html, entryOptions) {
             }
         },
         {
-            name: "ironclaw2e.changeTN",
+            name: "ironclaw2e.context.chatLog.changeTN",
             icon: '<i class="fas fa-bullseye"></i>',
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
@@ -443,7 +443,7 @@ function addIronclawChatLogContext(html, entryOptions) {
             }
         },
         {
-            name: "ironclaw2e.copyToHighest",
+            name: "ironclaw2e.context.chatLog.copyToHighest",
             icon: '<i class="fas fa-dice-d6"></i>',
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
@@ -457,7 +457,7 @@ function addIronclawChatLogContext(html, entryOptions) {
             }
         },
         {
-            name: "ironclaw2e.rerollOne",
+            name: "ironclaw2e.context.chatLog.rerollOne",
             icon: '<i class="fas fa-redo"></i>',
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
@@ -477,7 +477,7 @@ function addIronclawChatLogContext(html, entryOptions) {
             }
         },
         {
-            name: "ironclaw2e.showAttack",
+            name: "ironclaw2e.context.chatLog.showAttack",
             icon: '<i class="fas fa-fist-raised"></i>',
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
@@ -501,7 +501,7 @@ function addIronclawChatLogContext(html, entryOptions) {
             }
         },
         {
-            name: "ironclaw2e.showAttackSlaying",
+            name: "ironclaw2e.context.chatLog.showAttackSlaying",
             icon: '<i class="fas fa-fist-raised"></i>',
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
@@ -526,7 +526,7 @@ function addIronclawChatLogContext(html, entryOptions) {
             }
         },
         {
-            name: "ironclaw2e.resolveCounter",
+            name: "ironclaw2e.context.chatLog.resolveCounter",
             icon: '<i class="fas fa-fist-raised"></i>',
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
@@ -549,7 +549,7 @@ function addIronclawChatLogContext(html, entryOptions) {
             }
         },
         {
-            name: "ironclaw2e.resolveResist",
+            name: "ironclaw2e.context.chatLog.resolveResist",
             icon: '<i class="fas fa-bolt"></i>',
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
@@ -573,7 +573,7 @@ function addIronclawChatLogContext(html, entryOptions) {
             }
         },
         {
-            name: "ironclaw2e.resolveAsNormal",
+            name: "ironclaw2e.context.chatLog.resolveAsNormal",
             icon: '<i class="fas fa-fist-raised"></i>',
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
@@ -597,7 +597,7 @@ function addIronclawChatLogContext(html, entryOptions) {
             }
         },
         {
-            name: "ironclaw2e.resolveAsSlaying",
+            name: "ironclaw2e.context.chatLog.resolveAsSlaying",
             icon: '<i class="fas fa-fist-raised"></i>',
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
@@ -622,7 +622,7 @@ function addIronclawChatLogContext(html, entryOptions) {
             }
         },
         {
-            name: "ironclaw2e.attackAgainstDefense",
+            name: "ironclaw2e.context.chatLog.attackAgainstDefense",
             icon: '<i class="fas fa-fist-raised"></i>',
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
@@ -645,3 +645,37 @@ function addIronclawChatLogContext(html, entryOptions) {
         });
 }
 Hooks.on("getChatLogEntryContext", addIronclawChatLogContext);
+
+/**
+ * Adds the Ironclaw context menu options to the item directory
+ * @param {any} html
+ * @param {any} entryOptions The menu
+ */
+function addIronclawItemDirectoryFolderContext(html, entryOptions) {
+    entryOptions.push(
+        {
+            name: "ironclaw2e.context.items.setAsSpeciesSource",
+            icon: '<i class="fas fa-bullseye"></i>',
+            condition: header => {
+                const folder = game.folders.get(header.parent().data("folderId"));
+                return folder.contents.some(x => x.type === "speciesTemplate");
+            },
+            callback: header => {
+                const id = header.parent().data("folderId");
+                game.settings.set("ironclaw2e", "templateSpeciesFolder", id);
+            }
+        },
+        {
+            name: "ironclaw2e.context.items.setAsCareerSource",
+            icon: '<i class="fas fa-bullseye"></i>',
+            condition: header => {
+                const folder = game.folders.get(header.parent().data("folderId"));
+                return folder.contents.some(x => x.type === "careerTemplate");
+            },
+            callback: header => {
+                const id = header.parent().data("folderId");
+                game.settings.set("ironclaw2e", "templateCareerFolder", id);
+            }
+        });
+}
+Hooks.on("getItemDirectoryFolderContext", addIronclawItemDirectoryFolderContext);

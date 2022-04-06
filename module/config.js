@@ -264,3 +264,58 @@ export class CoinageSettingsConfig extends FormApplication {
         return defaultSettings;
     }
 }
+
+/** The template settings configuration menu */
+export class WildcardTemplateConfig extends FormApplication {
+
+    /**
+     * @override
+     * @returns {DocumentSheetOptions}
+     */
+    static get defaultOptions() {
+        return foundry.utils.mergeObject(super.defaultOptions, {
+            id: "wildcard-template-config",
+            title: game.i18n.localize("ironclaw2e.config.wildcardTemplateConfig.menuLabel"),
+            template: `systems/ironclaw2e/templates/popup/wildcard-template-config.html`,
+            width: 500
+        });
+    }
+
+    /** @override */
+    async getData(options) {
+        const settings = WildcardTemplateConfig.getTemplateSettingsObject;
+        return {
+            settings
+        };
+    }
+
+    /** @override */
+    async _updateObject(event, formData) {
+        const oldSettings = WildcardTemplateConfig.getTemplateSettingsObject;
+        for (let [key, value] of Object.entries(formData)) {
+            if (!oldSettings.hasOwnProperty(key)) {
+                console.error("Form data object had an extra property that was not present in Settings: " + key);
+                continue;
+            }
+            // If the value differs between the old and new settings, update the setting
+            if (oldSettings[key] !== value) {
+                await game.settings.set("ironclaw2e", key, value);
+                console.log(`${key} updated: ${value}`);
+            }
+        }
+
+        return formData;
+    }
+
+    /**
+     * Get a settings object that is filled with all the world settings
+     */
+    static get getTemplateSettingsObject() {
+        let settings = {};
+        settings.templateSpeciesActive = game.settings.get("ironclaw2e", "templateSpeciesActive");
+        settings.templateSpeciesFolder = game.settings.get("ironclaw2e", "templateSpeciesFolder");
+        settings.templateCareerActive = game.settings.get("ironclaw2e", "templateCareerActive");
+        settings.templateCareerFolder = game.settings.get("ironclaw2e", "templateCareerFolder");
+        return settings;
+    }
+}
