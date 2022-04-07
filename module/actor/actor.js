@@ -1,4 +1,4 @@
-import { checkDiceArrayEmpty, getCombatAdvantageConstruction, getTemplatePosition, popupConfirmationBox } from "../helpers.js";
+import { checkDiceArrayEmpty, diceFieldUpgrade, getCombatAdvantageConstruction, getTemplatePosition, popupConfirmationBox } from "../helpers.js";
 import { addArrays } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -55,6 +55,7 @@ export class Ironclaw2EActor extends Actor {
             // Only applies if the actor actually exists
             if (actor) {
                 actor.applyTemplate(data, { "confirm": options?.confirmCreation ?? false });
+                if (actor.parent) console.warn("Don't mind the _onCreate error underneath, it's a core bug and doesn't actually affect things AFAICT");
                 return false;
             }
         }
@@ -1660,6 +1661,31 @@ export class Ironclaw2EActor extends Actor {
                 "data.attributes.cycle": itemData.data.attributes.cycle,
                 "data.attributes.senses": itemData.data.attributes.senses,
             };
+            // Increased Trait handling
+            if (itemData.data.traitIncreases.increase1) {
+                const trait = makeCompareReady(itemData.data.traitIncreases.increase1);
+                if (data.traits[trait]?.dice) {
+                    const betterDice = reformDiceString(diceFieldUpgrade(findTotalDice(data.traits[trait].dice), 1));
+                    const fieldName = "data.traits." + trait + ".dice";
+                    updateData[fieldName] = betterDice;
+                }
+            }
+            if (itemData.data.traitIncreases.increase2) {
+                const trait = makeCompareReady(itemData.data.traitIncreases.increase2);
+                if (data.traits[trait]?.dice) {
+                    const betterDice = reformDiceString(diceFieldUpgrade(findTotalDice(data.traits[trait].dice), 1));
+                    const fieldName = "data.traits." + trait + ".dice";
+                    updateData[fieldName] = betterDice;
+                }
+            }
+            if (itemData.data.traitIncreases.increase3) {
+                const trait = makeCompareReady(itemData.data.traitIncreases.increase3);
+                if (data.traits[trait]?.dice) {
+                    const betterDice = reformDiceString(diceFieldUpgrade(findTotalDice(data.traits[trait].dice), 1));
+                    const fieldName = "data.traits." + trait + ".dice";
+                    updateData[fieldName] = betterDice;
+                }
+            }
         } else if (itemData.type === "careerTemplate") {
             if (confirm && data.traits.career.name) {
                 // Confirmation on whether to replace the existing data

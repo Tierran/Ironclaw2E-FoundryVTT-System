@@ -46,7 +46,7 @@ function wildcardTemplateApplying(token, options, user) {
     const careerFolder = game.settings.get("ironclaw2e", "templateCareerFolder");
     let careerSuccessful = null;
     if (careerActive && careerFolder && !actorData.data.traits.career.name) {
-        // If the setting is on, has a folder and there is no species name
+        // If the setting is on, has a folder and there is no career name
         const folder = game.folders.get(careerFolder);
         const templates = folder.contents;
         // Loop through the items

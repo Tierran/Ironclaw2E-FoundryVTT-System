@@ -28,6 +28,17 @@
                     <input type="text" name="data.skill2" value="{{data.skill2}}" data-dtype="String" />
                     <input type="text" name="data.skill3" value="{{data.skill3}}" data-dtype="String" />
                 </div>
+                <div class="attributes grid grid-4col grid-minimal">
+                    {{#each data.attributes as |attribute key|}}
+                    <div class="trait flexrow flex-center flex-tight arrange-vertically">
+                        <label for="data.attributes.{{key}}" class="normal-label">{{key}}</label>
+                        <input type="text" name="data.attributes.{{key}}" value="{{attribute}}" data-dtype="String" />
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            <div class="flexcol">
+                <h2 class="normal-label">Species Item Additions:</h2>
                 <div class="resource flexrow flex-group-center">
                     <label class="normal-label">Species Gifts:</label>
                     <input type="text" name="data.gift1" value="{{data.gift1}}" data-dtype="String" />
@@ -40,15 +51,13 @@
                     <input type="text" name="data.weapons.weapon2" value="{{data.weapons.weapon2}}" data-dtype="String" />
                     <input type="text" name="data.weapons.weapon3" value="{{data.weapons.weapon3}}" data-dtype="String" />
                 </div>
-            </div>
-
-            <div class="attributes grid grid-4col grid-minimal">
-                {{#each data.attributes as |attribute key|}}
-                <div class="trait flexrow flex-center flex-tight arrange-vertically">
-                    <label for="data.attributes.{{key}}" class="normal-label">{{key}}</label>
-                    <input type="text" name="data.attributes.{{key}}" value="{{attribute}}" data-dtype="String" />
+                <span class="bold-text">These are separate from Gifts for internal reasons, even though game mechanically they're the same</span>
+                <div class="resource flexrow flex-group-center">
+                    <label class="normal-label">Increased Trait:</label>
+                    <input type="text" name="data.traitIncreases.increase1" value="{{data.traitIncreases.increase1}}" placeholder="Trait Name" data-dtype="String" />
+                    <input type="text" name="data.traitIncreases.increase2" value="{{data.traitIncreases.increase2}}" placeholder="Trait Name" data-dtype="String" />
+                    <input type="text" name="data.traitIncreases.increase3" value="{{data.traitIncreases.increase3}}" placeholder="Trait Name" data-dtype="String" />
                 </div>
-                {{/each}}
             </div>
         </div>
     </section>

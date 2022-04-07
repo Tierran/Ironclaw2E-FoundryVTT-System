@@ -183,12 +183,12 @@
     "mook": {
       "templates": [ "baseTraits", "baseSkills", "baseAttributes", "baseMoney" ],
       "description": "",
-	  "applyTemplateOnSpawn": true
+      "applyTemplateOnSpawn": true
     },
     "beast": {
       "templates": [ "baseTraits", "baseAttributes" ],
       "description": "",
-	  "applyTemplateOnSpawn": false
+      "applyTemplateOnSpawn": false
     },
     "marker": {
       "description": ""
@@ -293,6 +293,11 @@
         "diet": "",
         "cycle": "",
         "senses": ""
+      },
+      "traitIncreases": {
+        "increase1": "",
+        "increase2": "",
+        "increase3": ""
       }
     },
     "careerTemplate": {
