@@ -1705,8 +1705,37 @@ export class Ironclaw2EActor extends Actor {
         await this.update(updateData);
 
         // Getting and making the embedded documents, if the actor doesn't yet have them
-        // TODO: Actually do this
+        let itemIds = [];
+        if (itemData.data.gifts.gift1) itemIds.push(itemData.data.gifts.gift1);
+        if (itemData.data.gifts.gift2) itemIds.push(itemData.data.gifts.gift2);
+        if (itemData.data.gifts.gift3) itemIds.push(itemData.data.gifts.gift3);
+        if (itemData.type === "speciesTemplate") {
+            if (itemData.data.weapons?.weapon1) itemIds.push(itemData.data.weapons.weapon1);
+            if (itemData.data.weapons?.weapon2) itemIds.push(itemData.data.weapons.weapon2);
+            if (itemData.data.weapons?.weapon3) itemIds.push(itemData.data.weapons.weapon3);
+        }
 
+        let itemCreateData = [];
+        for (let foo of itemIds) {
+            // Find if anything matches, either by id or name
+            let bar = null;
+            if (game.items.has(foo)) {
+                bar = game.items.get(foo);
+            } else {
+                bar = game.items.getName(foo);
+            }
+            // If something was found, make sure the actor does not already have it, then add it to the list to make
+            if (bar && bar.data) {
+                if (!this.items.getName(bar.name))
+                    itemCreateData.push(bar.data);
+            } else {
+                console.warn("Template item creation failed for id: " + foo);
+            }
+        }
+
+        // Actually create them
+        if (itemCreateData.length > 0)
+            await this.createEmbeddedDocuments("Item", itemCreateData);
     }
 
     /* -------------------------------------------- */

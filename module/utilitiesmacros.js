@@ -647,7 +647,7 @@ function addIronclawChatLogContext(html, entryOptions) {
 Hooks.on("getChatLogEntryContext", addIronclawChatLogContext);
 
 /**
- * Adds the Ironclaw context menu options to the item directory
+ * Adds the Ironclaw context menu options to the item folder directory
  * @param {any} html
  * @param {any} entryOptions The menu
  */
@@ -658,7 +658,7 @@ function addIronclawItemDirectoryFolderContext(html, entryOptions) {
             icon: '<i class="fas fa-bullseye"></i>',
             condition: header => {
                 const folder = game.folders.get(header.parent().data("folderId"));
-                return folder.contents.some(x => x.type === "speciesTemplate");
+                return game.user.isGM && folder.contents.some(x => x.type === "speciesTemplate");
             },
             callback: header => {
                 const id = header.parent().data("folderId");
@@ -670,7 +670,7 @@ function addIronclawItemDirectoryFolderContext(html, entryOptions) {
             icon: '<i class="fas fa-bullseye"></i>',
             condition: header => {
                 const folder = game.folders.get(header.parent().data("folderId"));
-                return folder.contents.some(x => x.type === "careerTemplate");
+                return game.user.isGM && folder.contents.some(x => x.type === "careerTemplate");
             },
             callback: header => {
                 const id = header.parent().data("folderId");
@@ -679,3 +679,33 @@ function addIronclawItemDirectoryFolderContext(html, entryOptions) {
         });
 }
 Hooks.on("getItemDirectoryFolderContext", addIronclawItemDirectoryFolderContext);
+
+/**
+ * Adds the Ironclaw context menu options to the item directory
+ * @param {any} html
+ * @param {any} entryOptions The menu
+ */
+function addIronclawItemDirectoryEntryContext(html, entryOptions) {
+    entryOptions.push(
+        {
+            name: "ironclaw2e.context.items.copyID",
+            icon: '<i class="fas fa-id-card"></i>',
+            condition: li => {
+                return game.user.isGM;
+            },
+            callback: li => {
+                const id = li.data("documentId");
+                const item = game.items.get(id);
+                const chatContents = `
+                <div class="ironclaw2e">
+                    <span>${item.name} ID: <p class="allow-selection">${id}</p></span>
+                </div>`;
+                let chatData = {
+                    "content": chatContents
+                };
+                ChatMessage.applyRollMode(chatData, "selfroll");
+                CONFIG.ChatMessage.documentClass.create(chatData);
+            }
+        });
+}
+Hooks.on("getItemDirectoryEntryContext", addIronclawItemDirectoryEntryContext);

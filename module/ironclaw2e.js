@@ -636,7 +636,7 @@ async function createIronclaw2EMacro(data, slot) {
  */
 function rollItemMacro(itemName, justInfo = false) {
     const actor = getSpeakerActor();
-    const item = actor ? actor.items.find(i => i.name === itemName) : null;
+    const item = actor ? actor.items.getName(itemName) : null;
     if (!item) return ui.notifications.warn(game.i18n.format("ironclaw2e.ui.actorDoesNotHaveItem", { "itemName": itemName }));
 
     // Trigger the item roll

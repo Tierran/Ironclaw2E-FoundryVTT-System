@@ -210,9 +210,11 @@
         "skill1": "",
         "skill2": "",
         "skill3": "",
-        "gift1": "",
-        "gift2": "",
-        "gift3": ""
+        "gifts": {
+          "gift1": "",
+          "gift2": "",
+          "gift3": ""
+        }
       }
     },
     "gift": {
