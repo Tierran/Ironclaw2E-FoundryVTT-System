@@ -381,6 +381,14 @@ function registerWorldSettings() {
         default: false,
         config: false
     });
+    game.settings.register("ironclaw2e", "sendGiftUseExhaustMessage", {
+        name: "ironclaw2e.config.sendGiftUseExhaustMessage",
+        hint: "ironclaw2e.config.sendGiftUseExhaustMessageHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: false
+    });
     game.settings.register("ironclaw2e", "askReadyWhenUsed", {
         name: "ironclaw2e.config.askReadyWhenUsed",
         hint: "ironclaw2e.config.askReadyWhenUsedHint",

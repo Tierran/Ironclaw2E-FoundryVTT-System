@@ -641,6 +641,10 @@ export function checkApplicability(special, item, actor,
     if ((special.worksWhenState === "refreshed" && special.refreshedState === false) || (special.worksWhenState === "exhausted" && special.refreshedState === true)) {
         return false;
     }
+    // Extra bonus "Exhausts on Use" field check to make sure if the check is in place, the setting won't be added if the refresh state is false
+    if (special.bonusExhaustsOnUse === true && special.refreshedState === false) {
+        return false;
+    }
     // Special defense bonus check
     if (defensecheck) {
         if (!special.appliesToDodges && defensetype === "dodge") {
@@ -813,15 +817,16 @@ export function diceFieldUpgrade(dicearray, upgrade) {
  * @param {string} fieldlabel The label for this field in the dice pool popup
  * @param {boolean} autocheck Whether the field is checked or not by default
  * @param {string} itemid The item id related to this field, if any
- * @param {any} param5 The mostly mandatory data which holds the previous values which are being added to
+ * @param {boolean} exhaustonuse Whether tapping the field will make the related gift exhausted
+ * @param {any} param6 The mostly mandatory data which holds the previous values which are being added to
  * @returns {object} Returns a holder object which returns the inputs with the added bonuses
  */
-export function formDicePoolField(fielddice, fieldname, fieldlabel, autocheck = true, itemid = null,
+export function formDicePoolField(fielddice, fieldname, fieldlabel, autocheck = true, { itemid = null, exhaustonuse = false } = {},
     { otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "" } = {}) {
     let fieldId = foundry.utils.randomID(12); // Make a random id to use for identifying this exact field
     while (otherkeys.has(fieldId)) fieldId = foundry.utils.randomID(12); // Pure paranoia check
-    otherkeys.set(fieldId, itemid);
-    otherdice.sets(fieldId, fielddice);
+    otherkeys.set(fieldId, { "itemId": itemid, "exhaustOnUse": exhaustonuse });
+    otherdice.set(fieldId, fielddice);
     othernames.set(fieldId, fieldname);
     otherbools.set(fieldId, autocheck);
     otherinputs += `<div class="form-group flexrow">
@@ -863,7 +868,7 @@ export function getDistancePenaltyConstruction(otherkeys, otherdice, othernames,
     } else if (distanceDice) {
         const diceArray = findTotalDice(distanceDice);
         const distLabel = game.i18n.format((explosionpenalty ? "ironclaw2e.dialog.dicePool.rangePenaltyExplosion" : "ironclaw2e.dialog.dicePool.rangePenaltyAttacker"), { "range": rangeBand, "penalty": distanceDice });
-        foo = formDicePoolField(diceArray, distKey, distLabel, autocheck, null, { otherkeys, otherdice, othernames, otherbools, otherinputs });
+        foo = formDicePoolField(diceArray, distKey, distLabel, autocheck, {}, { otherkeys, otherdice, othernames, otherbools, otherinputs });
     }
     return (foo ? foo : { "otherkeys": otherkeys, "otherdice": otherdice, "othernames": othernames, "otherbools": otherbools, "otherinputs": otherinputs });
 }
@@ -884,7 +889,7 @@ export function getCombatAdvantageConstruction(otherkeys, otherdice, othernames,
         const diceArray = findTotalDice(CommonSystemInfo.combatAdvantageDice);
         const advKey = "Combat Advantage";
         const advLabel = game.i18n.format("ironclaw2e.dialog.dicePool.combatAdvantage", { "bonus": CommonSystemInfo.combatAdvantageDice });
-        foo = formDicePoolField(diceArray, advKey, advLabel, autocheck, null, { otherkeys, otherdice, othernames, otherbools, otherinputs });
+        foo = formDicePoolField(diceArray, advKey, advLabel, autocheck, {}, { otherkeys, otherdice, othernames, otherbools, otherinputs });
     }
 
     return (foo ? foo : { "otherkeys": otherkeys, "otherdice": otherdice, "othernames": othernames, "otherbools": otherbools, "otherinputs": otherinputs });

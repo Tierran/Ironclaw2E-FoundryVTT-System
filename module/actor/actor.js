@@ -1042,7 +1042,7 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /* -------------------------------------------- */
-    /* Private Internal Functions                   */
+    /* Private & Protected Internal Functions       */
     /* -------------------------------------------- */
 
     /**
@@ -1070,7 +1070,7 @@ export class Ironclaw2EActor extends Actor {
      * @param {string[]} skillnames The array of skill names, just give the same array as traitnames to use with mixed name arrays
      * @param {boolean} isburdened Whether to apply the burdened limit to relevant skills
      * @param {boolean} addplus Whether to add the plus already on the first pool label
-     * @private
+     * @protected
      */
     _getDicePools(traitnames, skillnames, isburdened, addplus = false) {
         const data = this.data.data;
@@ -1124,14 +1124,17 @@ export class Ironclaw2EActor extends Actor {
      * @param {string[]} prechecked Traits and skills to add the dice from
      * @param {boolean} isburdened Whether to apply the burdened limit to relevant skills
      * @param {string} extradice Extra dice to add
-     * @param {[string]} otherkeys An array of keys, if empty the function will not add labels for the bonus dice
-     * @param {[number[]]} otherdice An array of dice arrays, the items should match exactly with their counterparts at otherkeys
-     * @param {[boolean]} otherbools An array of booleans that determine which modifiers should actually be used for quick rolls by default, the items should match exactly with their counterparts at otherkeys
+     * @param {Map<string,object>} otherkeys A map of dice pool field id's and the item information
+     * @param {Map<string,number[]>} otherdice A map of dice arrays, the id's should match exactly with their counterparts at otherkeys
+     * @param {Map<string,string>} [othernames] An array of names for the fields, to be used for UI information, the id's should match exactly with their counterparts at otherkeys
+     * @param {Map<string,boolean>} otherbools A map of booleans that determine which modifiers should actually be used for quick rolls by default, the id's should match exactly with their counterparts at otherkeys
+     * @protected
      */
-    _getAllDicePools(prechecked, isburdened, otherkeys = new Map(), otherdice = new Map(), otherbools = new Map(), extradice = "") {
+    _getAllDicePools(prechecked, isburdened, otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), extradice = "") {
         let label = "";
         let labelgiven = false;
         let totaldice = [0, 0, 0, 0, 0];
+        let giftsToExhaust = [];
 
         // Get the trait and skill pools
         const dicePools = this._getDicePools(prechecked, prechecked, isburdened);
@@ -1140,18 +1143,24 @@ export class Ironclaw2EActor extends Actor {
         totaldice = dicePools.totalDice;
 
         // Get the bonus dice pools
-        if (otherdice?.length > 0) {
-            for (let i = 0; i < otherdice.length; ++i) {
-                // If otherbools either doesn't exist or it has a true value for the dice in question, add the dice to the pool
-                // The otherbools system is kinda cumbersome, but the alternative would be to parse the otherinputs string for what dice pools are checked and what aren't
-                if (!otherbools || (i < otherbools.length && otherbools[i] === true)) {
-                    totaldice = addArrays(totaldice, otherdice[i]);
-                    if (otherkeys?.length > i) { // Only try to add a label if the array has a key to use as a label
+        if (otherkeys?.size > 0) {
+            for (let [key, info] of otherkeys.entries()) {
+                // Make sure otherbools has a positive match with the key
+                if (otherbools.get(key) === true) {
+                    totaldice = addArrays(totaldice, otherdice.get(key));
+                    if (othernames.has(key)) { // Only try to add a label if the array has a key to use as a label
                         if (labelgiven)
                             label += " + ";
-                        label += otherkeys[i];
+                        label += othernames.get(key);
                     }
                     labelgiven = true;
+                }
+                // Check whether the item is a gift that should be exhausted
+                if (info.itemId && info.exhaustOnUse) {
+                    const item = this.items.get(info.itemId);
+                    if (item?.type === 'gift') {
+                        giftsToExhaust.push(item);
+                    }
                 }
             }
         }
@@ -1167,7 +1176,7 @@ export class Ironclaw2EActor extends Actor {
             }
         }
 
-        return { "totalDice": totaldice, "label": label, "labelGiven": labelgiven };
+        return { "totalDice": totaldice, "label": label, "labelGiven": labelgiven, "giftsToExhaust": giftsToExhaust };
     }
 
     /**
@@ -1270,7 +1279,7 @@ export class Ironclaw2EActor extends Actor {
                         }
                         // Apply the bonus dice to the roll dialog construction
                         if (used.bonusDice) {
-                            const foo = formDicePoolField(used.bonusDice, used.giftName, `${used.giftName}: ${reformDiceString(used.bonusDice, true)}`, true, used.giftId,
+                            const foo = formDicePoolField(used.bonusDice, used.giftName, `${used.giftName}: ${reformDiceString(used.bonusDice, true)}`, used.bonusAutoUsed, { "itemid": used.giftId, "exhaustonuse": used.bonusExhaustsOnUse },
                                 { otherkeys, otherdice, othernames, otherbools, otherinputs });
                             otherinputs = foo.otherinputs;
                             otherbools = foo.otherbools;
@@ -1303,7 +1312,7 @@ export class Ironclaw2EActor extends Actor {
         const data = this.data.data;
         let armors = this.items.filter(element => element.data.data.worn === true);
         for (let i = 0; i < armors.length && i < 3; ++i) {
-            const foo = formDicePoolField(armors[i].data.data.armorArray, armors[i].data.name, `${armors[i].data.name}: ${reformDiceString(armors[i].data.data.armorArray, true)}`, autocheck, armors[i].id,
+            const foo = formDicePoolField(armors[i].data.data.armorArray, armors[i].data.name, `${armors[i].data.name}: ${reformDiceString(armors[i].data.data.armorArray, true)}`, autocheck, { "itemid": armors[i].id },
                 { otherkeys, otherdice, othernames, otherbools, otherinputs });
             otherkeys = foo.otherkeys;
             otherdice = foo.otherdice;
@@ -1329,7 +1338,7 @@ export class Ironclaw2EActor extends Actor {
         const data = this.data.data;
         let shield = this.items.find(element => element.data.data.held === true);
         if (shield) {
-            const foo = formDicePoolField(shield.data.data.coverArray, shield.data.name, `${shield.data.name}: ${reformDiceString(shield.data.data.coverArray, true)}`, autocheck, shield.id,
+            const foo = formDicePoolField(shield.data.data.coverArray, shield.data.name, `${shield.data.name}: ${reformDiceString(shield.data.data.coverArray, true)}`, autocheck, { "itemid": shield.id },
                 { otherkeys, otherdice, othernames, otherbools, otherinputs });
             otherkeys = foo.otherkeys;
             otherdice = foo.otherdice;
@@ -1421,7 +1430,7 @@ export class Ironclaw2EActor extends Actor {
             }
         }
 
-        const foo = formDicePoolField(bonusArray, bonusLabel, `${bonusLabel}: ${reformDiceString(bonusArray, true)}`, true, null,
+        const foo = formDicePoolField(bonusArray, bonusLabel, `${bonusLabel}: ${reformDiceString(bonusArray, true)}`, true, {},
             { otherkeys, otherdice, othernames, otherbools, otherinputs });
 
         return (foo ? foo : { "otherkeys": otherkeys, "otherdice": otherdice, "othernames": othernames, "otherbools": otherbools, "otherinputs": otherinputs });
@@ -1818,7 +1827,7 @@ export class Ironclaw2EActor extends Actor {
         let foo, bar;
         switch (returntype) { // Yes, yes, the breaks are unnecessary
             case -1:
-                foo = this._getAllDicePools(prechecked, burdened, constructionkeys, constructionarray, constructionbools);
+                foo = this._getAllDicePools(prechecked, burdened, constructionkeys, constructionarray, constructionnames, constructionbools);
                 bar = foo.totalDice;
                 return bar;
                 break;
@@ -1830,13 +1839,15 @@ export class Ironclaw2EActor extends Actor {
                 return null;
                 break;
             case 1:
-                foo = this._getAllDicePools(prechecked, burdened, constructionkeys, constructionarray, constructionbools);
+                foo = this._getAllDicePools(prechecked, burdened, constructionkeys, constructionarray, constructionnames, constructionbools);
                 bar = foo.totalDice;
+                Ironclaw2EItem.giftSetExhaustArray(foo.giftsToExhaust, "true");
                 return CardinalDiceRoller.rollHighestArray(bar, game.i18n.localize("ironclaw2e.chat.rollingInitiative") + ": " + foo.label, this, false);
                 break;
             case 2:
-                foo = this._getAllDicePools(prechecked, burdened, constructionkeys, constructionarray, constructionbools);
+                foo = this._getAllDicePools(prechecked, burdened, constructionkeys, constructionarray, constructionnames, constructionbools);
                 bar = foo.totalDice;
+                Ironclaw2EItem.giftSetExhaustArray(foo.giftsToExhaust, "true");
                 return CardinalDiceRoller.rollTargetNumberArray(tntouse, bar, game.i18n.localize("ironclaw2e.chat.rollingInitiativeCheck") + ": " + foo.label, this, false);
                 break;
         }
@@ -1872,7 +1883,7 @@ export class Ironclaw2EActor extends Actor {
         let foo, bar;
         switch (returntype) { // Yes, yes, the breaks are unnecessary
             case -1:
-                foo = this._getAllDicePools(prechecked, burdened, constructionkeys, constructionarray, constructionbools);
+                foo = this._getAllDicePools(prechecked, burdened, constructionkeys, constructionarray, constructionnames, constructionbools);
                 bar = foo.totalDice;
                 return bar;
                 break;
@@ -1972,7 +1983,7 @@ export class Ironclaw2EActor extends Actor {
 
         return this.basicRollSelector({
             "prechecked": checkedstats, tnyes, "tnnum": usedTn, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
-            otherlabel
+            "doubledice": checkweak, otherlabel
         }, { directroll }, successfunc);
     }
 
@@ -2367,8 +2378,9 @@ export class Ironclaw2EActor extends Actor {
      * @param {boolean} [tnyes] Whether to use a TN, true for yes
      * @param {number} [tnnum] TN to use
      * @param {string[]} [prechecked] Traits and skills to autocheck on the dialog
-     * @param {[string]} [otherkeys] An array of keys, to be used for UI information and with the added HTML for checkboxes in case the other dice can be switched off
-     * @param {[number[]]} [otherdice] An array of dice arrays, the items should match exactly with their counterparts at otherkeys
+     * @param {Map<string,object>} [otherkeys] An array of keys, used to identify what gift each 'other dice' field came from, and whether the gift should be exhausted
+     * @param {Map<string,number[]>} [otherdice] An array of dice arrays, with matching id's with the otherkeys iteration
+     * @param {Map<string,string>} [othernames] An array of names for the fields, to be used for UI information
      * @param {string} [otherinputs] HTML string to add to the dialog
      * @param {string} [extradice] Default extra dice to use for the bottom one-line slot
      * @param {string} [otherlabel] Text to postpend to the label
@@ -2382,8 +2394,8 @@ export class Ironclaw2EActor extends Actor {
         let firstelement = "";
         const hastraits = data.hasOwnProperty("traits");
         const hasskills = data.hasOwnProperty("skills");
-        const hashtml = otherinputs.length > 0;
         const conditionRemoval = game.settings.get("ironclaw2e", "autoConditionRemoval");
+        const giftUseToChat = game.settings.get("ironclaw2e", "sendGiftUseExhaustMessage");
 
         if (prechecked === null || typeof (prechecked) === "undefined") {
             console.warn("Prechecked stat array turned up null or undefined! This should not happen, correcting: " + prechecked);
@@ -2571,16 +2583,24 @@ export class Ironclaw2EActor extends Actor {
                             label += statfoobar.label;
                             labelgiven = statfoobar.labelGiven;
                         }
-                        if (Array.isArray(otherdice) && Array.isArray(otherkeys) && otherdice.length > 0 && otherdice.length == otherkeys.length) {
-                            for (let i = 0; i < otherdice.length; i++) { // Check whether the listed bonus dice are checked into the roll, then add those to the roll
-                                let OTHER = html.find(`[name=${makeCompareReady(otherkeys[i])}]`);
-                                let otherchecked = (hashtml && OTHER.length > 0 ? OTHER[0].checked : true);
+                        if (otherkeys?.size > 0) {
+                            for (let [key, info] of otherkeys.entries()) { // Check whether the listed bonus dice are checked into the roll, then add those to the roll
+                                let OTHER = html.find(`[name=${key}]`);
+                                let otherchecked = (OTHER.length > 0 ? OTHER[0].checked : false);
                                 if (otherchecked) {
-                                    totaldice = addArrays(totaldice, otherdice[i]);
+                                    totaldice = addArrays(totaldice, otherdice.get(key));
                                     if (labelgiven)
                                         label += " + ";
-                                    label += otherkeys[i];
+                                    label += othernames.get(key);
                                     labelgiven = true;
+
+                                    // Check whether the item is a gift that should be exhausted
+                                    if (info.itemId && info.exhaustOnUse) {
+                                        const item = this.items.get(info.itemId);
+                                        if (item?.type === 'gift') {
+                                            await item.giftToggleExhaust("true", giftUseToChat);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -2629,27 +2649,35 @@ export class Ironclaw2EActor extends Actor {
      * @param {boolean} [tnyes] Whether to use a TN, true for yes
      * @param {number} [tnnum] TN to use
      * @param {string[]} [prechecked] Traits and skills to roll
-     * @param {[number[]]} [otherdice] An array of dice arrays
-     * @param {[string]} [otherkeys] An array of keys, to be used for UI information, the items should match exactly with their counterparts at otherdice
-     * @param {[boolean]} [otherbools] An array of booleans that determine which modifiers should actually be used for quick rolls by default, the items should match exactly with their counterparts at otherdice
-     * @param {string} extradice Extra dice to roll
+     * @param {Map<string,object>} [otherkeys] An array of keys, used to identify what gift each 'other dice' field came from, and whether the gift should be exhausted
+     * @param {Map<string,number[]>} [otherdice] An array of dice arrays, with matching id's with the otherkeys iteration
+     * @param {Map<string,string>} [othernames] An array of names for the fields, to be used for UI information
+     * @param {Map<string,boolean>} [otherbools] An array of booleans that determine which modifiers should actually be used for quick rolls by default
+     * @param {string} [extradice] Extra dice to roll
      * @param {string} [otherlabel] Text to postpend to the label
+     * @param {boolean} [doubledice] Whether to roll the dice pool twice
      * @param successfunc Callback to execute after going through with the macro, executed unless an error happens
      * @param autocondition Callback to a condition auto-removal function, executed if the setting is on, executed unless an error happens
      * @returns {Promise<DiceReturn> | Promise<null>}
      */
-    async silentSelectRolled({ tnyes = false, tnnum = 3, prechecked = [], otherkeys = new Map(), otherdice = new Map(), otherbools = new Map(), othernames = new Map(), extradice = "", otherlabel = "" } = {}, successfunc = null, autocondition = null) {
+    async silentSelectRolled({ tnyes = false, tnnum = 3, prechecked = [], otherkeys = new Map(), otherdice = new Map(), otherbools = new Map(), othernames = new Map(), extradice = "", otherlabel = "", doubledice = false } = {}, successfunc = null, autocondition = null) {
         const burdened = hasConditionsIronclaw("burdened", this);
         const conditionRemoval = game.settings.get("ironclaw2e", "autoConditionRemoval");
         // Get the total of all the dice pools
-        const all = this._getAllDicePools(prechecked, burdened, otherkeys, otherdice, otherbools, extradice);
+        const all = this._getAllDicePools(prechecked, burdened, otherkeys, otherdice, othernames, otherbools, extradice);
 
         // Set the label
-        let label = all.label + ".";
-
+        let label = all.label + (doubledice ? ", " + game.i18n.localize("ironclaw2e.chat.doubleDice") : "") + ".";
         // If it exists, set the separate label
         if (typeof (otherlabel) === 'string' && otherlabel.length > 0)
             label += `<p style="color:black">${otherlabel}</p>`;
+
+        if (doubledice) { // See if the dicepool will be rolled twice (doubled dicepool), like in case of a Weak Soak
+            totaldice = addArrays(totaldice, totaldice);
+        }
+
+        // Exhaust the gifts returned from the dice pools
+        await Ironclaw2EItem.giftSetExhaustArray(all.giftsToExhaust, "true");
 
         let rollreturn = null;
         if (tnyes) // Do the actual roll, either TN or Highest based on tnyes

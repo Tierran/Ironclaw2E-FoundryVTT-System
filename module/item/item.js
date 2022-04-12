@@ -45,6 +45,21 @@ export class Ironclaw2EItem extends Item {
         }
     }
 
+    /**
+     * Simple helper that just sets the exhaust state of an entire array of gifts, helper to help combat against race conditions
+     * @param {Ironclaw2EItem[]} gifts
+     * @param {string} state "toggle" changes the state to the opposite, "true" or "false" set it to that state, otherwise errors out. "true" exhausts, "false" refreshes.
+     * @returns {Promise<boolean>} Whether there were any gifts to exhaust
+     */
+    static async giftSetExhaustArray(gifts, state) {
+        if (gifts?.length > 0) {
+            const giftUseToChat = game.settings.get("ironclaw2e", "sendGiftUseExhaustMessage");
+            for (let exhaust of gifts) { await exhaust.giftToggleExhaust(state, giftUseToChat); }
+            return true;
+        }
+        return false;
+    }
+
     /* -------------------------------------------- */
     /* Overrides                                    */
     /* -------------------------------------------- */
@@ -480,7 +495,7 @@ export class Ironclaw2EItem extends Item {
 
     /**
      * Set or toggle exhaustion in a gift, if able
-     * @param {string} toggle "toggle" changes the state to the opposite, "true" or "false" set it to that state, otherwise errors out
+     * @param {string} toggle "toggle" changes the state to the opposite, "true" or "false" set it to that state, otherwise errors out. "true" exhausts, "false" refreshes.
      * @param {boolean} sendToChat If true, send a message to chat about the new gift exhaust state
      * @returns {Promise<boolean | null>} Returns either whether gift is exhausted or not, or null in case of an error
      */
