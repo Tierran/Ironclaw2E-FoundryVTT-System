@@ -1,4 +1,4 @@
-import { findActorToken, findInItems, findTotalDice, getTokenFromSpeaker, popupConfirmationBox } from "../helpers.js";
+import { findActorToken, findInItems, findTotalDice, formDicePoolField, getTokenFromSpeaker, popupConfirmationBox } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -1522,19 +1522,16 @@ export class Ironclaw2EItem extends Item {
         if (this.actor) {
             // If the weapon has separate dice, add a new dice field to the popup dialog construction
             let formconstruction = ``;
-            let usesmoredice = false;
+            let moredice = null;
             if (Array.isArray(dicearray)) {
-                formconstruction += `<div class="form-group flexrow">
-                 <label class="normal-label">${diceid}: ${reformDiceString(dicearray, true)}</label>
-	             <input type="checkbox" id="${makeCompareReady(diceid)}" name="${makeCompareReady(diceid)}" value="${makeCompareReady(diceid)}" checked></input>
-                </div>`+ "\n";
-                usesmoredice = true;
+                moredice = formDicePoolField(dicearray, diceid, `${diceid}: ${reformDiceString(dicearray, true)}`, true, { "itemid": this.id });
             }
 
             // Prepare the actual dice input object separately from the roll types
+            formconstruction = (moredice ? moredice.otherinputs : "");
             const diceinput = {
-                "prechecked": stats, "tnyes": tnyes, "tnnum": usedtn, "otherkeys": (usesmoredice ? [diceid] : []), "otherdice": (usesmoredice ? [dicearray] : []),
-                "otherinputs": formconstruction, "otherbools": (usesmoredice ? [true] : []), "otherlabel": "", "extradice": extradice
+                "prechecked": stats, "tnyes": tnyes, "tnnum": usedtn, "otherkeys": (moredice ? moredice.otherkeys : new Map()), "otherdice": (moredice ? moredice.otherdice : new Map()),
+                "othernames": (moredice ? moredice.othernames : new Map()),"otherinputs": formconstruction, "otherbools": (moredice ? moredice.otherbools : new Map()), "otherlabel": "", "extradice": extradice
             };
 
             switch (rolltype) {
