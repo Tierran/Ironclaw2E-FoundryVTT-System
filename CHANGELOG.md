@@ -1,3 +1,12 @@
+### 0.5.12 Template exhaustion release
+ - Added species and career templates that can be applied to actors
+ - Added a system where a mook token will automatically get a missing species or career template from a configured source based on the image's name
+ - Gift bonuses can now be configured on whether they autocheck in the dice pool dialog and whether they exhaust the associated gift
+ - Added a better condition adding popup to sheets
+ - Added a way to make weapon templates from the sheet, but they have no effect on rolls
+ - Actor sheets should be using the localization system entirely
+ - Fixed bugs
+
 ### 0.5.11 Flat fixes release
  - Added detection for flat damage to weapons
  - Attackers now use the information for the defender's token through the chat if rolling directly against a damage, used for combat advantage detection
