@@ -127,6 +127,34 @@ export async function upgradeVersion(lastversion) {
 
         console.log("0.5.6, special setting upgrade, done!");
     }
+
+    // Version 0.5.12 check
+    version = "0.5.12";
+    if (checkIfNewerVersion(version, lastversion)) {
+        ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationNotice", { "version": version }), { permanent: true });
+
+        // Item changes, first grab all items from everywhere
+        let itemsToChange = getAllItemsInWorld("gift");
+        let problemItems = [];
+
+        // Validate the data for special settings
+        for (let item of itemsToChange) {
+            const foo = await item.giftValidateSpecialSetting();
+            if (!(foo)) {
+                problemItems.push(item);
+            }
+        }
+
+        // In case of potential problems the GM might need to check
+        if (problemItems.length > 0) {
+            ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationWarning", { "version": version }), { permanent: true });
+            problemItemToChat(problemItems);
+        } else {
+            ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationComplete", { "version": version }), { permanent: true });
+        }
+
+        console.log("0.5.12, special setting upgrade, done!");
+    }
 }
 
 /**

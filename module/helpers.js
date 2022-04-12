@@ -1035,7 +1035,7 @@ export function getCorrectElevationFlag() {
  * @param {boolean} localize
  * @returns {Promise<ConfirmationReturn>}
  */
-export function popupConfirmationBox(title, message, button, { localize = true, actorname = "", itemname = "", includesend = false, senddefault = true } = {}) {
+export function popupConfirmationBox(title, message, button, { localize = true, actorname = "", itemname = "", defaultbutton = "one", includesend = false, senddefault = true } = {}) {
     let confirmed = false;
     const usedTitle = (localize ? game.i18n.format(title, { "actor": actorname, "item": itemname }) : title);
     const sendPart = `
@@ -1065,7 +1065,7 @@ export function popupConfirmationBox(title, message, button, { localize = true, 
                     callback: () => confirmed = false
                 }
             },
-            default: "one",
+            default: defaultbutton,
             render: html => { },
             close: html => {
                 let sent = false;

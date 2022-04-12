@@ -1,0 +1,11 @@
+<form class="ironclaw2e">
+    <h1>{{localize "ironclaw2e.dialog.addCondition.header" name=actor.name}}</h1>
+    <div class="form-group">
+        <span class="normal-label">{{localize "ironclaw2e.dialog.addCondition.toAdd"}}:</span>
+    </div>
+    <div class="form-group">
+        <select id="condition" name="condition" data-dtype="Number">
+            {{selectOptions systemConditions localize=true}}
+        </select>
+    </div>
+</form>

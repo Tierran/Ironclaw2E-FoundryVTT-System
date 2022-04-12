@@ -163,6 +163,8 @@ export class Ironclaw2EItem extends Item {
                 data.usedSpecialSettings[i].giftName = itemData.name;
                 data.usedSpecialSettings[i].giftId = itemData._id;
                 data.usedSpecialSettings[i].settingIndex = i;
+                // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored refreshedState as true, otherwise it is false
+                data.usedSpecialSettings[i].refreshedState = (data.exhaustWhenUsed === false || !data.exhausted);
 
                 // Applicability settings
                 // Self settings
@@ -231,12 +233,6 @@ export class Ironclaw2EItem extends Item {
 
                 if (data.usedSpecialSettings[i].rangeOtherField) {
                     data.usedSpecialSettings[i].rangeOtherArray = splitStatString(data.usedSpecialSettings[i].rangeOtherField);
-                }
-
-                // Gift Exhaust check
-                if (data.usedSpecialSettings[i].worksWhenState !== "anyState") {
-                    // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored refreshedState as true, otherwise it is false
-                    data.usedSpecialSettings[i].refreshedState = (data.exhaustWhenUsed === false || !data.exhausted);
                 }
 
                 // Effect settings

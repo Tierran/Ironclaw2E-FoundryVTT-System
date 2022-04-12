@@ -338,6 +338,17 @@ export async function setTargetConditionQuota(condition, value) {
     return await condition.update({ "_id": condition.id, "flags.ironclaw2e.quota": inputvalue });
 }
 
+/**
+ * Function to generate a Map for a select HTML element
+ */
+export function getConditionSelectObject() {
+    let condMap = new Map();
+    for (let fig of CommonConditionInfo.conditionList) {
+        condMap[fig.id] = fig.label;
+    }
+    return condMap;
+}
+
 /* -------------------------------------------- */
 /*  Condition Helpers                           */
 /* -------------------------------------------- */

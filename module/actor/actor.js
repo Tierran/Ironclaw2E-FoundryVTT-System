@@ -18,7 +18,7 @@ import { getDistancePenaltyConstruction } from "../helpers.js";
 import { checkQuickModifierKey } from "../helpers.js";
 import { getDistanceBetweenPositions } from "../helpers.js";
 import { formDicePoolField } from "../helpers.js";
-import { CommonConditionInfo, getSingleConditionIronclaw, getTargetConditionQuota, setTargetConditionQuota } from "../conditions.js";
+import { CommonConditionInfo, getConditionSelectObject, getSingleConditionIronclaw, getTargetConditionQuota, setTargetConditionQuota } from "../conditions.js";
 import { checkStandardDefense, CommonSystemInfo, getRangeDiceFromDistance } from "../systeminfo.js";
 // For condition management
 import { hasConditionsIronclaw } from "../conditions.js";
@@ -1982,7 +1982,7 @@ export class Ironclaw2EActor extends Actor {
       </div>`;
 
         return this.basicRollSelector({
-            "prechecked": checkedstats, tnyes, "tnnum": usedTn, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
+            "prechecked": checkedstats, tnyes, "tnnum": tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
             "doubledice": checkweak, otherlabel
         }, { directroll }, successfunc);
     }
@@ -2038,7 +2038,7 @@ export class Ironclaw2EActor extends Actor {
         constructionbools = bonuses.otherbools;
 
         return this.basicRollSelector({
-            "prechecked": checkedstats, tnyes, "tnnum": usedTn, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
+            "prechecked": checkedstats, tnyes, "tnnum": tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
             otherlabel
         }, { directroll }, successfunc);
     }
@@ -2084,7 +2084,7 @@ export class Ironclaw2EActor extends Actor {
         const autoremove = (x => { actor.deleteEffect("aiming"); });
 
         return this.basicRollSelector({
-            "prechecked": checkedstats, tnyes, "tnnum": usedTn, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
+            "prechecked": checkedstats, tnyes, "tnnum": tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
             otherlabel
         }, { directroll }, successfunc);
     }
@@ -2116,7 +2116,7 @@ export class Ironclaw2EActor extends Actor {
         constructionbools = bonuses.otherbools;
 
         return this.basicRollSelector({
-            "prechecked": checkedstats, tnyes, "tnnum": usedTn, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
+            "prechecked": checkedstats, tnyes, "tnnum": tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
             otherlabel
         }, { directroll }, successfunc);
     }
@@ -2177,7 +2177,7 @@ export class Ironclaw2EActor extends Actor {
         constructionbools = bonuses.otherbools;
 
         return this.basicRollSelector({
-            "prechecked": checkedstats, tnyes, "tnnum": usedTn, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
+            "prechecked": checkedstats, tnyes, "tnnum": tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
             otherlabel
         }, { directroll }, successfunc);
     }
@@ -2330,22 +2330,20 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /** Special condition adding popup */
-    popupAddCondition(readyname = "") {
+    async popupAddCondition(readyname = "") {
         let confirmed = false;
         let speaker = getMacroSpeaker(this);
+
+        const templateData = {
+            "actor": this,
+            "systemConditions": getConditionSelectObject(),
+            "translateLabel": game.ironclaw2e.useCUBConditions
+        };
+        const contents = await renderTemplate("systems/ironclaw2e/templates/popup/condition-popup.html", templateData);
+
         let dlog = new Dialog({
             title: game.i18n.format("ironclaw2e.dialog.addCondition.title", { "name": speaker.alias }),
-            content: `
-     <form class="ironclaw2e">
-      <h1>${game.i18n.format("ironclaw2e.dialog.addCondition.header", { "name": this.data.name })}</h1>
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.addCondition.toAdd")}:</label>
-      </div>
-	  <div class="form-group">
-	   <input id="cond" name="cond" value="${readyname}" onfocus="this.select();"></input>
-      </div>
-     </form>
-     `,
+            content: contents,
             buttons: {
                 one: {
                     icon: '<i class="fas fa-check"></i>',
@@ -2359,11 +2357,12 @@ export class Ironclaw2EActor extends Actor {
                 }
             },
             default: "one",
-            render: html => { document.getElementById("cond").focus(); },
+            render: html => { document.getElementById("condition").focus(); },
             close: html => {
                 if (confirmed) {
-                    let COND = html.find('[name=cond]')[0].value;
-                    if (COND.length > 0) this.addEffect(makeCompareReady(COND));
+                    let COND = html.find('[name=condition]')[0]?.value;
+                    if (COND?.length > 0)
+                        this.addEffect(COND);
                 }
             }
         });
