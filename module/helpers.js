@@ -807,24 +807,51 @@ export function diceFieldUpgrade(dicearray, upgrade) {
 /* -------------------------------------------- */
 
 /**
+ * Generic command to add a new bonus field to the dice pool dialog
+ * @param {number[]} fielddice The dice for this particular field
+ * @param {string} fieldname The name to use for the field in the actual messages
+ * @param {string} fieldlabel The label for this field in the dice pool popup
+ * @param {boolean} autocheck Whether the field is checked or not by default
+ * @param {string} itemid The item id related to this field, if any
+ * @param {any} param5 The mostly mandatory data which holds the previous values which are being added to
+ * @returns {object} Returns a holder object which returns the inputs with the added bonuses
+ */
+export function formDicePoolField(fielddice, fieldname, fieldlabel, autocheck = true, itemid = null,
+    { otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "" } = {}) {
+    let fieldId = foundry.utils.randomID(12); // Make a random id to use for identifying this exact field
+    while (otherkeys.has(fieldId)) fieldId = foundry.utils.randomID(12); // Pure paranoia check
+    otherkeys.set(fieldId, itemid);
+    otherdice.sets(fieldId, fielddice);
+    othernames.set(fieldId, fieldname);
+    otherbools.set(fieldId, autocheck);
+    otherinputs += `<div class="form-group flexrow">
+                <label class="normal-label">${fieldlabel}</label>
+	            <input type="checkbox" id="${fieldId}" name="${fieldId}" ${(autocheck ? "checked" : "")}></input>
+                </div>`+ "\n";
+    return { otherkeys, otherdice, othernames, otherbools, otherinputs };
+}
+
+/**
  * Apply range penalty from the raw distance in paces to the roll
  * @param {any} otherinputs
  * @param {any} otherbools
  * @param {any} otherkeys
  * @param {any} otherdice
+ * @param {any} othernames
  * @param {number} distance The distance to get a penalty for, in paces
  * @param {number} reduction The degree of penalty reduction
  * @param {boolean} autocheck Whether to autocheck the penalty, only really false for when a wand is used
  * @param {boolean} allowovermax Whether to allow a range penalty over the maximum distance to exist (true), or to show it as an error (false)
  * @returns {object} Returns a holder object which returns the inputs with the added bonuses
  */
-export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs, otherbools, distance, { reduction = 0, autocheck = true, allowovermax = false, explosionpenalty = false } = {}) {
+export function getDistancePenaltyConstruction(otherkeys, otherdice, othernames, otherbools, otherinputs, distance, { reduction = 0, autocheck = true, allowovermax = false, explosionpenalty = false } = {}) {
     const usePenalties = game.settings.get("ironclaw2e", "rangePenalties");
     if (!usePenalties) {
         // If the penalties are turned off, just return out with the inputs as they were
-        return { "otherinputs": otherinputs, "otherbools": otherbools, "otherkeys": otherkeys, "otherdice": otherdice };
+        return { "otherkeys": otherkeys, "otherdice": otherdice, "othernames": othernames, "otherbools": otherbools, "otherinputs": otherinputs };
     }
 
+    let foo = null;
     const foobar = getRangeDiceFromDistance(distance, reduction, allowovermax, true);
     const distanceDice = foobar.rangeDice;
     const rangeBand = foobar.rangeBandOriginal;
@@ -835,16 +862,10 @@ export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs
                 </div>`+ "\n";
     } else if (distanceDice) {
         const diceArray = findTotalDice(distanceDice);
-        otherkeys.push(distKey);
-        otherdice.push(diceArray);
-        otherinputs += `<div class="form-group flexrow">
-                <label class="normal-label">${game.i18n.format((explosionpenalty ? "ironclaw2e.dialog.dicePool.rangePenaltyExplosion" : "ironclaw2e.dialog.dicePool.rangePenaltyAttacker"),
-            { "range": rangeBand, "penalty": distanceDice })}</label>
-	            <input type="checkbox" id="${makeCompareReady(distKey)}" name="${makeCompareReady(distKey)}" ${(autocheck ? "checked" : "")}></input>
-                </div>`+ "\n";
-        otherbools.push(autocheck);
+        const distLabel = game.i18n.format((explosionpenalty ? "ironclaw2e.dialog.dicePool.rangePenaltyExplosion" : "ironclaw2e.dialog.dicePool.rangePenaltyAttacker"), { "range": rangeBand, "penalty": distanceDice });
+        foo = formDicePoolField(diceArray, distKey, distLabel, autocheck, null, { otherkeys, otherdice, othernames, otherbools, otherinputs });
     }
-    return { "otherinputs": otherinputs, "otherbools": otherbools, "otherkeys": otherkeys, "otherdice": otherdice };
+    return (foo ? foo : { "otherkeys": otherkeys, "otherdice": otherdice, "othernames": othernames, "otherbools": otherbools, "otherinputs": otherinputs });
 }
 
 /**
@@ -857,20 +878,16 @@ export function getDistancePenaltyConstruction(otherkeys, otherdice, otherinputs
  * @param {boolean} autocheck Whether to autocheck the penalty, only really false for when a wand is used
  * @returns {object} Returns a holder object which returns the inputs with the added bonuses
  */
-export function getCombatAdvantageConstruction(otherkeys, otherdice, otherinputs, otherbools, target, { autocheck = true } = {}) {
+export function getCombatAdvantageConstruction(otherkeys, otherdice, othernames, otherbools, otherinputs, target, { autocheck = true } = {}) {
+    let foo = null;
     if (target && checkIfDisadvantagedIronclaw(target)) {
         const diceArray = findTotalDice(CommonSystemInfo.combatAdvantageDice);
         const advKey = "Combat Advantage";
-        otherkeys.push(advKey);
-        otherdice.push(diceArray);
-        otherinputs += `<div class="form-group flexrow">
-                <label class="normal-label">${game.i18n.format("ironclaw2e.dialog.dicePool.combatAdvantage", { "bonus": CommonSystemInfo.combatAdvantageDice })}</label>
-	            <input type="checkbox" id="${makeCompareReady(advKey)}" name="${makeCompareReady(advKey)}" ${(autocheck ? "checked" : "")}></input>
-                </div>`+ "\n";
-        otherbools.push(autocheck);
+        const advLabel = game.i18n.format("ironclaw2e.dialog.dicePool.combatAdvantage", { "bonus": CommonSystemInfo.combatAdvantageDice });
+        foo = formDicePoolField(diceArray, advKey, advLabel, autocheck, null, { otherkeys, otherdice, othernames, otherbools, otherinputs });
     }
 
-    return { "otherinputs": otherinputs, "otherbools": otherbools, "otherkeys": otherkeys, "otherdice": otherdice };
+    return (foo ? foo : { "otherkeys": otherkeys, "otherdice": otherdice, "othernames": othernames, "otherbools": otherbools, "otherinputs": otherinputs });
 }
 
 /* -------------------------------------------- */
