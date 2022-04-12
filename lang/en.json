@@ -214,6 +214,8 @@
   "ironclaw2e.config.weaponExhaustNeedsRefreshedHint": "If checked, weapons that have a gift to auto-exhaust will ask to refresh that gift when the weapon is used with the gift exhausted. Unchecked, the weapons will instead ignore the gift's state and work regardless.",
   "ironclaw2e.config.npcItemHasDescription": "NPC item messages have descriptions",
   "ironclaw2e.config.npcItemHasDescriptionHint": "If checked, item information messages sent from characters with no player owners will have the item's description in them. Unchecked, and such messages will only show the item's statistics to the players.",
+  "ironclaw2e.config.sendGiftUseExhaustMessage": "Send gift use exhaustion to chat",
+  "ironclaw2e.config.sendGiftUseExhaustMessageHint": "If checked, using gifts in a dice pool roll will also confirm gift exhaustion with a chat message.",
 
   "ironclaw2e.config.templateSpeciesActive": "Wildcard species templates active",
   "ironclaw2e.config.templateSpeciesActiveHint": "Whether the wildcard template system is active for Species.",
