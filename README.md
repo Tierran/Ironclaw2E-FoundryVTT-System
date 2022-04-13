@@ -36,7 +36,7 @@ For area-of-effect templates, the system can use Enhanced Terrain Layer's elevat
 
 #### Options
 
-All world-scope settings are in sub-menus within the System Configuration menu, either under World Settings or Currency Settings. By default, certain automation options are turned off, in case they conflict with the way a GM wants to run the system. These can be turned on in the system configuration at their leisure. In addition, the system contains some client-scope settings, which can be seen in the default system settings menu.  
+All world-scope settings are in sub-menus within the System Configuration menu. By default, certain automation options are turned off, in case they conflict with the way a GM wants to run the system. These can be turned on in the system configuration at their leisure. In addition, the system contains some client-scope settings, which can be seen in the default system settings menu.  
  - **Range settings:** The range settings in the world configuration control how the system measurements behave, with options to change the measurement method or the accuracy of the internal measuring.  
  - **Auto-remove conditions:** The system will remove conditions from actors based on hard-coded logic of where they should turn off. More on this under **Conditions**.  
  - **Automated encumbrance system:** Based on carried weight and worn armors, the system will give the actors encumbrance conditions as appropriate. The system is tested and should work fine, but it is potentially slightly unstable due to its implementation. When active, the encumbrance conditions should **not** be manually toggled.  
