@@ -1982,7 +1982,7 @@ export class Ironclaw2EActor extends Actor {
       </div>`;
 
         return this.basicRollSelector({
-            "prechecked": checkedstats, tnyes, "tnnum": tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
+            "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
             "doubledice": checkweak, otherlabel
         }, { directroll }, successfunc);
     }
@@ -2038,7 +2038,7 @@ export class Ironclaw2EActor extends Actor {
         constructionbools = bonuses.otherbools;
 
         return this.basicRollSelector({
-            "prechecked": checkedstats, tnyes, "tnnum": tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
+            "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
             otherlabel
         }, { directroll }, successfunc);
     }
@@ -2084,9 +2084,9 @@ export class Ironclaw2EActor extends Actor {
         const autoremove = (x => { actor.deleteEffect("aiming"); });
 
         return this.basicRollSelector({
-            "prechecked": checkedstats, tnyes, "tnnum": tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
+            "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
             otherlabel
-        }, { directroll }, successfunc);
+        }, { directroll }, successfunc, autoremove);
     }
 
     popupCounterRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "" } = {}, { directroll = false, otheritem = null } = {}, item = null, successfunc = null) {
@@ -2116,7 +2116,7 @@ export class Ironclaw2EActor extends Actor {
         constructionbools = bonuses.otherbools;
 
         return this.basicRollSelector({
-            "prechecked": checkedstats, tnyes, "tnnum": tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
+            "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
             otherlabel
         }, { directroll }, successfunc);
     }
@@ -2177,7 +2177,7 @@ export class Ironclaw2EActor extends Actor {
         constructionbools = bonuses.otherbools;
 
         return this.basicRollSelector({
-            "prechecked": checkedstats, tnyes, "tnnum": tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
+            "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
             otherlabel
         }, { directroll }, successfunc);
     }
