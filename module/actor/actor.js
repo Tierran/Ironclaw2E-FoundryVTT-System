@@ -324,6 +324,7 @@ export class Ironclaw2EActor extends Actor {
         }
 
         const attackActor = Ironclaw2EActor.getAttackerActor(otheritem);
+        const skipActor = (!otheritem.actorId && !otheritem.sceneId && !otheritem.tokenId);
 
         // Trigger the actual roll if the attacker is found and the weapon id is listed
         if (attackActor && otheritem.weaponId) {
@@ -332,7 +333,14 @@ export class Ironclaw2EActor extends Actor {
             else if (rolltype === "spark")
                 attackActor.items.get(otheritem.weaponId).sparkRoll(directroll);
         } else if (!attackActor) {
-            ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
+            if (skipActor && game.user.isGM) { // If the item has no flags for where it is, instead try and get it from the directory and launch a roll from there
+                if (rolltype === "attack")
+                    game.items.get(otheritem.weaponId)?.attackRoll(directroll, skipresist, presettn, resists, message, defenders);
+                else if (rolltype === "spark")
+                    game.items.get(otheritem.weaponId)?.sparkRoll(directroll);
+            } else {
+                ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
+            }
         }
     }
 
@@ -1913,7 +1921,7 @@ export class Ironclaw2EActor extends Actor {
         }
     }
 
-    async popupRallyAlliesRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "" } = {}, { directroll = false, targetpos = null } = {},
+    async popupRallyRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "" } = {}, { directroll = false, targetpos = null } = {},
         successfunc = null) {
         const data = this.data.data;
         let checkedstats = [...prechecked];
@@ -2016,7 +2024,7 @@ export class Ironclaw2EActor extends Actor {
         // Attacker range penalty
         if (otheritem) {
             const foundToken = findActorToken(this);
-            if (foundToken) {
+            if (foundToken && otheritem.attackerPos) {
                 const dist = getDistanceBetweenPositions(otheritem.attackerPos, foundToken.data, { usecombatrules: true });
                 const range = getDistancePenaltyConstruction(constructionkeys, constructionarray, constructionnames, constructionbools, formconstruction, dist, { "reduction": otheritem.attackerRangeReduction, "autocheck": otheritem.attackerRangeAutocheck });
                 formconstruction = range.otherinputs;
@@ -2143,7 +2151,7 @@ export class Ironclaw2EActor extends Actor {
 
             // Attacker range penalty
             const foundToken = findActorToken(this);
-            if (foundToken) {
+            if (foundToken && otheritem.attackerPos) {
                 // Use either the template if it exists, or the token data if the attack explosion spot is not indicated, or the attack is direct
                 const dist = getDistanceBetweenPositions(otheritem.attackerPos, otheritem.templatePos || foundToken.data, { usecombatrules: true });
                 const range = getDistancePenaltyConstruction(constructionkeys, constructionarray, constructionnames, constructionbools, formconstruction, dist, { "reduction": otheritem.attackerRangeReduction, "autocheck": otheritem.attackerRangeAutocheck });

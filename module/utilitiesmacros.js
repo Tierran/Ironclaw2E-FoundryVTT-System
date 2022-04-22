@@ -706,6 +706,22 @@ function addIronclawItemDirectoryEntryContext(html, entryOptions) {
                 ChatMessage.applyRollMode(chatData, "selfroll");
                 CONFIG.ChatMessage.documentClass.create(chatData);
             }
+        },
+        {
+            name: "ironclaw2e.context.items.sendToChat",
+            icon: '<i class="fas fa-comment-dots"></i>',
+            condition: li => {
+                const id = li.data("documentId");
+                return game.user.isGM && game.items.has(id);
+            },
+            callback: li => {
+                const id = li.data("documentId");
+                const item = game.items.get(id);
+                if (item)
+                    item.sendInfoToChat();
+                else
+                    ui.notifications.warn("ironclaw2e.ui.itemNotFound", { "localize": true });
+            }
         });
 }
 Hooks.on("getItemDirectoryEntryContext", addIronclawItemDirectoryEntryContext);

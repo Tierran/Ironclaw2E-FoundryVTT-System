@@ -568,8 +568,15 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         const [target] = (game.user.targets?.size > 0 ? game.user.targets : [null]);
         const otherlabel = game.i18n.format("ironclaw2e.chatInfo.itemInfo.rallyRoll", { name: getMacroSpeaker(this.actor)?.alias });
+        let tnnum = 3;
+        if (target) { // Check the target disposition for the default TN
+            if (target.actor?.hasPlayerOwner === false) {
+                if (target.disposition !== CONST.TOKEN_DISPOSITIONS.FRIENDLY)
+                    tnnum = 6;
+            }
+        }
 
-        this.actor.popupRallyAlliesRoll({ "prechecked": selected, "tnyes": true, "tnnum": 3, otherlabel }, { directroll, "targetpos": target });
+        this.actor.popupRallyRoll({ "prechecked": selected, "tnyes": true, tnnum, otherlabel }, { directroll, "targetpos": target });
     }
 
     /**

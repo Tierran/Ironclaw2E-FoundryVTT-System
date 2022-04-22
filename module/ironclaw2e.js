@@ -20,6 +20,7 @@ import { rollTargetNumberDialog } from "./dicerollers.js";
 import { rollHighestDialog } from "./dicerollers.js";
 import { rollTargetNumberOneLine } from "./dicerollers.js";
 import { rollHighestOneLine } from "./dicerollers.js";
+import { rollVariableOneLine } from "./dicerollers.js";
 
 import { checkQuickModifierKey, getSpeakerActor, makeCompareReady } from "./helpers.js";
 
@@ -64,6 +65,7 @@ Hooks.once('init', function () {
         rollHighestDialog,
         rollTargetNumberOneLine,
         rollHighestOneLine,
+        rollVariableOneLine,
         // System info
         CommonSystemInfo,
         CommonConditionInfo,

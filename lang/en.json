@@ -49,6 +49,7 @@
   "ironclaw2e.context.chatLog.rollResist": "Roll Resist",
 
   "ironclaw2e.context.items.copyID": "Copy ID to Chat",
+  "ironclaw2e.context.items.sendToChat": "Send Info to Chat",
   "ironclaw2e.context.items.setAsSpeciesSource": "Set as Species Template Source",
   "ironclaw2e.context.items.setAsCareerSource": "Set as Career Template Source",
 
@@ -70,6 +71,7 @@
   "ironclaw2e.ui.weaponGiftExhaustFailure": "{name} failed to find a gift named {gift} on: {actor}",
   "ironclaw2e.ui.weaponGiftExhaustAbort": "{name} use aborted, due to missing gift to exhaust",
   "ironclaw2e.ui.itemWeightParseError": "Item weight parsing error for {item}: {weight}",
+  "ironclaw2e.ui.itemNotFound": "Item not found",
   "ironclaw2e.ui.standardDefenseResist": "Weapon '{name}' defense stat pool defined as standard defense, yet the weapon's attack is resisted",
   "ironclaw2e.ui.alreadyReplacedSetting": "Special bonus system found a competing replacement bonus in the Gift '{replacement}' that the Gift '{name}' requested for '{actor}'. This should be avoided.",
   "ironclaw2e.ui.itemUpdateInProgress": "Item update in progress, please wait...",
@@ -256,6 +258,7 @@
   "ironclaw2e.dialog.macroDefault.titleTN": "Target Number Roll for {name}",
   "ironclaw2e.dialog.macroDefault.titleCopyTN": "Change Roll to TN",
   "ironclaw2e.dialog.macroDefault.titleHighest": "Highest Roll for {name}",
+  "ironclaw2e.dialog.macroDefault.titleVar": "Variable Type Roll for {name}",
   "ironclaw2e.dialog.macroDefault.targetNumber": "Target Number of Roll",
   "ironclaw2e.dialog.macroDefault.targetNumberCopy": "Target Number to use",
   "ironclaw2e.dialog.macroDefault.d12Dice": "D12 dice to Roll",

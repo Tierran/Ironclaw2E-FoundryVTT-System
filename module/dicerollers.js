@@ -687,6 +687,72 @@ export async function rollHighestOneLine(readydice = "", label = "", rolltitle =
 }
 
 /**
+ * Dialog macro function for a variable type roll that displays a single dice input field for standard dice notation that will then be parsed
+ * No inputs need to actually be given, but default values can be inputted
+ * @param {boolean} tnyes Whether the roll uses a target number by default
+ * @param {number} tnnum The target number for the roll
+ * @param {string} readydice The dice for the roll, in standard dice notation to be parsed
+ * @param {string} label The label given to the roll function to display in the chat message
+ * @param {string} rolltitle The title shown as the dialog's purpose, translated if one is found
+ * @param {Actor} rollingactor The actor for which the roll is for
+ * @returns {Promise<DiceReturn> | Promise<null>} Promise of the roll data in an object, or null if cancelled
+ */
+export async function rollVariableOneLine(tnyes = false, tnnum = 3, readydice = "", label = "", rolltitle = "", rollingactor = null) {
+    let confirmed = false;
+    const usetranslation = !rolltitle || game.i18n.has(rolltitle); // Use translations if either rolltitle does not exist, or it exists and has a translation equivalent
+    let speaker = getMacroSpeaker(rollingactor);
+    let resolvedroll = new Promise((resolve) => {
+        let dlog = new Dialog({
+            title: usetranslation ? game.i18n.format(rolltitle || "ironclaw2e.dialog.macroDefault.titleVar", { "name": speaker.alias }) : speaker.alias + ": " + rolltitle,
+            content: `
+     <form class="ironclaw2e">
+      <div class="form-group">
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.targetNumber")}:</label>
+       <input type="checkbox" id="tnused" name="tnused" ${tnyes ? "checked" : ""}></input>
+	   <input type="text" style="max-width:40%" id="tn" name="tn" value="${tnnum}" onfocus="this.select();"></input>
+      </div>
+      <div class="form-group">
+       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.oneLineDice")}:</label>
+      </div>
+	  <div class="form-group">
+	   <input type="text" id="dices" name="dices" value="${readydice}" onfocus="this.select();"></input>
+      </div>
+     </form>
+     `,
+            buttons: {
+                one: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: game.i18n.localize("ironclaw2e.dialog.roll"),
+                    callback: () => confirmed = true
+                },
+                two: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
+                    callback: () => confirmed = false
+                }
+            },
+            default: "one",
+            render: html => { document.getElementById("tn").focus(); },
+            close: html => {
+                if (confirmed) {
+                    let TNSS = html.find('[name=tn]')[0]?.value;
+                    let TN = 0; if (TNSS?.length > 0) TN = parseInt(TNSS);
+                    let TNUSED = html.find('[name=tnused]')[0];
+                    let USED = TNUSED?.checked ?? false;
+                    let DICES = html.find('[name=dices]')[0]?.value;
+                    let DICE = findTotalDice(DICES);
+                    resolve(USED ? CardinalDiceRoller.rollTargetNumberArray(TN, DICE, label, rollingactor) : CardinalDiceRoller.rollHighestArray(DICE, label, rollingactor));
+                } else {
+                    resolve(null);
+                }
+            }
+        });
+        dlog.render(true);
+    });
+    return await resolvedroll;
+}
+
+/**
  * Function that takes a message with a roll and asks for a target number to use in copying the results of the roll to a new one
  * @param {ChatMessage} message The chat message to copy the roll from, assuming it has one
  * @param {string} rolltitle The title shown as the dialog's purpose, translated if one is found

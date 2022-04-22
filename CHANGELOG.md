@@ -3,7 +3,7 @@
  - Added a system where a mook token will automatically get a missing species or career template from a configured source based on the image's name
  - Gift bonuses can now be configured on whether they autocheck in the dice pool dialog and whether they exhaust the associated gift
  - Added a better condition adding popup to sheets
- - Added a way to make weapon templates from the sheet, but they have no effect on rolls
+ - Added a way to make weapon AoE templates from the sheet, but they have no effect on rolls
  - Actor sheets should be using the localization system entirely
  - Fixed bugs
 

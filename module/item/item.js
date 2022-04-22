@@ -13,7 +13,7 @@ import { getSpecialOptionPrototype } from "../systeminfo.js";
 
 import { CommonConditionInfo } from "../conditions.js"
 
-import { CardinalDiceRoller, rollTargetNumberOneLine } from "../dicerollers.js";
+import { CardinalDiceRoller, rollTargetNumberOneLine, rollVariableOneLine } from "../dicerollers.js";
 import { rollHighestOneLine } from "../dicerollers.js";
 import { copyToRollTNDialog } from "../dicerollers.js";
 import { Ironclaw2EActor } from "../actor/actor.js";
@@ -730,6 +730,11 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
+        if (!this.actor) {
+            // If the item has no actor, skip this and simply return null
+            return null;
+        }
+
         if (data.exhaustGift && data.exhaustGiftName.length > 0) {
             const giftToExhaust = findInItems(this.actor?.items, makeCompareReady(data.exhaustGiftName), "gift");
             if (!giftToExhaust) {
@@ -810,6 +815,11 @@ export class Ironclaw2EItem extends Item {
         const data = itemData.data;
         if (!(itemData.type === 'weapon')) {
             console.error("Weapon ready toggle attempted on a non-weapon item: " + itemData.name);
+            return;
+        }
+
+        if (!this.actor) {
+            // Skip this function for items without actors
             return;
         }
 
@@ -910,7 +920,7 @@ export class Ironclaw2EItem extends Item {
         const actor = this.actor;
 
         // TODO: Make the system use speaker rather than these flags
-        let flags = { "ironclaw2e.itemId": this.id, "ironclaw2e.itemActorId": actor.id, "ironclaw2e.itemTokenId": actor.token?.id, "ironclaw2e.itemSceneId": actor.token?.parent?.id };
+        let flags = { "ironclaw2e.itemId": this.id, "ironclaw2e.itemActorId": actor?.id, "ironclaw2e.itemTokenId": actor?.token?.id, "ironclaw2e.itemSceneId": actor?.token?.parent?.id };
         if (item.type === "weapon") {
             flags = mergeObject(flags, {
                 "ironclaw2e.weaponName": item.name, "ironclaw2e.weaponDescriptors": itemData.descriptorsSplit, "ironclaw2e.weaponEffects": itemData.effectsSplit,
@@ -1338,7 +1348,7 @@ export class Ironclaw2EItem extends Item {
         }
 
         // If the weapon isn't readied and auto-ready is toggled on
-        if (!data.readied && data.readyWhenUsed) {
+        if (this.actor && !data.readied && data.readyWhenUsed) {
             const usable = await this.weaponReadyWhenUsed();
             if (!usable) {
                 return; // If the weapon is not usable, return out
@@ -1400,7 +1410,7 @@ export class Ironclaw2EItem extends Item {
         }
 
         // If the weapon isn't readied and auto-ready is toggled on
-        if (!data.readied && data.readyWhenUsed) {
+        if (this.actor && !data.readied && data.readyWhenUsed) {
             const usable = await this.weaponReadyWhenUsed();
             if (!usable) {
                 return; // If the weapon is not usable, return out
@@ -1435,7 +1445,7 @@ export class Ironclaw2EItem extends Item {
         }
 
         // If the weapon isn't readied and auto-ready is toggled on
-        if (!data.readied && data.readyWhenUsed) {
+        if (this.actor && !data.readied && data.readyWhenUsed) {
             const usable = await this.weaponReadyWhenUsed();
             if (!usable) {
                 return; // If the weapon is not usable, return out
@@ -1485,7 +1495,7 @@ export class Ironclaw2EItem extends Item {
         }
 
         // If the weapon isn't readied and auto-ready is toggled on
-        if (!data.readied && data.readyWhenUsed) {
+        if (this.actor && !data.readied && data.readyWhenUsed) {
             const usable = await this.weaponReadyWhenUsed();
             if (!usable) {
                 return; // If the weapon is not usable, return out
@@ -1557,12 +1567,14 @@ export class Ironclaw2EItem extends Item {
             }
 
         }
-        else {
-            // For GM tests on items without actors
-            if (tnyes)
-                rollTargetNumberOneLine(usedtn, reformDiceString(dicearray));
-            else
-                rollHighestOneLine(reformDiceString(dicearray));
+        else if (game.user.isGM) {
+            // For rolls on items without actors
+            const results = rollVariableOneLine(tnyes, usedtn, dicearray ? reformDiceString(dicearray) : "");
+            // Anonymous async function to handle the callback
+            (async function () {
+                const foo = await results;
+                if (foo && callback) callback(foo);
+            })();
         }
     }
 
