@@ -76,7 +76,7 @@ export function chatCommandsIntegration(chatCommands) {
             ironclawDamageApplyChat(messageText, chatdata?.speaker);
         },
         shouldDisplayToChat: false,
-        iconClass: "fa-skull-crossbones",
+        iconClass: "fa-tint",
         description: game.i18n.localize("ironclaw2e.command.actordamage")
     }));
 
@@ -104,7 +104,7 @@ export function chatCommandsIntegration(chatCommands) {
         description: game.i18n.localize("ironclaw2e.command.requestroll")
     }));
 
-    // Send a chat message that asks select users to roll selected dice
+    // Send a whisper message that asks select users to roll selected dice
     chatCommands.registerCommand(chatCommands.createCommandFromData({
         commandKey: "/whisperask",
         invokeOnCommand: async (chatlog, messageText, chatdata) => {
@@ -112,7 +112,7 @@ export function chatCommandsIntegration(chatCommands) {
             ironclawRequestRollChat(messageText, chatdata?.speaker, true);
         },
         shouldDisplayToChat: false,
-        iconClass: "fa-user",
+        iconClass: "fa-user-secret",
         description: game.i18n.localize("ironclaw2e.command.whisperask")
     }));
 }
