@@ -1,4 +1,14 @@
 <form autocomplete="off" onsubmit="event.preventDefault();">
+
+    <div>
+        <h2 class="header-label">{{localize 'ironclaw2e.config.worldConfig.diceSystem'}}</h2>
+        <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.dicePoolsSizeOrdered'}}</label>
+            <input type="checkbox" name="dicePoolsSizeOrdered" {{checked settings.dicePoolsSizeOrdered}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.dicePoolsSizeOrderedHint'}}</p>
+        </div>
+    </div>
+
     <div>
         <h2 class="header-label">{{localize 'ironclaw2e.config.worldConfig.calculate'}}</h2>
         <div class="form-group">

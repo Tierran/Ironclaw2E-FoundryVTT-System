@@ -420,7 +420,8 @@ function addIronclawChatLogContext(html, entryOptions) {
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
                 const type = message.getFlag("ironclaw2e", "rollType");
-                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type != "TN";
+                // Check that the message has a roll, and is not of TN type
+                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type !== "TN";
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
             },
             callback: li => {
@@ -434,7 +435,8 @@ function addIronclawChatLogContext(html, entryOptions) {
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
                 const type = message.getFlag("ironclaw2e", "rollType");
-                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type == "TN";
+                // Check that the message has a roll, and is of TN type
+                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type === "TN";
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
             },
             callback: li => {
@@ -448,7 +450,8 @@ function addIronclawChatLogContext(html, entryOptions) {
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
                 const type = message.getFlag("ironclaw2e", "rollType");
-                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type != "HIGH";
+                // Check that the message has a roll, and is not of Highest type
+                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type !== "HIGH";
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
             },
             callback: li => {
@@ -461,9 +464,10 @@ function addIronclawChatLogContext(html, entryOptions) {
             icon: '<i class="fas fa-redo"></i>',
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
-                const original = message.getFlag("ironclaw2e", "originalRoll");
+                const rerollable = message.getFlag("ironclaw2e", "rollIntermediary") || message.getFlag("ironclaw2e", "originalRoll");
                 const hasOne = message.getFlag("ironclaw2e", "hasOne");
-                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && original && hasOne;
+                // Check that the message has a roll, is rerollable either because it has the new intermediary array stored or because it is the original and has a one
+                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && rerollable && hasOne;
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
             },
             callback: li => {

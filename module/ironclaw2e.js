@@ -47,7 +47,9 @@ import { measureDistances } from "./canvas.js";
 Hooks.once('init', function () {
 
     game.ironclaw2e = {
-        // Document claases
+        // The special intermediary dice roller
+        CardinalDiceRoller,
+        // Document classes
         Ironclaw2EActor,
         Ironclaw2EItem,
         Ironclaw2ECombat,
@@ -60,7 +62,6 @@ Hooks.once('init', function () {
         popupDamage,
         requestRollPopup,
         // Dice rolling commands
-        CardinalDiceRoller,
         rollTargetNumberDialog,
         rollHighestDialog,
         rollTargetNumberOneLine,
@@ -147,6 +148,9 @@ Hooks.once('init', function () {
 
     // Handlebars helper registration
     registerHandlebarsHelpers();
+
+    // Dice roller init
+    CardinalDiceRoller.cardinalInitialization();
 
     console.log("Ironclaw2E System init complete");
 });
@@ -251,6 +255,17 @@ function registerWorldSettings() {
     });
 
     // General configurations
+    // Dice system configuration
+    game.settings.register("ironclaw2e", "dicePoolsSizeOrdered", {
+        name: "ironclaw2e.config.dicePoolsSizeOrdered",
+        hint: "ironclaw2e.config.dicePoolsSizeOrderedHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false,
+        onChange: ordered => game.ironclaw2e.CardinalDiceRoller.sizeOrderedDice = ordered
+    });
+
     // Damage calculation configs
     game.settings.register("ironclaw2e", "calculateAttackEffects", {
         name: "ironclaw2e.config.calculateAttackEffects",

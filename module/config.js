@@ -87,6 +87,7 @@ export class WorldSettingsConfig extends FormApplication {
         settings.weaponExhaustNeedsRefreshed = game.settings.get("ironclaw2e", "weaponExhaustNeedsRefreshed");
         settings.npcItemHasDescription = game.settings.get("ironclaw2e", "npcItemHasDescription");
         settings.sendGiftUseExhaustMessage = game.settings.get("ironclaw2e", "sendGiftUseExhaustMessage");
+        settings.dicePoolsSizeOrdered = game.settings.get("ironclaw2e", "dicePoolsSizeOrdered");
         return settings;
     }
 }

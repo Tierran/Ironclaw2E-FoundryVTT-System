@@ -1,4 +1,4 @@
-import { findTotalDice } from "./helpers.js";
+import { addArrays, findTotalDice, parseSingleDiceString } from "./helpers.js";
 import { getMacroSpeaker } from "./helpers.js";
 
 import { CommonSystemInfo } from "./systeminfo.js";
@@ -26,6 +26,25 @@ export class CardinalDiceRoller {
      * }} TNData
      */
 
+    /* -------------------------------------------- */
+    /*  Dice Roller Variables                       */
+    /* -------------------------------------------- */
+
+    /**
+     * Whether the dice are ordered in size (true), or by source pool (false)
+     */
+    static sizeOrderedDice = false;
+
+    /* -------------------------------------------- */
+    /*  Dice Roller Set Up Functions                */
+    /* -------------------------------------------- */
+
+    /**
+     * Place to get the variables from system settings
+     */
+    static cardinalInitialization() {
+        this.sizeOrderedDice = game.settings.get("ironclaw2e", "dicePoolsSizeOrdered");
+    }
 
     /* -------------------------------------------- */
     /*  Dice Rolling Functions Proper               */
@@ -34,19 +53,15 @@ export class CardinalDiceRoller {
     /**
      * A common dice roller function to roll a set of dice against a target number
      * @param {number} tni Target number
-     * @param {number} d12 d12's to roll
-     * @param {number} d10 d10's to roll
-     * @param {number} d8 d8's to roll
-     * @param {number} d6 d6's to roll
-     * @param {number} d4 d4's to roll
+     * @param {number[]} intermediary The intermediary dice array
      * @param {string} label Optional value to display some text before the result text
      * @param {Actor} rollingactor Optional value to display the roll as from a specific actor
      * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
      * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
      * @protected
      */
-    static async rollTargetNumber(tni, d12, d10, d8, d6, d4, label = "", rollingactor = null, sendinchat = true) {
-        let rollstring = CardinalDiceRoller.formRoll(d12, d10, d8, d6, d4);
+    static async rollTargetNumber(tni, intermediary, label = "", rollingactor = null, sendinchat = true) {
+        let rollstring = CardinalDiceRoller.formRollFromIntermediary(intermediary);
         if (rollstring.length == 0)
             return null;
 
@@ -70,23 +85,24 @@ export class CardinalDiceRoller {
         let msg = await roll.toMessage({
             speaker: getMacroSpeaker(rollingactor),
             flavor: flavorstring,
-            flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.label": label, "ironclaw2e.originalRoll": true, "ironclaw2e.hasOne": hasOne }
+            flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": label, "ironclaw2e.originalRoll": true, "ironclaw2e.hasOne": hasOne }
         }, { create: sendinchat });
 
         return { "roll": roll, "highest": highest, "tnData": tnData, "message": msg, "isSent": sendinchat };
     };
 
     /**
-     * Overload of sorts for the "rollTargetNumber" dice roller function, taking in a dice array instead of raw dice
+     * Overload of sorts for the "rollTargetNumber" dice roller function, taking in a set of dice arrays instead of an intermediary
      * @param {number} tni Target number
-     * @param {number[]} dicearray The dice array to roll, five numbers corresponding to dice the amount of dice to roll, [0] = d12, [1] = d10 ... [4] = d4
+     * @param {number[]} dicearrays A set of dice arrays to roll, five numbers corresponding to dice the amount of dice to roll, [0] = d12, [1] = d10 ... [4] = d4
      * @param {string} label Optional value to display some text before the result text
      * @param {Actor} rollingactor Optional value to display the roll as from a specific actor
      * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
      * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
      */
-    static async rollTargetNumberArray(tni, dicearray, label = "", rollingactor = null, sendinchat = true) {
-        return await CardinalDiceRoller.rollTargetNumber(tni, dicearray[0], dicearray[1], dicearray[2], dicearray[3], dicearray[4], label, rollingactor, sendinchat);
+    static async rollTargetNumberArray(tni, dicearrays, label = "", rollingactor = null, sendinchat = true) {
+        const intermediary = this.intermediaryDiceTermArray(dicearrays);
+        return await CardinalDiceRoller.rollTargetNumber(tni, intermediary, label, rollingactor, sendinchat);
     }
 
     /**
@@ -102,7 +118,8 @@ export class CardinalDiceRoller {
             console.warn(message);
             return;
         }
-        let rollstring = rerollone ? CardinalDiceRoller.copyRerollHighestOne(message.roll) : CardinalDiceRoller.copyDicePoolResult(message.roll);
+        let intermediary = message.getFlag("ironclaw2e", "rollIntermediary");
+        let rollstring = rerollone ? CardinalDiceRoller.copyRerollHighestOne(message.roll, intermediary) : CardinalDiceRoller.copyDicePoolResult(message.roll);
         if (rollstring.length == 0)
             return;
         let label = message.getFlag("ironclaw2e", "label");
@@ -130,7 +147,7 @@ export class CardinalDiceRoller {
         let msg = await roll.toMessage({
             speaker: message.data.speaker,
             flavor: flavorstring,
-            flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
+            flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
         }, { create: sendinchat });
 
         await CardinalDiceRoller.copyIronclawRollFlags(message, msg, tnData);
@@ -140,19 +157,15 @@ export class CardinalDiceRoller {
 
     /**
      * A common dice roller function to roll a set of dice and take the highest one
-     * @param {number} d12 d12's to roll
-     * @param {number} d10 d10's to roll
-     * @param {number} d8 d8's to roll
-     * @param {number} d6 d6's to roll
-     * @param {number} d4 d4's to roll
+     * @param {number[]} intermediary The intermediary dice array
      * @param {string} label Optional value to display some text before the result text
      * @param {Actor} rollingactor Optional value to display the roll as from a specific actor
      * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
      * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
      * @protected
      */
-    static async rollHighest(d12, d10, d8, d6, d4, label = "", rollingactor = null, sendinchat = true) {
-        let rollstring = CardinalDiceRoller.formRoll(d12, d10, d8, d6, d4);
+    static async rollHighest(intermediary, label = "", rollingactor = null, sendinchat = true) {
+        let rollstring = CardinalDiceRoller.formRollFromIntermediary(intermediary);
         if (rollstring.length == 0)
             return null;
 
@@ -164,22 +177,23 @@ export class CardinalDiceRoller {
         let msg = await roll.toMessage({
             speaker: getMacroSpeaker(rollingactor),
             flavor: flavorstring,
-            flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.label": label, "ironclaw2e.originalRoll": true, "ironclaw2e.hasOne": hasOne }
+            flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": label, "ironclaw2e.originalRoll": true, "ironclaw2e.hasOne": hasOne }
         }, { create: sendinchat });
 
         return { "roll": roll, "highest": roll.total, "tnData": null, "message": msg, "isSent": sendinchat };
     };
 
     /**
-     * Overload of sorts for the "rollHighest" dice roller function, taking in a dice array instead of raw dice
-     * @param {number[]} dicearray The dice array to roll, five numbers corresponding to dice the amount of dice to roll, [0] = d12, [1] = d10 ... [4] = d4
+     * Overload of sorts for the "rollHighest" dice roller function, taking in a set of dice arrays instead of an intermediary
+     * @param {number[]} dicearrays A set of dice arrays to roll, five numbers corresponding to dice the amount of dice to roll, [0] = d12, [1] = d10 ... [4] = d4
      * @param {string} label Optional value to display some text before the result text
      * @param {Actor} rollingactor Optional value to display the roll as from a specific actor
      * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
      * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
      */
-    static async rollHighestArray(dicearray, label = "", rollingactor = null, sendinchat = true) {
-        return await CardinalDiceRoller.rollHighest(dicearray[0], dicearray[1], dicearray[2], dicearray[3], dicearray[4], label, rollingactor, sendinchat);
+    static async rollHighestArray(dicearrays, label = "", rollingactor = null, sendinchat = true) {
+        const intermediary = this.intermediaryDiceTermArray(dicearrays);
+        return await CardinalDiceRoller.rollHighest(intermediary, label, rollingactor, sendinchat);
     }
 
     /**
@@ -195,7 +209,8 @@ export class CardinalDiceRoller {
             console.warn(message);
             return;
         }
-        let rollstring = rerollone ? CardinalDiceRoller.copyRerollHighestOne(message.roll) : CardinalDiceRoller.copyDicePoolResult(message.roll);
+        let intermediary = message.getFlag("ironclaw2e", "rollIntermediary");
+        let rollstring = rerollone ? CardinalDiceRoller.copyRerollHighestOne(message.roll, intermediary) : CardinalDiceRoller.copyDicePoolResult(message.roll);
         if (rollstring.length == 0)
             return;
         let label = message.getFlag("ironclaw2e", "label");
@@ -211,7 +226,7 @@ export class CardinalDiceRoller {
         let msg = await roll.toMessage({
             speaker: message.data.speaker,
             flavor: flavorstring,
-            flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
+            flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
         }, { create: sendinchat });
 
         await CardinalDiceRoller.copyIronclawRollFlags(message, msg);
@@ -220,37 +235,117 @@ export class CardinalDiceRoller {
     }
 
     /* -------------------------------------------- */
-    /*  Helpers                             */
+    /*  Helpers                                     */
     /* -------------------------------------------- */
 
     /**
-     * Helper function for the dice rollers to form the roll command properly
-     * @param {number} d12 d12's to roll
-     * @param {number} d10 d10's to roll
-     * @param {number} d8 d8's to roll
-     * @param {number} d6 d6's to roll
-     * @param {number} d4 d4's to roll
+     * Helper function to parse a bunch of dice arrays into the wanted format, based on game settings
+     * @param {[number[]] | number[]} dicearrays
+     * @returns {number[]} Intermediary dice term array, each number corresponding to a die type that is finally parsed into the Foundry roller; 0 = d12, 1 = d10 ... 4 = d4
+     */
+    static intermediaryDiceTermArray(dicearrays) {
+        if (dicearrays.length === 0) {
+            return [];
+        }
+        // If size ordered dice are active, or the dicearrays given is just a singular dice array
+        if (this.sizeOrderedDice === true || typeof (dicearrays[0]) === "number") {
+            // Check that it's one actual dice array
+            if (typeof (dicearrays[0]) === "number" && dicearrays.length === 5) {
+                // Parse the one pool into an intermediary and return it
+                return this.formIntermediaryFromPool(dicearrays);
+            }
+            // Check that the dice arrays are an actual array of arrays
+            else if (Array.isArray(dicearrays[0])) {
+                let foo = [0, 0, 0, 0, 0];
+                for (let pool of dicearrays) {
+                    if (pool?.length === 5) { // One final check to make sure the length is right
+                        // Add the pool to the temporary processing pool
+                        foo = addArrays(foo, pool);
+                    } else {
+                        console.error("Something other than a dice pool array got into the dice pool parser: " + pool);
+                    }
+                }
+                // Process and return the temp pool
+                return this.formIntermediaryFromPool(foo);
+            }
+        } else if (this.sizeOrderedDice === false) {
+            let foo = [];
+            for (let pool of dicearrays) {
+                if (pool?.length === 5) { // One final check to make sure the length is right
+                    // Process the pool and add it to the intermediary array
+                    foo = intermediary.concat(this.formIntermediaryFromPool(pool));
+                } else {
+                    console.error("Something other than a dice pool array got into the dice pool parser: " + pool);
+                }
+            }
+            // Return the processed array
+            return foo;
+        }
+
+        // Essentially a default, should never really happen
+        console.warn("The intermediary dice pool parsing essentially defaulted:" + dicearrays);
+        return [];
+    }
+
+    /**
+     * Helper function to process a dice pool array into an intermediary dice term array
+     * @param {number[]} dicearray The dice array to roll, five numbers corresponding to dice the amount of dice to roll; [0] = d12, [1] = d10 ... [4] = d4
+     * @returns {number[]} Intermediary dice term array, each number corresponding to a die type that is finally parsed into the Foundry roller; 0 = d12, 1 = d10 ... 4 = d4
+     * @private
+     */
+    static formIntermediaryFromPool(dicearray) {
+        let intermediary = [];
+        for (let i = 0; i < dicearray[0]; i++) {
+            intermediary.push(0);
+        }
+        for (let i = 0; i < dicearray[1]; i++) {
+            intermediary.push(1);
+        }
+        for (let i = 0; i < dicearray[2]; i++) {
+            intermediary.push(2);
+        }
+        for (let i = 0; i < dicearray[3]; i++) {
+            intermediary.push(3);
+        }
+        for (let i = 0; i < dicearray[4]; i++) {
+            intermediary.push(4);
+        }
+        return intermediary;
+    };
+
+    /**
+     * Helper function for the dice rollers to form the dice for the roll command properly
+     * @param {number[] | number} intermediary The intermediary dice array, or a single intermediary term number to get the die string version for
      * @returns {string} Properly set-up string to give to a Roll
      * @private
      */
-    static formRoll(d12, d10, d8, d6, d4) {
+    static formRollFromIntermediary(intermediary) {
+        // Convert a number into an actual array for processing
+        const inters = Array.isArray(intermediary) ? intermediary : [intermediary];
         let rollstring = "";
-        for (var i = 0; i < d12; i++) {
-            rollstring += "1d12,";
-        }
-        for (var i = 0; i < d10; i++) {
-            rollstring += "1d10,";
-        }
-        for (var i = 0; i < d8; i++) {
-            rollstring += "1d8,";
-        }
-        for (var i = 0; i < d6; i++) {
-            rollstring += "1d6,";
-        }
-        for (var i = 0; i < d4; i++) {
-            rollstring += "1d4,";
+        for (let term of inters) {
+            switch (term) {
+                case 0:
+                    rollstring += "1d12,";
+                    break;
+                case 1:
+                    rollstring += "1d10,";
+                    break;
+                case 2:
+                    rollstring += "1d8,";
+                    break;
+                case 3:
+                    rollstring += "1d6,";
+                    break;
+                case 4:
+                    rollstring += "1d4,";
+                    break;
+                default:
+                    break;
+            }
         }
         if (rollstring.length > 0) {
+            // Remove trailing comma
             rollstring = rollstring.slice(0, -1);
         }
         return rollstring;
@@ -317,6 +412,7 @@ export class CardinalDiceRoller {
                 formula += x.result.toString() + ",";
             });
             if (formula.length > 0) {
+                // Remove the trailing comma
                 formula = formula.slice(0, -1);
             }
         }
@@ -327,22 +423,53 @@ export class CardinalDiceRoller {
     /**
      * Helper function for the dice roller copy functions to reroll one "1" and copy the rest of the dice results as numbers
      * @param {Roll} roll
+     * @param {number[]} intermediary The original intermediary dice term array, used to figure out what die should get rerolled
      * @returns {string} A new formula to use for the new copy roll, with the highest "1" as a die to be rolled
      * @private
      */
-    static copyRerollHighestOne(roll) {
-        let onefound = false, formula = "";
+    static copyRerollHighestOne(roll, intermediary) {
+        // The size of the one found, the index of the found one, the recreated formula
+        let onefound = -1, foundone = -1, formula = "";
 
         if (roll.terms.length > 0) {
+            // Find the highest found one
             roll.terms[0].results.forEach((x, i) => {
-                if (!onefound && x.result == 1) {
-                    onefound = true;
-                    formula += roll.terms[0].terms[i] + ",";
+                if (x.result == 1) {
+                    if (intermediary) {
+                        // New version with an intermediary array
+                        if (foundone < 0) {
+                            onefound = intermediary[i];
+                            foundone = i;
+                        } else if (intermediary[i] < onefound) {
+                            onefound = intermediary[i];
+                            foundone = i;
+                        }
+                    } else {
+                        // Legacy for support
+                        const die = parseSingleDiceString(roll.terms[0].terms[1]);
+                        if (foundone < 0) {
+                            onefound = dieindex;
+                            foundone = i;
+                        } else if (die[1] > onefound) {
+                            onefound = dieindex;
+                            foundone = i;
+                        }
+                    }
+                }
+            });
+            // Replace the highest found one with its actual die
+            roll.terms[0].results.forEach((x, i) => {
+                if (i === foundone) {
+                    if (intermediary)
+                        formula += this.formRollFromIntermediary(intermediary[i]) + ",";
+                    else
+                        formula += roll.terms[0].terms[i] + ",";
                 } else {
                     formula += x.result.toString() + ",";
                 }
             });
             if (formula.length > 0) {
+                // Remove the trailing comma
                 formula = formula.slice(0, -1);
             }
         }
@@ -388,7 +515,7 @@ export class CardinalDiceRoller {
             }
         }
         if (defenseAttack) {
-            updatedata.flags = mergeObject(updatedata.flags, { "ironclaw2e.defenseForAttack": defenseAttack});
+            updatedata.flags = mergeObject(updatedata.flags, { "ironclaw2e.defenseForAttack": defenseAttack });
         }
 
         await target.update(updatedata);
@@ -477,7 +604,7 @@ export async function rollTargetNumberDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0
                     let D6S = 0; if (D6SS.length > 0) D6S = parseInt(D6SS);
                     let D4SS = html.find('[name=d4s]')[0].value;
                     let D4S = 0; if (D4SS.length > 0) D4S = parseInt(D4SS);
-                    resolve(CardinalDiceRoller.rollTargetNumber(TN, D12S, D10S, D8S, D6S, D4S, label, rollingactor));
+                    resolve(CardinalDiceRoller.rollTargetNumberArray(TN, [D12S, D10S, D8S, D6S, D4S], label, rollingactor));
                 } else {
                     resolve(null);
                 }
@@ -558,7 +685,7 @@ export async function rollHighestDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4
                     let D6S = 0; if (D6SS.length > 0) D6S = parseInt(D6SS);
                     let D4SS = html.find('[name=d4s]')[0].value;
                     let D4S = 0; if (D4SS.length > 0) D4S = parseInt(D4SS);
-                    resolve(CardinalDiceRoller.rollHighest(D12S, D10S, D8S, D6S, D4S, label, rollingactor));
+                    resolve(CardinalDiceRoller.rollHighestArray([D12S, D10S, D8S, D6S, D4S], label, rollingactor));
                 } else {
                     resolve(null);
                 }

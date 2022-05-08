@@ -135,6 +135,7 @@
   "ironclaw2e.config.worldConfig.range": "Range & Distance Measurement Settings",
   "ironclaw2e.config.worldConfig.item": "Item Related Settings",
   "ironclaw2e.config.worldConfig.misc": "Miscellaneous Settings",
+  "ironclaw2e.config.worldConfig.diceSystem": "Dice System Settings",
 
   "ironclaw2e.config.coinageConfig.menuName": "Ironclaw Currency Settings Config",
   "ironclaw2e.config.coinageConfig.menuHint": "Configure the currency settings for the world.",
@@ -218,6 +219,8 @@
   "ironclaw2e.config.npcItemHasDescriptionHint": "If checked, item information messages sent from characters with no player owners will have the item's description in them. Unchecked, and such messages will only show the item's statistics to the players.",
   "ironclaw2e.config.sendGiftUseExhaustMessage": "Send gift use exhaustion to chat",
   "ironclaw2e.config.sendGiftUseExhaustMessageHint": "If checked, using gifts in a dice pool roll will also confirm gift exhaustion with a chat message.",
+  "ironclaw2e.config.dicePoolsSizeOrdered": "Size ordered dice pools",
+  "ironclaw2e.config.dicePoolsSizeOrderedHint": "If checked, the dice system auto-orders the dice based on their size, largest first. Unchecked, the system instead orders them by given source for each set.",
 
   "ironclaw2e.config.templateSpeciesActive": "Wildcard species templates active",
   "ironclaw2e.config.templateSpeciesActiveHint": "Whether the wildcard template system is active for Species.",
