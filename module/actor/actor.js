@@ -1,4 +1,4 @@
-import { checkDiceArrayEmpty, diceFieldUpgrade, getCombatAdvantageConstruction, getTemplatePosition, popupConfirmationBox } from "../helpers.js";
+import { checkDiceArrayEmpty, diceFieldUpgrade, enforceLimitArray, flattenDicePoolArray, getCombatAdvantageConstruction, getTemplatePosition, popupConfirmationBox } from "../helpers.js";
 import { addArrays } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -1108,12 +1108,12 @@ export class Ironclaw2EActor extends Actor {
         const data = this.data.data;
         let label = "";
         let labelgiven = addplus;
-        let totaldice = [0, 0, 0, 0, 0];
+        let totaldice = [];
 
         if (data.traits && Array.isArray(traitnames) && traitnames.length > 0) { // If the actor has traits and the list of traits to use is given
             for (let [key, trait] of Object.entries(data.traits)) { // Loop through the traits
                 if (traitnames.includes(makeCompareReady(key)) || (trait.name && traitnames.includes(makeCompareReady(trait.name)))) { // If the traitnames include either the key or the name of the trait (career / species name)
-                    totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(trait.diceArray, 2) : trait.diceArray)); // Add the trait to the total dice pool, limited by burdened if applicable
+                    totaldice.push((isburdened && burdenedLimitedStat(key) ? enforceLimit(trait.diceArray, CommonSystemInfo.burdenedLimit) : trait.diceArray)); // Add the trait to the total dice pool, limited by burdened if applicable
                     if (labelgiven) // Check if the label has been given to add something in between names
                         label += " + ";
                     label += (data.hasExtraCareers && key === "career" ? trait.name : convertCamelCase(key)); // Add the name to the label, either a de-camelcased trait name or the career name if extra careers are a thing
@@ -1127,7 +1127,7 @@ export class Ironclaw2EActor extends Actor {
                     let key = makeCompareReady(extra.data.data.careerName); // Make a comparable key out of the career name
                     if (traitnames.includes(key)) {
                         // Even if extra careers can't be part of the standard burdened lists, check it just in case of a custom burdened list, though usually the extra career die is just added to the total dice pool
-                        totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(extra.data.data.diceArray, 2) : extra.data.data.diceArray));
+                        totaldice.push((isburdened && burdenedLimitedStat(key) ? enforceLimit(extra.data.data.diceArray, CommonSystemInfo.burdenedLimit) : extra.data.data.diceArray));
                         if (labelgiven)
                             label += " + ";
                         label += extra.data.data.careerName; // Add the career name as a label
@@ -1139,7 +1139,7 @@ export class Ironclaw2EActor extends Actor {
         if (data.skills && Array.isArray(skillnames) && skillnames.length > 0) { // If the actor has skills and the lists of skills to use is given
             for (let [key, skill] of Object.entries(data.skills)) { // Loop through the skills
                 if (skillnames.includes(makeCompareReady(key))) {
-                    totaldice = addArrays(totaldice, (isburdened && burdenedLimitedStat(key) ? enforceLimit(skill.diceArray, 2) : skill.diceArray)); // Add the skill to the total dice pool, limited by burdened if applicable
+                    totaldice.push((isburdened && burdenedLimitedStat(key) ? enforceLimit(skill.diceArray, CommonSystemInfo.burdenedLimit) : skill.diceArray)); // Add the skill to the total dice pool, limited by burdened if applicable
                     if (labelgiven)
                         label += " + ";
                     label += convertCamelCase(key); // Add the skill name as a label after being de-camelcased
@@ -1152,9 +1152,7 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /**
-     * Get the total added dice pool from the checked traits, skills, extra dice and bonus dice
-     * @param {string[]} prechecked Traits and skills to add the dice from
-     * @param {boolean} isburdened Whether to apply the burdened limit to relevant skills
+     * Get the dice pools from the other dice fields and extra dice
      * @param {string} extradice Extra dice to add
      * @param {Map<string,object>} otherkeys A map of dice pool field id's and the item information
      * @param {Map<string,number[]>} otherdice A map of dice arrays, the id's should match exactly with their counterparts at otherkeys
@@ -1162,24 +1160,19 @@ export class Ironclaw2EActor extends Actor {
      * @param {Map<string,boolean>} otherbools A map of booleans that determine which modifiers should actually be used for quick rolls by default, the id's should match exactly with their counterparts at otherkeys
      * @protected
      */
-    _getAllDicePools(prechecked, isburdened, otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), extradice = "") {
+    _getOtherDicePools(otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), extradice = "", addplus = false) {
         let label = "";
-        let labelgiven = false;
-        let totaldice = [0, 0, 0, 0, 0];
+        let labelgiven = addplus;
+        let totaldice = [];
+        /** @type Array<Ironclaw2EItem> */
         let giftsToExhaust = [];
-
-        // Get the trait and skill pools
-        const dicePools = this._getDicePools(prechecked, prechecked, isburdened);
-        label = dicePools.label;
-        labelgiven = dicePools.labelGiven;
-        totaldice = dicePools.totalDice;
 
         // Get the bonus dice pools
         if (otherkeys?.size > 0) {
             for (let [key, info] of otherkeys.entries()) {
                 // Make sure otherbools has a positive match with the key
                 if (otherbools.get(key) === true) {
-                    totaldice = addArrays(totaldice, otherdice.get(key));
+                    totaldice.push(otherdice.get(key));
                     if (othernames.has(key)) { // Only try to add a label if the array has a key to use as a label
                         if (labelgiven)
                             label += " + ";
@@ -1204,9 +1197,42 @@ export class Ironclaw2EActor extends Actor {
                 if (labelgiven)
                     label += " + ";
                 label += game.i18n.localize("ironclaw2e.chat.extraDice");
-                totaldice = addArrays(totaldice, extra);
+                totaldice.push(extra);
             }
         }
+
+        return { "totalDice": totaldice, "label": label, "labelGiven": labelgiven, "giftsToExhaust": giftsToExhaust };
+    }
+
+    /**
+     * Get the total added dice pool from the checked traits, skills, extra dice and bonus dice
+     * @param {string[]} prechecked Traits and skills to add the dice from
+     * @param {boolean} isburdened Whether to apply the burdened limit to relevant skills
+     * @param {string} extradice Extra dice to add
+     * @param {Map<string,object>} otherkeys A map of dice pool field id's and the item information
+     * @param {Map<string,number[]>} otherdice A map of dice arrays, the id's should match exactly with their counterparts at otherkeys
+     * @param {Map<string,string>} [othernames] An array of names for the fields, to be used for UI information, the id's should match exactly with their counterparts at otherkeys
+     * @param {Map<string,boolean>} otherbools A map of booleans that determine which modifiers should actually be used for quick rolls by default, the id's should match exactly with their counterparts at otherkeys
+     * @protected
+     */
+    _getAllDicePools(prechecked, isburdened, otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), extradice = "") {
+        let label = "";
+        let labelgiven = false;
+        let totaldice = [];
+        let giftsToExhaust = [];
+
+        // Get the trait and skill pools
+        const dicePools = this._getDicePools(prechecked, prechecked, isburdened);
+        label = dicePools.label;
+        labelgiven = dicePools.labelGiven;
+        totaldice = dicePools.totalDice;
+
+        // Get the other and extra dice pools
+        const otherPools = this._getOtherDicePools(otherkeys, otherdice, othernames, otherbools, extradice, labelgiven);
+        label += otherPools.label;
+        labelgiven = otherPools.labelGiven;
+        totaldice = totaldice.concat(otherPools.totalDice);
+        giftsToExhaust = otherPools.giftsToExhaust;
 
         return { "totalDice": totaldice, "label": label, "labelGiven": labelgiven, "giftsToExhaust": giftsToExhaust };
     }
@@ -1866,7 +1892,8 @@ export class Ironclaw2EActor extends Actor {
             case -1:
                 foo = this._getAllDicePools(prechecked, burdened, constructionkeys, constructionarray, constructionnames, constructionbools);
                 bar = foo.totalDice;
-                return bar;
+                // Flatten it, as it's never really necessary for the total to be in any other order than size-based
+                return flattenDicePoolArray(bar);
                 break;
             case 0:
                 this.basicRollSelector({
@@ -1922,7 +1949,8 @@ export class Ironclaw2EActor extends Actor {
             case -1:
                 foo = this._getAllDicePools(prechecked, burdened, constructionkeys, constructionarray, constructionnames, constructionbools);
                 bar = foo.totalDice;
-                return bar;
+                // Flatten it, as it's never really necessary for the total to be in any other order than size-based
+                return flattenDicePoolArray(bar);
                 break;
             case 0:
                 this.basicRollSelector({
@@ -2579,7 +2607,6 @@ export class Ironclaw2EActor extends Actor {
                         let TNSS = html.find('[name=tn]')[0].value;
                         let TN = 0; if (TNSS.length > 0) TN = parseInt(TNSS);
                         let DICES = html.find('[name=dices]')[0].value;
-                        let DICE = findTotalDice(DICES);
 
                         let DOUBLE = html.find('[name=doubledice]')?.[0];
                         let doubleDice = (DOUBLE ? DOUBLE.checked : false);
@@ -2592,36 +2619,31 @@ export class Ironclaw2EActor extends Actor {
                             label = game.i18n.localize("ironclaw2e.chat.rollingHighest") + ": ";
 
                         if (hastraits || hasskills) { // Get the dice pools from the checked traits and skills and add them to the roll
-                            let statfoobar = this._getDicePools(traitvalues, skillvalues, isburdened, labelgiven);
+                            const statfoobar = this._getDicePools(traitvalues, skillvalues, isburdened, labelgiven);
                             totaldice = statfoobar.totalDice;
                             label += statfoobar.label;
                             labelgiven = statfoobar.labelGiven;
                         }
+                        let checkmarks = new Map();
                         if (otherkeys?.size > 0) {
-                            for (let [key, info] of otherkeys.entries()) { // Check whether the listed bonus dice are checked into the roll, then add those to the roll
+                            for (let [key, info] of otherkeys.entries()) { // Go through the other dice fields and put their checkmarks to a map
                                 let OTHER = html.find(`[name=${key}]`);
                                 let otherchecked = (OTHER.length > 0 ? OTHER[0].checked : false);
-                                if (otherchecked) {
-                                    totaldice = addArrays(totaldice, otherdice.get(key));
-                                    if (labelgiven)
-                                        label += " + ";
-                                    label += othernames.get(key);
-                                    labelgiven = true;
-
-                                    // Check whether the item is a gift that should be exhausted
-                                    if (info.itemId && info.exhaustOnUse) {
-                                        const item = this.items.get(info.itemId);
-                                        if (item?.type === 'gift') {
-                                            await item.giftToggleExhaust("true", giftUseToChat);
-                                        }
-                                    }
-                                }
+                                checkmarks.set(key, otherchecked);
                             }
                         }
-                        if (DICE.some(element => element != 0)) { // Get the extra dice field and add it to the roll if there is anything in it
-                            label += " + " + game.i18n.localize("ironclaw2e.chat.extraDice");
-                            totaldice = addArrays(totaldice, DICE);
+                        if (checkmarks.size > 0 || DICES.length > 0) {
+                            // Add the other and extra fields to the pools
+                            const otherfoobar = this._getOtherDicePools(otherkeys, otherdice, othernames, checkmarks, DICES, labelgiven);
+                            totaldice = totaldice.concat(otherfoobar.totalDice);
+                            label += otherfoobar.label;
+                            labelgiven = otherfoobar.labelGiven;
+                            for (let item of otherfoobar.giftsToExhaust) {
+                                // Go though and exhaust the relevant gifts
+                                await item.giftToggleExhaust("true", giftUseToChat);
+                            }
                         }
+
 
                         if (doubleDice) {
                             label += ", " + game.i18n.localize("ironclaw2e.chat.doubleDice");
@@ -2631,10 +2653,10 @@ export class Ironclaw2EActor extends Actor {
                             label += `<p style="color:black">${otherlabel}</p>`;
 
                         if (doubleDice) { // See if the dicepool will be rolled twice (doubled dicepool), like in case of a Weak Soak
-                            totaldice = addArrays(totaldice, totaldice);
+                            totaldice = totaldice.concat(totaldice);
                         }
                         if (uselimit) { // See if a special limit has been set to all dice
-                            totaldice = enforceLimit(totaldice, limit);
+                            totaldice = enforceLimitArray(totaldice, limit);
                         }
 
                         if (IFTN) // Do and get the actual roll
@@ -2679,6 +2701,10 @@ export class Ironclaw2EActor extends Actor {
         const conditionRemoval = game.settings.get("ironclaw2e", "autoConditionRemoval");
         // Get the total of all the dice pools
         const all = this._getAllDicePools(prechecked, burdened, otherkeys, otherdice, othernames, otherbools, extradice);
+        for (let item of all.giftsToExhaust) {
+            // Go though and exhaust the relevant gifts
+            await item.giftToggleExhaust("true", giftUseToChat);
+        }
 
         // Set the label
         let label = all.label + (doubledice ? ", " + game.i18n.localize("ironclaw2e.chat.doubleDice") : "") + ".";
@@ -2687,7 +2713,7 @@ export class Ironclaw2EActor extends Actor {
             label += `<p style="color:black">${otherlabel}</p>`;
 
         if (doubledice) { // See if the dicepool will be rolled twice (doubled dicepool), like in case of a Weak Soak
-            totaldice = addArrays(totaldice, totaldice);
+            totaldice = totaldice.concat(totaldice);
         }
 
         // Exhaust the gifts returned from the dice pools

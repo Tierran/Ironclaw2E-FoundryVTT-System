@@ -147,6 +147,23 @@ export function addArrays(foo, bar, outputLength = -1) {
 }
 
 /**
+ * Helper function to take a set of dice arrays and combine them all into a single array
+ * @param {[number[]]} dicearrays
+ * @returns {number[]}
+ */
+export function flattenDicePoolArray(dicearrays) {
+    if (!Array.isArray(dicearrays) || dicearrays.length === 0 || !Array.isArray(dicearrays[0])) {
+        return console.warn("Unexpected input when flattening a dice array set: " + dicearrays);
+    }
+    let total = [];
+
+    for (let pool of dicearrays) {
+        total = addArrays(total, pool);
+    }
+    return total;
+}
+
+/**
  * Helper function to limit a dice array to some maximum die size, by adding all larger dice into the max die and changing them to zero
  * @param {number[]} dicearray The dice array to limit
  * @param {number} maxdie The maximum allowed die, corresponding to dice array index: 0 = d12, 1 = d10, 2 = d8, 3 = d6, 4 = d4
@@ -172,6 +189,27 @@ export function enforceLimit(dicearray, maxdie) {
 }
 
 /**
+ * Helper function to limit a set of dice arrays to some maximum die size
+ * @param {[number[]]} dicearrays
+ * @param {number} maxdie
+ * @returns {[number[]]} A new, limited set of dice arrays
+ */
+export function enforceLimitArray(dicearrays, maxdie) {
+    if (!Array.isArray(dicearray))
+        return console.error("Something other than an array inputted into limit enforcer: " + dicearray);
+    if (isNaN(maxdie))
+        return console.error("Something other than a number inputted into limit enforcer as the limit: " + maxdie);
+
+    let newpools = [];
+    for (let pool of dicearrays) {
+        const limited = enforceLimit(pool, maxdie);
+        newpools.push(limited);
+    }
+
+    return newpools;
+}
+
+/**
  * Helper function to reform a standard notation dice string from a dice array
  * Primarily intended to be used for showing already-parsed dice in the UI
  * @param {number[]} dicearray The array of dice to be parsed, in the same format as findTotalDice returns
@@ -183,15 +221,20 @@ export function reformDiceString(dicearray, humanreadable = false) {
         console.error("Something that was not an array inputted to dice string reformer: " + dicearray);
         return "";
     }
-    if (dicearray.length != 5) {
-        console.error("Something that was not a dice array (based on length) inputted to dice string reformer: " + dicearray);
+    let usedArray = dicearray;
+    if (dicearray.length > 0 && Array.isArray(dicearray[0])) {
+        // Assume the inputted string is in fact a set of dice arrays, so flatten them into one
+        usedArray = flattenDicePoolArray(dicearray);
+    }
+    if (usedArray.length != 5) {
+        console.error("Something that was not a dice array (based on length) inputted to dice string reformer: " + usedArray);
         return "";
     }
 
     let reformedString = "";
-    for (let i = 0; i < dicearray.length; ++i) {
-        if (dicearray[i] != 0) {
-            let amount = dicearray[i];
+    for (let i = 0; i < usedArray.length; ++i) {
+        if (usedArray[i] != 0) {
+            let amount = usedArray[i];
             let dicetype = 0;
             switch (i) {
                 case 0:

@@ -15,12 +15,22 @@ import { makeCompareReady } from "./helpers.js";
  * }} RangeDiceReturn
  */
 
+// Commonly in the system, die types are referred to with integers based around their index position in the system's dice arrays, whether or not they're actually in an array:
+// [0] = d12's, [1] = d10's, [2] = d8's, [3] = d6's, [4] = d4's
+// 0 = d12, 1 = d10, 2 = d8, 3 = d6, 4 = d4
+
+// So a die type of 2 would refer to a d8
+
 /** Common class for common system info that might be used */
 export class CommonSystemInfo {
     /**
      * List of stats that are limited by the Burdened condition
      */
     static burdenedList = Object.freeze(["speed", "climbing", "dodge", "endurance", "jumping", "stealth", "swimming"]);
+    /**
+     * The integer die-type the Burdened condition limits to
+     */
+    static burdenedLimit = 2;
     /**
      * The standard stats used for soak rolls
      */
