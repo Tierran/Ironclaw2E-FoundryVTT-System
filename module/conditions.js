@@ -283,12 +283,15 @@ export function checkIfDisadvantagedIronclaw(target) {
 
 /**
  * Check whether the inputted condition should have a quota field
- * @param {ActiveEffectData | ActiveEffect} condition
+ * @param {ActiveEffectData | ActiveEffect | string} condition
  * @returns {boolean} Returns true if the quota field should be there
  */
 export function checkConditionQuota(condition) {
     if (!condition) { // If nullable, just return false
         return false;
+    }
+    if (typeof (condition) === "string") {
+        return CommonConditionInfo.quotaList.has(condition);
     }
     const usedcond = condition instanceof ActiveEffect ? condition.data : condition;
     if (game.ironclaw2e.useCUBConditions) {

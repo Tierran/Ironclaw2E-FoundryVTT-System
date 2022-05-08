@@ -18,7 +18,7 @@ import { getDistancePenaltyConstruction } from "../helpers.js";
 import { checkQuickModifierKey } from "../helpers.js";
 import { getDistanceBetweenPositions } from "../helpers.js";
 import { formDicePoolField } from "../helpers.js";
-import { CommonConditionInfo, getConditionSelectObject, getSingleConditionIronclaw, getTargetConditionQuota, setTargetConditionQuota } from "../conditions.js";
+import { checkConditionQuota, CommonConditionInfo, getConditionSelectObject, getSingleConditionIronclaw, getTargetConditionQuota, setTargetConditionQuota } from "../conditions.js";
 import { checkStandardDefense, CommonSystemInfo, getRangeDiceFromDistance } from "../systeminfo.js";
 // For condition management
 import { hasConditionsIronclaw } from "../conditions.js";
@@ -2376,7 +2376,7 @@ export class Ironclaw2EActor extends Actor {
                     let COND = html.find('[name=condition]')[0]?.value;
                     if (COND?.length > 0) {
                         await this.addEffect(COND);
-                        if (quota > 0) await this.updateEffectQuota(COND, quota);
+                        if (quota > 0 && checkConditionQuota(COND)) await this.updateEffectQuota(COND, quota);
                     }
                 }
             }
