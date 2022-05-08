@@ -308,6 +308,7 @@
   "ironclaw2e.dialog.damageCalc.conditionDamageAdded": "Damage added by {conditions}",
   "ironclaw2e.dialog.damageCalc.conditionDamageNothing": "No damage added by conditions",
   "ironclaw2e.dialog.damageCalc.reduceWard": "Reduce the damage by Ward, max {value}",
+  "ironclaw2e.dialog.damageCalc.attack": "Is the damage from an attack?",
   "ironclaw2e.dialog.damageCalc.knockoutStrike": "Knockout Strike?",
   "ironclaw2e.dialog.damageCalc.nonLethal": "Non-lethal attack?",
   "ironclaw2e.dialog.damageCalc.damageConditions": "Other conditions to add:",
@@ -477,6 +478,7 @@
   "ironclaw2e.chatInfo.damageCalcInfo.soakCombinedImpaling": "Combined Impaling",
 
   "ironclaw2e.chatInfo.damageEffect.chatMessage": "{name} is <strong>{condition}!</strong>",
+  "ironclaw2e.chatInfo.damageEffect.chatNothing": "completely unscathed",
   "ironclaw2e.chatInfo.damageEffect.wardDamage": "Ward took {damage} damage!",
   "ironclaw2e.chatInfo.damageEffect.wardDestroyed": "Ward was destroyed!",
 

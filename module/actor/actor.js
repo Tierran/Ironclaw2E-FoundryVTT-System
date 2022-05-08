@@ -468,6 +468,30 @@ export class Ironclaw2EActor extends Actor {
         return null;
     }
 
+    /**
+     * Send the returned damage status to chat
+     * @param {DamageReturn} returnedstatus
+     * @param {Object} speaker
+     */
+    static async sendDamageToChat(returnedstatus, speaker) {
+        const reportedStatus = returnedstatus.conditionArray.length > 0 ? returnedstatus.conditionArray[returnedstatus.conditionArray.length - 1] : null;
+        const chatTemplateData = {
+            "speaker": speaker.alias,
+            "reportedCondition": game.i18n.localize(reportedStatus ? CommonConditionInfo.getConditionLabel(reportedStatus) : "ironclaw2e.chatInfo.damageEffect.chatNothing"),
+            "wardChanged": returnedstatus.wardDamage > 0,
+            "wardDamage": returnedstatus.wardDamage,
+            "wardDestroyed": returnedstatus.wardDestroyed
+        };
+        const chatContents = await renderTemplate("systems/ironclaw2e/templates/chat/damage-effect.html", chatTemplateData);
+
+        let chatData = {
+            "content": chatContents,
+            "speaker": speaker
+        };
+        ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
+        CONFIG.ChatMessage.documentClass.create(chatData);
+    }
+
     /* -------------------------------------------- */
     /* Overrides                                    */
     /* -------------------------------------------- */
@@ -1533,7 +1557,7 @@ export class Ironclaw2EActor extends Actor {
      * @param {boolean} nonlethal
      * @returns {Promise<DamageReturn>}
      */
-    async applyDamage(damage, knockout = false, nonlethal = false, applyWard = true) {
+    async applyDamage(damage, attack = true, knockout = false, nonlethal = false, applyWard = true) {
         const conditionRemoval = game.settings.get("ironclaw2e", "autoConditionRemoval");
         let wardDamage = -1;
         let wardDestroyed = false;
@@ -1563,7 +1587,9 @@ export class Ironclaw2EActor extends Actor {
             }
         }
 
-        let adding = ["reeling"];
+        // Only an attack gives Reeling
+        let adding = (attack ? ["reeling"] : []);
+        // Actual damage and knockout effects
         if (damage >= 1) {
             adding.push("hurt");
             if (knockout) adding.push("asleep");
@@ -1574,6 +1600,7 @@ export class Ironclaw2EActor extends Actor {
         }
         if (damage >= 3) adding.push("injured");
         if (damage >= 4) adding.push("dying");
+        // If the attack is marked as non-lethal, prevent outright immediate death
         if (damage >= 5 && !nonlethal) adding.push("dead");
         if (damage >= 6 && !nonlethal) adding.push("overkilled");
         await this.addEffect(adding);
@@ -2256,6 +2283,8 @@ export class Ironclaw2EActor extends Actor {
                     let soak = 0; if (SOAK.length > 0) soak = parseInt(SOAK);
                     let HURT = html.find('[name=hurt]')[0];
                     let hurt = HURT.checked;
+                    let ATTACK = html.find('[name=attack]')[0];
+                    let attack = ATTACK.checked;
                     let KNOCKOUT = html.find('[name=knockout]')[0];
                     let knockout = KNOCKOUT.checked;
                     let ALLOW = html.find('[name=nonlethal]')[0];
@@ -2267,27 +2296,12 @@ export class Ironclaw2EActor extends Actor {
                     let SEND = html.find('[name=send]')[0];
                     let send = SEND.checked;
 
-                    let statuses = await this.applyDamage(damage + (hurt ? addeddamage : 0) - soak, knockout, allow, ward);
+                    let statuses = await this.applyDamage(damage + (hurt ? addeddamage : 0) - soak, attack, knockout, allow, ward);
                     let conditions = splitStatString(conds);
                     if (conditions.length > 0) await this.addEffect(conditions);
 
                     if (send) {
-                        const reportedStatus = statuses.conditionArray[statuses.conditionArray.length - 1];
-                        const chatTemplateData = {
-                            "speaker": speaker.alias,
-                            "reportedCondition": game.i18n.localize(CommonConditionInfo.getConditionLabel(reportedStatus)),
-                            "wardChanged": statuses.wardDamage > 0,
-                            "wardDamage": statuses.wardDamage,
-                            "wardDestroyed": statuses.wardDestroyed
-                        };
-                        const chatContents = await renderTemplate("systems/ironclaw2e/templates/chat/damage-effect.html", chatTemplateData);
-
-                        let chatData = {
-                            "content": chatContents,
-                            "speaker": speaker
-                        };
-                        ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
-                        CONFIG.ChatMessage.documentClass.create(chatData);
+                        Ironclaw2EActor.sendDamageToChat(statuses, speaker);
                     }
                 }
             }
@@ -2318,32 +2332,19 @@ export class Ironclaw2EActor extends Actor {
         if (conditions.length > 0) await this.addEffect(conditions);
 
         if (confirmSend) {
-            const reportedStatus = statuses.conditionArray[statuses.conditionArray.length - 1];
-            const chatTemplateData = {
-                "speaker": speaker.alias,
-                "reportedCondition": game.i18n.localize(CommonConditionInfo.getConditionLabel(reportedStatus)),
-                "wardChanged": statuses.wardDamage > 0,
-                "wardDamage": statuses.wardDamage,
-                "wardDestroyed": statuses.wardDestroyed
-            };
-            const chatContents = await renderTemplate("systems/ironclaw2e/templates/chat/damage-effect.html", chatTemplateData);
-
-            let chatData = {
-                "content": chatContents,
-                "speaker": speaker
-            };
-            ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
-            CONFIG.ChatMessage.documentClass.create(chatData);
+            Ironclaw2EActor.sendDamageToChat(statuses, speaker);
         }
     }
 
     /** Special condition adding popup */
-    async popupAddCondition(readyname = "") {
+    async popupAddCondition(readyname = "", readyquota = "") {
         let confirmed = false;
         let speaker = getMacroSpeaker(this);
 
         const templateData = {
             "actor": this,
+            "readySelected": readyname || "focused",
+            "readyQuota": readyquota || "",
             "systemConditions": getConditionSelectObject(),
             "translateLabel": game.ironclaw2e.useCUBConditions
         };

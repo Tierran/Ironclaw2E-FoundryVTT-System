@@ -5,11 +5,11 @@
     </div>
     <div class="form-group">
         <select id="condition" name="condition" data-dtype="String">
-            {{selectOptions systemConditions localize=true}}
+            {{selectOptions systemConditions localize=true selected=readySelected}}
         </select>
     </div>
     <div class="form-group">
         <label class="normal-label">{{localize "ironclaw2e.dialog.addCondition.quota"}}:</label>
-        <input style="max-width:30%" type="text" id="quota" name="quota" value="" onfocus="this.select();" />
+        <input style="max-width:30%" type="text" id="quota" name="quota" value="{{readyQuota}}" onfocus="this.select();" />
     </div>
 </form>
