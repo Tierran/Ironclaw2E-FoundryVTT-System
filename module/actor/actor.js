@@ -1311,7 +1311,9 @@ export class Ironclaw2EActor extends Actor {
                         }
                         // Apply the bonus dice to the roll dialog construction
                         if (used.bonusDice) {
-                            const foo = formDicePoolField(used.bonusDice, used.giftName, `${used.giftName}: ${reformDiceString(used.bonusDice, true)}`, used.bonusAutoUsed, { "itemid": used.giftId, "exhaustonuse": used.bonusExhaustsOnUse },
+                            // Check whether the bonus uses the applicability for autocheck, or is always or never checked
+                            const autocheck = used.bonusAutoUsed === "applied" ? checkApplicability(setting, item, this, { otheritem, defensecheck, defensetype, "usecheck": true }) : (used.bonusAutoUsed === "always" ? true : false);
+                            const foo = formDicePoolField(used.bonusDice, used.giftName, `${used.giftName}: ${reformDiceString(used.bonusDice, true)}`, autocheck, { "itemid": used.giftId, "exhaustonuse": used.bonusExhaustsOnUse },
                                 { otherkeys, otherdice, othernames, otherbools, otherinputs });
                             otherinputs = foo.otherinputs;
                             otherbools = foo.otherbools;

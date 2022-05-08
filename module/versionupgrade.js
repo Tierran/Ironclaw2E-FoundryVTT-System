@@ -128,8 +128,8 @@ export async function upgradeVersion(lastversion) {
         console.log("0.5.6, special setting upgrade, done!");
     }
 
-    // Version 0.5.12 check
-    version = "0.5.12";
+    // Version 0.5.13 check
+    version = "0.5.13";
     if (checkIfNewerVersion(version, lastversion)) {
         ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationNotice", { "version": version }), { permanent: true });
 
@@ -139,7 +139,7 @@ export async function upgradeVersion(lastversion) {
 
         // Validate the data for special settings
         for (let item of itemsToChange) {
-            const foo = await item.giftValidateSpecialSetting();
+            const foo = await giftUpgradePointFiveThirteen(item);
             if (!(foo)) {
                 problemItems.push(item);
             }
@@ -153,7 +153,7 @@ export async function upgradeVersion(lastversion) {
             ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationComplete", { "version": version }), { permanent: true });
         }
 
-        console.log("0.5.12, special setting upgrade, done!");
+        console.log("0.5.13, special setting upgrade, done!");
     }
 }
 
@@ -282,6 +282,18 @@ async function giftUpgradePointFiveSix(item) {
         for (let i = 0; i < itemData.specialSettings.length; ++i) {
             if (itemData.specialSettings[i].otherItemField)
                 await item.giftChangeSpecialField(i, "otherOwnedItemField", itemData.specialSettings[i].otherItemField);
+        }
+        return item.giftValidateSpecialSetting();
+    }
+    return item;
+}
+
+async function giftUpgradePointFiveThirteen(item) {
+    let itemData = item.data.data;
+    if (itemData.specialSettings?.length > 0) {
+        for (let i = 0; i < itemData.specialSettings.length; ++i) {
+            if (itemData.specialSettings[i].bonusAutoUsed)
+                await item.giftChangeSpecialField(i, "bonusAutoUsed", itemData.specialSettings[i].bonusAutoUsed ? "always" : "never");
         }
         return item.giftValidateSpecialSetting();
     }

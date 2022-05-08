@@ -110,6 +110,12 @@ export class CommonSystemInfo {
         "anyState": "Any State", "refreshed": "Refreshed", "exhausted": "Exhausted"
     };
     /**
+     * The auto-use state, whether the gift is always or never checked, or whether that's controlled by applicability settings and the bonus always shows on the list
+     */
+    static giftBonusAutoUseOptions = {
+        "always": "Always", "never": "Never", "applied": "By Applicability"
+    };
+    /**
      * The name to check for in weapon's "defend with" field to use the standard defense against it
      * Anything that's _not_ this string is assumed to be a special defense, and the field to be traits and skills separated with commas
      */
@@ -145,7 +151,7 @@ export function getSpecialOptionPrototype(option) {
         case ("attackBonus"):
             return mergeObject(special, {
                 "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState",
-                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": true, "bonusExhaustsOnUse": false, "replaceNameField": ""
+                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": "always", "bonusExhaustsOnUse": false, "replaceNameField": ""
             });
             break;
 
@@ -154,7 +160,7 @@ export function getSpecialOptionPrototype(option) {
                 "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState",
                 "nameOtherField": "", "descriptorOtherField": "", "effectOtherField": "", "statOtherField": "", "equipOtherField": "", "rangeOtherField": "", "useActualRange": true, "appliesLongerRange": false, "appliesShorterRange": false,
                 "appliesToDodges": true, "appliesToParries": true, "appliesToSpecialDefenses": true,
-                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": true, "bonusExhaustsOnUse": false, "replaceNameField": ""
+                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": "always", "bonusExhaustsOnUse": false, "replaceNameField": ""
             });
             break;
 
@@ -162,7 +168,7 @@ export function getSpecialOptionPrototype(option) {
             return mergeObject(special, {
                 "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState",
                 "nameOtherField": "", "descriptorOtherField": "", "effectOtherField": "", "statOtherField": "", "equipOtherField": "", "rangeOtherField": "", "useActualRange": true, "appliesLongerRange": false, "appliesShorterRange": false,
-                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": true, "bonusExhaustsOnUse": false, "replaceNameField": ""
+                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": "always", "bonusExhaustsOnUse": false, "replaceNameField": ""
             });
             break;
 
@@ -170,14 +176,14 @@ export function getSpecialOptionPrototype(option) {
             return mergeObject(special, {
                 "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "nameOtherField": "", "descriptorOtherField": "", "effectOtherField": "", "statOtherField": "", "equipOtherField": "", "rangeOtherField": "", "useActualRange": true, "appliesLongerRange": false, "appliesShorterRange": false,
-                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": true, "bonusExhaustsOnUse": false, "replaceNameField": ""
+                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": "always", "bonusExhaustsOnUse": false, "replaceNameField": ""
             });
             break;
 
         case ("soakBonus"):
             return mergeObject(special, {
                 "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
-                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": true, "bonusExhaustsOnUse": false, "replaceNameField": ""
+                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": "always", "bonusExhaustsOnUse": false, "replaceNameField": ""
             });
             break;
 
@@ -198,14 +204,14 @@ export function getSpecialOptionPrototype(option) {
         case ("sprintBonus"):
             return mergeObject(special, {
                 "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
-                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": true, "bonusExhaustsOnUse": false, "replaceNameField": ""
+                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": "always", "bonusExhaustsOnUse": false, "replaceNameField": ""
             });
             break;
 
         case ("initiativeBonus"):
             return mergeObject(special, {
                 "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
-                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": true, "bonusExhaustsOnUse": false, "replaceNameField": ""
+                "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": "always", "bonusExhaustsOnUse": false, "replaceNameField": ""
             });
             break;
 

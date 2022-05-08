@@ -60,7 +60,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         }
         let selectables = {
             "handedness": CommonSystemInfo.equipHandedness, "range": CommonSystemInfo.rangeBands, "giftOptions": CommonSystemInfo.giftSpecialOptions, "giftStates": CommonSystemInfo.giftWorksStates,
-            "currencyOptions": currencyOptions
+            "currencyOptions": currencyOptions, "giftBonusUses": CommonSystemInfo.giftBonusAutoUseOptions
         };
         sheetData.selectables = selectables;
         sheetData.isGM = game.user.isGM;

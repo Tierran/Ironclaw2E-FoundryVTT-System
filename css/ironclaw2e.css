@@ -440,6 +440,11 @@ input.center-text {
   margin: 0;
 }
 
+.ironclaw2e .special-option {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
 .ironclaw2e .items-list .item-controls {
   -webkit-box-flex: 0;
   -ms-flex: 0 0 144px;

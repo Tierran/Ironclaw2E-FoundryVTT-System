@@ -631,12 +631,13 @@ export function getTemplatePosition({ weaponTemplatePos = null, weaponTemplateId
  * @returns {boolean} Whether the target is applicable for the special
  */
 export function checkApplicability(special, item, actor,
-    { otheritem = null, defensecheck = false, defensetype = "", rallycheck = false } = {}) {
+    { otheritem = null, defensecheck = false, defensetype = "", rallycheck = false, usecheck = false } = {}) {
     if (!special) {
         // In case the check is given something that doesn't exist
         return false;
     }
 
+    // Gift exhaust related checks
     // Gift state check, if the bonus is applicable only when refreshed and the gift is exhausted, or if applicable only when exhausted and the gift is refreshed, return false
     if ((special.worksWhenState === "refreshed" && special.refreshedState === false) || (special.worksWhenState === "exhausted" && special.refreshedState === true)) {
         return false;
@@ -645,6 +646,12 @@ export function checkApplicability(special, item, actor,
     if (special.bonusExhaustsOnUse === true && special.refreshedState === false) {
         return false;
     }
+
+    // Special permissive check for the bonus auto-use setting, if the setting is for "applied" and this is not marked as a use check, skip all the rest of the checks
+    if (special.bonusAutoUsed === "applied" && usecheck === false) {
+        return true; // The only permissive check, since this skips all but the above failing checks to allow the bonus to appear otherwise
+    }
+
     // Special defense bonus check
     if (defensecheck) {
         if (!special.appliesToDodges && defensetype === "dodge") {
