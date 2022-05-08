@@ -1585,7 +1585,7 @@ export class Ironclaw2EActor extends Actor {
      * @param {string | [string]} condition 
      */
     async addEffect(condition) {
-        await addConditionsIronclaw(condition, this);
+        return await addConditionsIronclaw(condition, this);
     }
 
     /**
@@ -1595,7 +1595,7 @@ export class Ironclaw2EActor extends Actor {
      */
     async updateEffectQuota(condition, value) {
         const usedcond = (typeof (condition) === "string" ? getSingleConditionIronclaw(condition, this) : condition);
-        await setTargetConditionQuota(usedcond, value);
+        return await setTargetConditionQuota(usedcond, value);
     }
 
     /**
@@ -2366,11 +2366,15 @@ export class Ironclaw2EActor extends Actor {
             },
             default: "one",
             render: html => { document.getElementById("condition").focus(); },
-            close: html => {
+            close: async html => {
                 if (confirmed) {
+                    let QUOTA = html.find('[name=quota]')[0].value;
+                    let quota = 0; if (QUOTA.length > 0) quota = parseInt(QUOTA);
                     let COND = html.find('[name=condition]')[0]?.value;
-                    if (COND?.length > 0)
-                        this.addEffect(COND);
+                    if (COND?.length > 0) {
+                        await this.addEffect(COND);
+                        if (quota > 0) await this.updateEffectQuota(COND, quota);
+                    }
                 }
             }
         });

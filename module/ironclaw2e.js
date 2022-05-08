@@ -5,7 +5,7 @@ import { Ironclaw2EActorSheet } from "./actor/actor-sheet.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { Ironclaw2EItemSheet } from "./item/item-sheet.js";
 
-import { } from "./token/token-hud-extender.js"
+import { TokenExtenderOptions } from "./token/token-hud-extender.js"
 import { } from "./token/token-extender.js"
 
 import { requestRollPopup } from "./utilitiesmacros.js";
@@ -559,6 +559,24 @@ function registerClientSettings() {
         default: 3000,
         range: { min: 1000, max: 4000, step: 200 },
         config: true
+    });
+    game.settings.register("ironclaw2e", "leftButtonOption", {
+        name: "ironclaw2e.config.leftButtonOption",
+        hint: "ironclaw2e.config.leftButtonOptionHint",
+        scope: "client",
+        type: String,
+        default: "pool",
+        config: true,
+        choices: TokenExtenderOptions.buttonOptions
+    });
+    game.settings.register("ironclaw2e", "rightButtonOption", {
+        name: "ironclaw2e.config.rightButtonOption",
+        hint: "ironclaw2e.config.rightButtonOptionHint",
+        scope: "client",
+        type: String,
+        default: "damage",
+        config: true,
+        choices: TokenExtenderOptions.buttonOptions
     });
 }
 

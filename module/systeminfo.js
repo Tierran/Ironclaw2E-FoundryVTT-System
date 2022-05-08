@@ -88,8 +88,13 @@ export class CommonSystemInfo {
     };
     /**
      * The over maximum range penalty, if allowed
+     * Pure homebrew, here mostly as a placeholder option
      */
     static rangeOverMaxDice = "12d12";
+    /**
+     * The combat advantage bonus
+     */
+    static combatAdvantageDice = "d8";
     /**
      * The special option types that gift items can have
      */
@@ -126,10 +131,6 @@ export class CommonSystemInfo {
      * The rule settings used to determine whether combat rules are used in distance measuring
      */
     static rangeCombatRules = { 0: "Never", 1: "In Combat", 2: "Always" };
-    /**
-     * The combat advantage bonus
-     */
-    static combatAdvantageDice = "d8";
 }
 
 /**

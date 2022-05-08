@@ -239,6 +239,10 @@
   "ironclaw2e.config.showRangeWhenTargetingHint": "If checked, targeting a token will show a quick scrolling text that tells the current range band it is at from the controlled token. The text will also show up if either the target or the controlled token move.",
   "ironclaw2e.config.showRangeDuration": "Range text duration",
   "ironclaw2e.config.showRangeDurationHint": "How long the range band scrolling text will be visible, in milliseconds.",
+  "ironclaw2e.config.leftButtonOption": "Left token button",
+  "ironclaw2e.config.leftButtonOptionHint": "The action the extra left button below a token does.",
+  "ironclaw2e.config.rightButtonOption": "Right token button",
+  "ironclaw2e.config.rightButtonOptionHint": "The action the extra right button below a token does.",
 
 
   "ironclaw2e.dialog.roll": "Roll!",
@@ -311,6 +315,7 @@
   "ironclaw2e.dialog.addCondition.title": "Adding Condition to {name}",
   "ironclaw2e.dialog.addCondition.header": "Add condition to {name}?",
   "ironclaw2e.dialog.addCondition.toAdd": "Condition to add",
+  "ironclaw2e.dialog.addCondition.quota": "Quota or Ward, if valid",
 
   "ironclaw2e.dialog.statusResetConfirmation.title": "Status Condition Reset",
   "ironclaw2e.dialog.statusResetConfirmation.note": "Are you sure you want to reset all status effects?",

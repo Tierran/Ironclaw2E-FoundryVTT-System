@@ -124,6 +124,7 @@ export function getSingleConditionIronclaw(name, target, warn = false) {
  * @param {String[] | String} conditions Conditions to add
  * @param {(Actor | Token)} target The actor or token in question
  * @param {boolean} warn Whether to use CUB's warnings
+ * @returns {Promise<Array>}
  */
 export async function addConditionsIronclaw(conditions, target, warn = false) {
     if (!game.ready) { // If the game isn't fully ready yet, wait until it is
@@ -138,6 +139,7 @@ export async function addConditionsIronclaw(conditions, target, warn = false) {
         let actor = getTargetActor(target);
         if (!actor) return;
         let usedconditions = Array.isArray(conditions) ? conditions : [conditions];
+        // Get rid of duplicate conditions
         if (hasConditionsIronclaw(conditions, target, warn)) {
             const existingeffects = getConditionsIronclaw(target, warn);
             usedconditions = usedconditions.filter(x => existingeffects.some(y => y.getFlag("core", "statusId") === x) == false);
@@ -146,6 +148,7 @@ export async function addConditionsIronclaw(conditions, target, warn = false) {
         if (effects.length > 0) {
             return await actor.createEmbeddedDocuments("ActiveEffect", effects);
         }
+        return [];
     }
 }
 
@@ -362,6 +365,11 @@ function getTargetActor(target) {
     return (target instanceof Actor ? target : (target instanceof Token ? target.actor : null));
 }
 
+/**
+ * Make sure the effect data is given to Foundry's systems in the correct form
+ * @param {any} effects
+ * @returns {Array}
+ */
 function prepareEffects(effects) {
     let effectDatas = [];
     effects = Array.isArray(effects) ? effects : [effects];
