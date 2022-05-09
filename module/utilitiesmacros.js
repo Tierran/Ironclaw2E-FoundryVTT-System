@@ -474,9 +474,9 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const message = game.messages.get(li.data("messageId"));
                 const type = message.getFlag("ironclaw2e", "rollType");
                 if (type === "TN") {
-                    CardinalDiceRoller.copyToRollTN(parseInt(message.roll.formula.slice(message.roll.formula.indexOf(">") + 1)), message, true, true);
+                    CardinalDiceRoller.copyToRollTN(parseInt(message.roll.formula.slice(message.roll.formula.indexOf(">") + 1)), message, true, "ONE");
                 } else {
-                    CardinalDiceRoller.copyToRollHighest(message, true, true);
+                    CardinalDiceRoller.copyToRollHighest(message, true, "ONE");
                 }
             }
         },

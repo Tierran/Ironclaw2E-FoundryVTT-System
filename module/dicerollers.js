@@ -110,23 +110,33 @@ export class CardinalDiceRoller {
      * @param {number} tni Target number
      * @param {Object} message Message containing the roll to copy
      * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
+     * @param {string} rerolltype Optional value, empty string for this means the copy is a direct one, whereas some input means that there is some type of modification happening
      * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
      */
-    static async copyToRollTN(tni, message, sendinchat = true, rerollone = false) {
+    static async copyToRollTN(tni, message, sendinchat = true, rerolltype = "") {
         if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
             console.warn("Somehow, a message that isn't a roll got into 'copyToRollTN'.");
             console.warn(message);
             return;
         }
         let intermediary = message.getFlag("ironclaw2e", "rollIntermediary");
-        let rollstring = rerollone ? CardinalDiceRoller.copyRerollHighestOne(message.roll, intermediary) : CardinalDiceRoller.copyDicePoolResult(message.roll);
-        if (rollstring.length == 0)
+        let rollString = CardinalDiceRoller.copyDicePoolResult(message.roll);
+        let directCopy = true;
+        let rerollFlavor = "";
+        if (rerolltype) {
+            const foobar = CardinalDiceRoller.rerollTypeSwitch(rerolltype, message, intermediary);
+            rollString = foobar.rollString;
+            directCopy = foobar.directCopy;
+            rerollFlavor = foobar.rerollFlavor;
+        }
+
+        if (rollString.length == 0)
             return;
         let label = message.getFlag("ironclaw2e", "label");
         if (typeof label != "string")
             return;
 
-        let roll = await new Roll("{" + rollstring + "}cs>" + tni).evaluate({ async: true });
+        let roll = await new Roll("{" + rollString + "}cs>" + tni).evaluate({ async: true });
 
         const successes = roll.total;
         let highest = 0;
@@ -139,7 +149,7 @@ export class CardinalDiceRoller {
         });
 
         const flavorstring = CardinalDiceRoller.flavorStringTN(successes, ties, highest,
-            `${(rerollone ? game.i18n.localize("ironclaw2e.chatInfo.reroll") : game.i18n.localize("ironclaw2e.chatInfo.copy"))} ${game.i18n.localize("ironclaw2e.chatInfo.tn")}: ` + label);
+            `${(directCopy ? game.i18n.localize("ironclaw2e.chatInfo.copy") : rerollFlavor)} ${game.i18n.localize("ironclaw2e.chatInfo.tn")}: ` + label);
 
         /** @type TNData */
         let tnData = { "successes": successes, "ties": ties };
@@ -200,26 +210,35 @@ export class CardinalDiceRoller {
      * Copies the results of an older roll into a new one while allowing a change in the evaluation method
      * @param {Object} message Message containing the roll to copy
      * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
-     * @param {boolean} rerollone Set to true to make the copy function also reroll a single one-showing die, preferring the largest die type
+     * @param {string} rerolltype Optional value, empty string for this means the copy is a direct one, whereas some input means that there is some type of modification happening
      * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
      */
-    static async copyToRollHighest(message, sendinchat = true, rerollone = false) {
+    static async copyToRollHighest(message, sendinchat = true, rerolltype = "") {
         if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
             console.warn("Somehow, a message that isn't a roll got into 'copyToRollHighest'.");
             console.warn(message);
             return;
         }
         let intermediary = message.getFlag("ironclaw2e", "rollIntermediary");
-        let rollstring = rerollone ? CardinalDiceRoller.copyRerollHighestOne(message.roll, intermediary) : CardinalDiceRoller.copyDicePoolResult(message.roll);
-        if (rollstring.length == 0)
+        let rollString = CardinalDiceRoller.copyDicePoolResult(message.roll);
+        let directCopy = true;
+        let rerollFlavor = "";
+        if (rerolltype) {
+            const foobar = CardinalDiceRoller.rerollTypeSwitch(rerolltype, message, intermediary);
+            rollString = foobar.rollString;
+            directCopy = foobar.directCopy;
+            rerollFlavor = foobar.rerollFlavor;
+        }
+
+        if (rollString.length == 0)
             return;
         let label = message.getFlag("ironclaw2e", "label");
         if (typeof label != "string")
             return;
 
-        let roll = await new Roll("{" + rollstring + "}kh1").evaluate({ async: true });
+        let roll = await new Roll("{" + rollString + "}kh1").evaluate({ async: true });
         const flavorstring = CardinalDiceRoller.flavorStringHighest(roll.total,
-            `${(rerollone ? game.i18n.localize("ironclaw2e.chatInfo.reroll") : game.i18n.localize("ironclaw2e.chatInfo.copy"))} ${game.i18n.localize("ironclaw2e.chatInfo.high")}: ` + label);
+            `${(directCopy ? game.i18n.localize("ironclaw2e.chatInfo.copy") : rerollFlavor)} ${game.i18n.localize("ironclaw2e.chatInfo.high")}: ` + label);
 
         let hasOne = roll.terms[0].results.some(x => x.result === 1); // Find if one of the dice "rolled" a "1"
 
@@ -396,6 +415,25 @@ export class CardinalDiceRoller {
     static flavorStringHighest(highest, label, small = false) {
         return (label.length > 0 ? "<p>" + label + "</p>" : "") + (small ? `<p style="font-size:${CommonSystemInfo.resultSmallFontSize};margin-top:0px;` : `<p style="font-size:${CommonSystemInfo.resultFontSize};`) + `
     color:${(highest > 1 ? CommonSystemInfo.resultColors.normal : CommonSystemInfo.resultColors.botch)}">${game.i18n.format("ironclaw2e.chat.highest", { "highest": highest })}</p>`;
+    }
+
+    /**
+     * Helper to pick the correct setups for different reroll types
+     * @param {string} reroll The type given: "ONE" means reroll a one
+     */
+    static rerollTypeSwitch(reroll, message, intermediary) {
+        let rollString = "";
+        let directCopy = true;
+        let rerollFlavor = "";
+        switch (reroll) {
+            case "ONE":
+                rollString = CardinalDiceRoller.copyRerollHighestOne(message.roll, intermediary);
+                directCopy = false;
+                rerollFlavor = game.i18n.localize("ironclaw2e.chatInfo.reroll");
+                break;
+        }
+
+        return { rollString, directCopy, rerollFlavor };
     }
 
     /**
