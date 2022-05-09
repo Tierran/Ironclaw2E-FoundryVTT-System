@@ -149,11 +149,13 @@ export function addArrays(foo, bar, outputLength = -1) {
 /**
  * Helper function to take a set of dice arrays and combine them all into a single array
  * @param {[number[]]} dicearrays
+ * @param {boolean} warninput Whether to send a warning about bad input or not
  * @returns {number[]}
  */
-export function flattenDicePoolArray(dicearrays) {
+export function flattenDicePoolArray(dicearrays, warninput = true) {
     if (!Array.isArray(dicearrays) || dicearrays.length === 0 || !Array.isArray(dicearrays[0])) {
-        return console.warn("Unexpected input when flattening a dice array set: " + dicearrays);
+        if (warninput) console.warn("Unexpected input when flattening a dice array set: " + dicearrays);
+        return [];
     }
     let total = [];
 
@@ -195,7 +197,7 @@ export function enforceLimit(dicearray, maxdie) {
  * @returns {[number[]]} A new, limited set of dice arrays
  */
 export function enforceLimitArray(dicearrays, maxdie) {
-    if (!Array.isArray(dicearray))
+    if (!Array.isArray(dicearrays))
         return console.error("Something other than an array inputted into limit enforcer: " + dicearray);
     if (isNaN(maxdie))
         return console.error("Something other than a number inputted into limit enforcer as the limit: " + maxdie);

@@ -273,7 +273,7 @@ export class CardinalDiceRoller {
             for (let pool of dicearrays) {
                 if (pool?.length === 5) { // One final check to make sure the length is right
                     // Process the pool and add it to the intermediary array
-                    foo = intermediary.concat(this.formIntermediaryFromPool(pool));
+                    foo = foo.concat(this.formIntermediaryFromPool(pool));
                 } else {
                     console.error("Something other than a dice pool array got into the dice pool parser: " + pool);
                 }
@@ -326,19 +326,19 @@ export class CardinalDiceRoller {
         for (let term of inters) {
             switch (term) {
                 case 0:
-                    rollstring += "1d12,";
+                    rollstring += "d12,";
                     break;
                 case 1:
-                    rollstring += "1d10,";
+                    rollstring += "d10,";
                     break;
                 case 2:
-                    rollstring += "1d8,";
+                    rollstring += "d8,";
                     break;
                 case 3:
-                    rollstring += "1d6,";
+                    rollstring += "d6,";
                     break;
                 case 4:
-                    rollstring += "1d4,";
+                    rollstring += "d4,";
                     break;
                 default:
                     break;

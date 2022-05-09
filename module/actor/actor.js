@@ -1897,7 +1897,7 @@ export class Ironclaw2EActor extends Actor {
                 break;
             case 0:
                 this.basicRollSelector({
-                    "prechecked": prechecked, "tnyes": true, "tnnum": tntouse, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, "otherbools": constructionbools, "constructionnames": constructionnames,
+                    "prechecked": prechecked, "tnyes": true, "tnnum": tntouse, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, "otherbools": constructionbools, "othernames": constructionnames,
                     "otherlabel": game.i18n.localize("ironclaw2e.chat.rollingInitiative")
                 }, { directroll });
                 return null;
@@ -1954,7 +1954,7 @@ export class Ironclaw2EActor extends Actor {
                 break;
             case 0:
                 this.basicRollSelector({
-                    "prechecked": prechecked, "tnyes": false, "tnnum": 3, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, "otherbools": constructionbools, "constructionnames": constructionnames,
+                    "prechecked": prechecked, "tnyes": false, "tnnum": 3, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, "otherbools": constructionbools, "othernames": constructionnames,
                     "otherlabel": game.i18n.localize("ironclaw2e.chat.rollingSprint") + ", " + game.i18n.format("ironclaw2e.chat.rollingSprintExtra", { "stride": `+-${data.stride}` })
                 }, { directroll });
                 return;
@@ -2593,7 +2593,7 @@ export class Ironclaw2EActor extends Actor {
                         // If there's something in the limit
                         if (LIMIT?.length > 0) {
                             const limitskill = makeCompareReady(LIMIT);
-                            const limitdicepool = this._getDicePools([limitskill], [limitskill], isburdened).totalDice; // See if the actor can get any dice pools from the limit
+                            const limitdicepool = flattenDicePoolArray(this._getDicePools([limitskill], [limitskill], isburdened).totalDice, false); // See if the actor can get any dice pools from the limit
                             const limitparsed = parseSingleDiceString(LIMIT); // Check if the limit field is a die, in which case, parse what value it's meant to limit to
                             const limitnumber = parseInt(LIMIT); // Just parse the limit as a number
                             // If the dice pool has stuff, use it as the limit, else use the parsed dice side, else try and use the parsed limit
