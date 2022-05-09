@@ -160,14 +160,14 @@ export function getSpecialOptionPrototype(option) {
     switch (option) {
         case ("attackBonus"):
             return mergeObject(special, {
-                "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState",
+                "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState", "needsSecondReadiedWeapon": false,
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": "always", "bonusExhaustsOnUse": false, "replaceNameField": ""
             });
             break;
 
         case ("defenseBonus"):
             return mergeObject(special, {
-                "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState",
+                "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState", "needsSecondReadiedWeapon": false,
                 "nameOtherField": "", "descriptorOtherField": "", "effectOtherField": "", "statOtherField": "", "equipOtherField": "", "rangeOtherField": "", "useActualRange": true, "appliesLongerRange": false, "appliesShorterRange": false,
                 "appliesToDodges": true, "appliesToParries": true, "appliesToSpecialDefenses": true,
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": "always", "bonusExhaustsOnUse": false, "replaceNameField": ""
@@ -176,7 +176,7 @@ export function getSpecialOptionPrototype(option) {
 
         case ("counterBonus"):
             return mergeObject(special, {
-                "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState",
+                "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState", "needsSecondReadiedWeapon": false,
                 "nameOtherField": "", "descriptorOtherField": "", "effectOtherField": "", "statOtherField": "", "equipOtherField": "", "rangeOtherField": "", "useActualRange": true, "appliesLongerRange": false, "appliesShorterRange": false,
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": "always", "bonusExhaustsOnUse": false, "replaceNameField": ""
             });

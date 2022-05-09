@@ -774,7 +774,7 @@ export function checkApplicability(special, item, actor,
                 }
             }
         }
-    } else if (special.typeArray || special.nameArray || special.equipArray || special.rangeArray || special.tagArray || special.descriptorArray || special.effectArray || special.statArray) {
+    } else if (special.typeArray || special.nameArray || special.equipArray || special.rangeArray || special.tagArray || special.descriptorArray || special.effectArray || special.statArray || special.needsSecondReadiedWeapon === true) {
         return false; // If the special has fields that would expect an item and none is given, fail the check
     }
     // Actor-specific checks
@@ -785,7 +785,13 @@ export function checkApplicability(special, item, actor,
         if (special.otherOwnedItemArray && !special.otherOwnedItemArray.some(x => findInItems(actor.items, x))) {
             return false;
         }
-    } else if (special.conditionArray || special.otherOwnedItemArray) {
+        if (special.needsSecondReadiedWeapon === true && item) {
+            // Listed under Actor-specific checks, but needs both actor and item to be present
+            const anotherReadiedWeapon = actor.items.some(x => x.id !== item.id && x.type === "weapon" && x.data.data.readied === true);
+            if (anotherReadiedWeapon === false)
+                return false;
+        }
+    } else if (special.conditionArray || special.otherOwnedItemArray || special.needsSecondReadiedWeapon === true) {
         return false; // If the special has fields that would expect an actor and none is given, fail the check
     }
     // Other-item-specific checks
@@ -953,10 +959,11 @@ export function getCombatAdvantageConstruction(otherkeys, otherdice, othernames,
 
 /**
  * Helper function to search through a given item list for any items matching the name given
- * @param {Array} itemlist The actor's item list to be checked
+ * Used over .items.getName() to allow slightly inexact name lookup, rather than requiring exactly the correct name
+ * @param {Collection} itemlist The actor's item list to be checked
  * @param {string} itemname The item in question to search for
  * @param {string} itemtype Optionally, also limit the search based on item type, in cases where that might matter
- * @returns {Object} Returns the item in question
+ * @returns {Ironclaw2EItem} Returns the item in question
  */
 export function findInItems(itemlist, itemname, itemtype = null) {
     if (!itemlist || typeof itemlist[Symbol.iterator] !== 'function') {
@@ -965,8 +972,9 @@ export function findInItems(itemlist, itemname, itemtype = null) {
     }
 
     const useitemtype = itemtype ? true : false;
+    const comparename = makeCompareReady(itemname);
 
-    return itemlist.find(element => (useitemtype ? element.data.type == itemtype : true) && makeCompareReady(element.data.name) == itemname);
+    return itemlist.find(element => (useitemtype ? element.data.type === itemtype : true) && makeCompareReady(element.data.name) === comparename);
 }
 
 /**

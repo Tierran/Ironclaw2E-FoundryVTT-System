@@ -736,6 +736,7 @@ export class Ironclaw2EItem extends Item {
         }
 
         if (data.exhaustGift && data.exhaustGiftName.length > 0) {
+            // Could use a simple .getName(), but the function below is more typo-resistant
             const giftToExhaust = findInItems(this.actor?.items, makeCompareReady(data.exhaustGiftName), "gift");
             if (!giftToExhaust) {
                 if (notifications) ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustFailure", { "name": itemData.name, "gift": data.exhaustGiftName, "actor": this.actor.name }));
