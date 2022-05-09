@@ -2,7 +2,7 @@
     <h3 class="header-label flexrow flex-center">{{localize "ironclaw2e.sheets.actor.battleStatistics"}}</h3>
     <div class="flexrow flex-group-center flex-tight">
         <div></div>
-        <span class="rollable roll-init normal-label" {{#if (isCombatantNoInit actor._id)}}style="color:forestgreen" title="{{localize "ironclaw2e.chat.rollingInitiativeCheck"}}"{{/if}}>{{localize "ironclaw2e.sheets.actor.initiative"}}: {{data.initiativeString}}</span>
+        <span class="rollable roll-init normal-label" {{#if (isCombatantNoInit actor._id)}} style="color:forestgreen" title="{{localize "ironclaw2e.chat.rollingInitiativeCheck"}}" {{/if}}>{{localize "ironclaw2e.sheets.actor.initiative"}}: {{data.initiativeString}}</span>
         <div></div>
     </div>
     <div class="flexrow flex-group-center flex-tight">
@@ -19,14 +19,14 @@
         {{/if}}
     </div>
     <div class="grid grid-3col">
-        <div class="rollable roll-soak flex-group-center flex-tight">
-            <span class="normal-label">{{localize "ironclaw2e.sheets.actor.soakRoll"}}</span>
+        <div class="rollable roll-soak flex-group-center flex-tight" {{#if (propertyExists data "visualData")}} title="{{localize "ironclaw2e.sheets.actor.visual.soak" dice=data.visualData.soakPool}}" {{/if}}>
+            <span class="normal-label">{{localize "ironclaw2e.sheets.actor.soakRoll"}}{{#if (propertyExists data "visualData")}}: {{data.visualData.soak}}{{/if}}</span>
         </div>
-        <div class="rollable roll-defense flex-group-center flex-tight">
-            <span class="normal-label">{{localize "ironclaw2e.sheets.actor.dodgeRoll"}}</span>
+        <div class="rollable roll-defense flex-group-center flex-tight" {{#if (propertyExists data "visualData")}} title="{{localize "ironclaw2e.sheets.actor.visual.dodge" dice=data.visualData.dodgePool}}" {{/if}}>
+            <span class="normal-label">{{localize "ironclaw2e.sheets.actor.dodgeRoll"}}{{#if (propertyExists data "visualData")}}: {{data.visualData.dodge}}{{/if}}</span>
         </div>
-        <div class="rollable roll-rally flex-group-center flex-tight">
-            <span class="normal-label">{{localize "ironclaw2e.sheets.actor.rallyRoll"}}</span>
+        <div class="rollable roll-rally flex-group-center flex-tight" {{#if (propertyExists data "visualData")}} title="{{localize "ironclaw2e.sheets.actor.visual.rally" dice=data.visualData.rallyPool}}" {{/if}}>
+            <span class="normal-label">{{localize "ironclaw2e.sheets.actor.rallyRoll"}}{{#if (propertyExists data "visualData")}}: {{data.visualData.rally}}{{/if}}</span>
         </div>
     </div>
     <div>
@@ -89,7 +89,7 @@
                 </div>
                 <div style="max-width: 10%"></div>
                 <div class="item-controls">
-                    {{#if (usableGift item)}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.giftTooltip"}}" data-roll="gift" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/gift-use.svg" width="24" height="24" /></a>{{/if}}
+                    {{#if (usableGift item)}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.giftTooltip" name=item.name}}" data-roll="gift" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/gift-use.svg" width="24" height="24" /></a>{{/if}}
                 </div>
             </li>
             {{/if}}

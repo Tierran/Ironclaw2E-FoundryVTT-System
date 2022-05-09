@@ -517,12 +517,17 @@ export class Ironclaw2EActor extends Actor {
      * Perform any last data modifications after super.prepareData has finished executing
      */
     prepareData() {
-        // Performs the following, in order: data reset, prepareBaseData(), prepareEmbeddedEntities(), prepareDerivedData()
+        // Performs the following, in order: data reset, prepareBaseData(), prepareEmbeddedDocuments(), prepareDerivedData()
         super.prepareData();
         const actorData = this.data;
 
-        // Automatic Encumbrance Management
-        this._encumbranceAutoManagement(actorData);
+        // If the actor is one with actual stats, do post-processing
+        if (actorData.type === "character" || actorData.type === "mook" || actorData.type === "beast") {
+            // Automatic Encumbrance Management
+            this._encumbranceAutoManagement(actorData);
+            // Battle Stat roll dice pool visuals
+            this._battleDataRollVisuals(actorData);
+        }
     }
 
     /* -------------------------------------------- */
@@ -1048,6 +1053,38 @@ export class Ironclaw2EActor extends Actor {
         data.totalArmors = totalarmors;
     }
 
+    /* -------------------------------------------- */
+    /* Process Finals                               */
+    /* -------------------------------------------- */
+
+    /**
+     * Derive battle statistical roll dice pools for sheet visuals, mostly for title-texts
+     */
+    _battleDataRollVisuals(actorData) {
+        const data = actorData.data;
+        const burdened = hasConditionsIronclaw("burdened", this);
+        const visualData = {};
+
+        // The preset buttons
+        // Soak
+        const soakArmor = this._getArmorConstruction();
+        const soakBonuses = this._getGiftSpecialConstruction("soakBonus", CommonSystemInfo.soakBaseStats, soakArmor.otherkeys, soakArmor.otherdice, soakArmor.othernames, soakArmor.otherbools, soakArmor.otherinputs);
+        visualData.soak = reformDiceString(this._getAllDicePools(soakBonuses.prechecked, burdened, soakBonuses.otherkeys, soakBonuses.otherdice, soakBonuses.othernames, soakBonuses.otherbools).totalDice, true);
+        visualData.soakPool = soakBonuses.prechecked.join(", ") +            (soakBonuses.othernames.size > 0 ? " + " + Array.from(soakBonuses.othernames.values()).join(", ") : "");
+        // Dodge
+        const dodgeShield = this._getShieldConstruction();
+        const dodgeGuard = this._getStatusBonusConstruction("guard", false, dodgeShield.otherkeys, dodgeShield.otherdice, dodgeShield.othernames, dodgeShield.otherbools, dodgeShield.otherinputs);
+        const dodgeBonuses = this._getGiftSpecialConstruction("defenseBonus", CommonSystemInfo.dodgingBaseStats,
+            dodgeGuard.otherkeys, dodgeGuard.otherdice, dodgeGuard.othernames, dodgeGuard.otherbools, dodgeGuard.otherinputs, null, null, true, "dodge");
+        visualData.dodge = reformDiceString(this._getAllDicePools(dodgeBonuses.prechecked, burdened, dodgeBonuses.otherkeys, dodgeBonuses.otherdice, dodgeBonuses.othernames, dodgeBonuses.otherbools).totalDice, true);
+        visualData.dodgePool = dodgeBonuses.prechecked.join(", ") + (dodgeBonuses.othernames.size > 0 ? " + " + Array.from(dodgeBonuses.othernames.values()).join(", ") : "");
+        // Rally
+        visualData.rally = reformDiceString(this._getAllDicePools(CommonSystemInfo.rallyBaseStats, burdened).totalDice, true);
+        visualData.rallyPool = CommonSystemInfo.rallyBaseStats.join(", ");
+
+        data.visualData = visualData;
+    }
+
     /** 
      *  Automatic encumbrance management, performed if the setting is enabled
      */
@@ -1267,6 +1304,17 @@ export class Ironclaw2EActor extends Actor {
     /* -------------------------------------------- */
 
     /**
+     * @typedef {{
+     *   prechecked: string[],
+     *   otherkeys: Map<string,string>,
+     *   otherdice: Map<string,number[]>,
+     *   othernames: Map<string,string>,
+     *   otherbools: Map<string,boolean>,
+     *   otherinputs: string
+     * }} SpecialReturn
+     */
+
+    /**
      * Apply a certain type of gift special bonus to roll dialog construction
      * @param {any} specialname
      * @param {any} prechecked
@@ -1278,10 +1326,10 @@ export class Ironclaw2EActor extends Actor {
      * @param {any} otheritem
      * @param {boolean} defensecheck Whether the check is done from a defense 
      * @param {string} defensetype
-     * @returns {object} Returns a holder object which returns the inputs with the added bonuses
+     * @returns {SpecialReturn} Returns a holder object which returns the inputs with the added bonuses
      * @private
      */
-    _getGiftSpecialConstruction(specialname, prechecked, otherkeys, otherdice, othernames, otherbools, otherinputs, item, otheritem = null, defensecheck = false, defensetype = "") {
+    _getGiftSpecialConstruction(specialname, prechecked = [], otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", item = null, otheritem = null, defensecheck = false, defensetype = "") {
         const data = this.data.data;
         if (data.processingLists?.[specialname]) { // Check if they even exist
             for (let setting of data.processingLists[specialname]) { // Loop through them
@@ -1306,16 +1354,16 @@ export class Ironclaw2EActor extends Actor {
                                         foobar = this._getShieldConstruction(otherkeys, otherdice, othernames, otherbools, otherinputs);
                                         break;
                                     case ("guard"):
-                                        foobar = this._getStatusBonusConstruction(otherkeys, otherdice, othernames, otherbools, otherinputs, "guard", false);
+                                        foobar = this._getStatusBonusConstruction("guard", false, otherkeys, otherdice, othernames, otherbools, otherinputs);
                                         break;
                                     case ("guard-always"):
-                                        foobar = this._getStatusBonusConstruction(otherkeys, otherdice, othernames, otherbools, otherinputs, "guard", true);
+                                        foobar = this._getStatusBonusConstruction("guard", true, otherkeys, otherdice, othernames, otherbools, otherinputs);
                                         break;
                                     case ("aim"):
-                                        foobar = this._getStatusBonusConstruction(otherkeys, otherdice, othernames, otherbools, otherinputs, "aim", false);
+                                        foobar = this._getStatusBonusConstruction("aim", false, otherkeys, otherdice, othernames, otherbools, otherinputs);
                                         break;
                                     case ("aim-always"):
-                                        foobar = this._getStatusBonusConstruction(otherkeys, otherdice, othernames, otherbools, otherinputs, "aim", true);
+                                        foobar = this._getStatusBonusConstruction("aim", true, otherkeys, otherdice, othernames, otherbools, otherinputs);
                                         break;
                                 }
                                 if (foobar) {
@@ -1368,7 +1416,7 @@ export class Ironclaw2EActor extends Actor {
      * @returns {object} Returns a holder object which returns the inputs with the added bonuses
      * @private
      */
-    _getArmorConstruction(otherkeys, otherdice, othernames, otherbools, otherinputs, autocheck = true) {
+    _getArmorConstruction(otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", autocheck = true) {
         const data = this.data.data;
         let armors = this.items.filter(element => element.data.data.worn === true);
         for (let i = 0; i < armors.length && i < 3; ++i) {
@@ -1394,7 +1442,7 @@ export class Ironclaw2EActor extends Actor {
      * @returns {object} Returns a holder object which returns the inputs with the added bonuses
      * @private
      */
-    _getShieldConstruction(otherkeys, otherdice, othernames, otherbools, otherinputs, autocheck = true) {
+    _getShieldConstruction(otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", autocheck = true) {
         const data = this.data.data;
         let shield = this.items.find(element => element.data.data.held === true);
         if (shield) {
@@ -1416,11 +1464,11 @@ export class Ironclaw2EActor extends Actor {
      * @param {any} otherdice
      * @param {any} otherbools
      * @param {object} bonustype Whether the bonus is of "aim" or "guard" type
-     * @param {boolean} skipcheck Whether to skip the "Guarding" condition check
+     * @param {boolean} skipcheck Whether to skip the condition check
      * @returns {object} Returns a holder object which returns the inputs with the added bonuses
      * @private
      */
-    _getStatusBonusConstruction(otherkeys, otherdice, othernames, otherbools, otherinputs, bonustype, skipcheck = false) {
+    _getStatusBonusConstruction(bonustype, skipcheck, otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "") {
         const data = this.data.data;
         let replaceSettings = []; // Bonuses that would replace the base bonus
         let addSettings = []; // Bonuses that would add to the base bonus
@@ -2071,7 +2119,7 @@ export class Ironclaw2EActor extends Actor {
         constructionbools = shield.otherbools;
 
         // Guarding bonus
-        const guard = this._getStatusBonusConstruction(constructionkeys, constructionarray, constructionnames, constructionbools, formconstruction, "guard");
+        const guard = this._getStatusBonusConstruction("guard", false, constructionkeys, constructionarray, constructionnames, constructionbools, formconstruction);
         formconstruction = guard.otherinputs;
         constructionkeys = guard.otherkeys;
         constructionarray = guard.otherdice;
@@ -2118,7 +2166,7 @@ export class Ironclaw2EActor extends Actor {
         let formconstruction = otherinputs;
 
         // Aiming bonus
-        const aim = this._getStatusBonusConstruction(constructionkeys, constructionarray, constructionnames, constructionbools, formconstruction, "aim");
+        const aim = this._getStatusBonusConstruction("aim", false, constructionkeys, constructionarray, constructionnames, constructionbools, formconstruction);
         formconstruction = aim.otherinputs;
         constructionkeys = aim.otherkeys;
         constructionarray = aim.otherdice;
@@ -2164,7 +2212,7 @@ export class Ironclaw2EActor extends Actor {
         let formconstruction = otherinputs;
 
         // Guarding bonus
-        const guard = this._getStatusBonusConstruction(constructionkeys, constructionarray, constructionnames, constructionbools, formconstruction, "guard");
+        const guard = this._getStatusBonusConstruction("guard", false, constructionkeys, constructionarray, constructionnames, constructionbools, formconstruction);
         formconstruction = guard.otherinputs;
         constructionkeys = guard.otherkeys;
         constructionarray = guard.otherdice;

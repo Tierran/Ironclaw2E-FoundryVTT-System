@@ -147,17 +147,17 @@ export function addArrays(foo, bar, outputLength = -1) {
 }
 
 /**
- * Helper function to take a set of dice arrays and combine them all into a single array
+ * Helper function to take a set of dice arrays and combine them all into a single dice array
  * @param {[number[]]} dicearrays
  * @param {boolean} warninput Whether to send a warning about bad input or not
  * @returns {number[]}
  */
 export function flattenDicePoolArray(dicearrays, warninput = true) {
+    let total = [0, 0, 0, 0, 0];
     if (!Array.isArray(dicearrays) || dicearrays.length === 0 || !Array.isArray(dicearrays[0])) {
         if (warninput) console.warn("Unexpected input when flattening a dice array set: " + dicearrays);
-        return [];
+        return total;
     }
-    let total = [];
 
     for (let pool of dicearrays) {
         total = addArrays(total, pool);

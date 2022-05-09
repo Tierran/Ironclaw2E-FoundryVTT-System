@@ -522,11 +522,15 @@
   "ironclaw2e.sheets.actor.sparkTooltip": "Spark Die",
   "ironclaw2e.sheets.actor.parryTooltip": "Parry with {name}",
   "ironclaw2e.sheets.actor.counterTooltip": "Counter with {name}",
-  "ironclaw2e.sheets.actor.giftTooltip": "Use Gift",
+  "ironclaw2e.sheets.actor.giftTooltip": "Use Gift of {name}",
   "ironclaw2e.sheets.actor.putAwayTooltip": "Put away {name}",
   "ironclaw2e.sheets.actor.readyTooltip": "Ready {name}",
   "ironclaw2e.sheets.actor.showBattleTooltip": "Show {name} in battle statistics",
   "ironclaw2e.sheets.actor.hideBattleTooltip": "Hide {name} in battle statistics",
+
+  "ironclaw2e.sheets.actor.visual.soak": "Normal soak pool: {dice}",
+  "ironclaw2e.sheets.actor.visual.dodge": "Normal dodge pool: {dice}",
+  "ironclaw2e.sheets.actor.visual.rally": "Normal rallying pool: {dice}",
 
   "ironclaw2e.sheets.actor.readied": "Readied",
   "ironclaw2e.sheets.actor.stowed": "Stowed",
