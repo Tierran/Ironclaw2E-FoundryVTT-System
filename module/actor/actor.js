@@ -2723,7 +2723,7 @@ export class Ironclaw2EActor extends Actor {
                     }
                     resolve(rollreturn);
                 }
-            }, { width: 600 });
+            }, { width: 620 });
             dlog.render(true);
         });
         return resolvedroll;
