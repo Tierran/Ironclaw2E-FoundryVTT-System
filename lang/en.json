@@ -528,9 +528,9 @@
   "ironclaw2e.sheets.actor.showBattleTooltip": "Show {name} in battle statistics",
   "ironclaw2e.sheets.actor.hideBattleTooltip": "Hide {name} in battle statistics",
 
-  "ironclaw2e.sheets.actor.visual.soak": "Normal soak pool: {dice}",
-  "ironclaw2e.sheets.actor.visual.dodge": "Normal dodge pool: {dice}",
-  "ironclaw2e.sheets.actor.visual.rally": "Normal rallying pool: {dice}",
+  "ironclaw2e.sheets.actor.visual.soak": "Soak pool sources: {dice}",
+  "ironclaw2e.sheets.actor.visual.dodge": "Dodge pool sources: {dice}",
+  "ironclaw2e.sheets.actor.visual.rally": "Rallying pool sources: {dice}",
 
   "ironclaw2e.sheets.actor.readied": "Readied",
   "ironclaw2e.sheets.actor.stowed": "Stowed",

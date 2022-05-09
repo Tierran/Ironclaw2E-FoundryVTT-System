@@ -34,23 +34,23 @@ export class CommonSystemInfo {
     /**
      * The standard stats used for soak rolls
      */
-    static soakBaseStats = ["body"];
+    static soakBaseStats = Object.freeze(["body"]);
     /**
      * The standard stats used for dodge defense rolls
      */
-    static dodgingBaseStats = ["speed", "dodge"];
+    static dodgingBaseStats = Object.freeze(["speed", "dodge"]);
     /**
      * The standard stats used for dodge defense rolls
      */
-    static rallyBaseStats = ["will", "leadership"];
+    static rallyBaseStats = Object.freeze(["will", "leadership"]);
     /**
      * The standard stats used for initiative rolls
      */
-    static initiativeBaseStats = ["speed", "mind"];
+    static initiativeBaseStats = Object.freeze(["speed", "mind"]);
     /**
      * The standard stats used for sprint rolls
      */
-    static sprintBaseStats = ["speed"];
+    static sprintBaseStats = Object.freeze(["speed"]);
     /**
      * List of CSS colors to use for different message types
      */
