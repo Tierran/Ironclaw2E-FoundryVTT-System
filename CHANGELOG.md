@@ -1,3 +1,11 @@
+### 0.5.13 Pooling UI release
+ - Added an option to order dice in dice pool rolls by their source instead of by size
+ - Added a new gift special option to use the applicability field to control the checkbox auto-check instead of the bonus appearing in the dice pools
+ - Added two options to choose what the extra token buttons Ironclaw adds do
+ - Added quota / ward field to the condition adding popup
+ - New checkbox to damage-applying to specify whether the damage is from an attack
+ - Added more visible dice pools to battle statistics part of character sheets
+
 ### 0.5.12 Template exhaustion release
  - Added species and career templates that can be applied to actors
  - Added a system where a mook token will automatically get a missing species or career template from a configured source based on the image's name

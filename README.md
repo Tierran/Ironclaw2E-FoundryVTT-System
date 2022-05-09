@@ -37,6 +37,7 @@ For area-of-effect templates, the system can use Enhanced Terrain Layer's elevat
 #### Options
 
 All world-scope settings are in sub-menus within the System Configuration menu. By default, certain automation options are turned off, in case they conflict with the way a GM wants to run the system. These can be turned on in the system configuration at their leisure. In addition, the system contains some client-scope settings, which can be seen in the default system settings menu.  
+Among the more notable options:  
  - **Range settings:** The range settings in the world configuration control how the system measurements behave, with options to change the measurement method or the accuracy of the internal measuring.  
  - **Auto-remove conditions:** The system will remove conditions from actors based on hard-coded logic of where they should turn off. More on this under **Conditions**.  
  - **Automated encumbrance system:** Based on carried weight and worn armors, the system will give the actors encumbrance conditions as appropriate. The system is tested and should work fine, but it is potentially slightly unstable due to its implementation. When active, the encumbrance conditions should **not** be manually toggled.  
@@ -139,11 +140,12 @@ If the special bonus applies, it's applied where relevant, with the bonus depend
 
 <details>
 <summary>List of effect configuration fields</summary>
+Note on **"Check Bonus Automatically"**: If it is set to "By Applicability" for a bonus, it alters how the above applicability fields are used. Normally, the applicability settings control whether the bonus is added to or appears on the dice pool popup. But when a bonus is auto-checked by applicability, the *entire bonus* is always added and the applicability system controls whether the *dice bonus* is auto-checked. The only exception is the gift exhaust state check. It is *highly* recommended that bonus sources and stats are not used when the "By Applicability" option is set. *(The option is a sort-of kludgy special case for odd gift bonuses anyway, where a bonus might apply a lot, but is hard to reliably check for.)*  
 
  - **Bonus Sources**: List of special additions on the bonus. "Armor" adds the worn armors with the bonus, "Shield" adds the equipped shield, "Guard" or "Aim" adds the guarding or aiming bonus if the actor has the respective condition, and "Guard-always" or "Aim-always" adds the guarding or aiming bonus whether or not the actor has the condition.
  - **Bonus Stats**: List of stats (traits and/or skills) to add with the bonus as pre-checked. If empty, the bonus uses its gift's stats. A dash "-" will make the special skip the bonus stats entirely and not use anything.
  - **Bonus Dice**: Dice to add with the bonus as an extra field. If empty, the bonus uses its gift's dice. A dash "-" will make the special skip the bonus dice entirely and not use anything.
- - **Check Bonus Automatically**: Whether the bonus is automatically checked in a dice pool popup.
+ - **Check Bonus Automatically**: Whether the bonus dice are automatically checked in a dice pool popup, either always, never, or based on the applicability fields.
  - **Bonus Exhausts the Gift**: Whether the bonus automatically exhausts its gift if it is used in a dice pool popup. Also implies that the bonus needs an unexhausted gift.
  - **Replaces the Base Bonus**: Whether the bonus to Guarding/Aiming replaces or adds to the Guarding/Aiming dice.
  - **Bonus Stride/Dash/Run**: The amount of respective movement capability to add to the actor.
