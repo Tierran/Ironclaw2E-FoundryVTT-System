@@ -256,14 +256,14 @@ function registerWorldSettings() {
 
     // General configurations
     // Dice system configuration
-    game.settings.register("ironclaw2e", "dicePoolsSizeOrdered", {
-        name: "ironclaw2e.config.dicePoolsSizeOrdered",
-        hint: "ironclaw2e.config.dicePoolsSizeOrderedHint",
+    game.settings.register("ironclaw2e", "dicePoolsSourceOrdered", {
+        name: "ironclaw2e.config.dicePoolsSourceOrdered",
+        hint: "ironclaw2e.config.dicePoolsSourceOrderedHint",
         scope: "world",
         type: Boolean,
-        default: true,
+        default: false,
         config: false,
-        onChange: ordered => game.ironclaw2e.CardinalDiceRoller.sizeOrderedDice = ordered
+        onChange: ordered => game.ironclaw2e.CardinalDiceRoller.sourceOrderedDice = ordered
     });
 
     // Damage calculation configs

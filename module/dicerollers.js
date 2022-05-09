@@ -31,9 +31,9 @@ export class CardinalDiceRoller {
     /* -------------------------------------------- */
 
     /**
-     * Whether the dice are ordered in size (true), or by source pool (false)
+     * Whether the dice are ordered by source pool (true), or by size (false)
      */
-    static sizeOrderedDice = false;
+    static sourceOrderedDice = false;
 
     /* -------------------------------------------- */
     /*  Dice Roller Set Up Functions                */
@@ -43,7 +43,7 @@ export class CardinalDiceRoller {
      * Place to get the variables from system settings
      */
     static cardinalInitialization() {
-        this.sizeOrderedDice = game.settings.get("ironclaw2e", "dicePoolsSizeOrdered");
+        this.sourceOrderedDice = game.settings.get("ironclaw2e", "dicePoolsSourceOrdered");
     }
 
     /* -------------------------------------------- */
@@ -247,8 +247,8 @@ export class CardinalDiceRoller {
         if (dicearrays.length === 0) {
             return [];
         }
-        // If size ordered dice are active, or the dicearrays given is just a singular dice array
-        if (this.sizeOrderedDice === true || typeof (dicearrays[0]) === "number") {
+        // If source ordered dice is disabled, or the dicearrays given is just a singular dice array
+        if (this.sourceOrderedDice === false || typeof (dicearrays[0]) === "number") {
             // Check that it's one actual dice array
             if (typeof (dicearrays[0]) === "number" && dicearrays.length === 5) {
                 // Parse the one pool into an intermediary and return it
@@ -268,7 +268,7 @@ export class CardinalDiceRoller {
                 // Process and return the temp pool
                 return this.formIntermediaryFromPool(foo);
             }
-        } else if (this.sizeOrderedDice === false) {
+        } else if (this.sourceOrderedDice === true) {
             let foo = [];
             for (let pool of dicearrays) {
                 if (pool?.length === 5) { // One final check to make sure the length is right
