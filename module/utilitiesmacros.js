@@ -81,6 +81,7 @@ Hooks.on("renderChatMessage", function (message, html, data) {
         if (hideDescription) {
             // If description should be hidden, remove it
             html.find('.item-description').remove();
+            html.find('.item-statistics').remove();
         }
     }
 });

@@ -1068,19 +1068,19 @@ export class Ironclaw2EActor extends Actor {
         // The preset buttons
         // Soak
         const soakArmor = this._getArmorConstruction();
-        const soakBonuses = this._getGiftSpecialConstruction("soakBonus", CommonSystemInfo.soakBaseStats, soakArmor.otherkeys, soakArmor.otherdice, soakArmor.othernames, soakArmor.otherbools, soakArmor.otherinputs);
+        const soakBonuses = this._getGiftSpecialConstruction("soakBonus", [...CommonSystemInfo.soakBaseStats], soakArmor.otherkeys, soakArmor.otherdice, soakArmor.othernames, soakArmor.otherbools, soakArmor.otherinputs);
         visualData.soak = reformDiceString(this._getAllDicePools(soakBonuses.prechecked, burdened, soakBonuses.otherkeys, soakBonuses.otherdice, soakBonuses.othernames, soakBonuses.otherbools).totalDice, true);
-        visualData.soakPool = soakBonuses.prechecked.join(", ") +            (soakBonuses.othernames.size > 0 ? " + " + Array.from(soakBonuses.othernames.values()).join(", ") : "");
+        visualData.soakPool = soakBonuses.prechecked.join(", ") + (soakBonuses.othernames.size > 0 ? " + " + Array.from(soakBonuses.othernames.values()).join(", ") : "");
         // Dodge
         const dodgeShield = this._getShieldConstruction();
         const dodgeGuard = this._getStatusBonusConstruction("guard", false, dodgeShield.otherkeys, dodgeShield.otherdice, dodgeShield.othernames, dodgeShield.otherbools, dodgeShield.otherinputs);
-        const dodgeBonuses = this._getGiftSpecialConstruction("defenseBonus", CommonSystemInfo.dodgingBaseStats,
+        const dodgeBonuses = this._getGiftSpecialConstruction("defenseBonus", [...CommonSystemInfo.dodgingBaseStats],
             dodgeGuard.otherkeys, dodgeGuard.otherdice, dodgeGuard.othernames, dodgeGuard.otherbools, dodgeGuard.otherinputs, null, null, true, "dodge");
         visualData.dodge = reformDiceString(this._getAllDicePools(dodgeBonuses.prechecked, burdened, dodgeBonuses.otherkeys, dodgeBonuses.otherdice, dodgeBonuses.othernames, dodgeBonuses.otherbools).totalDice, true);
         visualData.dodgePool = dodgeBonuses.prechecked.join(", ") + (dodgeBonuses.othernames.size > 0 ? " + " + Array.from(dodgeBonuses.othernames.values()).join(", ") : "");
         // Rally
-        visualData.rally = reformDiceString(this._getAllDicePools(CommonSystemInfo.rallyBaseStats, burdened).totalDice, true);
-        visualData.rallyPool = CommonSystemInfo.rallyBaseStats.join(", ");
+        visualData.rally = reformDiceString(this._getAllDicePools([...CommonSystemInfo.rallyBaseStats], burdened).totalDice, true);
+        visualData.rallyPool = [...CommonSystemInfo.rallyBaseStats].join(", ");
 
         data.visualData = visualData;
     }
