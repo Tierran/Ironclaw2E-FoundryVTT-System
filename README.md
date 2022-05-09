@@ -99,6 +99,7 @@ The system works by first checking whether the special bonus is applicable. This
 
 <details>
 <summary>List of applicability configuration fields</summary>
+
 Any of these fields that aren't just checkboxes can include multiple values, separated with commas.
 
  - **Type Field**: List of item types (gift, weapon, armor) that the special can apply to.
@@ -121,6 +122,7 @@ Any of these fields that aren't just checkboxes can include multiple values, sep
 
 <details>
 <summary>Attacker applicability configurations</summary>
+
 These applicability configuration fields are applied from the *attacking weapon*, to allow defensive bonuses to determine what sorts of weapons they are applicable *against*.  
 Any of these fields that aren't just checkboxes can include multiple values, separated with commas.  
 
@@ -140,6 +142,7 @@ If the special bonus applies, it's applied where relevant, with the bonus depend
 
 <details>
 <summary>List of effect configuration fields</summary>
+
 Note on **"Check Bonus Automatically"**: If it is set to "By Applicability" for a bonus, it alters how the above applicability fields are used. Normally, the applicability settings control whether the bonus is added to or appears on the dice pool popup. But when a bonus is auto-checked by applicability, the *entire bonus* is always added and the applicability system controls whether the *dice bonus* is auto-checked. The only exception is the gift exhaust state check. It is *highly* recommended that bonus sources and stats are not used when the "By Applicability" option is set. *(The option is a sort-of kludgy special case for odd gift bonuses anyway, where a bonus might apply a lot, but is hard to reliably check for.)*  
 
  - **Bonus Sources**: List of special additions on the bonus. "Armor" adds the worn armors with the bonus, "Shield" adds the equipped shield, "Guard" or "Aim" adds the guarding or aiming bonus if the actor has the respective condition, and "Guard-always" or "Aim-always" adds the guarding or aiming bonus whether or not the actor has the condition.
