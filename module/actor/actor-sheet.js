@@ -556,7 +556,8 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         event.preventDefault();
         const element = event.currentTarget;
         const dataset = element.dataset;
-        const data = this.actor.data.data;
+        const actor = this.actor;
+        const token = findActorToken(actor);
         let selected = [];
         const directroll = checkQuickModifierKey();
 
@@ -570,10 +571,23 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const otherlabel = game.i18n.format("ironclaw2e.chatInfo.itemInfo.rallyRoll", { name: getMacroSpeaker(this.actor)?.alias });
         let tnnum = 3;
         if (target) { // Check the target disposition for the default TN
-            if (target.actor?.hasPlayerOwner === false) {
-                if (target.disposition !== CONST.TOKEN_DISPOSITIONS.FRIENDLY)
+            if (actor?.hasPlayerOwner === true || token?.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY) {
+                // Friendly / PC rallyer
+                if (target.actor?.hasPlayerOwner === false) {
+                    if (target.disposition !== CONST.TOKEN_DISPOSITIONS.FRIENDLY)
+                        tnnum = 6;
+                }
+            } else if (token?.disposition === CONST.TOKEN_DISPOSITIONS.NEUTRAL) {
+                // Neutral rallyer
+                if (target.disposition !== CONST.TOKEN_DISPOSITIONS.NEUTRAL)
                     tnnum = 6;
+            } else if (token?.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE) {
+                // Hostile rallyer
+                if (target.disposition !== CONST.TOKEN_DISPOSITIONS.HOSTILE || target.actor?.hasPlayerOwner === true) {
+                        tnnum = 6;
+                }
             }
+
         }
 
         this.actor.popupRallyRoll({ "prechecked": selected, "tnyes": true, tnnum, otherlabel }, { directroll, "targetpos": target });
