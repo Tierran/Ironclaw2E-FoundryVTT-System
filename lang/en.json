@@ -38,6 +38,7 @@
   "ironclaw2e.context.chatLog.changeTN": "Change TN",
   "ironclaw2e.context.chatLog.copyToHighest": "Copy to Highest Roll",
   "ironclaw2e.context.chatLog.rerollOne": "Reroll a Single One",
+  "ironclaw2e.context.chatLog.rerollDialog": "Rerolling Dialog",
   "ironclaw2e.context.chatLog.showAttack": "Send the Attack to Chat",
   "ironclaw2e.context.chatLog.showAttackSlaying": "Send the Attack as Slaying",
   "ironclaw2e.context.chatLog.resolveCounter": "Resolve the Counter-Attack",
@@ -261,6 +262,8 @@
   "ironclaw2e.dialog.request": "Request",
   "ironclaw2e.dialog.ready": "Ready",
   "ironclaw2e.dialog.replace": "Replace",
+  "ironclaw2e.dialog.rerollText": "Reroll",
+  "ironclaw2e.dialog.labelNotice": "<strong>The chat label for the roll:</strong> {label}",
 
   "ironclaw2e.dialog.macroDefault.titleTN": "Target Number Roll for {name}",
   "ironclaw2e.dialog.macroDefault.titleCopyTN": "Change Roll to TN",
@@ -277,7 +280,6 @@
 
   "ironclaw2e.dialog.dicePool.title": "Choose Pools",
   "ironclaw2e.dialog.dicePool.header": "Choose dice pools for {name}",
-  "ironclaw2e.dialog.dicePool.labelNotice": "<strong>The chat label for the roll:</strong> {label}",
   "ironclaw2e.dialog.dicePool.showUp": "Showing up in chat as {alias}",
   "ironclaw2e.dialog.dicePool.useTN": "Check to use TN",
   "ironclaw2e.dialog.dicePool.applyBurdened": "Apply Burdened Limit automatically",
@@ -383,11 +385,22 @@
   "ironclaw2e.dialog.requestRoll.targetNumber": "Default Target Number",
   "ironclaw2e.dialog.requestRoll.rollToRequest": "The Roll to request, in Dice Pool format",
 
+  "ironclaw2e.dialog.reroll.heading": "Rerolling Dialog",
+  "ironclaw2e.dialog.reroll.type": "Choose reroll type",
+  "ironclaw2e.dialog.reroll.typeOne": "Reroll One",
+  "ironclaw2e.dialog.reroll.typeFavor": "Favor Bonus",
+  "ironclaw2e.dialog.reroll.typeLuck": "Luck",
+  "ironclaw2e.dialog.reroll.typeKnack": "Knack",
+  "ironclaw2e.dialog.reroll.favorRerollOneToo": "Favor Bonus: Reroll a One at the same time",
+  "ironclaw2e.dialog.reroll.luckChooseDie": "Luck: Choose what die to reroll",
+  "ironclaw2e.dialog.reroll.luckChooseWhich": "Luck: Pick highest or lowest?",
+
 
   "ironclaw2e.chatInfo.tn": "TN",
   "ironclaw2e.chatInfo.high": "High",
   "ironclaw2e.chatInfo.copy": "Copy",
   "ironclaw2e.chatInfo.reroll": "Reroll",
+  "ironclaw2e.chatInfo.favor": "Favor",
 
   "ironclaw2e.chatInfo.itemInfo.tags": "Tags",
   "ironclaw2e.chatInfo.itemInfo.refresh": "Refresh",

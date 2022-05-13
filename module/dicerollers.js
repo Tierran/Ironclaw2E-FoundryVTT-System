@@ -85,7 +85,7 @@ export class CardinalDiceRoller {
         let msg = await roll.toMessage({
             speaker: getMacroSpeaker(rollingactor),
             flavor: flavorstring,
-            flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": label, "ironclaw2e.originalRoll": true, "ironclaw2e.hasOne": hasOne }
+            flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.targetNumber": tni, "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": label, "ironclaw2e.originalRoll": true, "ironclaw2e.hasOne": hasOne }
         }, { create: sendinchat });
 
         return { "roll": roll, "highest": highest, "tnData": tnData, "message": msg, "isSent": sendinchat };
@@ -108,33 +108,37 @@ export class CardinalDiceRoller {
     /**
      * Copies the results of an older roll into a new one while allowing a change in the evaluation method
      * @param {number} tni Target number
-     * @param {Object} message Message containing the roll to copy
+     * @param {object} message Message containing the roll to copy
      * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
      * @param {string} rerolltype Optional value, empty string for this means the copy is a direct one, whereas some input means that there is some type of modification happening
+     * @param {object} copyoptions Optional value, the object to hold options for the reroll copy function
      * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
      */
-    static async copyToRollTN(tni, message, sendinchat = true, rerolltype = "") {
+    static async copyToRollTN(tni, message, sendinchat = true, rerolltype = "", copyoptions = {}) {
         if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
             console.warn("Somehow, a message that isn't a roll got into 'copyToRollTN'.");
             console.warn(message);
             return;
         }
-        let intermediary = message.getFlag("ironclaw2e", "rollIntermediary");
+        let intermediary = [...message.getFlag("ironclaw2e", "rollIntermediary")];
         let rollString = CardinalDiceRoller.copyDicePoolResult(message.roll);
         let directCopy = true;
         let rerollFlavor = "";
         if (rerolltype) {
-            const foobar = CardinalDiceRoller.rerollTypeSwitch(rerolltype, message, intermediary);
+            copyoptions.firstroll = { "type": "TN", "TN": tni };
+            const foobar = await CardinalDiceRoller.rerollTypeSwitch(rerolltype, message, intermediary, copyoptions);
             rollString = foobar.rollString;
             directCopy = foobar.directCopy;
             rerollFlavor = foobar.rerollFlavor;
         }
 
-        if (rollString.length == 0)
+        if (rollString.length == 0) {
             return;
+        }
         let label = message.getFlag("ironclaw2e", "label");
-        if (typeof label != "string")
+        if (typeof label !== "string") {
             return;
+        }
 
         let roll = await new Roll("{" + rollString + "}cs>" + tni).evaluate({ async: true });
 
@@ -157,7 +161,7 @@ export class CardinalDiceRoller {
         let msg = await roll.toMessage({
             speaker: message.data.speaker,
             flavor: flavorstring,
-            flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
+            flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.targetNumber": tni, "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
         }, { create: sendinchat });
 
         await CardinalDiceRoller.copyIronclawRollFlags(message, msg, tnData);
@@ -187,7 +191,7 @@ export class CardinalDiceRoller {
         let msg = await roll.toMessage({
             speaker: getMacroSpeaker(rollingactor),
             flavor: flavorstring,
-            flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": label, "ironclaw2e.originalRoll": true, "ironclaw2e.hasOne": hasOne }
+            flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.targetNumber": -1, "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": label, "ironclaw2e.originalRoll": true, "ironclaw2e.hasOne": hasOne }
         }, { create: sendinchat });
 
         return { "roll": roll, "highest": roll.total, "tnData": null, "message": msg, "isSent": sendinchat };
@@ -208,33 +212,37 @@ export class CardinalDiceRoller {
 
     /**
      * Copies the results of an older roll into a new one while allowing a change in the evaluation method
-     * @param {Object} message Message containing the roll to copy
+     * @param {object} message Message containing the roll to copy
      * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
      * @param {string} rerolltype Optional value, empty string for this means the copy is a direct one, whereas some input means that there is some type of modification happening
+     * @param {object} copyoptions Optional value, the object to hold options for the reroll copy function
      * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
      */
-    static async copyToRollHighest(message, sendinchat = true, rerolltype = "") {
+    static async copyToRollHighest(message, sendinchat = true, rerolltype = "", copyoptions = {}) {
         if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
             console.warn("Somehow, a message that isn't a roll got into 'copyToRollHighest'.");
             console.warn(message);
             return;
         }
-        let intermediary = message.getFlag("ironclaw2e", "rollIntermediary");
+        let intermediary = [...message.getFlag("ironclaw2e", "rollIntermediary")];
         let rollString = CardinalDiceRoller.copyDicePoolResult(message.roll);
         let directCopy = true;
         let rerollFlavor = "";
         if (rerolltype) {
-            const foobar = CardinalDiceRoller.rerollTypeSwitch(rerolltype, message, intermediary);
+            copyoptions.firstroll = { "type": "HIGH", "TN": -1 };
+            const foobar = await CardinalDiceRoller.rerollTypeSwitch(rerolltype, message, intermediary, copyoptions);
             rollString = foobar.rollString;
             directCopy = foobar.directCopy;
             rerollFlavor = foobar.rerollFlavor;
         }
 
-        if (rollString.length == 0)
+        if (rollString.length == 0) {
             return;
+        }
         let label = message.getFlag("ironclaw2e", "label");
-        if (typeof label != "string")
+        if (typeof label !== "string") {
             return;
+        }
 
         let roll = await new Roll("{" + rollString + "}kh1").evaluate({ async: true });
         const flavorstring = CardinalDiceRoller.flavorStringHighest(roll.total,
@@ -245,7 +253,7 @@ export class CardinalDiceRoller {
         let msg = await roll.toMessage({
             speaker: message.data.speaker,
             flavor: flavorstring,
-            flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
+            flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.targetNumber": -1, "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
         }, { create: sendinchat });
 
         await CardinalDiceRoller.copyIronclawRollFlags(message, msg);
@@ -335,10 +343,11 @@ export class CardinalDiceRoller {
     /**
      * Helper function for the dice rollers to form the dice for the roll command properly
      * @param {number[] | number} intermediary The intermediary dice array, or a single intermediary term number to get the die string version for
+     * @param {boolean} leavecomma Whether to leave the trailing comma in place or not
      * @returns {string} Properly set-up string to give to a Roll
      * @private
      */
-    static formRollFromIntermediary(intermediary) {
+    static formRollFromIntermediary(intermediary, leavecomma = false) {
         // Convert a number into an actual array for processing
         const inters = Array.isArray(intermediary) ? intermediary : [intermediary];
         let rollstring = "";
@@ -363,7 +372,7 @@ export class CardinalDiceRoller {
                     break;
             }
         }
-        if (rollstring.length > 0) {
+        if (!leavecomma && rollstring.length > 0) {
             // Remove trailing comma
             rollstring = rollstring.slice(0, -1);
         }
@@ -420,20 +429,37 @@ export class CardinalDiceRoller {
     /**
      * Helper to pick the correct setups for different reroll types
      * @param {string} reroll The type given: "ONE" means reroll a one
+     * @param {Object} message Message containing the roll to copy
+     * @param {number[]} intermediary The intermediary dice array
+     * @param {boolean} [favorreroll] Whether a favored roll will also reroll a one at the same time
+     * @param {number} [luckindex] What index the luck is rerolling
+     * @param {boolean} [luckhigh] Whether the luck uses the highest or lowest roll
+     * @param {object} [firstroll] The data about the original roll
      */
-    static rerollTypeSwitch(reroll, message, intermediary) {
+    static async rerollTypeSwitch(reroll, message, intermediary, { favorreroll = false, luckindex = -1, luckhigh = true, firstroll = {} } = {}) {
         let rollString = "";
         let directCopy = true;
         let rerollFlavor = "";
+        let rollUsed = message.roll;
         switch (reroll) {
             case "ONE":
-                rollString = CardinalDiceRoller.copyRerollHighestOne(message.roll, intermediary);
+                rollString = CardinalDiceRoller.copyRerollHighestOne(rollUsed, intermediary);
                 directCopy = false;
                 rerollFlavor = game.i18n.localize("ironclaw2e.chatInfo.reroll");
                 break;
+            case "FAVOR":
+                intermediary.unshift(0);
+                rollString = CardinalDiceRoller.copyResultToIntermediary(rollUsed, intermediary, 1);
+                directCopy = false;
+                rerollFlavor = game.i18n.localize("ironclaw2e.chatInfo.favor");
+                if (favorreroll) {
+                    const roll = await new Roll("{" + rollString + "}" + (firstroll.type === "HIGH" ? "kh1" : "cs>" + firstroll.TN.toString())).evaluate({ async: true });
+                    rollString = CardinalDiceRoller.copyRerollHighestOne(roll, intermediary);
+                }
+                break;
         }
 
-        return { rollString, directCopy, rerollFlavor };
+        return { rollString, directCopy, rerollFlavor, rollUsed };
     }
 
     /**
@@ -444,15 +470,55 @@ export class CardinalDiceRoller {
      */
     static copyDicePoolResult(roll) {
         let formula = "";
+        if (roll.terms.length === 0) {
+            console.warn("A roll with zero terms given to a copy function");
+            return formula;
+        }
 
-        if (roll.terms.length > 0) {
-            roll.terms[0].results.forEach(x => {
-                formula += x.result.toString() + ",";
-            });
-            if (formula.length > 0) {
-                // Remove the trailing comma
-                formula = formula.slice(0, -1);
+        roll.terms[0].results.forEach(x => {
+            formula += x.result.toString() + ",";
+        });
+        if (formula.length > 0) {
+            // Remove the trailing comma
+            formula = formula.slice(0, -1);
+        }
+
+
+        return formula;
+    }
+
+    /**
+     * Helper function to partially override a dice pool with existing roll data
+     * If the skip dice is not set above zero, the function will have equivalent output to copyDicePoolResult
+     * @param {Roll} roll The roll to be copied
+     * @param {number[]} intermediary The original intermediary dice term array, used to figure out what die should get rerolled
+     * @param {number} skipdice The index from which the roll will be copied over the intermediary, essentially, how many indices are skipped over until the copying starts
+     * @returns {string} A new formula to use for the new copy roll
+     * @private
+     */
+    static copyResultToIntermediary(roll, intermediary, skipdice, ignoreextra = true) {
+        let formula = "";
+        if (roll.terms.length === 0) {
+            console.warn("A roll with zero terms given to a copy function");
+            return formula;
+        }
+        const skipping = (skipdice > 0 ? skipdice : 0);
+        const results = roll.terms[0].results;
+        const max = (ignoreextra ? intermediary.length : (intermediary.length > results.length + skipping ? intermediary.length : results.length + skipping));
+
+        for (let i = 0; i < max; ++i) {
+            // If the result is over the skipping limit, and the resulting index is within the results limits, copy it from the roll
+            if (i >= skipping && (i - skipping < results.length && i - skipping >= 0)) {
+                formula += results[i - skipping].result.toString() + ",";
+            } else if (i < intermediary.length) {
+                // Otherwise, if the index is within intermediary's limits, copy it from the intermediary
+                formula += this.formRollFromIntermediary(intermediary[i], true);
             }
+
+        }
+        if (formula.length > 0) {
+            // Remove the trailing comma
+            formula = formula.slice(0, -1);
         }
 
         return formula;
@@ -460,56 +526,58 @@ export class CardinalDiceRoller {
 
     /**
      * Helper function for the dice roller copy functions to reroll one "1" and copy the rest of the dice results as numbers
-     * @param {Roll} roll
+     * @param {Roll} roll The roll to be checked for ones
      * @param {number[]} intermediary The original intermediary dice term array, used to figure out what die should get rerolled
      * @returns {string} A new formula to use for the new copy roll, with the highest "1" as a die to be rolled
      * @private
      */
     static copyRerollHighestOne(roll, intermediary) {
+        if (roll.terms.length === 0) {
+            console.warn("A roll with zero terms given to a copy function");
+            return formula;
+        }
         // The size of the one found, the index of the found one, the recreated formula
         let onefound = -1, foundone = -1, formula = "";
 
-        if (roll.terms.length > 0) {
-            // Find the highest found one
-            roll.terms[0].results.forEach((x, i) => {
-                if (x.result == 1) {
-                    if (intermediary) {
-                        // New version with an intermediary array
-                        if (foundone < 0) {
-                            onefound = intermediary[i];
-                            foundone = i;
-                        } else if (intermediary[i] < onefound) {
-                            onefound = intermediary[i];
-                            foundone = i;
-                        }
-                    } else {
-                        // Legacy for support
-                        const die = parseSingleDiceString(roll.terms[0].terms[1]);
-                        if (foundone < 0) {
-                            onefound = dieindex;
-                            foundone = i;
-                        } else if (die[1] > onefound) {
-                            onefound = dieindex;
-                            foundone = i;
-                        }
+        // Find the highest found one
+        roll.terms[0].results.forEach((x, i) => {
+            if (x.result == 1) {
+                if (intermediary) {
+                    // New version with an intermediary array
+                    if (foundone < 0) {
+                        onefound = intermediary[i];
+                        foundone = i;
+                    } else if (intermediary[i] < onefound) {
+                        onefound = intermediary[i];
+                        foundone = i;
+                    }
+                } else {
+                    // Legacy for support
+                    const die = parseSingleDiceString(roll.terms[0].terms[1]);
+                    if (foundone < 0) {
+                        onefound = dieindex;
+                        foundone = i;
+                    } else if (die[1] > onefound) {
+                        onefound = dieindex;
+                        foundone = i;
                     }
                 }
-            });
-            // Replace the highest found one with its actual die
-            roll.terms[0].results.forEach((x, i) => {
-                if (i === foundone) {
-                    if (intermediary)
-                        formula += this.formRollFromIntermediary(intermediary[i]) + ",";
-                    else
-                        formula += roll.terms[0].terms[i] + ",";
-                } else {
-                    formula += x.result.toString() + ",";
-                }
-            });
-            if (formula.length > 0) {
-                // Remove the trailing comma
-                formula = formula.slice(0, -1);
             }
+        });
+        // Replace the highest found one with its actual die
+        roll.terms[0].results.forEach((x, i) => {
+            if (i === foundone) {
+                if (intermediary)
+                    formula += this.formRollFromIntermediary(intermediary[i], true);
+                else
+                    formula += roll.terms[0].terms[i] + ",";
+            } else {
+                formula += x.result.toString() + ",";
+            }
+        });
+        if (formula.length > 0) {
+            // Remove the trailing comma
+            formula = formula.slice(0, -1);
         }
 
         return formula;
@@ -958,6 +1026,71 @@ export async function copyToRollTNDialog(message, rolltitle = "") {
                     let DICES = html.find('[name=tn]')[0].value;
                     let TN = 0; if (DICES.length > 0) TN = parseInt(DICES);
                     resolve(CardinalDiceRoller.copyToRollTN(TN, message));
+                } else {
+                    resolve(null);
+                }
+            }
+        });
+        dlog.render(true);
+    });
+    return await resolvedroll;
+}
+
+class RerollInfo {
+    static rerollTypes = {
+        "ONE": "ironclaw2e.dialog.reroll.typeOne",
+        "FAVOR": "ironclaw2e.dialog.reroll.typeFavor",
+        "LUCK": "ironclaw2e.dialog.reroll.typeLuck",
+        "KNACK": "ironclaw2e.dialog.reroll.typeKnack"
+    };
+}
+
+/**
+ * Function that takes a message with a roll and asks for a target number to use in copying the results of the roll to a new one
+ * @param {ChatMessage} message The chat message to copy the roll from, assuming it has one
+ * @param {string} rolltitle The title shown as the dialog's purpose, translated if one is found
+ * @returns {Promise<DiceReturn> | Promise<null>} Promise of the roll data in an object, or null if cancelled
+ */
+export async function rerollDialog(message, defaultreroll) {
+    let confirmed = false;
+
+    const templateData = {
+        "rerollTypes": RerollInfo.rerollTypes,
+        "rerollSelected": defaultreroll,
+        "alias": message.data.speaker.alias
+    };
+    const contents = await renderTemplate("systems/ironclaw2e/templates/popup/reroll-popup.html", templateData);
+    const rollType = message.getFlag("ironclaw2e", "rollType");
+    const targetNumber = message.getFlag("ironclaw2e", "targetNumber");
+
+    let resolvedroll = new Promise((resolve) => {
+        let dlog = new Dialog({
+            title: game.i18n.format("ironclaw2e.dialog.reroll.heading"),
+            content: contents,
+            buttons: {
+                one: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: game.i18n.localize("ironclaw2e.dialog.rerollText"),
+                    callback: () => confirmed = true
+                },
+                two: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
+                    callback: () => confirmed = false
+                }
+            },
+            default: "one",
+            render: html => { document.getElementById("rerolltype").focus(); },
+            close: html => {
+                if (confirmed) {
+                    let REROLL = html.find('[name=rerolltype]')[0].value;
+                    let FAVORRE = html.find('[name=favorreroll]')[0];
+                    let favorreroll = FAVORRE.checked;
+
+                    if (rollType === "HIGH")
+                        resolve(CardinalDiceRoller.copyToRollHighest(message, true, REROLL, { favorreroll }));
+                    else
+                        resolve(CardinalDiceRoller.copyToRollTN(targetNumber, message, true, REROLL, { favorreroll }));
                 } else {
                     resolve(null);
                 }

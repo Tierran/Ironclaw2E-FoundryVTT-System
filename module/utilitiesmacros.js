@@ -5,8 +5,7 @@ import { Ironclaw2EActor } from "./actor/actor.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { getRangeBandFromDistance } from "./systeminfo.js";
 import { hasConditionsIronclaw } from "./conditions.js";
-import { AbilityTemplateIronclaw } from "./ability-template.js";
-import { CardinalDiceRoller, copyToRollTNDialog } from "./dicerollers.js";
+import { CardinalDiceRoller, copyToRollTNDialog, rerollDialog } from "./dicerollers.js";
 
 /* -------------------------------------------- */
 /*  Hooks                                       */
@@ -41,7 +40,7 @@ Hooks.on("renderChatMessage", function (message, html, data) {
                 attackHolder.find('.spark-attack').click(Ironclaw2EActor.onChatSparkClick.bind(this));
 
                 const templateHolder = buttons.find('.template-buttons');
-                templateHolder.find('.place-template').click(onPlaceExplosionTemplate.bind(this));
+                templateHolder.find('.place-template').click(Ironclaw2EActor.onPlaceExplosionTemplate.bind(this));
             } else {
                 buttons.find('.attack-buttons').remove();
                 buttons.find('.template-buttons').remove();
@@ -289,42 +288,6 @@ async function onRequestRollTrigger(event) {
     }
 }
 
-/**
- * The function to trigger when a user presses the "Place Template" button
- * @param {any} event
- */
-async function onPlaceExplosionTemplate(event) {
-    event.preventDefault();
-    const element = event.currentTarget;
-    const dataset = element.dataset;
-    const message = game.messages.get($(event.currentTarget).closest('.chat-message')[0]?.dataset?.messageId);
-
-    if (!dataset || !message) {
-        console.error("Placing a template didn't get the correct data: " + dataset + " " + message);
-        return;
-    }
-
-    const messageFlags = message?.data?.flags?.ironclaw2e;
-    const otheritem = Ironclaw2EActor.getAttackerItemFlags(messageFlags);
-    const attackToken = Ironclaw2EActor.getAttackerToken(otheritem);
-    if (!attackToken) {
-        return;
-    }
-
-    // Function to execute on success, setting the proper flags to the item data message
-    const onSuccess = async (x) => {
-        const flags = {
-            "ironclaw2e.weaponTemplatePos": { "x": x.data.x, "y": x.data.y, "elevation": attackToken.data.elevation },
-            "ironclaw2e.weaponTemplateId": x.id,
-            "ironclaw2e.weaponTemplateSceneId": x.parent?.id
-        };
-        message.update({ "_id": x.id, "flags": flags });
-    };
-
-    const template = AbilityTemplateIronclaw.fromRange(dataset.arearange, { "elevation": attackToken.data.elevation, "successfunc": onSuccess });
-    if (template) template.drawPreview();
-}
-
 /* -------------------------------------------- */
 /*  Distance Showing Functions                  */
 /* -------------------------------------------- */
@@ -474,11 +437,30 @@ function addIronclawChatLogContext(html, entryOptions) {
             callback: li => {
                 const message = game.messages.get(li.data("messageId"));
                 const type = message.getFlag("ironclaw2e", "rollType");
+                const targetNumber = message.getFlag("ironclaw2e", "targetNumber");
                 if (type === "TN") {
-                    CardinalDiceRoller.copyToRollTN(parseInt(message.roll.formula.slice(message.roll.formula.indexOf(">") + 1)), message, true, "ONE");
+                    CardinalDiceRoller.copyToRollTN(targetNumber, message, true, "ONE");
                 } else {
                     CardinalDiceRoller.copyToRollHighest(message, true, "ONE");
                 }
+            }
+        },
+        {
+            name: "ironclaw2e.context.chatLog.rerollDialog",
+            icon: '<i class="fas fa-redo"></i>',
+            condition: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const rerollable = message.getFlag("ironclaw2e", "rollIntermediary") || message.getFlag("ironclaw2e", "originalRoll");
+                const hasOne = message.getFlag("ironclaw2e", "hasOne");
+                const actorHasRerolls = getSpeakerActor() || game.user.isGM;
+                // Check that the message has a roll, is rerollable either because it has the new intermediary array stored or because it is the original and has a one
+                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && rerollable && hasOne && actorHasRerolls;
+                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+            },
+            callback: li => {
+                const message = game.messages.get(li.data("messageId"));
+                const type = message.getFlag("ironclaw2e", "rollType");
+                rerollDialog(message, "ONE");
             }
         },
         {

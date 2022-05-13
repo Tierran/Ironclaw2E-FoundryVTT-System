@@ -1,0 +1,18 @@
+<form class="ironclaw2e">
+    <h1>{{localize "ironclaw2e.dialog.reroll.heading"}}</h1>
+    <div class="form-group">
+        <span class="normal-label">{{localize "ironclaw2e.dialog.reroll.type"}}:</span>
+        <div>
+            <span class="small-text">{{"ironclaw2e.dialog.showUp" alias=alias}}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <select id="rerolltype" name="rerolltype" data-dtype="String">
+            {{selectOptions rerollTypes localize=true selected=rerollSelected}}
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="normal-label">{{localize "ironclaw2e.dialog.reroll.favorRerollOneToo"}}</label>
+        <input type="checkbox" id="favorreroll" name="favorreroll" checked />
+    </div>
+</form>

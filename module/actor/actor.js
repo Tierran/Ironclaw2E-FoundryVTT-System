@@ -20,6 +20,7 @@ import { getDistanceBetweenPositions } from "../helpers.js";
 import { formDicePoolField } from "../helpers.js";
 import { checkConditionQuota, CommonConditionInfo, getConditionSelectObject, getSingleConditionIronclaw, getTargetConditionQuota, setTargetConditionQuota } from "../conditions.js";
 import { checkStandardDefense, CommonSystemInfo, getRangeDiceFromDistance } from "../systeminfo.js";
+import { AbilityTemplateIronclaw } from "../ability-template.js";
 // For condition management
 import { hasConditionsIronclaw } from "../conditions.js";
 import { getConditionNamesIronclaw } from "../conditions.js";
@@ -39,6 +40,10 @@ export class Ironclaw2EActor extends Actor {
 
     /* -------------------------------------------- */
     /* Static Functions                             */
+    /* -------------------------------------------- */
+
+    /* -------------------------------------------- */
+    /* Static Hook Functions                        */
     /* -------------------------------------------- */
 
     /**
@@ -61,6 +66,10 @@ export class Ironclaw2EActor extends Actor {
             }
         }
     }
+
+    /* -------------------------------------------- */
+    /* Static Click Functions                       */
+    /* -------------------------------------------- */
 
     /**
      * Handle the chat button event for clicking attack
@@ -220,6 +229,46 @@ export class Ironclaw2EActor extends Actor {
             ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
         }
     }
+
+    /**
+     * The function to trigger when a user presses the "Place Template" button
+     * @param {any} event
+     */
+    static async onPlaceExplosionTemplate(event) {
+        event.preventDefault();
+        const element = event.currentTarget;
+        const dataset = element.dataset;
+        const message = game.messages.get($(event.currentTarget).closest('.chat-message')[0]?.dataset?.messageId);
+
+        if (!dataset || !message) {
+            console.error("Placing a template didn't get the correct data: " + dataset + " " + message);
+            return;
+        }
+
+        const messageFlags = message?.data?.flags?.ironclaw2e;
+        const otheritem = Ironclaw2EActor.getAttackerItemFlags(messageFlags);
+        const attackToken = Ironclaw2EActor.getAttackerToken(otheritem);
+        if (!attackToken) {
+            return;
+        }
+
+        // Function to execute on success, setting the proper flags to the item data message
+        const onSuccess = async (x) => {
+            const flags = {
+                "ironclaw2e.weaponTemplatePos": { "x": x.data.x, "y": x.data.y, "elevation": attackToken.data.elevation },
+                "ironclaw2e.weaponTemplateId": x.id,
+                "ironclaw2e.weaponTemplateSceneId": x.parent?.id
+            };
+            message.update({ "_id": x.id, "flags": flags });
+        };
+
+        const template = AbilityTemplateIronclaw.fromRange(dataset.arearange, { "elevation": attackToken.data.elevation, "successfunc": onSuccess });
+        if (template) template.drawPreview();
+    }
+
+    /* -------------------------------------------- */
+    /* Static Utility Functions                     */
+    /* -------------------------------------------- */
 
     /**
      * Construct and pop up a dialog to pick the defending weapon
@@ -614,6 +663,10 @@ export class Ironclaw2EActor extends Actor {
             }
         }
     }
+
+    /* -------------------------------------------- */
+    /* Normal Functions                             */
+    /* -------------------------------------------- */
 
     /* -------------------------------------------- */
     /* Process Derived                              */
@@ -2514,7 +2567,7 @@ export class Ironclaw2EActor extends Actor {
         }
         let labelNotice = "";
         if (otherlabel) {
-            labelNotice = `<span class="normal-text">${game.i18n.format("ironclaw2e.dialog.dicePool.labelNotice", { "label": otherlabel })}</span><br>`;
+            labelNotice = `<span class="normal-text">${game.i18n.format("ironclaw2e.dialog.labelNotice", { "label": otherlabel })}</span><br>`;
         }
 
         if (hastraits) {
