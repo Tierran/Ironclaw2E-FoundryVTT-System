@@ -203,6 +203,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
                     if (confirmed) { // Only copy the item data and replace existing ones if confirmed
                         const items = getAllItemsInWorld(this.item.type);
                         items.delete(this.item);
+                        // Clone the data to ensure no derived data leaks into the actual database
                         const cloneData = (await this.item.clone()).data;
                         cloneData.reset();
                         ui.notifications.info("ironclaw2e.ui.itemUpdateInProgress", { localize: true, permanent: true });
