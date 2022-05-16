@@ -880,6 +880,16 @@ export function diceFieldUpgrade(dicearray, upgrade) {
 /* -------------------------------------------- */
 
 /**
+ * @typedef {{
+ *   otherkeys: Map<string,object>,
+ *   otherdice: Map<string,number[]>,
+ *   othernames: Map<string,string>,
+ *   otherbools: Map<string,boolean>,
+ *   otherinputs: string
+ * }} DicePoolFormReturn
+ */
+
+/**
  * Generic command to add a new bonus field to the dice pool dialog
  * @param {number[]} fielddice The dice for this particular field
  * @param {string} fieldname The name to use for the field in the actual messages
@@ -888,7 +898,7 @@ export function diceFieldUpgrade(dicearray, upgrade) {
  * @param {string} itemid The item id related to this field, if any
  * @param {boolean} exhaustonuse Whether tapping the field will make the related gift exhausted
  * @param {any} param6 The mostly mandatory data which holds the previous values which are being added to
- * @returns {object} Returns a holder object which returns the inputs with the added bonuses
+ * @returns {DicePoolFormReturn} Returns a holder object which returns the inputs with the added bonuses
  */
 export function formDicePoolField(fielddice, fieldname, fieldlabel, autocheck = true, { itemid = null, exhaustonuse = false } = {},
     { otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "" } = {}) {
@@ -983,7 +993,7 @@ export function findInItems(itemlist, itemname, itemtype = null) {
     }
 
     const useitemtype = itemtype ? true : false;
-    const regex = new RegExp(`^${itemname}\$`, "gi");
+    const regex = new RegExp(`^\\s*${itemname}\\s*\$`, "gi");
 
     return itemlist.find(element => (useitemtype ? element.data.type === itemtype : true) && regex.test(element.data.name));
 }
