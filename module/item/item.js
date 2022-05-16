@@ -357,7 +357,7 @@ export class Ironclaw2EItem extends Item {
                     flat = true;
                 }
                 if (bar.length > 0) {
-                    const damage = parseInt(bar.slice(-1));
+                    const damage = parseInt(bar.match(/([0-9])+/i)?.[0]); // Grabs the first number group of the damage, which should always return the correct damage number
                     data.damageEffect = isNaN(damage) ? -1 : damage;
                     data.damageFlat = flat && data.damageEffect >= 0;
                 } else { data.damageEffect = -1; }
@@ -1538,7 +1538,7 @@ export class Ironclaw2EItem extends Item {
             formconstruction = (moredice ? moredice.otherinputs : "");
             const diceinput = {
                 "prechecked": stats, "tnyes": tnyes, "tnnum": usedtn, "otherkeys": (moredice ? moredice.otherkeys : new Map()), "otherdice": (moredice ? moredice.otherdice : new Map()),
-                "othernames": (moredice ? moredice.othernames : new Map()),"otherinputs": formconstruction, "otherbools": (moredice ? moredice.otherbools : new Map()), "otherlabel": "", "extradice": extradice
+                "othernames": (moredice ? moredice.othernames : new Map()), "otherinputs": formconstruction, "otherbools": (moredice ? moredice.otherbools : new Map()), "otherlabel": "", "extradice": extradice
             };
 
             switch (rolltype) {
