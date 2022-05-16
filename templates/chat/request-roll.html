@@ -5,7 +5,8 @@
     <div class="chat-content">
         <div class="chat-item">
             <span class="normal-label">{{localize "ironclaw2e.chatInfo.requestRoll.requestRollType"}}: </span><span class="normal-text">{{#if tnyes}}{{localize "ironclaw2e.targetNumber"}}: {{tnnum}}{{else}}{{localize "ironclaw2e.highestRoll"}}{{/if}}<br /></span>
-            <span class="normal-label">{{localize "ironclaw2e.chatInfo.requestRoll.requestRollDicePool"}}: </span><span class="normal-text">{{stats}}</span>
+            <span class="normal-label">{{localize "ironclaw2e.chatInfo.requestRoll.requestRollDicePool"}}: </span><span class="normal-text">{{stats}}<br /></span>
+            {{#if requestedGifts}}<span class="normal-label">{{localize "ironclaw2e.chatInfo.requestRoll.requestRollGifts"}}: </span><span class="normal-text">{{requestedGifts}}</span>{{/if}}
         </div>
         <div class="chat-item button-holder">
             <div class="flexrow">

@@ -1,4 +1,4 @@
-import { checkDiceArrayEmpty, diceFieldUpgrade, enforceLimitArray, flattenDicePoolArray, getCombatAdvantageConstruction, getTemplatePosition, popupConfirmationBox } from "../helpers.js";
+import { checkDiceArrayEmpty, diceFieldUpgrade, enforceLimitArray, findInItems, flattenDicePoolArray, getCombatAdvantageConstruction, getTemplatePosition, popupConfirmationBox } from "../helpers.js";
 import { addArrays } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -1359,7 +1359,7 @@ export class Ironclaw2EActor extends Actor {
     /**
      * @typedef {{
      *   prechecked: string[],
-     *   otherkeys: Map<string,string>,
+     *   otherkeys: Map<string,object>,
      *   otherdice: Map<string,number[]>,
      *   othernames: Map<string,string>,
      *   otherbools: Map<string,boolean>,
@@ -1593,6 +1593,11 @@ export class Ironclaw2EActor extends Actor {
 
         const foo = formDicePoolField(bonusArray, bonusLabel, `${bonusLabel}: ${reformDiceString(bonusArray, true)}`, true, {},
             { otherkeys, otherdice, othernames, otherbools, otherinputs });
+        otherkeys = foo.otherkeys;
+        otherdice = foo.otherdice;
+        othernames = foo.othernames;
+        otherbools = foo.otherbools;
+        otherinputs = foo.otherinputs;
 
         return (foo ? foo : { "otherkeys": otherkeys, "otherdice": otherdice, "othernames": othernames, "otherbools": otherbools, "otherinputs": otherinputs });
     }
@@ -1985,6 +1990,35 @@ export class Ironclaw2EActor extends Actor {
         // Add the basic "Reroll One" option if the input matches
         if (hasone && addbasicreroll) rerollTypes.set("ONE", null);
         return rerollTypes;
+    }
+
+    /**
+     * Get a dice pool construction set from the given gifts
+     * @param {string[]} giftnames
+     */
+    requestedGiftDialogConstruction(giftnames) {
+        let otherkeys = new Map();
+        let otherdice = new Map();
+        let othernames = new Map();
+        let otherbools = new Map();
+        let otherinputs = "";
+        // Go through each gift name given
+        for (let name of giftnames) {
+            const gift = findInItems(this.items, name, "gift");
+            // If a gift with the name was found, it is usable and it has a dice array
+            if (gift && gift.data.data.giftUsable && gift.data.data.giftArray) {
+                // Add a dialog dice pool construction of the gift
+                const foo = formDicePoolField(gift.data.data.giftArray, gift.name, `${gift.name}: ${reformDiceString(gift.data.data.giftArray, true)}`, true, { "itemid": gift.id, "exhaustonuse": gift.data.data.exhaustWhenUsed },
+                    { otherkeys, otherdice, othernames, otherbools, otherinputs });
+                otherkeys = foo.otherkeys;
+                otherdice = foo.otherdice;
+                othernames = foo.othernames;
+                otherbools = foo.otherbools;
+                otherinputs = foo.otherinputs;
+            }
+        }
+
+        return { otherkeys, otherdice, othernames, otherbools, otherinputs };
     }
 
     /* -------------------------------------------- */

@@ -948,6 +948,11 @@ export function getDistancePenaltyConstruction(otherkeys, otherdice, othernames,
         const diceArray = findTotalDice(distanceDice);
         const distLabel = game.i18n.format((explosionpenalty ? "ironclaw2e.dialog.dicePool.rangePenaltyExplosion" : "ironclaw2e.dialog.dicePool.rangePenaltyAttacker"), { "range": rangeBand, "penalty": distanceDice });
         foo = formDicePoolField(diceArray, distKey, distLabel, autocheck, {}, { otherkeys, otherdice, othernames, otherbools, otherinputs });
+        otherkeys = foo.otherkeys;
+        otherdice = foo.otherdice;
+        othernames = foo.othernames;
+        otherbools = foo.otherbools;
+        otherinputs = foo.otherinputs;
     }
     return (foo ? foo : { "otherkeys": otherkeys, "otherdice": otherdice, "othernames": othernames, "otherbools": otherbools, "otherinputs": otherinputs });
 }
@@ -969,6 +974,11 @@ export function getCombatAdvantageConstruction(otherkeys, otherdice, othernames,
         const advKey = "Combat Advantage";
         const advLabel = game.i18n.format("ironclaw2e.dialog.dicePool.combatAdvantage", { "bonus": CommonSystemInfo.combatAdvantageDice });
         foo = formDicePoolField(diceArray, advKey, advLabel, autocheck, {}, { otherkeys, otherdice, othernames, otherbools, otherinputs });
+        otherkeys = foo.otherkeys;
+        otherdice = foo.otherdice;
+        othernames = foo.othernames;
+        otherbools = foo.otherbools;
+        otherinputs = foo.otherinputs;
     }
 
     return (foo ? foo : { "otherkeys": otherkeys, "otherdice": otherdice, "othernames": othernames, "otherbools": otherbools, "otherinputs": otherinputs });
@@ -993,9 +1003,10 @@ export function findInItems(itemlist, itemname, itemtype = null) {
     }
 
     const useitemtype = itemtype ? true : false;
-    const regex = new RegExp(`^\\s*${itemname}\\s*\$`, "gi");
-
-    return itemlist.find(element => (useitemtype ? element.data.type === itemtype : true) && regex.test(element.data.name));
+    // First remove all whitespace from the itemname, then make a case-insensitive regexp from it
+    const regex = new RegExp(`^${itemname.replace(/\s/g, '')}\$`, "gi");
+    // Go through all the items until the itemname regexp (and optionally the itemtype) match with something
+    return itemlist.find(element => (useitemtype ? element.data.type === itemtype : true) && regex.test(element.data.name.replace(/\s/g, '')));
 }
 
 /**

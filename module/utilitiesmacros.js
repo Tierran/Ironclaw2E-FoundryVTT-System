@@ -1,6 +1,6 @@
 // Utilities and Macros
 // Random non-helper stuff that are substantial, relatively self-contained, and I couldn't really think of another place to dump into
-import { findActorToken, getActorFromSpeaker, getDistanceBetweenPositions, getMacroSpeaker, getSpeakerActor, splitStatsAndBonus } from "./helpers.js";
+import { checkQuickModifierKey, findActorToken, getActorFromSpeaker, getDistanceBetweenPositions, getMacroSpeaker, getSpeakerActor, splitStatsAndBonus, splitStatString } from "./helpers.js";
 import { Ironclaw2EActor } from "./actor/actor.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { getRangeBandFromDistance } from "./systeminfo.js";
@@ -131,7 +131,7 @@ Hooks.on("updateToken", function (token, data, options, userid) {
  * @param {number} tnnum
  * @param {string} whispername
  */
-export async function requestRollPopup(readydice = "", tnnum = -1, whispername = "") {
+export async function requestRollPopup(readydice = "", readygifts = "", tnnum = -1, whispername = "") {
     const allowNonGM = game.settings.get("ironclaw2e", "allowNonGMRequestRolls");
     if (!game.user.isGM && !allowNonGM) {
         // If the user is not a GM and the world settings do not allow non-GM's to ask rolls
@@ -148,6 +148,7 @@ export async function requestRollPopup(readydice = "", tnnum = -1, whispername =
         "macroAlias": macroSpeaker.alias,
         "whispername": whispername,
         "readydice": readydice,
+        "readygifts": readygifts,
         "tnnum": tnnum
     };
 
@@ -180,8 +181,10 @@ export async function requestRollPopup(readydice = "", tnnum = -1, whispername =
                 let tn = -1; if (TNNUM.length > 0) tn = parseInt(TNNUM);
                 let DICES = html.find('[name=dices]')[0].value;
                 let dices = ""; if (DICES.length > 0) dices = DICES;
+                let GIFTS = html.find('[name=gifts]')[0].value;
+                let gifts = ""; if (GIFTS.length > 0) gifts = GIFTS;
 
-                requestRollToMessage(dices, tn, { "speaker": (usernumber === 1 ? macroSpeaker : userSpeaker), "whisper": whisper });
+                requestRollToMessage(dices, tn, { "speaker": (usernumber === 1 ? macroSpeaker : userSpeaker), "whisper": whisper, "requestedgifts": gifts });
             }
         }
     });
@@ -194,7 +197,7 @@ export async function requestRollPopup(readydice = "", tnnum = -1, whispername =
  * @param {number} tn
  * @param {any} param2
  */
-export async function requestRollToMessage(dicepool, tn, { whisper = "", speaker = null } = {}) {
+export async function requestRollToMessage(dicepool, tn, { whisper = "", speaker = null, requestedgifts = "" } = {}) {
     const allowNonGM = game.settings.get("ironclaw2e", "allowNonGMRequestRolls");
     if (!game.user.isGM && !allowNonGM) {
         // If the user is not a GM and the world settings do not allow non-GM's to request rolls
@@ -214,13 +217,17 @@ export async function requestRollToMessage(dicepool, tn, { whisper = "", speaker
     const templateData = {
         "speaker": speaker.alias,
         "stats": dicepool,
+        "requestedGifts": requestedgifts,
         "tnyes": tnyes,
         "tnnum": tnnum
     };
 
     const contents = await renderTemplate("systems/ironclaw2e/templates/chat/request-roll.html", templateData);
 
-    let flags = { "ironclaw2e.requestRoll": true, "ironclaw2e.requestDicePool": dicepool, "ironclaw2e.requestTNYes": tnyes, "ironclaw2e.requestTNNum": tnnum, "ironclaw2e.requestSpeaker": speaker.alias };
+    let flags = {
+        "ironclaw2e.requestRoll": true, "ironclaw2e.requestDicePool": dicepool, "ironclaw2e.requestedGifts": requestedgifts,
+        "ironclaw2e.requestTNYes": tnyes, "ironclaw2e.requestTNNum": tnnum, "ironclaw2e.requestSpeaker": speaker.alias
+    };
 
     let chatData = {
         content: contents,
@@ -260,16 +267,19 @@ async function onRequestRollTrigger(event) {
         ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
         return null;
     }
-
+    const direct = checkQuickModifierKey();
     const messageFlags = message?.data?.flags?.ironclaw2e;
 
     // Check to make sure the flags actually exist
     if (messageFlags) {
         const splitStats = splitStatsAndBonus(messageFlags.requestDicePool);
-        requestActor.popupSelectRolled({
-            "tnyes": messageFlags.requestTNYes, "tnnum": messageFlags.requestTNNum, "prechecked": splitStats[0],
+        const splitGifts = splitStatString(messageFlags.requestedGifts ?? "");
+        const giftSetup = requestActor.requestedGiftDialogConstruction(splitGifts);
+        requestActor.basicRollSelector({
+            "tnyes": messageFlags.requestTNYes, "tnnum": messageFlags.requestTNNum, "prechecked": splitStats[0], "otherkeys": giftSetup.otherkeys,
+            "otherdice": giftSetup.otherdice, "othernames": giftSetup.othernames, "otherbools": giftSetup.otherbools, "otherinputs": giftSetup.otherinputs,
             "extradice": splitStats[1], "otherlabel": game.i18n.format("ironclaw2e.chatInfo.requestRoll.rollLabel", { "user": messageFlags.requestSpeaker })
-        });
+        }, { "directroll": direct });
     }
 }
 

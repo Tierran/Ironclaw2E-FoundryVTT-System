@@ -149,6 +149,9 @@ export class Ironclaw2EItem extends Item {
         if (data.grantsMark) {
             data.skillName = makeCompareReady(data.markSkill);
         }
+        // Usability
+        // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored refreshedState as true, otherwise it is false
+        data.giftUsable = (data.exhaustWhenUsed === false || !data.exhausted);
 
         // Special settings
         if (data.specialSettings?.length > 0) {
@@ -163,8 +166,7 @@ export class Ironclaw2EItem extends Item {
                 data.usedSpecialSettings[i].giftName = itemData.name;
                 data.usedSpecialSettings[i].giftId = itemData._id;
                 data.usedSpecialSettings[i].settingIndex = i;
-                // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored refreshedState as true, otherwise it is false
-                data.usedSpecialSettings[i].refreshedState = (data.exhaustWhenUsed === false || !data.exhausted);
+                data.usedSpecialSettings[i].refreshedState = data.giftUsable;
                 // If the special is of a type that does not use items but preset data, set the itemless boolean to "true"
                 data.usedSpecialSettings[i].itemless = CommonSystemInfo.giftItemlessOptions.has(data.usedSpecialSettings[i].settingMode);
 
@@ -471,27 +473,6 @@ export class Ironclaw2EItem extends Item {
     /* -------------------------------------------- */
 
     /**
-     * Check whether a gift is usable, ie. not exhausted or does not exhaust at all
-     * @param {boolean} countNonExhaust Whether to return true on gifts that are not exhaustible, or only return true for gifts that can be exhausted but aren't
-     * @returns {boolean} Whether the gift is usable, ie. refreshed or doesn't exhaust
-     */
-    giftUsable(countNonExhaust = true) {
-        const itemData = this.data;
-        const data = itemData.data;
-        if (!(itemData.type === 'gift')) {
-            console.error("Gift exhaust check attempted on a non-gift item: " + itemData.name);
-            return;
-        }
-
-        if (data.exhaustWhenUsed === false && countNonExhaust === false) {
-            return false; // If the gift does not exhaust when used and the function is set to not count those, return false
-        }
-
-        const exhaustibletest = data.exhaustWhenUsed === false && countNonExhaust === true; // Set the test as true if the gift does not exhaust when used and the function is set to count non-exhaustible gifts
-        return data.exhausted === false || exhaustibletest === true; // Return true if the gift is not exhausted, or if the countnonexhaust is set to true and the gift is not exhaustible
-    }
-
-    /**
      * Set or toggle exhaustion in a gift, if able
      * @param {string} toggle "toggle" changes the state to the opposite, "true" or "false" set it to that state, otherwise errors out. "true" exhausts, "false" refreshes.
      * @param {boolean} sendToChat If true, send a message to chat about the new gift exhaust state
@@ -739,7 +720,7 @@ export class Ironclaw2EItem extends Item {
 
         if (data.exhaustGift && data.exhaustGiftName.length > 0) {
             // Could use a simple .getName(), but the function below is more typo-resistant
-            const giftToExhaust = findInItems(this.actor?.items, makeCompareReady(data.exhaustGiftName), "gift");
+            const giftToExhaust = findInItems(this.actor?.items, data.exhaustGiftName, "gift");
             if (!giftToExhaust) {
                 if (notifications) ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustFailure", { "name": itemData.name, "gift": data.exhaustGiftName, "actor": this.actor.name }));
                 return null;
@@ -790,7 +771,7 @@ export class Ironclaw2EItem extends Item {
                 if (!exhaust) {
                     ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
                     return null;
-                } else if (needsRefreshed && exhaust?.giftUsable() === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
+                } else if (needsRefreshed && exhaust?.data.data.giftUsable === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
                     const confirmation = await exhaust?.popupGiftExhaustToggle(false);
                     if (confirmation !== false) {
                         return null;
@@ -1382,7 +1363,7 @@ export class Ironclaw2EItem extends Item {
         // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively instead of the roll
         if (data.exhaustGift && !data.exhaustGiftWhenReadied && !exhaust) {
             ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
-        } else if (data.exhaustGift && !data.exhaustGiftWhenReadied && needsRefreshed && exhaust?.giftUsable() === false) {
+        } else if (data.exhaustGift && !data.exhaustGiftWhenReadied && needsRefreshed && exhaust?.data.data.giftUsable === false) {
             // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust.popupRefreshGift();
         } else {
@@ -1469,7 +1450,7 @@ export class Ironclaw2EItem extends Item {
         // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively instead of the roll
         if (data.exhaustGift && !data.exhaustGiftWhenReadied && !exhaust) {
             ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
-        } else if (data.exhaustGift && !data.exhaustGiftWhenReadied && needsRefreshed && exhaust?.giftUsable() === false) {
+        } else if (data.exhaustGift && !data.exhaustGiftWhenReadied && needsRefreshed && exhaust?.data.data.giftUsable === false) {
             // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust.popupRefreshGift();
         } else {
@@ -1555,12 +1536,12 @@ export class Ironclaw2EItem extends Item {
                 case 2: // Attack roll
                     diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect +
                         (this.data.data.opposingDefenseStats?.length > 0 ? ", " + (this.data.data.hasResist ? game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith") + " " + this.data.data.defendWith + " vs. 3 " : game.i18n.localize("ironclaw2e.chatInfo.itemInfo.opposingDefense") + ": " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attack") + " vs. " + this.data.data.defendWith) : "") : ": ");
-                    if (this.weaponGetGiftToExhaust()?.giftUsable() === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
+                    if (this.weaponGetGiftToExhaust()?.data.data.giftUsable === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
                     this.actor.popupAttackRoll(diceinput, { directroll, target }, this, callback);
                     break;
                 case 3: // Counter roll
                     diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.counterRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect : ": ");
-                    if (this.weaponGetGiftToExhaust()?.giftUsable() === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
+                    if (this.weaponGetGiftToExhaust()?.data.data.giftUsable === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
                     this.actor.popupCounterRoll(diceinput, { directroll, otheritem }, this, callback);
                     break;
                 default:
@@ -1646,7 +1627,7 @@ export class Ironclaw2EItem extends Item {
         if (exhaust && !itemData.canDefend && !itemData.canSpark) {
             const needsRefreshed = game.settings.get("ironclaw2e", "weaponExhaustNeedsRefreshed");
             // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
-            if (needsRefreshed && exhaust?.giftUsable() === false) {
+            if (needsRefreshed && exhaust?.data.data.giftUsable === false) {
                 exhaust?.popupRefreshGift();
                 return;
             }

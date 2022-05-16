@@ -7,7 +7,7 @@ import { CommonSystemInfo } from "./systeminfo.js";
 import { requestRollToMessage } from "./utilitiesmacros.js";
 
 export function chatCommandsIntegration(chatCommands) {
-// Using async and delays to ensure the same press of enter does not also automatically close the dialog
+    // Using async and delays to ensure the same press of enter does not also automatically close the dialog
 
     // Basic command to trigger a one-line highest or TN roll from the chat, with the dice included after the command
     chatCommands.registerCommand(chatCommands.createCommandFromData({
@@ -270,23 +270,44 @@ function ironclawRequestRollChat(inputstring, speaker, expectwhisper = false) {
 
     let tn = -1;
     let usedstring = inputstring;
+    let gifts = "";
 
-    // Attempt to check whether the input has two semicolons, and use the value after the third as a TN
-    if (piecedinput.length > 2) {
+    // Lots of complicated checks to make sure the input is parsed correctly
+    if (piecedinput.length > 3) { // If all possible semicolons are present, do basic validation and just pass things along
         let bar = parseInt(piecedinput[2].trim());
         if (!isNaN(bar))
             tn = bar;
-        usedstring = inputstring.slice(0, inputstring.lastIndexOf(";")); // Remove the last semicolon from the string used for determining dice pools
-    } else if (piecedinput.length == 2) { // Attempt to check whether the input has only one semicolon and see if the part after the semicolon contains actual dice or a plain number
+        gifts = piecedinput[3];
+        usedstring = inputstring.slice(0, inputstring.lastIndexOf(";", inputstring.lastIndexOf(";") - 1)); // Remove the last two semicolons from the string used for determining dice pools
+    } else if (piecedinput.length === 3) {// Attempt to check whether the input has two semicolons, and see if the last value is a TN or a Gift list
+        const test = splitStatString(piecedinput[1]); // Split the potential dice string into pieces for the single dice check
+        if (test.length > 0 && parseSingleDiceString(test[0]) === null) { // If the test turns out to reveal that the second part does not contain dice, assume the last two parts are the TN and gift list
+            let bar = parseInt(piecedinput[1].trim());
+            if (!isNaN(bar))
+                tn = bar;
+            gifts = piecedinput[2];
+            usedstring = inputstring.slice(0, inputstring.lastIndexOf(";", inputstring.lastIndexOf(";") - 1)); // Remove the last two semicolons from the string used for determining dice pools
+        } else {
+            let bar = parseInt(piecedinput[2].trim());
+            if (!isNaN(bar))
+                tn = bar;
+            else
+                gifts = piecedinput[2];
+            usedstring = inputstring.slice(0, inputstring.lastIndexOf(";")); // Remove the last semicolon from the string used for determining dice pools
+        }
+    } else if (piecedinput.length === 2) { // Attempt to check whether the input has only one semicolon and see if the part after the semicolon contains actual dice or a plain number
         const test = splitStatString(piecedinput[1]); // Split the potential dice string into pieces for the single dice check
         if (test.length > 0) {
             let bar = parseInt(piecedinput[1].trim());
             if (parseSingleDiceString(test[0]) === null && !isNaN(bar)) {
-                tn = bar;
+                tn = bar; // If the dice string doesn't parse and the number parse produces a number, assume the last value is a TN
+                usedstring = inputstring.slice(0, inputstring.lastIndexOf(";")); // Remove the last semicolon from the string used for determining dice pools
+            } else if (parseSingleDiceString(test[0]) === null && isNaN(bar)) {
+                gifts = piecedinput[1]; // If the dice string doesn't parse and neither does the number, assume the last value is a list of gifts
                 usedstring = inputstring.slice(0, inputstring.lastIndexOf(";")); // Remove the last semicolon from the string used for determining dice pools
             }
         }
     }
 
-    requestRollToMessage(usedstring, tn, { "speaker": usedSpeaker, "whisper": whisperUsers });
+    requestRollToMessage(usedstring, tn, { "speaker": usedSpeaker, "whisper": whisperUsers, "requestedgifts": gifts });
 }
