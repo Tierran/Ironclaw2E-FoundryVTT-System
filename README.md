@@ -67,7 +67,7 @@ In addition, /popuproll can take a simple "soak", "defense" or "dodging" as inpu
 The /quickroll command takes the same parameters as /popuproll, but rather than opening a dice pool dialog, the given dice are rolled quickly without any dialog opening up. The /directroll command is simply an alias for /quickroll.  
 The /itemuse command simply uses an item; it takes an item name and uses that to activate a normal item use, as if the item was used through a hotbar macro. The *item* in this case refers to all things FoundryVTT considers items (armor, gifts, weapons, illumination...), not just the gear type. The name must be an **exact** match.  
 The /actordamage command pops up a damage dialog, either with the normal defaults or with inputted values. Every value should be separated by a semicolon, with the values being damage, soak, extra conditions and whether the damage should be added quickly / silently without a popup, respectively. For example: "/actordamage 4;3;Blinded;quick" or "/actordamage 2;-1"  
-The /requestroll and its alias /askroll commands are for requesting a specific roll from other players, and send a chat message which contains a button to roll the specified stats, dice and TN. It takes a dice pool format input, again with an additional semicolon and number changing the default roll type from highest to TN. Eg. "/requestroll Dodge, Speed;d12" or "/askroll will,presence;4". The /whisperask does the same thing, but this time, the first part should be player names that the request will be whispered to. Eg. "/whisperask Alice; Will, Gossip; d8; 3" or "/whisperask Bob, Charlie; Mind, weathersense; 3"  
+The /requestroll and its alias /askroll commands are for requesting a specific roll from other players, and send a chat message which contains a button to roll the specified stats, dice and TN. It takes a dice pool format input, again with an additional semicolon and number changing the default roll type from highest to TN. In addition, after the last semicolon, a list of Gift names can be inputted, separated by commas, that are included in the roll. Eg. "/requestroll Dodge, Speed;d12" or "/askroll will,presence;4". The /whisperask does the same thing, but this time, the first part should be player names that the request will be whispered to. Eg. "/whisperask Alice; Will, Gossip; d8; 3; Fast-Talk" or "/whisperask Bob, Charlie; Mind, weathersense; 3"  
 
 #### Advanced Gift Bonus Settings
 
@@ -87,6 +87,7 @@ For gifts that should interact with the system by giving situational bonuses, th
  - **Initiative Bonus**: A bonus applied to the initiative roll.  
  - **Movement Bonus**: A bonus that changes the movement speed of an actor.  
  - **Flying Move Bonus**: A bonus that changes the flying speed of an actor. (These stack with normal movement bonuses)  
+ - **Reroll Bonus**: A bonus that allows some type of reroll.  
  - **Range Penalty Reduction**: A bonus that reduces the range penalty applied to attacks by the actor.  
  - **Encumbrance Limit Bonus**: A bonus to the carrying capacity of an actor.  
  - **Currency Value Change**: A way to allow a gift to change the value of a currency for an actor.  
@@ -149,6 +150,7 @@ Note on **"Check Bonus Automatically"**: If it is set to "By Applicability" for 
  - **Bonus Stats**: List of stats (traits and/or skills) to add with the bonus as pre-checked. If empty, the bonus uses its gift's stats. A dash "-" will make the special skip the bonus stats entirely and not use anything.
  - **Bonus Dice**: Dice to add with the bonus as an extra field. If empty, the bonus uses its gift's dice. A dash "-" will make the special skip the bonus dice entirely and not use anything.
  - **Check Bonus Automatically**: Whether the bonus dice are automatically checked in a dice pool popup, either always, never, or based on the applicability fields.
+ - **Reroll Type**: What sort of reroll the bonus gives.
  - **Bonus Exhausts the Gift**: Whether the bonus automatically exhausts its gift if it is used in a dice pool popup. Also implies that the bonus needs an unexhausted gift.
  - **Replaces the Base Bonus**: Whether the bonus to Guarding/Aiming replaces or adds to the Guarding/Aiming dice.
  - **Bonus Stride/Dash/Run**: The amount of respective movement capability to add to the actor.
