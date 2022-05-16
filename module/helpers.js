@@ -983,9 +983,9 @@ export function findInItems(itemlist, itemname, itemtype = null) {
     }
 
     const useitemtype = itemtype ? true : false;
-    const comparename = makeCompareReady(itemname);
+    const regex = new RegExp(`^${itemname}\$`, "gi");
 
-    return itemlist.find(element => (useitemtype ? element.data.type === itemtype : true) && makeCompareReady(element.data.name) === comparename);
+    return itemlist.find(element => (useitemtype ? element.data.type === itemtype : true) && regex.test(element.data.name));
 }
 
 /**
