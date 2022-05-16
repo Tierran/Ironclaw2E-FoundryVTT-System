@@ -439,7 +439,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const hasOne = message.getFlag("ironclaw2e", "hasOne");
                 const statsUsed = message.getFlag("ironclaw2e", "usedActorStats");
                 const actor = getSpeakerActor();
-                const usableRerolls = actor ? actor.getGiftRerollTypes?.(hasOne, statsUsed)?.size > 0 : game.user.isGM;
+                const usableRerolls = actor ? actor.getGiftRerollTypes?.(statsUsed, hasOne, false)?.size > 0 : game.user.isGM;
                 // Check that the message has a roll, is rerollable because it has the new intermediary array stored, and either that the current selected actor has rerolls or the user is a GM
                 const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && rerollable && usableRerolls;
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;

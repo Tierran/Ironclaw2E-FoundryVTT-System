@@ -1069,7 +1069,7 @@ export async function rerollDialog(message, actor) {
 
     const hasOne = message.getFlag("ironclaw2e", "hasOne");
     const statsUsed = message.getFlag("ironclaw2e", "usedActorStats");
-    const rerollTypes = actor?.getGiftRerollTypes(hasOne, statsUsed) ?? specialSettingsRerollGMMap(hasOne);
+    const rerollTypes = actor?.getGiftRerollTypes(statsUsed, hasOne) ?? specialSettingsRerollGMMap(hasOne);
     if (!(rerollTypes?.size > 0)) { // If the rerollTypes size isn't larger than zero, done this way in case rerollTypes ever ends up null or size ends up null, this should still catch it
         console.error("Somehow, the rerollDialog function was called despite no usable reroll types being found: " + rerollTypes);
         return null;

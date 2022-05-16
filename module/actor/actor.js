@@ -1956,9 +1956,10 @@ export class Ironclaw2EActor extends Actor {
      * Get the reroll types this actor has access to
      * @param {boolean} hasone Whether the roll to check on has a one
      * @param {string[]} stats The stats for the roll to check
+     * @param {boolean} addbasicreroll Whether to add the normal "Reroll Ones" option to the returned Map
      * @returns {Map<string,object>} Every reroll type that is allowed, plus special setting data for each
      */
-    getGiftRerollTypes(hasone = false, stats = []) {
+    getGiftRerollTypes(stats = [], hasone = false, addbasicreroll = true) {
         const data = this.data.data;
         let rerollTypes = new Map();
         let itemlessdata = { "statArray": stats };
@@ -1981,8 +1982,8 @@ export class Ironclaw2EActor extends Actor {
                 }
             }
         }
-
-        if (hasone) rerollTypes.set("ONE", null);
+        // Add the basic "Reroll One" option if the input matches
+        if (hasone && addbasicreroll) rerollTypes.set("ONE", null);
         return rerollTypes;
     }
 
