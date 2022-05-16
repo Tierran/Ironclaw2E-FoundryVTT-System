@@ -120,23 +120,25 @@ export class CardinalDiceRoller {
             console.warn(message);
             return;
         }
+
+        let label = message.getFlag("ironclaw2e", "label");
+        if (typeof label !== "string") {
+            return;
+        }
         let intermediary = [...message.getFlag("ironclaw2e", "rollIntermediary")];
         let rollString = CardinalDiceRoller.copyDicePoolResult(message.roll);
         let directCopy = true;
         let rerollFlavor = "";
         if (rerolltype) {
             copyoptions.firstroll = { "type": "TN", "TN": tni };
-            const foobar = await CardinalDiceRoller.rerollTypeSwitch(rerolltype, message, intermediary, copyoptions);
+            const foobar = await CardinalDiceRoller.rerollTypeSwitch(rerolltype, message, intermediary, label, copyoptions);
             rollString = foobar.rollString;
             directCopy = foobar.directCopy;
             rerollFlavor = foobar.rerollFlavor;
+            label = foobar.label;
         }
 
         if (rollString.length == 0) {
-            return;
-        }
-        let label = message.getFlag("ironclaw2e", "label");
-        if (typeof label !== "string") {
             return;
         }
 
@@ -224,23 +226,25 @@ export class CardinalDiceRoller {
             console.warn(message);
             return;
         }
+
+        let label = message.getFlag("ironclaw2e", "label");
+        if (typeof label !== "string") {
+            return;
+        }
         let intermediary = [...message.getFlag("ironclaw2e", "rollIntermediary")];
         let rollString = CardinalDiceRoller.copyDicePoolResult(message.roll);
         let directCopy = true;
         let rerollFlavor = "";
         if (rerolltype) {
             copyoptions.firstroll = { "type": "HIGH", "TN": -1 };
-            const foobar = await CardinalDiceRoller.rerollTypeSwitch(rerolltype, message, intermediary, copyoptions);
+            const foobar = await CardinalDiceRoller.rerollTypeSwitch(rerolltype, message, intermediary, label, copyoptions);
             rollString = foobar.rollString;
             directCopy = foobar.directCopy;
             rerollFlavor = foobar.rerollFlavor;
+            label = foobar.label;
         }
 
         if (rollString.length == 0) {
-            return;
-        }
-        let label = message.getFlag("ironclaw2e", "label");
-        if (typeof label !== "string") {
             return;
         }
 
@@ -431,12 +435,13 @@ export class CardinalDiceRoller {
      * @param {string} reroll The type given: "ONE" means reroll a one
      * @param {Object} message Message containing the roll to copy
      * @param {number[]} intermediary The intermediary dice array
+     * @param {string} label The label used for the roll message
      * @param {boolean} [favorreroll] Whether a favored roll will also reroll a one at the same time
      * @param {number} [luckindex] What index the luck is rerolling
      * @param {boolean} [luckhigh] Whether the luck uses the highest or lowest roll
      * @param {object} [firstroll] The data about the original roll
      */
-    static async rerollTypeSwitch(reroll, message, intermediary, { favorreroll = false, luckindex = -1, luckhigh = true, firstroll = {} } = {}) {
+    static async rerollTypeSwitch(reroll, message, intermediary, label, { favorreroll = false, luckindex = -1, luckhigh = true, firstroll = {} } = {}) {
         let rollString = "";
         let directCopy = true;
         let rerollFlavor = "";
@@ -452,6 +457,9 @@ export class CardinalDiceRoller {
                 rollString = CardinalDiceRoller.copyResultToIntermediary(rollUsed, intermediary, 1);
                 directCopy = false;
                 rerollFlavor = game.i18n.localize("ironclaw2e.chatInfo.favor");
+                if (label && label.includes(":")) { // To append the Favor Bonus note to the correct position, a bit hacky but it works
+                    label = label.replace(":", ": " + game.i18n.localize("ironclaw2e.chatInfo.favorBonus") + " +");
+                }
                 if (favorreroll) {
                     const roll = await new Roll("{" + rollString + "}" + (firstroll.type === "HIGH" ? "kh1" : "cs>" + firstroll.TN.toString())).evaluate({ async: true });
                     rollString = CardinalDiceRoller.copyRerollHighestOne(roll, intermediary);
@@ -464,7 +472,7 @@ export class CardinalDiceRoller {
                 break;
         }
 
-        return { rollString, directCopy, rerollFlavor, rollUsed };
+        return { rollString, directCopy, rerollFlavor, rollUsed, label };
     }
 
     /**
