@@ -11,8 +11,15 @@
             {{selectOptions rerollTypes localize=true selected=rerollSelected}}
         </select>
     </div>
+    {{#if gmIgnore}}
+    <div class="form-group">
+        <span class="normal-text">{{localize "ironclaw2e.dialog.reroll.gmIgnore"}}</span>
+    </div>
+    {{/if}}
+    {{#if favorExists}}
     <div class="form-group">
         <label class="normal-label">{{localize "ironclaw2e.dialog.reroll.favorRerollOneToo"}}</label>
         <input type="checkbox" id="favorreroll" name="favorreroll" checked />
     </div>
+    {{/if}}
 </form>

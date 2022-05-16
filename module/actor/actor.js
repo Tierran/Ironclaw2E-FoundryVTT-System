@@ -1952,6 +1952,39 @@ export class Ironclaw2EActor extends Actor {
         return { reduction, autocheck };
     }
 
+    /**
+     * Get the reroll types this actor has access to
+     * @param {boolean} hasone Whether the roll to check on has a one
+     * @param {string[]} stats The stats for the roll to check
+     * @returns {Map<string,object>} Every reroll type that is allowed, plus special setting data for each
+     */
+    getGiftRerollTypes(hasone = false, stats = []) {
+        const data = this.data.data;
+        let rerollTypes = new Map((hasone ? [["ONE", null]] : []));
+        let itemlessdata = { "statArray": stats };
+        // Check if any of the reroll types the actor has applies, then grab those
+        if (data.processingLists?.rerollBonus) { // Check if reroll bonuses even exist
+            for (let setting of data.processingLists.rerollBonus) { // Loop through them
+                if (checkApplicability(setting, null, this, { itemlessdata, "hasoneinroll": hasone })) { // Check initial applicability
+                    let used = setting; // Store the setting in a temp variable
+                    let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
+                    while (replacement && checkApplicability(replacement, null, this, { itemlessdata, "hasoneinroll": hasone })) { // As long as the currently used one could be replaced by something applicable
+                        used = replacement; // Store the replacement as the one to be used
+                        replacement = this._checkForReplacement(used); // Check for a new replacement
+                    }
+                    if (used) { // Sanity check that the used still exists
+                        // Apply the used setting
+                        rerollTypes.set(used.rerollType, { "giftId": used.giftId, "bonusExhaustsOnUse": used.bonusExhaustsOnUse });
+                    } else { // If used somehow turns out unsuable, send an error
+                        console.error("Somehow, the used setting came up unusable: " + used);
+                    }
+                }
+            }
+        }
+
+        return rerollTypes;
+    }
+
     /* -------------------------------------------- */
     /*  Non-popup Roll Functions                    */
     /* -------------------------------------------- */
@@ -2739,10 +2772,8 @@ export class Ironclaw2EActor extends Actor {
                             totaldice = totaldice.concat(otherfoobar.totalDice);
                             label += otherfoobar.label;
                             labelgiven = otherfoobar.labelGiven;
-                            for (let item of otherfoobar.giftsToExhaust) {
-                                // Go though and exhaust the relevant gifts
-                                await item.giftToggleExhaust("true", giftUseToChat);
-                            }
+                            // Exhaust the gifts returned from the dice pools
+                            await Ironclaw2EItem.giftSetExhaustArray(otherfoobar.giftsToExhaust, "true");
                         }
 
 
@@ -2764,6 +2795,9 @@ export class Ironclaw2EActor extends Actor {
                             rollreturn = await CardinalDiceRoller.rollTargetNumberArray(TN, totaldice, label, this);
                         else
                             rollreturn = await CardinalDiceRoller.rollHighestArray(totaldice, label, this);
+
+                        // Add the statistics used for the roll into a flag
+                        await rollreturn.message.setFlag("ironclaw2e", "usedActorStats", traitvalues.concat(skillvalues));
 
                         if (successfunc && typeof (successfunc) == "function") {
                             successfunc(rollreturn); // Then do the special callback function of the roll if it is set
@@ -2825,6 +2859,9 @@ export class Ironclaw2EActor extends Actor {
             rollreturn = await CardinalDiceRoller.rollTargetNumberArray(tnnum, all.totalDice, label, this);
         else
             rollreturn = await CardinalDiceRoller.rollHighestArray(all.totalDice, label, this);
+
+        // Add the statistics used for the roll into a flag
+        await rollreturn.message.setFlag("ironclaw2e", "usedActorStats", prechecked);
 
         // The success callback function
         if (successfunc && typeof (successfunc) == "function") {

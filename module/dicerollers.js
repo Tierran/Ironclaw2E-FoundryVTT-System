@@ -1,7 +1,7 @@
 import { addArrays, findTotalDice, parseSingleDiceString } from "./helpers.js";
 import { getMacroSpeaker } from "./helpers.js";
 
-import { CommonSystemInfo } from "./systeminfo.js";
+import { CommonSystemInfo, specialSettingsRerollGMMap, specialSettingsRerollIntersection } from "./systeminfo.js";
 
 /**
  * The unified dice roller system class for the Cardinal dice pool system.
@@ -457,6 +457,11 @@ export class CardinalDiceRoller {
                     rollString = CardinalDiceRoller.copyRerollHighestOne(roll, intermediary);
                 }
                 break;
+            case "KNACK":
+                rollString = CardinalDiceRoller.formRollFromIntermediary(intermediary);
+                directCopy = false;
+                rerollFlavor = game.i18n.localize("ironclaw2e.chatInfo.knack");
+                break;
         }
 
         return { rollString, directCopy, rerollFlavor, rollUsed };
@@ -597,6 +602,7 @@ export class CardinalDiceRoller {
 
         const hangingType = origin.getFlag("ironclaw2e", "hangingAttack");
         const defenseAttack = origin.getFlag("ironclaw2e", "defenseForAttack");
+        const usedActorStats = origin.getFlag("ironclaw2e", "usedActorStats");
         let updatedata = {
             "flags": {}
         };
@@ -622,6 +628,9 @@ export class CardinalDiceRoller {
         }
         if (defenseAttack) {
             updatedata.flags = mergeObject(updatedata.flags, { "ironclaw2e.defenseForAttack": defenseAttack });
+        }
+        if (usedActorStats) {
+            updatedata.flags = mergeObject(updatedata.flags, { "ironclaw2e.usedActorStats": usedActorStats });
         }
 
         await target.update(updatedata);
@@ -1036,28 +1045,36 @@ export async function copyToRollTNDialog(message, rolltitle = "") {
     return await resolvedroll;
 }
 
-class RerollInfo {
-    static rerollTypes = {
-        "ONE": "ironclaw2e.dialog.reroll.typeOne",
-        "FAVOR": "ironclaw2e.dialog.reroll.typeFavor",
-        "LUCK": "ironclaw2e.dialog.reroll.typeLuck",
-        "KNACK": "ironclaw2e.dialog.reroll.typeKnack"
-    };
-}
-
 /**
- * Function that takes a message with a roll and asks for a target number to use in copying the results of the roll to a new one
- * @param {ChatMessage} message The chat message to copy the roll from, assuming it has one
- * @param {string} rolltitle The title shown as the dialog's purpose, translated if one is found
+ * Function that takes a message with a roll and asks what sort of reroll the user wants to do to it
+ * @param {ChatMessage} message The chat message to reroll
+ * @param {Ironclaw2EActor} actor The actor to use for checks
  * @returns {Promise<DiceReturn> | Promise<null>} Promise of the roll data in an object, or null if cancelled
  */
-export async function rerollDialog(message, defaultreroll) {
+export async function rerollDialog(message, actor) {
     let confirmed = false;
+    const GMPrivilege = !actor && game.user.isGM;
+    if (!actor && !GMPrivilege) {
+        console.error("A non-GM user tried to open a reroll dialog without a set actor: " + actor);
+        return null;
+    }
+
+    const hasOne = message.getFlag("ironclaw2e", "hasOne");
+    const statsUsed = message.getFlag("ironclaw2e", "usedActorStats");
+    const rerollTypes = actor?.getGiftRerollTypes(hasOne, statsUsed) ?? specialSettingsRerollGMMap(hasOne);
+    if (!(rerollTypes?.size > 0)) { // If the rerollTypes size isn't larger than zero, done this way in case rerollTypes ever ends up null or size ends up null, this should still catch it
+        console.error("Somehow, the rerollDialog function was called despite no usable reroll types being found: " + rerollTypes);
+        return null;
+    }
+
+    const rerollIntersection = specialSettingsRerollIntersection(rerollTypes);
 
     const templateData = {
-        "rerollTypes": RerollInfo.rerollTypes,
-        "rerollSelected": defaultreroll,
-        "alias": message.data.speaker.alias
+        "rerollTypes": rerollIntersection.usableRerolls,
+        "rerollSelected": rerollIntersection.firstType,
+        "favorExists": rerollIntersection.usableRerolls.hasOwnProperty("FAVOR"),
+        "alias": message.data.speaker.alias,
+        "gmIgnore": GMPrivilege
     };
     const contents = await renderTemplate("systems/ironclaw2e/templates/popup/reroll-popup.html", templateData);
     const rollType = message.getFlag("ironclaw2e", "rollType");
@@ -1081,11 +1098,17 @@ export async function rerollDialog(message, defaultreroll) {
             },
             default: "one",
             render: html => { document.getElementById("rerolltype").focus(); },
-            close: html => {
+            close: async html => {
                 if (confirmed) {
                     let REROLL = html.find('[name=rerolltype]')[0].value;
                     let FAVORRE = html.find('[name=favorreroll]')[0];
-                    let favorreroll = FAVORRE.checked;
+                    let favorreroll = FAVORRE?.checked;
+
+                    if (rerollTypes.has(REROLL) && rerollTypes.get(REROLL)?.bonusExhaustsOnUse === true) {
+                        const gift = actor.items.get(rerollTypes.get(REROLL).giftId);
+                        const giftUseToChat = game.settings.get("ironclaw2e", "sendGiftUseExhaustMessage");
+                        if (gift) await gift.giftToggleExhaust("true", giftUseToChat);
+                    }
 
                     if (rollType === "HIGH")
                         resolve(CardinalDiceRoller.copyToRollHighest(message, true, REROLL, { favorreroll }));

@@ -110,9 +110,13 @@ export class CommonSystemInfo {
      */
     static giftSpecialOptions = {
         "attackBonus": "Attack Bonus", "defenseBonus": "Defense Bonus", "counterBonus": "Counter Bonus", "resistBonus": "Resist Bonus", "soakBonus": "Soak Bonus", "guardBonus": "Guard Bonus", "aimBonus": "Aim Bonus",
-        "sprintBonus": "Sprint Bonus", "initiativeBonus": "Initiative Bonus", "moveBonus": "Movement Bonus", "flyingBonus": "Flying Move Bonus", "rangePenaltyReduction": "Range Penalty Reduction",
+        "sprintBonus": "Sprint Bonus", "initiativeBonus": "Initiative Bonus", "moveBonus": "Movement Bonus", "flyingBonus": "Flying Move Bonus", "rerollBonus": "Reroll Bonus", "rangePenaltyReduction": "Range Penalty Reduction",
         "encumbranceBonus": "Encumbrance Limit Bonus", "currencyValueChange": "Currency Value Change", "statChange": "Stat Change", "diceUpgrade": "Dice Upgrade"
     };
+    /**
+     * Special option types that use fields normally reserved for item checks for other data
+     */
+    static giftItemlessOptions = new Set(["rerollBonus"]);
     /**
      * The state of gift exhaustion when the bonus can work
      */
@@ -124,6 +128,15 @@ export class CommonSystemInfo {
      */
     static giftBonusAutoUseOptions = {
         "always": "Always", "never": "Never", "applied": "By Applicability"
+    };
+    /**
+     * Reroll types that exist within the system and the associated translation strings
+     */
+    static rerollTypes = {
+        "ONE": "ironclaw2e.dialog.reroll.typeOne",
+        "FAVOR": "ironclaw2e.dialog.reroll.typeFavor",
+        //"LUCK": "ironclaw2e.dialog.reroll.typeLuck",
+        "KNACK": "ironclaw2e.dialog.reroll.typeKnack"
     };
     /**
      * The name to check for in weapon's "defend with" field to use the standard defense against it
@@ -236,6 +249,13 @@ export function getSpecialOptionPrototype(option) {
             return mergeObject(special, {
                 "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "bonusStrideNumber": 0, "bonusDashNumber": 0, "bonusRunNumber": 0, "replaceNameField": ""
+            });
+            break;
+
+        case ("rerollBonus"):
+            return mergeObject(special, {
+                "statField": "", "conditionField": "", "worksWhenState": "anyState",
+                "rerollType": "FAVOR", "bonusExhaustsOnUse": false, "replaceNameField": ""
             });
             break;
 
@@ -377,4 +397,39 @@ export function getRangeDiceFromDistance(distance, reduction = 0, allowovermax =
  */
 export function checkStandardDefense(defense) {
     return (makeCompareReady(defense) === CommonSystemInfo.defenseStandardName);
+}
+
+/** Simple function to get a property list  */
+export function getSpecialSettingsRerolls() {
+    const cloned = { ...CommonSystemInfo.rerollTypes };
+    delete cloned["ONE"];
+    return cloned;
+}
+
+/**
+ * Function to construct an object for the reroll dialog that only has the reroll types that can be used
+ * @param {Map<string,any>} rerolltypes
+ */
+export function specialSettingsRerollIntersection(rerolltypes) {
+    let foo = {};
+    let first = null;
+    for (let bar of rerolltypes.keys()) {
+        if (!first) first = bar;
+        foo[bar] = CommonSystemInfo.rerollTypes[bar];
+    }
+    return { "usableRerolls": foo, "firstType": first };
+}
+
+/**
+ * Function to get the GM reroll type map for reroll dialog construction
+ * @param {boolean} hasone Whether there is a one in the roll
+ */
+export function specialSettingsRerollGMMap(hasone) {
+    let foo = new Map();
+    for (let [bar, value] of Object.entries(CommonSystemInfo.rerollTypes)) {
+        if (!hasone && (bar === "ONE" || bar === "FAVOR"))
+            continue;
+        foo.set(bar, null);
+    }
+    return foo;
 }

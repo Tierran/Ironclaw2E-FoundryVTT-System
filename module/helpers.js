@@ -423,7 +423,7 @@ export function burdenedLimitedStat(name) {
 
 /**
  * Helper function to get what speaker to use in the dice roller output, dependent on the system settings
- * @param {Actor} rollingactor The actor to find a speaker for
+ * @param {Ironclaw2EActor} rollingactor The actor to find a speaker for
  * @returns {Object} Returns the speaker data
  */
 export function getMacroSpeaker(rollingactor) {
@@ -444,7 +444,7 @@ export function getMacroSpeaker(rollingactor) {
 /**
  * Helper function to find the token for a given actor, or return undefined if no token is found
  * On non-synthetic actors, requires the token's actorLink to be TRUE in order to pick them
- * @param {Actor} actor The actor to find a token for
+ * @param {Ironclaw2EActor} actor The actor to find a token for
  * @returns {TokenDocument} Returns the found token, or null
  */
 export function findActorToken(actor) {
@@ -465,7 +465,7 @@ export function findActorToken(actor) {
 
 /**
  * Helper function to get the actor of the current speaker, be it the user default or the currently selected actor, or null if no actor is found
- * @returns {Actor | null} The actor of the current speaker, or null if nothing found
+ * @returns {Ironclaw2EActor | null} The actor of the current speaker, or null if nothing found
  */
 export function getSpeakerActor() {
     const speaker = ChatMessage.getSpeaker();
@@ -676,7 +676,7 @@ export function getTemplatePosition({ weaponTemplatePos = null, weaponTemplateId
  * @returns {boolean} Whether the target is applicable for the special
  */
 export function checkApplicability(special, item, actor,
-    { otheritem = null, defensecheck = false, defensetype = "", rallycheck = false, usecheck = false } = {}) {
+    { otheritem = null, itemlessdata = null, defensecheck = false, defensetype = "", rallycheck = false, usecheck = false, hasoneinroll = false } = {}) {
     if (!special) {
         // In case the check is given something that doesn't exist
         return false;
@@ -715,8 +715,19 @@ export function checkApplicability(special, item, actor,
             return false; // Return false if the check is a rally and the special specifically does not apply to rallying
         }
     }
+    // Favor reroll type check for ones
+    if (special.rerollType === "FAVOR" && !hasoneinroll) {
+        return false; // Return false if there is no dice rolled a one in the originating roll
+    }
+
     // Item-specific checks
-    if (item) {
+    if (special.itemless && itemlessdata) {
+        // If the special is actually itemless and itemless data has been set
+        if (special.statArray && !special.statArray.some(x => itemlessdata.statArray?.includes(x))) {
+            return false;
+        }
+    } else if (item) {
+        // If an item has been given
         const itemData = (item instanceof Ironclaw2EItem ? item.data : item);
         if (special.typeArray && !special.typeArray.includes(makeCompareReady(itemData.type))) {
             return false;

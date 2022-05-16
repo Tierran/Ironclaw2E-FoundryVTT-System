@@ -165,6 +165,8 @@ export class Ironclaw2EItem extends Item {
                 data.usedSpecialSettings[i].settingIndex = i;
                 // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored refreshedState as true, otherwise it is false
                 data.usedSpecialSettings[i].refreshedState = (data.exhaustWhenUsed === false || !data.exhausted);
+                // If the special is of a type that does not use items but preset data, set the itemless boolean to "true"
+                data.usedSpecialSettings[i].itemless = CommonSystemInfo.giftItemlessOptions.has(data.usedSpecialSettings[i].settingMode);
 
                 // Applicability settings
                 // Self settings

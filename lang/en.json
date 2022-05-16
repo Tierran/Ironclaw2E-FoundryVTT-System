@@ -394,6 +394,7 @@
   "ironclaw2e.dialog.reroll.favorRerollOneToo": "Favor Bonus: Reroll a One at the same time",
   "ironclaw2e.dialog.reroll.luckChooseDie": "Luck: Choose what die to reroll",
   "ironclaw2e.dialog.reroll.luckChooseWhich": "Luck: Pick highest or lowest?",
+  "ironclaw2e.dialog.reroll.gmIgnore": "Ignoring gift special requirements, GM opened this dialog without any actors selected.",
 
 
   "ironclaw2e.chatInfo.tn": "TN",
@@ -401,6 +402,8 @@
   "ironclaw2e.chatInfo.copy": "Copy",
   "ironclaw2e.chatInfo.reroll": "Reroll",
   "ironclaw2e.chatInfo.favor": "Favor",
+  "ironclaw2e.chatInfo.luck": "Luck",
+  "ironclaw2e.chatInfo.knack": "Knack",
 
   "ironclaw2e.chatInfo.itemInfo.tags": "Tags",
   "ironclaw2e.chatInfo.itemInfo.refresh": "Refresh",

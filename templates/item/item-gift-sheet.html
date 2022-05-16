@@ -131,6 +131,12 @@
                                         {{selectOptions ../selectables.giftBonusUses selected=special.bonusAutoUsed localize=false}}
                                     </select>
                                 </div>{{/if}}
+                                {{#if (propertyExists special "rerollType")}}<div class="flexrow flex-center">
+                                    <label class="normal-label" style="min-width: 60%">Reroll Type</label>
+                                    <select style="width: 40%" class="special-change-field" name="rerollType" data-dtype="String">
+                                        {{selectOptions ../selectables.giftRerolls selected=special.rerollType localize=true}}
+                                    </select>
+                                </div>{{/if}}
                                 {{#if (propertyExists special "bonusExhaustsOnUse")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Bonus Exhausts the Gift</label><input class="special-change-boolean" type="checkbox" name="bonusExhaustsOnUse" {{checked special.bonusExhaustsOnUse}} data-dtype="Boolean" /></div>{{/if}}
                                 {{#if (propertyExists special "replacesBaseBonus")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Replaces the Base Bonus</label><input class="special-change-boolean" type="checkbox" name="replacesBaseBonus" {{checked special.replacesBaseBonus}} data-dtype="Boolean" /></div>{{/if}}
                                 {{#if (propertyExists special "bonusStrideNumber")}}<div class="flexrow flex-center">

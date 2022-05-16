@@ -450,17 +450,19 @@ function addIronclawChatLogContext(html, entryOptions) {
             icon: '<i class="fas fa-redo"></i>',
             condition: li => {
                 const message = game.messages.get(li.data("messageId"));
-                const rerollable = message.getFlag("ironclaw2e", "rollIntermediary") || message.getFlag("ironclaw2e", "originalRoll");
+                const rerollable = message.getFlag("ironclaw2e", "rollIntermediary");
                 const hasOne = message.getFlag("ironclaw2e", "hasOne");
-                const actorHasRerolls = getSpeakerActor() || game.user.isGM;
-                // Check that the message has a roll, is rerollable either because it has the new intermediary array stored or because it is the original and has a one
-                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && rerollable && hasOne && actorHasRerolls;
+                const statsUsed = message.getFlag("ironclaw2e", "usedActorStats");
+                const actor = getSpeakerActor();
+                const usableRerolls = actor ? actor.getGiftRerollTypes?.(hasOne, statsUsed)?.size > 0 : game.user.isGM;
+                // Check that the message has a roll, is rerollable because it has the new intermediary array stored, and either that the current selected actor has rerolls or the user is a GM
+                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && rerollable && usableRerolls;
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
             },
             callback: li => {
                 const message = game.messages.get(li.data("messageId"));
-                const type = message.getFlag("ironclaw2e", "rollType");
-                rerollDialog(message, "ONE");
+                const actor = getSpeakerActor();
+                rerollDialog(message, actor);
             }
         },
         {
