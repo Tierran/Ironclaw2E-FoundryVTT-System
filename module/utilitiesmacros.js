@@ -131,7 +131,7 @@ Hooks.on("updateToken", function (token, data, options, userid) {
  * @param {number} tnnum
  * @param {string} whispername
  */
-export function requestRollPopup(readydice = "", tnnum = -1, whispername = "") {
+export async function requestRollPopup(readydice = "", tnnum = -1, whispername = "") {
     const allowNonGM = game.settings.get("ironclaw2e", "allowNonGMRequestRolls");
     if (!game.user.isGM && !allowNonGM) {
         // If the user is not a GM and the world settings do not allow non-GM's to ask rolls
@@ -143,30 +143,15 @@ export function requestRollPopup(readydice = "", tnnum = -1, whispername = "") {
     const macroSpeaker = getMacroSpeaker(this.actor);
     const userSpeaker = { alias: game.user.name };
 
-    let dialogContent = `
-     <form class="ironclaw2e">
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.requestRoll.requestRollAsUser")}:</label>
-       <select style="width: 60%" id="selectuser" name="selectuser">
-        <option value="0" selected>${userSpeaker.alias}</option>
-        <option value="1">${macroSpeaker.alias}</option>
-       </select>
-      </div>
-	  <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.requestRoll.whisperLabel")}:</label>
-	   <input type="text" id="whisper" name="whisper" value="${whispername}"></input>
-      </div>
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.requestRoll.targetNumber")}:</label>
-	   <input type="text" id="tn" name="tn" value="${tnnum}" onfocus="this.select();"></input>
-      </div>
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.requestRoll.rollToRequest")}:</label>
-      </div>
-	  <div class="form-group">
-	   <input type="text" id="dices" name="dices" value="${readydice}"></input>
-      </div>
-     </form>`;
+    const templateData = {
+        "userAlias": userSpeaker.alias,
+        "macroAlias": macroSpeaker.alias,
+        "whispername": whispername,
+        "readydice": readydice,
+        "tnnum": tnnum
+    };
+
+    let dialogContent = await renderTemplate("systems/ironclaw2e/templates/popup/request-popup.html", templateData);
 
     let dlog = new Dialog({
         title: game.i18n.localize("ironclaw2e.dialog.requestRoll.requestRollHeader"),

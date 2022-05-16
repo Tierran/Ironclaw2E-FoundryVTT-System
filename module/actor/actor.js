@@ -1960,7 +1960,7 @@ export class Ironclaw2EActor extends Actor {
      */
     getGiftRerollTypes(hasone = false, stats = []) {
         const data = this.data.data;
-        let rerollTypes = new Map((hasone ? [["ONE", null]] : []));
+        let rerollTypes = new Map();
         let itemlessdata = { "statArray": stats };
         // Check if any of the reroll types the actor has applies, then grab those
         if (data.processingLists?.rerollBonus) { // Check if reroll bonuses even exist
@@ -1982,6 +1982,7 @@ export class Ironclaw2EActor extends Actor {
             }
         }
 
+        if (hasone) rerollTypes.set("ONE", null);
         return rerollTypes;
     }
 

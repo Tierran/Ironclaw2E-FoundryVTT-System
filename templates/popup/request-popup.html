@@ -1,0 +1,23 @@
+<form class="ironclaw2e">
+    <div class="form-group">
+        <label>{{localize "ironclaw2e.dialog.requestRoll.requestRollAsUser"}}:</label>
+        <select style="width: 60%" id="selectuser" name="selectuser">
+            <option value="0" selected>{{userAlias}}</option>
+            <option value="1">{{macroAlias}}</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>{{localize "ironclaw2e.dialog.requestRoll.whisperLabel"}}:</label>
+        <input type="text" id="whisper" name="whisper" value="{{whispername}}" />
+    </div>
+    <div class="form-group">
+        <label>{{localize "ironclaw2e.dialog.requestRoll.targetNumber"}}:</label>
+        <input type="text" id="tn" name="tn" value="{{tnnum}}" onfocus="this.select();" />
+    </div>
+    <div class="form-group">
+        <label>{{localize "ironclaw2e.dialog.requestRoll.rollToRequest"}}:</label>
+    </div>
+    <div class="form-group">
+        <input type="text" id="dices" name="dices" value="{{readydice}}" />
+    </div>
+</form>

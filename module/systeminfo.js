@@ -133,10 +133,10 @@ export class CommonSystemInfo {
      * Reroll types that exist within the system and the associated translation strings
      */
     static rerollTypes = {
-        "ONE": "ironclaw2e.dialog.reroll.typeOne",
         "FAVOR": "ironclaw2e.dialog.reroll.typeFavor",
         //"LUCK": "ironclaw2e.dialog.reroll.typeLuck",
-        "KNACK": "ironclaw2e.dialog.reroll.typeKnack"
+        "KNACK": "ironclaw2e.dialog.reroll.typeKnack",
+        "ONE": "ironclaw2e.dialog.reroll.typeOne"
     };
     /**
      * The name to check for in weapon's "defend with" field to use the standard defense against it
