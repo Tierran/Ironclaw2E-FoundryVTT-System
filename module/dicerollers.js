@@ -461,6 +461,7 @@ export class CardinalDiceRoller {
                     label = label.replace(":", ": " + game.i18n.localize("ironclaw2e.chatInfo.favorBonus") + " +");
                 }
                 if (favorreroll) {
+                    rerollFlavor = rerollFlavor + " + " + game.i18n.localize("ironclaw2e.chatInfo.reroll");
                     const roll = await new Roll("{" + rollString + "}" + (firstroll.type === "HIGH" ? "kh1" : "cs>" + firstroll.TN.toString())).evaluate({ async: true });
                     rollString = CardinalDiceRoller.copyRerollHighestOne(roll, intermediary);
                 }
