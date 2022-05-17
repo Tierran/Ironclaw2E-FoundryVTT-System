@@ -150,7 +150,7 @@ export class Ironclaw2EItem extends Item {
             data.skillName = makeCompareReady(data.markSkill);
         }
         // Usability
-        // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored refreshedState as true, otherwise it is false
+        // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored giftUsable as true, otherwise it is false
         data.giftUsable = (data.exhaustWhenUsed === false || !data.exhausted);
 
         // Special settings
