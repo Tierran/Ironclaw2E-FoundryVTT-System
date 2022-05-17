@@ -1,3 +1,11 @@
+### 0.5.14 Rerolling gift release
+ - Added a rerolling bonus type for gifts and a rerolling dialog in the chat context menu that shows up when applicable
+ - Added a possibility to ask for specific gifts when requesting a roll, which will show up in the roll dialog if available and exhausted when used if applicable
+ - Made the rallying roll base TN check what the rallyer's side is in relation to the target's
+ - Added a setting to ask for a second readied weapon in some bonus types
+ - Compatibility with multi-digit damage numbers in weapons
+ - Fixed bugs
+ 
 ### 0.5.13 Pooling UI release
  - Added an option to order dice in dice pool rolls by their source instead of by size
  - Added a new gift special option to use the applicability field to control the checkbox auto-check instead of the bonus appearing in the dice pools
