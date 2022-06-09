@@ -208,4 +208,6 @@ Then next, under CUPButer should be "Condition Lab". If you open it, it should h
 Ironclaw © SanguineGames.com  
 This is a fan project, we are not associated with Sanguine Productions.
 
+Foundry VTT integration is licensed under the Foundry Virtual Tabletop EULA's *Limited License Agreement For Module Development*, found here: https://foundryvtt.com/article/license/  
+
 This system and its contents are licensed under the MIT License located in the root directory, as "LICENSE.txt". Some content is excluded from the MIT License and is governed by their own licenses; these will be noted with an "EXCLUDED.txt" file located in the same directory.
