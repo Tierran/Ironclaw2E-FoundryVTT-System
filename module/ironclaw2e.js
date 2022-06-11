@@ -265,6 +265,14 @@ function registerWorldSettings() {
         config: false,
         onChange: ordered => game.ironclaw2e.CardinalDiceRoller.sourceOrderedDice = ordered
     });
+    game.settings.register("ironclaw2e", "oneLineDicesOrdered", {
+        name: "ironclaw2e.config.oneLineDicesOrdered",
+        hint: "ironclaw2e.config.oneLineDicesOrderedHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: false
+    });
 
     // Damage calculation configs
     game.settings.register("ironclaw2e", "calculateAttackEffects", {

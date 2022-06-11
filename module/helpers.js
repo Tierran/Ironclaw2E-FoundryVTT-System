@@ -64,6 +64,27 @@ export function parseSingleDiceString(dicestring) {
 }
 
 /**
+ * A helper function to split a dice string to its component forms and add each comma-separated set of dice to its own dice array
+ * @param {string} dicestring
+ * @returns {[number[]]} An array of dice arrays
+ */
+export function findTotalDiceArrays(dicestring) {
+    let totalarrays = [];
+
+    if (typeof (dicestring) !== "string") {
+        console.error("Something that was not a string inputted to dice parser: " + dicestring);
+        return totaldice;
+    }
+
+    let foos = dicestring.split(",");
+    for (let i = 0; i < foos.length; ++i) {
+        const bar = findTotalDice(foos[i]);
+        totalarrays.push(bar);
+    }
+    return totalarrays;
+}
+
+/**
  * Simple helper to check which dice array index a die with a given number of sides would belong to
  * @param {number} sides The sides of the die to check
  * @returns {number} The dice array index the dice would belong to, or -1 for invalid

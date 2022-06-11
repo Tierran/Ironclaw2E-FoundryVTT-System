@@ -1,4 +1,4 @@
-import { addArrays, findTotalDice, parseSingleDiceString } from "./helpers.js";
+import { addArrays, findTotalDice, findTotalDiceArrays, parseSingleDiceString } from "./helpers.js";
 import { getMacroSpeaker } from "./helpers.js";
 
 import { CommonSystemInfo, specialSettingsRerollGMMap, specialSettingsRerollIntersection } from "./systeminfo.js";
@@ -915,6 +915,7 @@ export async function rollHighestDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4
 export async function rollTargetNumberOneLine(tnnum = 3, readydice = "", label = "", rolltitle = "", rollingactor = null) {
     let confirmed = false;
     const usetranslation = !rolltitle || game.i18n.has(rolltitle); // Use translations if either rolltitle does not exist, or it exists and has a translation equivalent
+    const extraOrdered = game.settings.get("ironclaw2e", "oneLineDicesOrdered");
     let speaker = getMacroSpeaker(rollingactor);
     let resolvedroll = new Promise((resolve) => {
         let dlog = new Dialog({
@@ -952,7 +953,7 @@ export async function rollTargetNumberOneLine(tnnum = 3, readydice = "", label =
                     let TNSS = html.find('[name=tn]')[0].value;
                     let TN = 0; if (TNSS.length > 0) TN = parseInt(TNSS);
                     let DICES = html.find('[name=dices]')[0].value;
-                    let DICE = findTotalDice(DICES);
+                    let DICE = extraOrdered ? findTotalDiceArrays(DICES) : findTotalDice(DICES);
                     resolve(CardinalDiceRoller.rollTargetNumberArray(TN, DICE, label, rollingactor));
                 } else {
                     resolve(null);
@@ -976,6 +977,7 @@ export async function rollTargetNumberOneLine(tnnum = 3, readydice = "", label =
 export async function rollHighestOneLine(readydice = "", label = "", rolltitle = "", rollingactor = null) {
     let confirmed = false;
     const usetranslation = !rolltitle || game.i18n.has(rolltitle); // Use translations if either rolltitle does not exist, or it exists and has a translation equivalent
+    const extraOrdered = game.settings.get("ironclaw2e", "oneLineDicesOrdered");
     let speaker = getMacroSpeaker(rollingactor);
     let resolvedroll = new Promise((resolve) => {
         let dlog = new Dialog({
@@ -1007,7 +1009,7 @@ export async function rollHighestOneLine(readydice = "", label = "", rolltitle =
             close: html => {
                 if (confirmed) {
                     let DICES = html.find('[name=dices]')[0].value;
-                    let DICE = findTotalDice(DICES);
+                    let DICE = extraOrdered ? findTotalDiceArrays(DICES) : findTotalDice(DICES);
                     resolve(CardinalDiceRoller.rollHighestArray(DICE, label, rollingactor));
                 } else {
                     resolve(null);

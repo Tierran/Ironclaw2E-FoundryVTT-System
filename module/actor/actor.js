@@ -1,4 +1,4 @@
-import { checkDiceArrayEmpty, diceFieldUpgrade, enforceLimitArray, findInItems, flattenDicePoolArray, getCombatAdvantageConstruction, getTemplatePosition, popupConfirmationBox } from "../helpers.js";
+import { checkDiceArrayEmpty, diceFieldUpgrade, enforceLimitArray, findInItems, findTotalDiceArrays, flattenDicePoolArray, getCombatAdvantageConstruction, getTemplatePosition, popupConfirmationBox } from "../helpers.js";
 import { addArrays } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -1254,6 +1254,7 @@ export class Ironclaw2EActor extends Actor {
         let label = "";
         let labelgiven = addplus;
         let totaldice = [];
+        const extraOrdered = game.settings.get("ironclaw2e", "oneLineDicesOrdered");
         /** @type Array<Ironclaw2EItem> */
         let giftsToExhaust = [];
 
@@ -1282,8 +1283,8 @@ export class Ironclaw2EActor extends Actor {
 
         // Get the extra dice
         if (extradice?.length > 0) {
-            const extra = findTotalDice(extradice);
-            if (checkDiceArrayEmpty(extra)) {
+            const extra = extraOrdered ? findTotalDiceArrays(extradice) : findTotalDice(extradice);
+            if (checkDiceArrayEmpty(extraOrdered ? flattenDicePoolArray(extra) : extra)) {
                 if (labelgiven)
                     label += " + ";
                 label += game.i18n.localize("ironclaw2e.chat.extraDice");
