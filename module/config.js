@@ -89,6 +89,7 @@ export class WorldSettingsConfig extends FormApplication {
         settings.sendGiftUseExhaustMessage = game.settings.get("ironclaw2e", "sendGiftUseExhaustMessage");
         settings.dicePoolsSourceOrdered = game.settings.get("ironclaw2e", "dicePoolsSourceOrdered");
         settings.oneLineDicesOrdered = game.settings.get("ironclaw2e", "oneLineDicesOrdered");
+        settings.sparkDieAutoDwindle = game.settings.get("ironclaw2e", "sparkDieAutoDwindle");
         return settings;
     }
 }

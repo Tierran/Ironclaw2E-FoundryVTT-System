@@ -414,6 +414,14 @@ function registerWorldSettings() {
         default: false,
         config: false
     });
+    game.settings.register("ironclaw2e", "sparkDieAutoDwindle", {
+        name: "ironclaw2e.config.sparkDieAutoDwindle",
+        hint: "ironclaw2e.config.sparkDieAutoDwindleHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
     game.settings.register("ironclaw2e", "askReadyWhenUsed", {
         name: "ironclaw2e.config.askReadyWhenUsed",
         hint: "ironclaw2e.config.askReadyWhenUsedHint",

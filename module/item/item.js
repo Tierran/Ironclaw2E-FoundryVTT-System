@@ -1,4 +1,4 @@
-import { findActorToken, findInItems, findTotalDice, formDicePoolField, getTokenFromSpeaker, popupConfirmationBox } from "../helpers.js";
+import { findActorToken, findInItems, findTotalDice, formDicePoolField, getTokenFromSpeaker, popupConfirmationBox, reduceDiceStringSet } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -1486,12 +1486,21 @@ export class Ironclaw2EItem extends Item {
             }
         }
 
+        let roll = null;
         // Depending on the directroll setting, either show the simple dialog or do the roll automatically
         if (!directroll) {
-            rollHighestOneLine(data.sparkDie, game.i18n.localize("ironclaw2e.dialog.sparkRoll.label"), "ironclaw2e.dialog.sparkRoll.title", this.actor);
+            roll = await rollHighestOneLine(data.sparkDie, game.i18n.localize("ironclaw2e.dialog.sparkRoll.label"), "ironclaw2e.dialog.sparkRoll.title", this.actor);
         } else {
             const foo = findTotalDice(data.sparkDie);
-            CardinalDiceRoller.rollHighestArray(foo, game.i18n.localize("ironclaw2e.dialog.sparkRoll.label"), this.actor);
+            roll = await CardinalDiceRoller.rollHighestArray(foo, game.i18n.localize("ironclaw2e.dialog.sparkRoll.label"), this.actor);
+        }
+        // In case the spark botches, check the settings and if set, automatically reduce it by one level
+        if (roll && roll.highest === 1) {
+            const autoDwindle = game.settings.get("ironclaw2e", "sparkDieAutoDwindle");
+            if (autoDwindle) {
+                const newDie = reduceDiceStringSet(data.sparkArray, 1, true);
+                await this.update({ "_id": this.id, "data.sparkDie": newDie });
+            }
         }
     }
 

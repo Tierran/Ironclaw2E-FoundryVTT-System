@@ -9,7 +9,7 @@ import { findTotalDice } from "../helpers.js";
 import { splitStatString } from "../helpers.js";
 import { nullCheckConcat } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
-import { checkDiceArrayIndex } from "../helpers.js";
+import { checkDiceIndex } from "../helpers.js";
 import { getDiceArrayMaxValue } from "../helpers.js";
 import { checkApplicability } from "../helpers.js";
 import { compareDiceArrays } from "../helpers.js";
@@ -2768,8 +2768,8 @@ export class Ironclaw2EActor extends Actor {
                             const limitparsed = parseSingleDiceString(LIMIT); // Check if the limit field is a die, in which case, parse what value it's meant to limit to
                             const limitnumber = parseInt(LIMIT); // Just parse the limit as a number
                             // If the dice pool has stuff, use it as the limit, else use the parsed dice side, else try and use the parsed limit
-                            if (Array.isArray(limitdicepool) && checkDiceArrayEmpty(limitdicepool)) limit = checkDiceArrayIndex(getDiceArrayMaxValue(limitdicepool));
-                            else if (Array.isArray(limitparsed)) limit = checkDiceArrayIndex(limitparsed[1]);
+                            if (Array.isArray(limitdicepool) && checkDiceArrayEmpty(limitdicepool)) limit = checkDiceIndex(getDiceArrayMaxValue(limitdicepool));
+                            else if (Array.isArray(limitparsed)) limit = checkDiceIndex(limitparsed[1]);
                             else if (!isNaN(limitnumber)) limit = limitnumber;
                         }
 

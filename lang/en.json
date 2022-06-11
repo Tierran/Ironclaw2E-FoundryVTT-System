@@ -225,6 +225,8 @@
   "ironclaw2e.config.dicePoolsSourceOrderedHint": "If checked, the dice system auto-orders the dice based on their given source for each dice pool set, within the set the dice are ordered by size. Unchecked, the system instead orders all the dice by their size, largest first.",
   "ironclaw2e.config.oneLineDicesOrdered": "One line pools ordered",
   "ironclaw2e.config.oneLineDicesOrderedHint": "If checked, one line dice pools will separate each comma-separated set of dice into separate sets rather than one large set. Has no effect unless dice pools are source-ordered, in which case each set will keep its relative position. Eg. '3d8, d6, d12' will show three d8's, then a d6 and then a d12 in the roll, in that order, rather than automatically combining them and ordering them by size.",
+  "ironclaw2e.config.sparkDieAutoDwindle": "Spark die auto-dwindles",
+  "ironclaw2e.config.sparkDieAutoDwindleHint": "If checked, when rolling a spark die, the system will automatically reduce it by one step if it botches. Note that this assumes that the spark die field only contains a single die set.",
 
   "ironclaw2e.config.templateSpeciesActive": "Wildcard species templates active",
   "ironclaw2e.config.templateSpeciesActiveHint": "Whether the wildcard template system is active for Species.",

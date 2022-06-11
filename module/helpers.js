@@ -31,7 +31,7 @@ export function findTotalDice(dicestring) {
 
         if (total == 0 || sides == 0)
             continue;
-        let diceindex = checkDiceArrayIndex(sides);
+        let diceindex = checkDiceIndex(sides);
         if (diceindex >= 0)
             totaldice[diceindex] += total;
         else if (diceindex < -1) // Special exception to allow a d0 in dice inputs without logging it as unusual
@@ -87,28 +87,61 @@ export function findTotalDiceArrays(dicestring) {
 /**
  * Simple helper to check which dice array index a die with a given number of sides would belong to
  * @param {number} sides The sides of the die to check
- * @returns {number} The dice array index the dice would belong to, or -1 for invalid
+ * @returns {number} The dice array index the dice would belong to, or -2 for invalid
  */
-export function checkDiceArrayIndex(sides) {
+export function checkDiceIndex(sides) {
     if (isNaN(sides)) {
         console.error("Something that was NaN inputted to dice index checker: " + sides);
-        return -1;
+        return -2;
     }
 
-    if (sides == 12)
-        return 0;
-    else if (sides == 10)
-        return 1;
-    else if (sides == 8)
-        return 2;
-    else if (sides == 6)
-        return 3;
-    else if (sides == 4)
-        return 4;
-    else if (sides == 0) // Special case to separate a d0 from other invalid dice, since a d0 can represent a non-existing trait
-        return -1;
-    else
+    switch (sides) {
+        case 12:
+            return 0;
+        case 10:
+            return 1;
+        case 8:
+            return 2;
+        case 6:
+            return 3;
+        case 4:
+            return 4;
+        case 0: // Special case to separate a d0 from other invalid dice, since a d0 can represent a non-existing trait
+            return -1;
+        default:
+            return -2;
+    }
+}
+
+/**
+ * Simple helper to check which dice array side a certain index belongs to
+ * @param {number} index The index of the die to check
+ * @returns {number} The dice array side the dice would belong to, or -2 for invalid
+ */
+export function checkDiceSides(index) {
+    if (isNaN(index)) {
+        console.error("Something that was NaN inputted to dice index checker: " + index);
         return -2;
+    }
+
+    switch (index) {
+        case 0:
+            return 12;
+        case 1:
+            return 10;
+        case 2:
+            return 8;
+        case 3:
+            return 6;
+        case 4:
+            return 4;
+        case -1: // Special case to separate a d0 from other invalid dice, since a d0 can represent a non-existing trait
+            return 0;
+        case 5: // And same here, a special exception for a zero die
+            return 0;
+        default:
+            return -2;
+    }
 }
 
 /**
@@ -258,24 +291,7 @@ export function reformDiceString(dicearray, humanreadable = false) {
     for (let i = 0; i < usedArray.length; ++i) {
         if (usedArray[i] != 0) {
             let amount = usedArray[i];
-            let dicetype = 0;
-            switch (i) {
-                case 0:
-                    dicetype = 12;
-                    break;
-                case 1:
-                    dicetype = 10;
-                    break;
-                case 2:
-                    dicetype = 8;
-                    break;
-                case 3:
-                    dicetype = 6;
-                    break;
-                case 4:
-                    dicetype = 4;
-                    break;
-            }
+            let dicetype = checkDiceSides(i);
             reformedString += (amount == 1 ? "" : amount.toString()) + "d" + dicetype.toString() + "," + (humanreadable ? " " : "");
         }
     }
@@ -349,6 +365,39 @@ export function compareDiceArrays(alpha, beta) {
     }
 
     return 0;
+}
+
+/**
+ * A helper to reduce the dice set type by the steps given, then returning the dice string for the set
+ * Note that this function assumes that only a single die type is given, an array with multiple dice types will only use the highest one
+ * @param {number[]} dicearray
+ * @param {number} steps
+ * @param {boolean} allowzerodie
+ * @returns {string}
+ */
+export function reduceDiceStringSet(dicearray, steps, allowzerodie = false) {
+    if (!Array.isArray(dicearray)) {
+        console.error("Something that was not an array inputted to dice set reducer: " + dicearray);
+        return -1;
+    }
+    if (dicearray.length != 5) {
+        console.error("Something that was not a dice array (based on length) inputted to dice set reducer: " + dicearray);
+        return -1;
+    }
+    const index = checkDiceIndex(getDiceArrayMaxValue(dicearray));
+    const amount = dicearray[index];
+    let reducedIndex = index + steps; // Plus, since a higher index means a smaller die
+    if (reducedIndex < 0) reducedIndex = 0; // Clamp to 0, just in case
+    if (allowzerodie) {
+        // Allow reduction up to zero die
+        if (reducedIndex > 5) reducedIndex = 5;
+    } else {
+        // Clamp to a minimum of d4
+        if (reducedIndex > 4) reducedIndex = 4;
+    }
+
+    // Return a reconstructed dice string for the reduced dice set, without a number in the front if it's a one
+    return (amount === 1 ? "" : amount.toString()) + "d" + checkDiceSides(reducedIndex).toString();
 }
 
 
