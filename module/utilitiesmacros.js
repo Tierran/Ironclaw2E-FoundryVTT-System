@@ -372,7 +372,7 @@ export function ironclawDragRulerIntegration(SpeedProvider) {
  * @param {any} entryOptions The menu
  */
 function addIronclawChatLogContext(html, entryOptions) {
-    entryOptions.push(
+    entryOptions.push( // General roll context options
         {
             name: "ironclaw2e.context.chatLog.copyToTN",
             icon: '<i class="fas fa-bullseye"></i>',
@@ -380,7 +380,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const message = game.messages.get(li.data("messageId"));
                 const type = message.getFlag("ironclaw2e", "rollType");
                 // Check that the message has a roll, and is not of TN type
-                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type !== "TN";
+                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type === "HIGH";
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
             },
             callback: li => {
@@ -410,7 +410,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const message = game.messages.get(li.data("messageId"));
                 const type = message.getFlag("ironclaw2e", "rollType");
                 // Check that the message has a roll, and is not of Highest type
-                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type !== "HIGH";
+                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type === "TN";
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
             },
             callback: li => {
@@ -425,8 +425,9 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const message = game.messages.get(li.data("messageId"));
                 const rerollable = message.getFlag("ironclaw2e", "rollIntermediary") || message.getFlag("ironclaw2e", "originalRoll");
                 const hasOne = message.getFlag("ironclaw2e", "hasOne");
+                const type = message.getFlag("ironclaw2e", "rollType");
                 // Check that the message has a roll, is rerollable either because it has the new intermediary array stored or because it is the original and has a one
-                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && rerollable && hasOne;
+                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && rerollable && hasOne && type !== "MINI";
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
             },
             callback: li => {
@@ -450,8 +451,9 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const statsUsed = message.getFlag("ironclaw2e", "usedActorStats");
                 const actor = getSpeakerActor();
                 const usableRerolls = actor ? actor.getGiftRerollTypes?.(statsUsed, hasOne, false)?.size > 0 : game.user.isGM;
+                const type = message.getFlag("ironclaw2e", "rollType");
                 // Check that the message has a roll, is rerollable because it has the new intermediary array stored, and either that the current selected actor has rerolls or the user is a GM
-                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && rerollable && usableRerolls;
+                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && rerollable && usableRerolls && type !== "MINI";
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
             },
             callback: li => {
@@ -459,7 +461,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const actor = getSpeakerActor();
                 rerollDialog(message, actor);
             }
-        },
+        }, // Combat roll context options
         {
             name: "ironclaw2e.context.chatLog.showAttack",
             icon: '<i class="fas fa-fist-raised"></i>',

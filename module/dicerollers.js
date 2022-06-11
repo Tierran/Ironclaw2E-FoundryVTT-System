@@ -62,7 +62,7 @@ export class CardinalDiceRoller {
      */
     static async rollTargetNumber(tni, intermediary, label = "", rollingactor = null, sendinchat = true) {
         let rollstring = CardinalDiceRoller.formRollFromIntermediary(intermediary);
-        if (rollstring.length == 0)
+        if (rollstring.length === 0)
             return null;
 
         let roll = await new Roll("{" + rollstring + "}cs>" + tni).evaluate({ async: true });
@@ -71,6 +71,7 @@ export class CardinalDiceRoller {
         let highest = 0;
         let ties = 0;
         let hasOne = false;
+        // Process the roll results to get all the necessary data out
         roll.terms[0].results.forEach(x => {
             if (x.result == tni) ties++;
             if (x.result > highest) highest = x.result;
@@ -125,13 +126,15 @@ export class CardinalDiceRoller {
         if (typeof label !== "string") {
             return;
         }
+
+        const usedSpeaker = (copyoptions.replacespeaker ? { "alias": (message.data.speaker?.alias ?? game.i18n.localize("ironclaw2e.chatInfo.miniRoll")) } : message.data.speaker);
         let intermediary = [...message.getFlag("ironclaw2e", "rollIntermediary")];
         let rollString = CardinalDiceRoller.copyDicePoolResult(message.roll);
         let directCopy = true;
         let rerollFlavor = "";
         if (rerolltype) {
             copyoptions.firstroll = { "type": "TN", "TN": tni };
-            const foobar = await CardinalDiceRoller.rerollTypeSwitch(rerolltype, message, intermediary, label, copyoptions);
+            const foobar = await CardinalDiceRoller.rerollTypeSwitch(rerolltype, message, intermediary, label, usedSpeaker, copyoptions);
             rollString = foobar.rollString;
             directCopy = foobar.directCopy;
             rerollFlavor = foobar.rerollFlavor;
@@ -148,6 +151,7 @@ export class CardinalDiceRoller {
         let highest = 0;
         let ties = 0;
         let hasOne = false;
+        // Process the roll results to get all the necessary data out
         roll.terms[0].results.forEach(x => {
             if (x.result == tni) ties++;
             if (x.result > highest) highest = x.result;
@@ -161,7 +165,7 @@ export class CardinalDiceRoller {
         let tnData = { "successes": successes, "ties": ties };
 
         let msg = await roll.toMessage({
-            speaker: message.data.speaker,
+            speaker: usedSpeaker,
             flavor: flavorstring,
             flags: { "ironclaw2e.rollType": "TN", "ironclaw2e.targetNumber": tni, "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
         }, { create: sendinchat });
@@ -182,13 +186,13 @@ export class CardinalDiceRoller {
      */
     static async rollHighest(intermediary, label = "", rollingactor = null, sendinchat = true) {
         let rollstring = CardinalDiceRoller.formRollFromIntermediary(intermediary);
-        if (rollstring.length == 0)
+        if (rollstring.length === 0)
             return null;
 
         let roll = await new Roll("{" + rollstring + "}kh1").evaluate({ async: true });
         const flavorstring = CardinalDiceRoller.flavorStringHighest(roll.total, label);
 
-        let hasOne = roll.terms[0].results.some(x => x.result === 1); // Find if one of the dice rolled a "1"
+        const hasOne = roll.terms[0].results.some(x => x.result === 1); // Find if one of the dice rolled a "1"
 
         let msg = await roll.toMessage({
             speaker: getMacroSpeaker(rollingactor),
@@ -231,13 +235,15 @@ export class CardinalDiceRoller {
         if (typeof label !== "string") {
             return;
         }
+
+        const usedSpeaker = (copyoptions.replacespeaker ? { "alias": (message.data.speaker?.alias ?? game.i18n.localize("ironclaw2e.chatInfo.miniRoll")) } : message.data.speaker);
         let intermediary = [...message.getFlag("ironclaw2e", "rollIntermediary")];
         let rollString = CardinalDiceRoller.copyDicePoolResult(message.roll);
         let directCopy = true;
         let rerollFlavor = "";
         if (rerolltype) {
             copyoptions.firstroll = { "type": "HIGH", "TN": -1 };
-            const foobar = await CardinalDiceRoller.rerollTypeSwitch(rerolltype, message, intermediary, label, copyoptions);
+            const foobar = await CardinalDiceRoller.rerollTypeSwitch(rerolltype, message, intermediary, label, usedSpeaker, copyoptions);
             rollString = foobar.rollString;
             directCopy = foobar.directCopy;
             rerollFlavor = foobar.rerollFlavor;
@@ -252,10 +258,10 @@ export class CardinalDiceRoller {
         const flavorstring = CardinalDiceRoller.flavorStringHighest(roll.total,
             `${(directCopy ? game.i18n.localize("ironclaw2e.chatInfo.copy") : rerollFlavor)} ${game.i18n.localize("ironclaw2e.chatInfo.high")}: ` + label);
 
-        let hasOne = roll.terms[0].results.some(x => x.result === 1); // Find if one of the dice "rolled" a "1"
+        const hasOne = roll.terms[0].results.some(x => x.result === 1); // Find if one of the dice "rolled" a "1"
 
         let msg = await roll.toMessage({
-            speaker: message.data.speaker,
+            speaker: usedSpeaker,
             flavor: flavorstring,
             flags: { "ironclaw2e.rollType": "HIGH", "ironclaw2e.targetNumber": -1, "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
         }, { create: sendinchat });
@@ -263,6 +269,65 @@ export class CardinalDiceRoller {
         await CardinalDiceRoller.copyIronclawRollFlags(message, msg);
 
         return { "roll": roll, "highest": roll.total, "tnData": null, "message": msg, "isSent": sendinchat };
+    }
+
+    /**
+     * A mini dice roller function meant for the internal reroll system to reroll specific dice separately of the main roll
+     * @param {number[]} rollstring The roll string to use for the mini-roll
+     * @param {number[]} intermediary The intermediary dice array, mostly for storing it in the roll flags
+     * @param {string} reason The reason shown for the mini-roll
+     * @param {string} rolltype The roll type this mini-roll will be for, either 'HIGH' or 'TN'
+     * @param {number} tni The target number used for the roll, if a TN type
+     * @param {Object} chatspeaker Optional value to get the speaker for the chat message from a preset value
+     * @param {boolean} sendinchat Optional value, set to false for the dice roller to not send the roll message into chat, just create the data for it
+     * @param {boolean} picklowest Optional value, set to true to actually get the lowest value from the given roll, rather than the highest, the 'highest' value returned will actually be the lowest
+     * @param {boolean} playsound Optional value, set to false to disable the sound for the roll
+     * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
+     * @protected
+     */
+    static async miniRoll(rollstring, intermediary, reason, rolltype, tni = -1, chatspeaker = null, sendinchat = true, picklowest = false, playsound = true) {
+        if (rollstring.length === 0) {
+            rollstring = CardinalDiceRoller.formRollFromIntermediary(intermediary);
+            if (rollstring.length === 0)
+                return null;
+        }
+
+        const useTN = rolltype === "TN" && tni > 0;
+        const rollEval = useTN ? "}cs>" + tni.toString() : (picklowest ? "}kl1" : "}kh1");
+        let roll = await new Roll("{" + rollstring + rollEval).evaluate({ async: true });
+
+        let successes = 0;
+        let highest = 0;
+        let ties = 0;
+        let hasOne = false;
+        if (useTN) {
+            // Process the roll results to get all the necessary data out
+            successes = roll.total;
+            roll.terms[0].results.forEach(x => {
+                if (x.result == tni) ties++;
+                if (x.result > highest) highest = x.result;
+                if (x.result === 1) hasOne = true;
+            });
+        } else {
+            hasOne = roll.terms[0].results.some(x => x.result === 1); // Find if one of the dice "rolled" a "1"
+        }
+
+        const label = game.i18n.format("ironclaw2e.chatInfo.miniRollFor", { "reason": reason });
+        const flavorstring = useTN ? CardinalDiceRoller.flavorStringTN(successes, ties, highest, label) :
+            (picklowest ? CardinalDiceRoller.flavorStringLowest(roll.total, label) : CardinalDiceRoller.flavorStringHighest(roll.total, label));
+
+        /** @type TNData */
+        let tnData = useTN ? { "successes": successes, "ties": ties } : null;
+
+        let messageData = {
+            speaker: chatspeaker ?? getMacroSpeaker(null),
+            flavor: flavorstring,
+            flags: { "ironclaw2e.rollType": "MINI", "ironclaw2e.targetNumber": useTN ? tni : -1, "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
+        };
+        if (playsound === false) messageData.sound = null;
+        let msg = await roll.toMessage(messageData, { create: sendinchat });
+
+        return { "roll": roll, "highest": roll.total, "tnData": tnData, "message": msg, "isSent": sendinchat };
     }
 
     /* -------------------------------------------- */
@@ -431,17 +496,32 @@ export class CardinalDiceRoller {
     }
 
     /**
+     * Helper function for the lowest dice rollers to form the chat message flavor text properly 
+     * This is used basically just for luck rerolls to pick the lowest die possible
+     * @param {number} lowest The lowest die result for the roll
+     * @param {string} label Label to put in front of the dice results
+     * @param {boolean} small Whether to ask for the small version of the string
+     * @returns {string} The formed flavor string
+     * @private
+     */
+    static flavorStringLowest(lowest, label, small = false) {
+        return (label.length > 0 ? "<p>" + label + "</p>" : "") + (small ? `<p style="font-size:${CommonSystemInfo.resultSmallFontSize};margin-top:0px;` : `<p style="font-size:${CommonSystemInfo.resultFontSize};`) + `
+    color:${(lowest > 1 ? CommonSystemInfo.resultColors.normal : CommonSystemInfo.resultColors.botch)}">${game.i18n.format("ironclaw2e.chat.lowest", { "lowest": lowest })}</p>`;
+    }
+
+    /**
      * Helper to pick the correct setups for different reroll types
      * @param {string} reroll The type given: "ONE" means reroll a one
      * @param {Object} message Message containing the roll to copy
      * @param {number[]} intermediary The intermediary dice array
      * @param {string} label The label used for the roll message
+     * @param {Object} speaker The speaker used for potential mini-rolls
      * @param {boolean} [favorreroll] Whether a favored roll will also reroll a one at the same time
      * @param {number} [luckindex] What index the luck is rerolling
      * @param {boolean} [luckhigh] Whether the luck uses the highest or lowest roll
      * @param {object} [firstroll] The data about the original roll
      */
-    static async rerollTypeSwitch(reroll, message, intermediary, label, { favorreroll = false, luckindex = -1, luckhigh = true, firstroll = {} } = {}) {
+    static async rerollTypeSwitch(reroll, message, intermediary, label, speaker, { favorreroll = false, luckindex = -1, luckhigh = true, firstroll = {} } = {}) {
         let rollString = "";
         let directCopy = true;
         let rerollFlavor = "";
@@ -454,16 +534,17 @@ export class CardinalDiceRoller {
                 break;
             case "FAVOR":
                 intermediary.unshift(0);
-                rollString = CardinalDiceRoller.copyResultToIntermediary(rollUsed, intermediary, 1);
+                rollString = CardinalDiceRoller.copyResultToIntermediary(rollUsed, intermediary, 1); // Get the favor roll string now, it'll be used either for the mini-roll or for the main reroll
                 directCopy = false;
-                rerollFlavor = game.i18n.localize("ironclaw2e.chatInfo.favor");
                 if (label && label.includes(":")) { // To append the Favor Bonus note to the correct position, a bit hacky but it works
                     label = label.replace(":", ": " + game.i18n.localize("ironclaw2e.chatInfo.favorBonus") + " +");
                 }
-                if (favorreroll) {
-                    rerollFlavor = rerollFlavor + " + " + game.i18n.localize("ironclaw2e.chatInfo.reroll");
-                    const roll = await new Roll("{" + rollString + "}" + (firstroll.type === "HIGH" ? "kh1" : "cs>" + firstroll.TN.toString())).evaluate({ async: true });
-                    rollString = CardinalDiceRoller.copyRerollHighestOne(roll, intermediary);
+                if (favorreroll) { // To reroll the one at the same time
+                    rerollFlavor = game.i18n.localize("ironclaw2e.chatInfo.favor") + " + " + game.i18n.localize("ironclaw2e.chatInfo.reroll");
+                    const miniRoll = await CardinalDiceRoller.miniRoll(rollString, intermediary, game.i18n.localize("ironclaw2e.chatInfo.favor"), firstroll.type, firstroll.TN, speaker, true, false, false);
+                    rollString = CardinalDiceRoller.copyRerollHighestOne(miniRoll.roll, intermediary);
+                } else { // To simply add a favor bonus
+                    rerollFlavor = game.i18n.localize("ironclaw2e.chatInfo.favor");
                 }
                 break;
             case "KNACK":
@@ -510,7 +591,7 @@ export class CardinalDiceRoller {
      * @returns {string} A new formula to use for the new copy roll
      * @private
      */
-    static copyResultToIntermediary(roll, intermediary, skipdice, ignoreextra = true) {
+    static copyResultToIntermediary(roll, intermediary, skipdice, { ignoreextra = true } = {}) {
         let formula = "";
         if (roll.terms.length === 0) {
             console.warn("A roll with zero terms given to a copy function");
@@ -518,6 +599,7 @@ export class CardinalDiceRoller {
         }
         const skipping = (skipdice > 0 ? skipdice : 0);
         const results = roll.terms[0].results;
+        // Check what the maximum iteration amount it, either based completely on intermediary length, or using either intermediary length or the results length plus skipping amount
         const max = (ignoreextra ? intermediary.length : (intermediary.length > results.length + skipping ? intermediary.length : results.length + skipping));
 
         for (let i = 0; i < max; ++i) {

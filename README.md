@@ -86,8 +86,8 @@ For gifts that should interact with the system by giving situational bonuses, th
  - **Sprint Bonus**: A bonus applied to the sprint roll.  
  - **Initiative Bonus**: A bonus applied to the initiative roll.  
  - **Movement Bonus**: A bonus that changes the movement speed of an actor.  
- - **Flying Move Bonus**: A bonus that changes the flying speed of an actor. (These stack with normal movement bonuses)  
- - **Reroll Bonus**: A bonus that allows some type of reroll. Note on Favor Bonus, if done together with rerolling a 1 and it seemingly doesn't reroll anything and just rolls the bonus d12, what happened was that the bonus d12 rolled a 1 first and was then rerolled. Rolling the bonus d12 is done without a chat message when rerolling a 1 at the same time, to save some chat space.  
+ - **Flying Move Bonus**: A bonus that changes the flying speed of an actor. (These stack with normal movement bonuses.)  
+ - **Reroll Bonus**: A bonus that allows some type of reroll. Note on Favor Bonus with a reroll, it shows a separate "mini-roll" for the bonus first, then the actual reroll of 1. It's possible for the bonus to roll a 1, in which case it will be rerolled instead of the original 1.  
  - **Range Penalty Reduction**: A bonus that reduces the range penalty applied to attacks by the actor.  
  - **Encumbrance Limit Bonus**: A bonus to the carrying capacity of an actor.  
  - **Currency Value Change**: A way to allow a gift to change the value of a currency for an actor.  

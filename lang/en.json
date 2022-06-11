@@ -91,6 +91,7 @@
   "ironclaw2e.chat.failure": "Failure. TN not exceeded or met.",
   "ironclaw2e.chat.botch": "Botch! All ones!",
   "ironclaw2e.chat.highest": "Highest die was {highest}",
+  "ironclaw2e.chat.lowest": "Lowest die was {lowest}",
   "ironclaw2e.chat.rollingHighest": "Rolling highest",
   "ironclaw2e.chat.rollingTN": "Rolling against TN",
   "ironclaw2e.chat.rollingForInitiative": "{name} rolling for initiative:",
@@ -406,6 +407,8 @@
   "ironclaw2e.chatInfo.favorBonus": "Favor Bonus",
   "ironclaw2e.chatInfo.luck": "Luck",
   "ironclaw2e.chatInfo.knack": "Knack",
+  "ironclaw2e.chatInfo.miniRoll": "Mini-Roll",
+  "ironclaw2e.chatInfo.miniRollFor": "Mini-Roll for {reason}",
 
   "ironclaw2e.chatInfo.itemInfo.tags": "Tags",
   "ironclaw2e.chatInfo.itemInfo.refresh": "Refresh",
