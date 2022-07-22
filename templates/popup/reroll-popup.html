@@ -19,7 +19,19 @@
     {{#if favorExists}}
     <div class="form-group">
         <label class="normal-label">{{localize "ironclaw2e.dialog.reroll.favorRerollOneToo"}}</label>
-        <input type="checkbox" id="favorreroll" name="favorreroll" checked />
+        <input type="checkbox" id="favorreroll" name="favorreroll" checked data-dtype="Boolean" />
+    </div>
+    {{/if}}
+    {{#if luckExists}}
+    <div class="form-group">
+        <label class="normal-label">{{localize "ironclaw2e.dialog.reroll.luckChooseDie"}}</label>
+        <select id="luckindex" name="luckindex" data-dtype="Number">
+            {{selectOptions luckSelections localize=false selected="0"}}
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="normal-label">{{localize "ironclaw2e.dialog.reroll.luckChooseWhich"}}</label>
+        <input type="checkbox" id="luckhigh" name="luckhigh" value="0" checked data-dtype="Boolean" />
     </div>
     {{/if}}
 </form>

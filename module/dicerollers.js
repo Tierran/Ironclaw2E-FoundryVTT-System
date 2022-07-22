@@ -552,6 +552,11 @@ export class CardinalDiceRoller {
                 directCopy = false;
                 rerollFlavor = game.i18n.localize("ironclaw2e.chatInfo.knack");
                 break;
+            case "LUCK":
+                rollString = CardinalDiceRoller.copyRerollLuckDie(rollUsed, intermediary, luckindex, luckhigh);
+                directCopy = false;
+                rerollFlavor = luckhigh ? game.i18n.localize("ironclaw2e.chatInfo.luckHighest") : game.i18n.localize("ironclaw2e.chatInfo.luckLowest");
+                break;
         }
 
         return { rollString, directCopy, rerollFlavor, rollUsed, label };
@@ -628,12 +633,14 @@ export class CardinalDiceRoller {
      * @private
      */
     static copyRerollHighestOne(roll, intermediary) {
+        // The recreated formula
+        let formula = "";
         if (roll.terms.length === 0) {
             console.warn("A roll with zero terms given to a copy function");
             return formula;
         }
-        // The size of the one found, the index of the found one, the recreated formula
-        let onefound = -1, foundone = -1, formula = "";
+        // The size of the one found, the index of the found one
+        let onefound = -1, foundone = -1;
 
         // Find the highest found one
         roll.terms[0].results.forEach((x, i) => {
@@ -677,6 +684,48 @@ export class CardinalDiceRoller {
         }
 
         return formula;
+    }
+
+    /**
+     * Helper function to form a new roll string for a Luck reroll
+     * @param {Roll} roll The roll to be checked for ones
+     * @param {number[]} intermediary The original intermediary dice term array, used to figure out what die should get rerolled
+     * @param {number} luckdie Index of the die to be lucked
+     * @param {boolean} highest Whether to pick the highest, or the lowest
+     * @returns {string} A new formula to use for the new copy roll, with the highest "1" as a die to be rolled
+     * @private
+     */
+    static copyRerollLuckDie(roll, intermediary, luckdie, highest = true) {
+        // The new formula
+        let formula = "";
+        if (roll.terms.length === 0) {
+            console.warn("A roll with zero terms given to a copy function");
+            return formula;
+        }
+        if (!intermediary) {
+            console.error("A luck reroll attempted on a dice roll with no intermediary saved!");
+            return formula;
+        }
+        if (luckdie < 0) {
+            console.error("A luck reroll attempted without specifying luck index!");
+            return formula;
+        }
+
+        // Replace the lucked die with two new rolls
+        roll.terms[0].results.forEach((x, i) => {
+            if (i === luckdie) {
+                formula += `{${this.formRollFromIntermediary(intermediary[i], false)},${this.formRollFromIntermediary(intermediary[i], false)},${x.result.toString()}}${highest ? "kh1" : "kl1"},`;
+            } else {
+                formula += x.result.toString() + ",";
+            }
+        });
+        if (formula.length > 0) {
+            // Remove the trailing comma
+            formula = formula.slice(0, -1);
+        }
+
+        return formula;
+
     }
 
     /**
@@ -1151,6 +1200,11 @@ export async function rerollDialog(message, actor) {
         console.error("A non-GM user tried to open a reroll dialog without a set actor: " + actor);
         return null;
     }
+    const messageRoll = message.roll;
+    if (!messageRoll) {
+        console.error("A reroll dialog opened on a message with no roll attached: " + message);
+        return null;
+    }
 
     const hasOne = message.getFlag("ironclaw2e", "hasOne");
     const statsUsed = message.getFlag("ironclaw2e", "usedActorStats");
@@ -1160,12 +1214,23 @@ export async function rerollDialog(message, actor) {
         return null;
     }
 
+    // Get the usable reroll types in the correct format
     const rerollIntersection = specialSettingsRerollIntersection(rerollTypes);
+
+    // Get the possible luck selections if luck reroll is one of the types
+    let luckSelections = {};
+    if (rerollIntersection.usableRerolls.hasOwnProperty("LUCK")) {
+        for (let i = 0; i < messageRoll.terms[0].terms.length && i < i < messageRoll.terms[0].results.length; i++) {
+            luckSelections[i] = game.i18n.format("ironclaw2e.dialog.reroll.luckDiceSelect", { "ordinal": i, "die": messageRoll.terms[0].terms[i], "result": messageRoll.terms[0].results[i].result });
+        }
+    }
 
     const templateData = {
         "rerollTypes": rerollIntersection.usableRerolls,
         "rerollSelected": rerollIntersection.firstType,
         "favorExists": rerollIntersection.usableRerolls.hasOwnProperty("FAVOR"),
+        "luckExists": rerollIntersection.usableRerolls.hasOwnProperty("LUCK"),
+        "luckSelections": luckSelections,
         "alias": message.data.speaker.alias,
         "gmIgnore": GMPrivilege
     };
@@ -1175,7 +1240,7 @@ export async function rerollDialog(message, actor) {
 
     let resolvedroll = new Promise((resolve) => {
         let dlog = new Dialog({
-            title: game.i18n.format("ironclaw2e.dialog.reroll.heading"),
+            title: game.i18n.localize("ironclaw2e.dialog.reroll.heading"),
             content: contents,
             buttons: {
                 one: {
@@ -1196,6 +1261,10 @@ export async function rerollDialog(message, actor) {
                     let REROLL = html.find('[name=rerolltype]')[0].value;
                     let FAVORRE = html.find('[name=favorreroll]')[0];
                     let favorreroll = FAVORRE?.checked;
+                    let LUCKIN = html.find('[name=luckindex]')[0].value;
+                    let luckindex = -1; if (LUCKIN.length > 0) luckindex = parseInt(LUCKIN);
+                    let LUCKHI = html.find('[name=luckhigh]')[0];
+                    let luckhigh = LUCKHI?.checked;
 
                     if (rerollTypes.has(REROLL) && rerollTypes.get(REROLL)?.bonusExhaustsOnUse === true) {
                         const gift = actor.items.get(rerollTypes.get(REROLL).giftId);
@@ -1204,9 +1273,9 @@ export async function rerollDialog(message, actor) {
                     }
 
                     if (rollType === "HIGH")
-                        resolve(CardinalDiceRoller.copyToRollHighest(message, true, REROLL, { favorreroll }));
+                        resolve(CardinalDiceRoller.copyToRollHighest(message, true, REROLL, { favorreroll, luckindex, luckhigh }));
                     else
-                        resolve(CardinalDiceRoller.copyToRollTN(targetNumber, message, true, REROLL, { favorreroll }));
+                        resolve(CardinalDiceRoller.copyToRollTN(targetNumber, message, true, REROLL, { favorreroll, luckindex, luckhigh }));
                 } else {
                     resolve(null);
                 }
