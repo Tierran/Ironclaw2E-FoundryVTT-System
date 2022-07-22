@@ -254,8 +254,8 @@ export function getSpecialOptionPrototype(option) {
 
         case ("rerollBonus"):
             return mergeObject(special, {
-                "statField": "", "conditionField": "", "worksWhenState": "anyState",
-                "rerollType": "FAVOR", "bonusExhaustsOnUse": false, "replaceNameField": ""
+                "statField": "", "conditionField": "", "worksWhenState": "anyState", "allowOnOthers": false,
+                "rerollType": "FAVOR", "bonusExhaustsOnUse": false, "identifierOverride": "", "replaceNameField": ""
             });
             break;
 
@@ -413,9 +413,10 @@ export function getSpecialSettingsRerolls() {
 export function specialSettingsRerollIntersection(rerolltypes) {
     let foo = {};
     let first = null;
-    for (let bar of rerolltypes.keys()) {
-        if (!first) first = bar;
-        foo[bar] = CommonSystemInfo.rerollTypes[bar];
+    for (let [key, value] of rerolltypes) {
+        if (!first) first = key;
+        console.log(value);
+        foo[key] = value?.identifierOverride || game.i18n.localize(CommonSystemInfo.rerollTypes[key]);
     }
     return { "usableRerolls": foo, "firstType": first };
 }

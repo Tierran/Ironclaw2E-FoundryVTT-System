@@ -367,6 +367,18 @@ export function ironclawDragRulerIntegration(SpeedProvider) {
 /* -------------------------------------------- */
 
 /**
+ * Small function to get the hanging actor from a message
+ * @param {any} message
+ * @private
+ */
+function getHangingActor(message) {
+    const actorid = message.getFlag("ironclaw2e", "hangingActor");
+    const tokenid = message.getFlag("ironclaw2e", "hangingToken");
+    const sceneid = message.getFlag("ironclaw2e", "hangingScene");
+    return game.scenes.get(sceneid)?.tokens.get(tokenid)?.actor || game.actors.get(actorid);
+}
+
+/**
  * Adds the Ironclaw context menu options to the chat log
  * @param {any} html
  * @param {any} entryOptions The menu
@@ -450,11 +462,11 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const hasOne = message.getFlag("ironclaw2e", "hasOne");
                 const statsUsed = message.getFlag("ironclaw2e", "usedActorStats");
                 const actor = getSpeakerActor();
-                const usableRerolls = actor ? actor.getGiftRerollTypes?.(statsUsed, hasOne, false)?.size > 0 : game.user.isGM;
+                const usableRerolls = actor ? actor.getGiftRerollTypes?.(statsUsed, hasOne, message.isAuthor, false)?.size > 0 : game.user.isGM;
                 const type = message.getFlag("ironclaw2e", "rollType");
                 // Check that the message has a roll, is rerollable because it has the new intermediary array stored, and either that the current selected actor has rerolls or the user is a GM
                 const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && rerollable && usableRerolls && type !== "MINI";
-                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+                return allowed && message.isContentVisible;
             },
             callback: li => {
                 const message = game.messages.get(li.data("messageId"));
@@ -471,17 +483,15 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const type = message.getFlag("ironclaw2e", "hangingAttack");
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
                 const successes = message.getFlag("ironclaw2e", "attackSuccessCount");
+                const actor = getHangingActor(message);
                 // Check whether the attack effect calculation is active, the message has a roll, has a weapon id and a positive number of successes set and has explicitly been set to have a hanging normal attack
                 const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && successes > 0 && type === "attack";
-                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+                return allowed && (game.user.isGM || (message.isAuthor && actor.isOwner)) && message.isContentVisible;
             },
             callback: li => {
                 const message = game.messages.get(li.data("messageId"));
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
-                const actorid = message.getFlag("ironclaw2e", "hangingActor");
-                const tokenid = message.getFlag("ironclaw2e", "hangingToken");
-                const sceneid = message.getFlag("ironclaw2e", "hangingScene");
-                const actor = game.scenes.get(sceneid)?.tokens.get(tokenid)?.actor || game.actors.get(actorid);
+                const actor = getHangingActor(message);
                 const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
                 weapon?.resendNormalAttack?.(message);
             }
@@ -496,17 +506,15 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
                 const isslaying = message.getFlag("ironclaw2e", "hangingSlaying");
                 const successes = message.getFlag("ironclaw2e", "attackSuccessCount");
+                const actor = getHangingActor(message);
                 // Check whether the attack effect calculation is active, the message has a roll, doesn't already have slaying, has a weapon id and a positive number of successes set and has explicitly been set to have a hanging normal attack
                 const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && !isslaying && weaponid && successes > 0 && type === "attack";
-                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+                return allowed && (message.isAuthor && actor.isOwner) && message.isContentVisible;
             },
             callback: li => {
                 const message = game.messages.get(li.data("messageId"));
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
-                const actorid = message.getFlag("ironclaw2e", "hangingActor");
-                const tokenid = message.getFlag("ironclaw2e", "hangingToken");
-                const sceneid = message.getFlag("ironclaw2e", "hangingScene");
-                const actor = game.scenes.get(sceneid)?.tokens.get(tokenid)?.actor || game.actors.get(actorid);
+                const actor = getHangingActor(message);
                 const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
                 weapon?.resendNormalAttack?.(message, true);
             }
@@ -519,17 +527,15 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const active = game.settings.get("ironclaw2e", "calculateAttackEffects");
                 const type = message.getFlag("ironclaw2e", "hangingAttack");
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
+                const actor = getHangingActor(message);
                 // Check whether the attack effect calculation is active, the message has a roll, has a weapon id set and has explicitly been set to have a hanging counter-attack
                 const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && type === "counter";
-                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+                return allowed && (message.isAuthor && actor.isOwner) && message.isContentVisible;
             },
             callback: li => {
                 const message = game.messages.get(li.data("messageId"));
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
-                const actorid = message.getFlag("ironclaw2e", "hangingActor");
-                const tokenid = message.getFlag("ironclaw2e", "hangingToken");
-                const sceneid = message.getFlag("ironclaw2e", "hangingScene");
-                const actor = game.scenes.get(sceneid)?.tokens.get(tokenid)?.actor || game.actors.get(actorid);
+                const actor = getHangingActor(message);
                 const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
                 weapon?.resolveCounterAttack?.(message);
             }
@@ -543,17 +549,15 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const type = message.getFlag("ironclaw2e", "hangingAttack");
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
                 const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
+                const actor = getHangingActor(message);
                 // Check whether the attack effect calculation is active, the message has a roll, has a weapon id and a positive number of successes set and has explicitly been set to have a hanging resist attack
                 const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && successes > 0 && type === "resist";
-                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+                return allowed && (message.isAuthor && actor.isOwner) && message.isContentVisible;
             },
             callback: li => {
                 const message = game.messages.get(li.data("messageId"));
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
-                const actorid = message.getFlag("ironclaw2e", "hangingActor");
-                const tokenid = message.getFlag("ironclaw2e", "hangingToken");
-                const sceneid = message.getFlag("ironclaw2e", "hangingScene");
-                const actor = game.scenes.get(sceneid)?.tokens.get(tokenid)?.actor || game.actors.get(actorid);
+                const actor = getHangingActor(message);
                 const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
                 weapon?.resolveResistedAttack?.(message);
             }
@@ -567,17 +571,15 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const type = message.getFlag("ironclaw2e", "hangingAttack");
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
                 const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
+                const actor = getHangingActor(message);
                 // Check whether the attack effect calculation is active, the message has a roll, has a weapon id and a positive number of successes set and has explicitly been set to have a hanging resist attack
                 const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && successes > 0 && type === "resist";
-                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+                return allowed && (message.isAuthor && actor.isOwner) && message.isContentVisible;
             },
             callback: li => {
                 const message = game.messages.get(li.data("messageId"));
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
-                const actorid = message.getFlag("ironclaw2e", "hangingActor");
-                const tokenid = message.getFlag("ironclaw2e", "hangingToken");
-                const sceneid = message.getFlag("ironclaw2e", "hangingScene");
-                const actor = game.scenes.get(sceneid)?.tokens.get(tokenid)?.actor || game.actors.get(actorid);
+                const actor = getHangingActor(message);
                 const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
                 weapon?.resolveAsNormalAttack?.(message);
             }
@@ -592,17 +594,15 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
                 const isslaying = message.getFlag("ironclaw2e", "hangingSlaying");
                 const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
+                const actor = getHangingActor(message);
                 // Check whether the attack effect calculation is active, the message has a roll, doesn't already have slaying, has a weapon id and a positive number of successes set and has explicitly been set to have a hanging resist attack
                 const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && !isslaying && weaponid && successes > 0 && type === "resist";
-                return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
+                return allowed && (message.isAuthor && actor.isOwner) && message.isContentVisible;
             },
             callback: li => {
                 const message = game.messages.get(li.data("messageId"));
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
-                const actorid = message.getFlag("ironclaw2e", "hangingActor");
-                const tokenid = message.getFlag("ironclaw2e", "hangingToken");
-                const sceneid = message.getFlag("ironclaw2e", "hangingScene");
-                const actor = game.scenes.get(sceneid)?.tokens.get(tokenid)?.actor || game.actors.get(actorid);
+                const actor = getHangingActor(message);
                 const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
                 weapon?.resolveAsNormalAttack?.(message, true);
             }

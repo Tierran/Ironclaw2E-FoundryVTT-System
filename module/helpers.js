@@ -746,7 +746,7 @@ export function getTemplatePosition({ weaponTemplatePos = null, weaponTemplateId
  * @returns {boolean} Whether the target is applicable for the special
  */
 export function checkApplicability(special, item, actor,
-    { otheritem = null, itemlessdata = null, defensecheck = false, defensetype = "", rallycheck = false, usecheck = false, hasoneinroll = false } = {}) {
+    { otheritem = null, itemlessdata = null, defensecheck = false, defensetype = "", rallycheck = false, usecheck = false, hasoneinroll = false, isauthor = false } = {}) {
     if (!special) {
         // In case the check is given something that doesn't exist
         return false;
@@ -779,10 +779,23 @@ export function checkApplicability(special, item, actor,
             return false; // Return false if the special does not apply to special defenses and this is a special defense
         }
     }
+
     // Special rally check
     if (rallycheck) {
         if (special.appliesToRallying === false) {
             return false; // Return false if the check is a rally and the special specifically does not apply to rallying
+        }
+    }
+
+    // Roll authorship check
+    if (special.allowOnOthers === false && isauthor === false) {
+        return false; // Return false if the special does not allow for others and the user is not an author of the target roll
+    }
+    else if (special.allowOnOthers === true && isauthor === false) {
+        // If the special does allow use on others and the user is not an author of the target roll, check whether the game option allows use
+        const allowOthers = game.settings.get("ironclaw2e", "allowRerollingOthersDice");
+        if (allowOthers === false && !game.user.isGM) {
+            return false; // Return false if the setting is turned off and the user is not a GM
         }
     }
     // Favor reroll type check for ones

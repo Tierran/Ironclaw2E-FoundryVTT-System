@@ -90,6 +90,7 @@ export class WorldSettingsConfig extends FormApplication {
         settings.dicePoolsSourceOrdered = game.settings.get("ironclaw2e", "dicePoolsSourceOrdered");
         settings.oneLineDicesOrdered = game.settings.get("ironclaw2e", "oneLineDicesOrdered");
         settings.sparkDieAutoDwindle = game.settings.get("ironclaw2e", "sparkDieAutoDwindle");
+        settings.allowRerollingOthersDice = game.settings.get("ironclaw2e", "allowRerollingOthersDice");
         return settings;
     }
 }

@@ -273,6 +273,14 @@ function registerWorldSettings() {
         default: false,
         config: false
     });
+    game.settings.register("ironclaw2e", "allowRerollingOthersDice", {
+        name: "ironclaw2e.config.allowRerollingOthersDice",
+        hint: "ironclaw2e.config.allowRerollingOthersDiceHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
 
     // Damage calculation configs
     game.settings.register("ironclaw2e", "calculateAttackEffects", {

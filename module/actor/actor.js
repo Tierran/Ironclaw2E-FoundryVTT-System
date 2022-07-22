@@ -1963,25 +1963,26 @@ export class Ironclaw2EActor extends Actor {
      * @param {boolean} hasone Whether the roll to check on has a one
      * @param {string[]} stats The stats for the roll to check
      * @param {boolean} addbasicreroll Whether to add the normal "Reroll Ones" option to the returned Map
+     * @param {boolean} isauthor Whether the current user owns the roll being rerolled
      * @returns {Map<string,object>} Every reroll type that is allowed, plus special setting data for each
      */
-    getGiftRerollTypes(stats = [], hasone = false, addbasicreroll = true) {
+    getGiftRerollTypes(stats = [], hasone = false, isauthor = false, addbasicreroll = true) {
         const data = this.data.data;
         let rerollTypes = new Map();
         let itemlessdata = { "statArray": stats };
         // Check if any of the reroll types the actor has applies, then grab those
         if (data.processingLists?.rerollBonus) { // Check if reroll bonuses even exist
             for (let setting of data.processingLists.rerollBonus) { // Loop through them
-                if (checkApplicability(setting, null, this, { itemlessdata, "hasoneinroll": hasone })) { // Check initial applicability
+                if (checkApplicability(setting, null, this, { itemlessdata, "hasoneinroll": hasone, isauthor })) { // Check initial applicability
                     let used = setting; // Store the setting in a temp variable
                     let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
-                    while (replacement && checkApplicability(replacement, null, this, { itemlessdata, "hasoneinroll": hasone })) { // As long as the currently used one could be replaced by something applicable
+                    while (replacement && checkApplicability(replacement, null, this, { itemlessdata, "hasoneinroll": hasone, isauthor })) { // As long as the currently used one could be replaced by something applicable
                         used = replacement; // Store the replacement as the one to be used
                         replacement = this._checkForReplacement(used); // Check for a new replacement
                     }
                     if (used) { // Sanity check that the used still exists
                         // Apply the used setting
-                        rerollTypes.set(used.rerollType, { "giftId": used.giftId, "bonusExhaustsOnUse": used.bonusExhaustsOnUse });
+                        rerollTypes.set(used.rerollType, { "giftId": used.giftId, "bonusExhaustsOnUse": used.bonusExhaustsOnUse, "identifierOverride": used.identifierOverride });
                     } else { // If used somehow turns out unsuable, send an error
                         console.error("Somehow, the used setting came up unusable: " + used);
                     }

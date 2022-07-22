@@ -521,7 +521,7 @@ export class CardinalDiceRoller {
      * @param {boolean} [luckhigh] Whether the luck uses the highest or lowest roll
      * @param {object} [firstroll] The data about the original roll
      */
-    static async rerollTypeSwitch(reroll, message, intermediary, label, speaker, { favorreroll = false, luckindex = -1, luckhigh = true, firstroll = {} } = {}) {
+    static async rerollTypeSwitch(reroll, message, intermediary, label, speaker, { identifieroverride = "", favorreroll = false, luckindex = -1, luckhigh = true, firstroll = {} } = {}) {
         let rollString = "";
         let directCopy = true;
         let rerollFlavor = "";
@@ -530,7 +530,7 @@ export class CardinalDiceRoller {
             case "ONE":
                 rollString = CardinalDiceRoller.copyRerollHighestOne(rollUsed, intermediary);
                 directCopy = false;
-                rerollFlavor = game.i18n.localize("ironclaw2e.chatInfo.reroll");
+                rerollFlavor = identifieroverride ? identifieroverride + "," : game.i18n.localize("ironclaw2e.chatInfo.reroll");
                 break;
             case "FAVOR":
                 intermediary.unshift(0);
@@ -544,18 +544,18 @@ export class CardinalDiceRoller {
                     const miniRoll = await CardinalDiceRoller.miniRoll(rollString, intermediary, game.i18n.localize("ironclaw2e.chatInfo.favor"), firstroll.type, firstroll.TN, speaker, true, false, false);
                     rollString = CardinalDiceRoller.copyRerollHighestOne(miniRoll.roll, intermediary);
                 } else { // To simply add a favor bonus
-                    rerollFlavor = game.i18n.localize("ironclaw2e.chatInfo.favor");
+                    rerollFlavor = identifieroverride ? identifieroverride + "," : game.i18n.localize("ironclaw2e.chatInfo.favor");
                 }
                 break;
             case "KNACK":
                 rollString = CardinalDiceRoller.formRollFromIntermediary(intermediary);
                 directCopy = false;
-                rerollFlavor = game.i18n.localize("ironclaw2e.chatInfo.knack");
+                rerollFlavor = identifieroverride ? identifieroverride + "," : game.i18n.localize("ironclaw2e.chatInfo.knack");
                 break;
             case "LUCK":
                 rollString = CardinalDiceRoller.copyRerollLuckDie(rollUsed, intermediary, luckindex, luckhigh);
                 directCopy = false;
-                rerollFlavor = luckhigh ? game.i18n.localize("ironclaw2e.chatInfo.luckHighest") : game.i18n.localize("ironclaw2e.chatInfo.luckLowest");
+                rerollFlavor = identifieroverride ? identifieroverride + "," : (luckhigh ? game.i18n.localize("ironclaw2e.chatInfo.luckHighest") : game.i18n.localize("ironclaw2e.chatInfo.luckLowest"));
                 break;
         }
 
@@ -1206,9 +1206,10 @@ export async function rerollDialog(message, actor) {
         return null;
     }
 
+    // Get the reroll types
     const hasOne = message.getFlag("ironclaw2e", "hasOne");
     const statsUsed = message.getFlag("ironclaw2e", "usedActorStats");
-    const rerollTypes = actor?.getGiftRerollTypes(statsUsed, hasOne) ?? specialSettingsRerollGMMap(hasOne);
+    const rerollTypes = actor?.getGiftRerollTypes(statsUsed, hasOne, message.isAuthor) ?? specialSettingsRerollGMMap(hasOne);
     if (!(rerollTypes?.size > 0)) { // If the rerollTypes size isn't larger than zero, done this way in case rerollTypes ever ends up null or size ends up null, this should still catch it
         console.error("Somehow, the rerollDialog function was called despite no usable reroll types being found: " + rerollTypes);
         return null;
@@ -1266,16 +1267,23 @@ export async function rerollDialog(message, actor) {
                     let LUCKHI = html.find('[name=luckhigh]')[0];
                     let luckhigh = LUCKHI?.checked;
 
-                    if (rerollTypes.has(REROLL) && rerollTypes.get(REROLL)?.bonusExhaustsOnUse === true) {
-                        const gift = actor.items.get(rerollTypes.get(REROLL).giftId);
-                        const giftUseToChat = game.settings.get("ironclaw2e", "sendGiftUseExhaustMessage");
-                        if (gift) await gift.giftToggleExhaust("true", giftUseToChat);
+                    let identifieroverride = "";
+
+                    if (rerollTypes.has(REROLL)) {
+                        if (rerollTypes.get(REROLL)?.identifierOverride)
+                            identifieroverride = rerollTypes.get(REROLL)?.identifierOverride;
+
+                        if (rerollTypes.get(REROLL)?.bonusExhaustsOnUse === true) {
+                            const gift = actor.items.get(rerollTypes.get(REROLL).giftId);
+                            const giftUseToChat = game.settings.get("ironclaw2e", "sendGiftUseExhaustMessage");
+                            if (gift) await gift.giftToggleExhaust("true", giftUseToChat);
+                        }
                     }
 
                     if (rollType === "HIGH")
-                        resolve(CardinalDiceRoller.copyToRollHighest(message, true, REROLL, { favorreroll, luckindex, luckhigh }));
+                        resolve(CardinalDiceRoller.copyToRollHighest(message, true, REROLL, { identifieroverride, favorreroll, luckindex, luckhigh }));
                     else
-                        resolve(CardinalDiceRoller.copyToRollTN(targetNumber, message, true, REROLL, { favorreroll, luckindex, luckhigh }));
+                        resolve(CardinalDiceRoller.copyToRollTN(targetNumber, message, true, REROLL, { identifieroverride, favorreroll, luckindex, luckhigh }));
                 } else {
                     resolve(null);
                 }
