@@ -733,6 +733,38 @@ export class Ironclaw2EItem extends Item {
     }
 
     /**
+     * Get the weapon this weapon is supposed to be upgraded from, essentially stowing it while readying this weapon
+     * @param {boolean} notifications Set to false to disable the missing weapon warning
+     * @returns {Ironclaw2EItem} The weapon to upgrade from
+     */
+    weaponGetWeaponToUpgrade(notifications = true) {
+        const itemData = this.data;
+        const data = itemData.data;
+        if (!(itemData.type === 'weapon')) {
+            console.error("Weapon get weapon upgrade attempted on a non-weapon item: " + itemData.name);
+            return;
+        }
+
+        if (!this.actor) {
+            // If the item has no actor, skip this and simply return null
+            return null;
+        }
+
+        if (data.upgradeWeapon && data.upgradeWeaponName.length > 0) {
+            // Could use a simple .getName(), but the function below is more typo-resistant
+            const weaponToUpgrade = findInItems(this.actor?.items, data.upgradeWeaponName, "weapon");
+            if (!weaponToUpgrade) {
+                if (notifications) ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponUpgradeFindFailure", { "name": itemData.name, "weapon": data.upgradeWeaponName, "actor": this.actor.name }));
+                return null;
+            }
+            return weaponToUpgrade;
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
      * Toggle the readiness of the weapon
      * @param {string} toggle The state to toggle to
      * @returns {Promise<boolean | null>} Returns either the state the weapon was set to, or null in case of an error
@@ -762,25 +794,68 @@ export class Ironclaw2EItem extends Item {
         }
 
         if (endState !== null) {
-            if (endState === true && data.exhaustGift && data.exhaustGiftWhenReadied) {
-                const sendToChat = game.settings.get("ironclaw2e", "sendWeaponReadyExhaustMessage");
-                const needsRefreshed = game.settings.get("ironclaw2e", "weaponExhaustNeedsRefreshed");
-                const exhaust = this.weaponGetGiftToExhaust();
 
-                // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively
-                if (!exhaust) {
-                    ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
-                    return null;
-                } else if (needsRefreshed && exhaust?.data.data.giftUsable === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
-                    const confirmation = await exhaust?.popupGiftExhaustToggle(false);
-                    if (confirmation !== false) {
+            if (endState === true) {
+                // Weapon gift exhausting
+                if (data.exhaustGift && data.exhaustGiftWhenReadied) {
+                    const sendToChat = game.settings.get("ironclaw2e", "sendWeaponReadyExhaustMessage");
+                    const needsRefreshed = game.settings.get("ironclaw2e", "weaponExhaustNeedsRefreshed");
+                    const exhaust = this.weaponGetGiftToExhaust();
+
+                    // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively
+                    if (!exhaust) {
+                        ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
+                        return null;
+                    } else if (needsRefreshed && exhaust?.data.data.giftUsable === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
+                        const confirmation = await exhaust?.popupGiftExhaustToggle(false);
+                        if (confirmation !== false) {
+                            return null;
+                        }
+                    }
+
+                    const worked = await exhaust.giftToggleExhaust("true", sendToChat);
+                    if (worked !== true) {
                         return null;
                     }
                 }
 
-                const worked = await exhaust.giftToggleExhaust("true", sendToChat);
-                if (worked !== true) {
-                    return null;
+                // Weapon upgrading from another
+                if (data.upgradeWeapon && data.upgradeWeaponName) {
+                    const upgrade = this.weaponGetWeaponToUpgrade();
+
+                    // If the weapon has a weapon to upgrade from that can't be found or is stowed, warn about it or pop a ready request about it respectively
+                    if (!upgrade) {
+                        ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponUpgradeFindAbort", { "name": itemData.name }));
+                        return null;
+                    } else if (upgrade?.data.data.readied === false) { // If the weapon needs a readied weapon to upgrade from and the weapon is not readied, immediately pop up a ready request on that weapon
+                        const confirmation = await popupConfirmationBox("ironclaw2e.dialog.readyWeapon.upgradeTitle", "ironclaw2e.dialog.readyWeapon.upgradeHeader",
+                            "ironclaw2e.dialog.ready", { "itemname": upgrade.data.name, "actorname": this.actor.name, "targetname": itemData.name });
+                        if (confirmation.confirmed === true) {
+                            if (await upgrade.weaponToggleReady("true") !== true) {
+                                return null;
+                            }
+                        } else {
+                            return null;
+                        }
+                    }
+
+                    // Confirm taking the required action to upgrade the weapon
+                    const upgrading = await popupConfirmationBox("ironclaw2e.dialog.upgradeWeapon.title", "ironclaw2e.dialog.upgradeWeapon.header",
+                        "ironclaw2e.dialog.upgrade", { "itemname": itemData.name, "actorname": this.actor.name, "targetname": data.upgradeWeaponAction });
+
+                    // If confirmed, actually stow the weapon this one is upgraded from, and add the given upgrade condition to the actor, if a condition is selected
+                    if (upgrading.confirmed) {
+                        const worked = await upgrade.weaponToggleReady("false");
+                        if (worked === false) {
+                            if (data.upgradeWeaponCondition) {
+                                await this.actor.addEffect(data.upgradeWeaponCondition);
+                            }
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        return null;
+                    }
                 }
             }
 
@@ -836,7 +911,7 @@ export class Ironclaw2EItem extends Item {
 
         const confirm = game.settings.get("ironclaw2e", "askReadyWhenUsed");
         if (confirm) {
-            const confirmation = await popupConfirmationBox("ironclaw2e.dialog.readyWhenUsed.title", "ironclaw2e.dialog.readyWhenUsed.header", "ironclaw2e.dialog.ready", { "itemname": itemData.name, "actorname": this.actor.name });
+            const confirmation = await popupConfirmationBox("ironclaw2e.dialog.readyWeapon.title", "ironclaw2e.dialog.readyWeapon.header", "ironclaw2e.dialog.ready", { "itemname": itemData.name, "actorname": this.actor.name });
             if (!confirmation.confirmed) {
                 return false;
             }
@@ -1577,7 +1652,7 @@ export class Ironclaw2EItem extends Item {
 
     /**
      * Pop up a dialog box to confirm changing the exhaustion state of the gift
-     * @param {boolean} mode What state to change to
+     * @param {boolean} mode What state to change to, true for Exhausted and false for Refreshed
      */
     async popupGiftExhaustToggle(mode) {
         if (this.data.type != "gift") {

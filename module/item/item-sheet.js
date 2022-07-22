@@ -1,5 +1,6 @@
 import { CommonSystemInfo, getRangeDistanceFromBand, getSpecialSettingsRerolls } from "../systeminfo.js";
 import { getAllItemsInWorld } from "../helpers.js";
+import { getConditionSelectObject } from "../conditions.js";
 
 /**
  * Extend the basic ItemSheet with some very simple modifications
@@ -60,7 +61,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         }
         let selectables = {
             "handedness": CommonSystemInfo.equipHandedness, "range": CommonSystemInfo.rangeBands, "giftOptions": CommonSystemInfo.giftSpecialOptions, "giftStates": CommonSystemInfo.giftWorksStates,
-            "currencyOptions": currencyOptions, "giftBonusUses": CommonSystemInfo.giftBonusAutoUseOptions, "giftRerolls": getSpecialSettingsRerolls()
+            "currencyOptions": currencyOptions, "giftBonusUses": CommonSystemInfo.giftBonusAutoUseOptions, "giftRerolls": getSpecialSettingsRerolls(), "systemConditions": getConditionSelectObject()
         };
         sheetData.selectables = selectables;
         sheetData.isGM = game.user.isGM;

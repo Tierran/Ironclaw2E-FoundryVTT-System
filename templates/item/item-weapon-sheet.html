@@ -94,6 +94,24 @@
                     <input type="text" name="data.exhaustGiftName" value="{{data.exhaustGiftName}}" data-dtype="String" />
                 </div>
                 {{/if}}
+                <div class="resource flexrow flex-group-center">
+                    <label class="resource-label">Upgrades from a Weapon:</label>
+                    <input type="checkbox" name="data.upgradeWeapon" {{checked data.upgradeWeapon}} data-dtype="Boolean" />
+                    {{#if data.upgradeWeapon}}
+                    <label class="resource-label">Upgrade Action:</label>
+                    <input type="text" name="data.upgradeWeaponAction" value="{{data.upgradeWeaponAction}}" data-dtype="String" />
+                    <label class="resource-label">Upgrade Condition:</label>
+                    <select name="data.upgradeWeaponCondition" data-dtype="String">
+                        {{selectOptions selectables.systemConditions selected=data.upgradeWeaponCondition blank="ironclaw2e.none" localize=true}}
+                    </select>
+                    {{/if}}
+                </div>
+                {{#if data.upgradeWeapon}}
+                <div class="resource flexrow flex-group-center">
+                    <label class="resource-label">Auto-Upgrade Weapon Name:</label>
+                    <input type="text" name="data.upgradeWeaponName" value="{{data.upgradeWeaponName}}" data-dtype="String" />
+                </div>
+                {{/if}}
                 <h3 class="header-label">Dice Pools</h3>
                 <div class="resource flex-group-center">
                     <label class="resource-label">Attack Pool:</label>

@@ -256,7 +256,11 @@
       "autoStow": false,
       "exhaustGift": false,
       "exhaustGiftWhenReadied": false,
-      "exhaustGiftName": ""
+      "exhaustGiftName": "",
+      "upgradeWeapon": false,
+      "upgradeWeaponName": "",
+      "upgradeWeaponAction": "",
+      "upgradeWeaponCondition": ""
     },
     "armor": {
       "templates": [ "base", "physical" ],

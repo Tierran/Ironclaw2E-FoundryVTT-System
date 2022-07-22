@@ -71,6 +71,8 @@
   "ironclaw2e.ui.diceParseFailure": "Parsing {dicetype} failed on: {name}",
   "ironclaw2e.ui.weaponGiftExhaustFailure": "{name} failed to find a gift named {gift} on: {actor}",
   "ironclaw2e.ui.weaponGiftExhaustAbort": "{name} use aborted, due to missing gift to exhaust",
+  "ironclaw2e.ui.weaponUpgradeFindFailure": "{name} failed to find a weapon named {weapon} on: {actor}",
+  "ironclaw2e.ui.weaponUpgradeFindAbort": "{name} use aborted, due to missing weapon to upgrade from",
   "ironclaw2e.ui.itemWeightParseError": "Item weight parsing error for {item}: {weight}",
   "ironclaw2e.ui.itemNotFound": "Item not found",
   "ironclaw2e.ui.standardDefenseResist": "Weapon '{name}' defense stat pool defined as standard defense, yet the weapon's attack is resisted",
@@ -268,6 +270,8 @@
   "ironclaw2e.dialog.sendToChat": "Send to Chat?",
   "ironclaw2e.dialog.request": "Request",
   "ironclaw2e.dialog.ready": "Ready",
+  "ironclaw2e.dialog.upgrade": "Upgrade",
+  "ironclaw2e.dialog.stow": "Stow",
   "ironclaw2e.dialog.replace": "Replace",
   "ironclaw2e.dialog.rerollText": "Reroll",
   "ironclaw2e.dialog.labelNotice": "<strong>The chat label for the roll:</strong> {label}",
@@ -353,8 +357,16 @@
   "ironclaw2e.dialog.sparkRoll.title": "Roll Spark die",
   "ironclaw2e.dialog.sparkRoll.label": "Rolling Spark die...",
 
-  "ironclaw2e.dialog.readyWhenUsed.title": "Ready Weapon",
-  "ironclaw2e.dialog.readyWhenUsed.header": "Ready {item} for {actor}?",
+  "ironclaw2e.dialog.readyWeapon.title": "Ready Weapon",
+  "ironclaw2e.dialog.readyWeapon.upgradeTitle": "Ready Weapon for Upgrade",
+  "ironclaw2e.dialog.readyWeapon.header": "Ready {item} for {actor}?",
+  "ironclaw2e.dialog.readyWeapon.upgradeHeader": "Ready {actor}'s {item} to upgrade it into {target}?",
+
+  "ironclaw2e.dialog.upgradeWeapon.title": "Upgrade Weapon",
+  "ironclaw2e.dialog.upgradeWeapon.header": "Upgrade {actor}'s {item} by taking an action to {target}?",
+
+  "ironclaw2e.dialog.stowWeapon.title": "Stow Weapon",
+  "ironclaw2e.dialog.stowWeapon.header": "Stow {item} for {actor}?",
 
   "ironclaw2e.dialog.refreshGift.title": "Refresh Gift for {actor}",
   "ironclaw2e.dialog.refreshGift.header": "Refresh {item} for {actor}?",
