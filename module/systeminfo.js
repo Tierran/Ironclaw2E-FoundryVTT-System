@@ -118,6 +118,10 @@ export class CommonSystemInfo {
      */
     static giftItemlessOptions = new Set(["rerollBonus"]);
     /**
+     * Special option types that can default to the gift's skill in some way
+     */
+    static giftGenericSkillOptions = new Set(["rerollBonus"]);
+    /**
      * The state of gift exhaustion when the bonus can work
      */
     static giftWorksStates = {

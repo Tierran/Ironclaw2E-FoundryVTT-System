@@ -67,6 +67,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         sheetData.isGM = game.user.isGM;
         sheetData.showDirectoryOptions = game.user.isGM && !this.item.parent;
         sheetData.rangeDistance = getRangeDistanceFromBand(sheetData.data.range);
+        sheetData.showGiftSkill = baseData.data.data.grantsMark || baseData.data.data.specialSkillUse;
 
         return sheetData;
     }

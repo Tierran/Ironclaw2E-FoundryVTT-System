@@ -147,7 +147,7 @@ export class Ironclaw2EItem extends Item {
         }
         // Skill Mark
         if (data.grantsMark) {
-            data.skillName = makeCompareReady(data.markSkill);
+            data.skillName = makeCompareReady(data.giftSkill);
         }
         // Usability
         // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored giftUsable as true, otherwise it is false
@@ -193,7 +193,12 @@ export class Ironclaw2EItem extends Item {
                     data.usedSpecialSettings[i].effectArray = splitStatString(data.usedSpecialSettings[i].effectField);
                 }
 
-                if (data.usedSpecialSettings[i].statField) {
+                // Special case for gifts that can be generically tied to skills
+                if (data.usedSpecialSettings[i].statField === "" && CommonSystemInfo.giftGenericSkillOptions.has(data.usedSpecialSettings[i].settingMode)) {
+                    data.specialSkillUse = true;
+                    if (data.giftSkill) data.usedSpecialSettings[i].statArray = splitStatString(data.giftSkill);
+                }
+                else if (data.usedSpecialSettings[i].statField) {
                     data.usedSpecialSettings[i].statArray = splitStatString(data.usedSpecialSettings[i].statField);
                 }
 
