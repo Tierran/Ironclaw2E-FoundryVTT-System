@@ -70,7 +70,7 @@ export class CommonSystemInfo {
     /**
      * The handedness of a weapon
      */
-    static equipHandedness = { "goodhand": "Good hand", "offhand": "Off hand", "twohands": "Two hands", "other": "Other" };
+    static equipHandedness = { "goodhand": "Good hand", "offhand": "Off hand", "twohands": "Two hands", "strapped": "Strapped to arm", "other": "Other" };
     /**
      * The range of a weapon
      */

@@ -19,11 +19,15 @@
             </div>
             <div class="resource flexrow flex-group-center">
                 <label class="header-label">Shield Cover Die:</label>
-                <input type="text" name="data.coverDie" value="{{data.coverDie}}" data-dtype="String" />
+                <input style="max-width: 80px" type="text" name="data.coverDie" value="{{data.coverDie}}" data-dtype="String" />
                 <label class="header-label">Held:</label>
                 <input type="checkbox" name="data.held" {{checked data.held}} data-dtype="Boolean" />
             </div>
             <div class="resource flexrow flex-group-center flex-tight">
+                <label class="resource-label">Held with:</label>
+                <select name="data.equip">
+                    {{selectOptions selectables.handedness selected=data.equip localize=false}}
+                </select>
                 <label class="resource-label">Show in Battle Stats:</label>
                 <input type="checkbox" name="data.showInBattleStats" {{checked data.showInBattleStats}} data-dtype="Boolean" />
             </div>

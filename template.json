@@ -266,7 +266,8 @@
     "shield": {
       "templates": [ "base", "physical" ],
       "coverDie": "d4",
-      "held": true
+      "held": true,
+      "equip": "strapped"
     },
     "illumination": {
       "templates": [ "base", "physical" ],
