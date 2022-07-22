@@ -194,7 +194,7 @@ export class Ironclaw2EItem extends Item {
                 }
 
                 // Special case for gifts that can be generically tied to skills
-                if (data.usedSpecialSettings[i].statField === "" && CommonSystemInfo.giftGenericSkillOptions.has(data.usedSpecialSettings[i].settingMode)) {
+                if (data.usedSpecialSettings[i].statField === "-" && CommonSystemInfo.giftGenericSkillOptions.has(data.usedSpecialSettings[i].settingMode)) {
                     data.specialSkillUse = true;
                     if (data.giftSkill) data.usedSpecialSettings[i].statArray = splitStatString(data.giftSkill);
                 }
