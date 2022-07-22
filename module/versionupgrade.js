@@ -155,6 +155,25 @@ export async function upgradeVersion(lastversion) {
 
         console.log("0.5.13, special setting upgrade, done!");
     }
+
+    // Version 0.5.15 check
+    version = "0.5.15";
+    if (checkIfNewerVersion(version, lastversion)) {
+        ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationNotice", { "version": version }), { permanent: true });
+
+        // Item changes, first grab all items from everywhere
+        let itemsToChange = getAllItemsInWorld("gift");
+
+        // Upgrade all gifts to newer templates
+        for (let item of itemsToChange) {
+            await giftUpgradePointFiveFifteen(item);
+        }
+
+        // In case of potential problems the GM might need to check
+        ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationComplete", { "version": version }), { permanent: true });
+
+        console.log("0.5.15, item upgrade, done!");
+    }
 }
 
 /**
@@ -297,6 +316,17 @@ async function giftUpgradePointFiveThirteen(item) {
         }
         return item.giftValidateSpecialSetting();
     }
+    return item;
+}
+
+async function giftUpgradePointFiveFifteen(item) {
+    let itemData = item.data.data;
+    let updateData = {};
+    updateData["data.giftSkill"] = itemData.markSkill;
+    if (itemData.specialSettings?.length > 0) {
+        await item.giftValidateSpecialSetting();
+    }
+    await item.update(updateData);
     return item;
 }
 

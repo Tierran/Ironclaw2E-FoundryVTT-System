@@ -1,3 +1,15 @@
+### 0.5.15 Upgraded rerolling release
+ - Players can now use reroll gifts on rolls not made by them, if world configuration and gift settings allow
+ - Added luck rerolling to the reroll bouns options
+ - Added weapon upgrade system for spells that are upgraded from a previous one
+ - Made favor bonus roll visible
+ - Added spark die auto-dwindle world config option
+ - One-line pools can now be ordered internally as well
+ - Shields now specify how they are held
+ - Fixed bugs
+ - Added a note about Foundry license
+ - Most likely the last Foundry V9 update
+
 ### 0.5.14 Rerolling gift release
  - Added a rerolling bonus type for gifts and a rerolling dialog in the chat context menu that shows up when applicable
  - Added a possibility to ask for specific gifts when requesting a roll, which will show up in the roll dialog if available and exhausted when used if applicable

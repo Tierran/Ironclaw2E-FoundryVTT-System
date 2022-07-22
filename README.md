@@ -38,6 +38,7 @@ For area-of-effect templates, the system can use Enhanced Terrain Layer's elevat
 
 All world-scope settings are in sub-menus within the System Configuration menu. By default, certain automation options are turned off, in case they conflict with the way a GM wants to run the system. These can be turned on in the system configuration at their leisure. In addition, the system contains some client-scope settings, which can be seen in the default system settings menu.  
 Among the more notable options:  
+ - **Dice ordering:** By default, the system orders dice based on their size. But alternatively, they can be set to be ordered by the order in which they are added to the dice pool.  
  - **Range settings:** The range settings in the world configuration control how the system measurements behave, with options to change the measurement method or the accuracy of the internal measuring.  
  - **Auto-remove conditions:** The system will remove conditions from actors based on hard-coded logic of where they should turn off. More on this under **Conditions**.  
  - **Automated encumbrance system:** Based on carried weight and worn armors, the system will give the actors encumbrance conditions as appropriate. The system is tested and should work fine, but it is potentially slightly unstable due to its implementation. When active, the encumbrance conditions should **not** be manually toggled.  
@@ -58,6 +59,8 @@ Gifts that grant situational bonuses can be configured from the "Advanced Settin
 
 Both the *Effect* and *Descriptor* fields in weapons should be formatted so that every attribute is separated with a comma, eg. "Damage +2, Slaying, Awkward", for the system automations to support them. Weapons also have a field to give its opposing defensive pool for system and quick reference, normally this is just standard "defense" but some weapons with special defenses may have different pools. Weapons with resisted effects should set the resistance pool in the opposing defense field and toggle the "Defense is Resist" checkbox on. Wands and rods should also include "Wand" or "Rod" respectively as a descriptor even if that's not normal for Ironclaw.  
 Weapons that would exhaust a gift on use can be set to auto-exhaust the gift in question when used to Attack or Counter. Depending on the world settings of whether weapons with a gift *require* an unexhausted gift, trying to use the weapon when the gift is exhausted will instead pop out a Refresh Gift dialog. A weapon can also be set to exhaust its gift when readied, in which case the popup to refresh a gift will happen when readying.  
+Weapons also support being upgrades from another weapon, in which case, readying the weapon will require the weapon it is an upgrade from to already be readied. If that's not the case, the system will pop out a confirmation box to ready the pre-upgrade weapon. This can result in multiple popup boxes if gifts are not set as refreshed or the pre-upgrade weapon is itself an upgrade from yet another weapon. Remember that each ready or refresh does require a separate action, even if the system allows the gifts and weapons to be refreshed and readied as needed.  
+The weapon upgrade action field notes what action the upgrade process requires instead of the standard ready action, whereas the upgrade condition allows for a condition to be auto-given to the actor when upgrading the weapon. Eg. if the upgrade action is "Aim", the condition should be set to "Aiming".  
 Currently, the system does not allow dice pools to include items. Instead, the system tries to track what items should be included in which dice pools, eg. including worn armor in Soak rolls, as well as adding the gift special bonuses. Where these bonuses go is hard-coded though, so I'm afraid it won't be perfect.  
 
 **For Chat Commands**:  
@@ -87,7 +90,7 @@ For gifts that should interact with the system by giving situational bonuses, th
  - **Initiative Bonus**: A bonus applied to the initiative roll.  
  - **Movement Bonus**: A bonus that changes the movement speed of an actor.  
  - **Flying Move Bonus**: A bonus that changes the flying speed of an actor. (These stack with normal movement bonuses.)  
- - **Reroll Bonus**: A bonus that allows some type of reroll. Note on Favor Bonus with a reroll, it shows a separate "mini-roll" for the bonus first, then the actual reroll of 1. It's possible for the bonus to roll a 1, in which case it will be rerolled instead of the original 1.  
+ - **Reroll Bonus**: A bonus that allows some type of reroll. Note on Favor Bonus with a reroll, it shows a separate "mini-roll" for the bonus first, then the actual reroll of 1. It's possible for the bonus to roll a 1, in which case it will be rerolled instead of the original 1. If the stat field of a reroll is marked with a dash (-), it can automatically use the gift's skill as the stat that enables its use.  
  - **Range Penalty Reduction**: A bonus that reduces the range penalty applied to attacks by the actor.  
  - **Encumbrance Limit Bonus**: A bonus to the carrying capacity of an actor.  
  - **Currency Value Change**: A way to allow a gift to change the value of a currency for an actor.  
@@ -118,6 +121,7 @@ Any of these fields that aren't just checkboxes can include multiple values, sep
  - **Applies to Parries**: Whether a defense bonus applies to parry defenses.
  - **Applies to Special Defenses**: Whether a defense bonus applies to special defenses.
  - **Applies to Rallying**: Whether a range penalty reduction applies to rallying.
+ - **Allow Use on Others**: Whether the reroll can be used on rolls not done by the user.
  
 </details>
 
@@ -162,6 +166,7 @@ Note on **"Check Bonus Automatically"**: If it is set to "By Applicability" for 
  - **Currency Value**: The new value for the given currency.
  - **Upgrade Steps**: The number of steps to upgrade the dice. A single "step" would upgrade the dice by one, from d4 to d6, d6 to d8, etc. Negative steps will instead downgrade the dice instead. The upgraded dice cap at *d12* at maximum and *d4* at minimum.
  - **Name Addition**: What to append to the name of items modified by this bonus. If left empty, the name will not change at all. Note that these should not include brackets, as that will cause Foundry's internal system to attempt to parse it as a roll modifier.
+ - **Reroll Identifier Override**: The text added here will override the default reroll identifier. Eg. instead of showing a Knack reroll as "Knack", it will instead be shown as whatever is in this field.
  - **Replacing Name**: The name of a gift that this gift would replace. If this field has something, this bonus will not be applied normally. Instead, when the system would apply a same type bonus from the replaced gift, it will check whether this bonus applies and use this one instead if it does apply. Note that the system does not support multiple potential replacements, only one replacement per type is supported. Also, only the top-most one of each bonus type is considered for the replacement system.
  
 </details>
