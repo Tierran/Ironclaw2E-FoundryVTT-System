@@ -542,6 +542,10 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /* -------------------------------------------- */
+    /* Normal Functions                             */
+    /* -------------------------------------------- */
+
+    /* -------------------------------------------- */
     /* Overrides                                    */
     /* -------------------------------------------- */
 
@@ -584,7 +588,7 @@ export class Ironclaw2EActor extends Actor {
     /* -------------------------------------------- */
 
     /** @override
-     * Process the embedded entities data, mostly for lists
+     * Process the embedded documents data, mostly for lists
      */
     prepareEmbeddedDocuments() {
         super.prepareEmbeddedDocuments();
@@ -663,10 +667,6 @@ export class Ironclaw2EActor extends Actor {
             }
         }
     }
-
-    /* -------------------------------------------- */
-    /* Normal Functions                             */
-    /* -------------------------------------------- */
 
     /* -------------------------------------------- */
     /* Process Derived                              */
