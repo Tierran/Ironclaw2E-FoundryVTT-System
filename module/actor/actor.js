@@ -576,10 +576,10 @@ export class Ironclaw2EActor extends Actor {
 
         // If the actor is one with actual stats, do post-processing
         if (actorData.type === "character" || actorData.type === "mook" || actorData.type === "beast") {
-            // Automatic Encumbrance Management
-            this._encumbranceAutoManagement(actorData);
             // Battle Stat roll dice pool visuals
             this._battleDataRollVisuals(actorData);
+            // Automatic Encumbrance Management
+            this._encumbranceAutoManagement(actorData);
         }
     }
 
@@ -1141,24 +1141,27 @@ export class Ironclaw2EActor extends Actor {
     /** 
      *  Automatic encumbrance management, performed if the setting is enabled
      */
-    _encumbranceAutoManagement(actorData) {
+    async _encumbranceAutoManagement(actorData, sleeptime = 100) {
+        // To combat race conditions
+        if (sleeptime > 0) await game.ironclaw2e.sleep(sleeptime);
+
         const manageburdened = game.settings.get("ironclaw2e", "manageEncumbranceAuto");
         const data = actorData.data;
 
         if (manageburdened) {
             if (data.totalWeight > data.encumbranceOverBurdened || data.totalArmors > 3) {
-                this.addEffect(["burdened", "over-burdened", "cannotmove"]);
+                await this.addEffect(["burdened", "over-burdened", "cannotmove"]);
             }
             else if (data.totalWeight > data.encumbranceBurdened || data.totalArmors == 3) {
-                this.deleteEffect(["cannotmove"], false);
-                this.addEffect(["burdened", "over-burdened"]);
+                await this.deleteEffect(["cannotmove"], false);
+                await this.addEffect(["burdened", "over-burdened"]);
             }
             else if (data.totalWeight > data.encumbranceNone || data.totalArmors == 2) {
-                this.deleteEffect(["over-burdened", "cannotmove"], false);
-                this.addEffect(["burdened"]);
+                await this.deleteEffect(["over-burdened", "cannotmove"], false);
+                await this.addEffect(["burdened"]);
             }
             else {
-                this.deleteEffect(["burdened", "over-burdened", "cannotmove"], false);
+                await this.deleteEffect(["burdened", "over-burdened", "cannotmove"], false);
             }
         }
     }
