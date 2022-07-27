@@ -40,7 +40,7 @@ export class CommonSystemInfo {
      */
     static dodgingBaseStats = Object.freeze(["speed", "dodge"]);
     /**
-     * The standard stats used for dodge defense rolls
+     * The standard stats used for rallying rolls
      */
     static rallyBaseStats = Object.freeze(["will", "leadership"]);
     /**
