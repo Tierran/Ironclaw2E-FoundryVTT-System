@@ -29,6 +29,9 @@
                 <strong>{{localize "ironclaw2e.chatInfo.itemInfo.range"}}:</strong> {{equipRange}}
             </p>
             {{#if itemData.exhaustGift}}{{#if itemData.exhaustGiftName}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.exhaustGift"}}:</strong> {{itemData.exhaustGiftName}}</p>{{/if}}{{/if}}
+            {{#if itemData.upgradeWeapon}}{{#if itemData.upgradeWeaponName}}<p>
+                {{{localize "ironclaw2e.chatInfo.itemInfo.upgradeWeapon" weapon=itemData.upgradeWeaponName action=itemData.upgradeWeaponAction}}}
+            </p>{{/if}}{{/if}}
             {{#if itemData.attackDice}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.attackDice"}}:</strong> {{itemData.attackDice}}</p>{{/if}}
             {{#if itemData.useSpark}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.sparkDice"}}:</strong> {{itemData.sparkDie}}</p>{{/if}}
             {{#if itemData.defenseDice}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.parryDice"}}:</strong> {{itemData.defenseDice}}</p>{{/if}}
@@ -51,6 +54,9 @@
             {{#if (typeCheck item.type "shield")}}
             <p>
                 <strong>{{localize "ironclaw2e.chatInfo.itemInfo.coverDie"}}:</strong> {{itemData.coverDie}},
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.heldWith"}}:</strong> {{equipHandedness}},
+            </p>
+            <p>
                 <strong>{{localize "ironclaw2e.chatInfo.itemInfo.held"}}:</strong> {{#if itemData.held}}{{localize "ironclaw2e.yes"}}{{else}}{{localize "ironclaw2e.no"}}{{/if}}
             </p>
             {{/if}}

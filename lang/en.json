@@ -363,7 +363,7 @@
   "ironclaw2e.dialog.readyWeapon.upgradeHeader": "Ready {actor}'s {item} to upgrade it into {target}?",
 
   "ironclaw2e.dialog.upgradeWeapon.title": "Upgrade Weapon",
-  "ironclaw2e.dialog.upgradeWeapon.header": "Upgrade {actor}'s {item} by taking an action to {target}?",
+  "ironclaw2e.dialog.upgradeWeapon.header": "Upgrade to {actor}'s {item} by taking an action to {target}?",
 
   "ironclaw2e.dialog.stowWeapon.title": "Stow Weapon",
   "ironclaw2e.dialog.stowWeapon.header": "Stow {item} for {actor}?",
@@ -453,6 +453,7 @@
   "ironclaw2e.chatInfo.itemInfo.equip": "Equip",
   "ironclaw2e.chatInfo.itemInfo.range": "Range",
   "ironclaw2e.chatInfo.itemInfo.exhaustGift": "Gift to exhaust",
+  "ironclaw2e.chatInfo.itemInfo.upgradeWeapon": "<strong>Upgrades</strong> from {weapon} with {action}",
   "ironclaw2e.chatInfo.itemInfo.attackDice": "Attack dice",
   "ironclaw2e.chatInfo.itemInfo.sparkDice": "Spark die",
   "ironclaw2e.chatInfo.itemInfo.parryDice": "Parry dice",
@@ -473,6 +474,7 @@
   "ironclaw2e.chatInfo.itemInfo.worn": "Worn",
 
   "ironclaw2e.chatInfo.itemInfo.coverDie": "Cover Die",
+  "ironclaw2e.chatInfo.itemInfo.heldWith": "Held with",
   "ironclaw2e.chatInfo.itemInfo.held": "Held",
 
   "ironclaw2e.chatInfo.itemInfo.attackWith": "Attack with {name}",

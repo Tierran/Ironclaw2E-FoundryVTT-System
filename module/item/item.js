@@ -1027,7 +1027,7 @@ export class Ironclaw2EItem extends Item {
             "actorId": actor?.id ?? null,
             "tokenId": actor?.token?.id ?? null,
             "sceneId": actor?.token?.parent?.id ?? null,
-            "equipHandedness": (item.type === 'weapon' ? CommonSystemInfo.equipHandedness[itemData.equip] : ""),
+            "equipHandedness": (item.type === 'weapon' || item.type === 'shield' ? CommonSystemInfo.equipHandedness[itemData.equip] : ""),
             "equipRange": (item.type === 'weapon' ? CommonSystemInfo.rangeBands[itemData.range] : "")
         };
 
