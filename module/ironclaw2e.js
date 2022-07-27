@@ -152,6 +152,13 @@ Hooks.once('init', function () {
     // Dice roller init
     CardinalDiceRoller.cardinalInitialization();
 
+    const asciiArt = `  _____                      _                
+  \\_   \\_ __ ___  _ __   ___| | __ ___      __
+   / /\\/ '__/ _ \\| '_ \\ / __| |/ _\` \\ \\ /\\ / /
+/\\/ /_ | | | (_) | | | | (__| | (_| |\\ V  V / 
+\\____/ |_|  \\___/|_| |_|\\___|_|\\__,_| \\_/\\_/  
+==============================================`;
+    console.log(asciiArt);
     console.log("Ironclaw2E System init complete");
 });
 
