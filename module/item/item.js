@@ -1019,8 +1019,12 @@ export class Ironclaw2EItem extends Item {
         const actor = this.actor;
         const confirmSend = game.settings.get("ironclaw2e", "confirmItemInfo");
 
-        // Check whether the character even has Tactics to use
-        const hasTactics = actor?.data.data.skills?.tactics?.diceArray ? checkDiceArrayEmpty(actor.data.data.skills.tactics.diceArray) : false;
+        // Check whether the character even has Tactics to use, if not, set hasTactics to false to remove the Tactics checkbox from the chat message
+        let hasTactics = actor?.data.data.skills?.tactics?.diceArray ? checkDiceArrayEmpty(actor.data.data.skills.tactics.diceArray) : false;
+        if (itemData.attackStats?.includes("tactics")) {
+            hasTactics = false; // If the weapon has manually set Tactics in the attack stats, remove the checkbox
+        }
+
         let useTactics = false; // Right now, just hardcode tactics to never be checked by default
 
         const templateData = {
@@ -1034,7 +1038,7 @@ export class Ironclaw2EItem extends Item {
             "equipHandedness": (item.type === 'weapon' || item.type === 'shield' ? CommonSystemInfo.equipHandedness[itemData.equip] : ""),
             "equipRange": (item.type === 'weapon' ? CommonSystemInfo.rangeBands[itemData.range] : ""),
             "hasTactics": hasTactics,
-            "checkTactics": useTactics
+            "useTactics": useTactics
         };
 
         const contents = await renderTemplate("systems/ironclaw2e/templates/chat/item-info.html", templateData);
