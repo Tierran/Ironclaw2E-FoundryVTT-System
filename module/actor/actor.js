@@ -236,8 +236,7 @@ export class Ironclaw2EActor extends Actor {
      */
     static async onPlaceExplosionTemplate(event) {
         event.preventDefault();
-        const element = event.currentTarget;
-        const dataset = element.dataset;
+        const dataset = event.currentTarget.dataset;
         const message = game.messages.get($(event.currentTarget).closest('.chat-message')[0]?.dataset?.messageId);
 
         if (!dataset || !message) {
@@ -259,11 +258,22 @@ export class Ironclaw2EActor extends Actor {
                 "ironclaw2e.weaponTemplateId": x.id,
                 "ironclaw2e.weaponTemplateSceneId": x.parent?.id
             };
-            message.update({ "_id": x.id, "flags": flags });
+            message.update({ "_id": message.id, "flags": flags });
         };
 
         const template = AbilityTemplateIronclaw.fromRange(dataset.arearange, { "elevation": attackToken.data.elevation, "successfunc": onSuccess });
         if (template) template.drawPreview();
+    }
+
+    static async onChangeTacticsUse(event) {
+        event.preventDefault();
+        const message = game.messages.get($(event.currentTarget).closest('.chat-message')[0]?.dataset?.messageId);
+        const value = event.currentTarget.checked;
+
+        const flags = {
+            "ironclaw2e.attackUsingTactics": value
+        };
+        message.update({ "_id": message.id, "flags": flags });
     }
 
     /* -------------------------------------------- */
@@ -378,13 +388,15 @@ export class Ironclaw2EActor extends Actor {
         // Trigger the actual roll if the attacker is found and the weapon id is listed
         if (attackActor && otheritem.weaponId) {
             if (rolltype === "attack")
-                attackActor.items.get(otheritem.weaponId).attackRoll(directroll, skipresist, presettn, resists, message, defenders);
+                attackActor.items.get(otheritem.weaponId).attackRoll(directroll, skipresist, presettn, resists,
+                    { "sourcemessage": message, "defendermessage": defenders, "addtactics": messageFlags?.attackUsingTactics ?? false });
             else if (rolltype === "spark")
                 attackActor.items.get(otheritem.weaponId).sparkRoll(directroll);
         } else if (!attackActor) {
             if (skipActor && game.user.isGM) { // If the item has no flags for where it is, instead try and get it from the directory and launch a roll from there
                 if (rolltype === "attack")
-                    game.items.get(otheritem.weaponId)?.attackRoll(directroll, skipresist, presettn, resists, message, defenders);
+                    game.items.get(otheritem.weaponId)?.attackRoll(directroll, skipresist, presettn, resists,
+                        { "sourcemessage": message, "defendermessage": defenders, "addtactics": messageFlags?.attackUsingTactics ?? false });
                 else if (rolltype === "spark")
                     game.items.get(otheritem.weaponId)?.sparkRoll(directroll);
             } else {
@@ -424,7 +436,7 @@ export class Ironclaw2EActor extends Actor {
         otheritem.name = flags.weaponName;
         otheritem.descriptors = flags.weaponDescriptors;
         otheritem.effects = flags.weaponEffects;
-        otheritem.stats = flags.weaponAttackStats;
+        otheritem.stats = [...flags.weaponAttackStats];
         otheritem.equip = flags.weaponEquip;
         otheritem.range = flags.weaponRange;
         otheritem.multiAttack = flags.weaponMultiAttack;
@@ -433,6 +445,7 @@ export class Ironclaw2EActor extends Actor {
         otheritem.templatePos = getTemplatePosition(flags);
         otheritem.attackerRangeReduction = flags.itemUserRangeReduction;
         otheritem.attackerRangeAutocheck = !(flags.itemUserRangeAutocheck === false); // If and only if the the value is false, will the value be false; if it is true, undefined or something else, value will be true
+        if (flags.attackUsingTactics) otheritem.stats.push("tactics"); // Add Tactics to the used stat pool for the attack
 
         return otheritem;
     }

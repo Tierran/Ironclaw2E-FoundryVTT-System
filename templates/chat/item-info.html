@@ -65,18 +65,26 @@
         </div>
         {{#if hasButtons}}
         <div class="chat-item button-holder" data-itemid="{{item._id}}" data-actorid="{{actorId}}" data-tokenid="{{tokenId}}" data-sceneid="{{sceneId}}">
-            <div class="attack-buttons flexrow">
-                <button class="default-attack" data-skipresist="false">{{localize "ironclaw2e.chatInfo.itemInfo.attackWith" name=item.name}}</button>
-                {{#if itemData.hasResist}}<button class="skip-attack small-text" style="max-width:4em" title="{{localize "ironclaw2e.chatInfo.itemInfo.attackBasicHint" name=item.name}}" data-skipresist="true">
-                    {{localize "ironclaw2e.chatInfo.itemInfo.attackBasic"}}
-                </button>{{/if}}
-                {{#if itemData.canSpark}}<button class="spark-attack small-text" style="max-width:4em">{{localize "ironclaw2e.chatInfo.itemInfo.attackSpark"}}</button>{{/if}}
+            <div class="attack-holder">
+                <div class="attack-buttons flexrow">
+                    <button class="default-attack" data-skipresist="false">{{localize "ironclaw2e.chatInfo.itemInfo.attackWith" name=item.name}}</button>
+                    {{#if itemData.hasResist}}<button class="skip-attack small-text" style="max-width:4em" title="{{localize "ironclaw2e.chatInfo.itemInfo.attackBasicHint" name=item.name}}" data-skipresist="true">
+                        {{localize "ironclaw2e.chatInfo.itemInfo.attackBasic"}}
+                    </button>{{/if}}
+                    {{#if itemData.canSpark}}<button class="spark-attack small-text" style="max-width:4em">{{localize "ironclaw2e.chatInfo.itemInfo.attackSpark"}}</button>{{/if}}
+                </div>
+                {{#if itemData.attackHasTemplate}}
+                <div class="template-buttons flexrow">
+                    <button class="place-template" data-arearange="{{itemData.multiAttackRange}}">{{localize "ironclaw2e.chatInfo.itemInfo.placeTemplate"}}</button>
+                </div>
+                {{/if}}
+                {{#if hasTactics}}
+                <div class="tactics-buttons flexrow flex-center">
+                    <span class="normal-label">{{localize "ironclaw2e.chatInfo.itemInfo.useTactics"}}</span>
+                    <input class="tactics-checkbox" name="tactics-checkbox" type="checkbox" {{checked checkTactics}} />
+                </div>
+                {{/if}}
             </div>
-            {{#if itemData.attackHasTemplate}}
-            <div class="template-buttons flexrow">
-                <button class="place-template" data-arearange="{{itemData.multiAttackRange}}">{{localize "ironclaw2e.chatInfo.itemInfo.placeTemplate"}}</button>
-            </div>
-            {{/if}}
             <div class="defense-buttons flexrow" data-defense="{{itemData.defendWith}}" data-hasresist="{{itemData.hasResist}}" data-weaponname="{{item.name}}">
                 {{#unless itemData.hasResist}}
                 {{#if standardDefense}}

@@ -24,8 +24,8 @@ Hooks.on("renderChatMessage", function (message, html, data) {
         // If buttons are disabled, remove the buttons from the visible messages
         buttons.remove();
     } else {
-        const showAuthor = game.user.isGM || message.isAuthor;
-        const showOthers = game.user.isGM || !message.isAuthor || showOthersToAll;
+        const showAuthor = game.user.isGM || message.isAuthor; // Check to show buttons meant to the author
+        const showOthers = game.user.isGM || !message.isAuthor || showOthersToAll; // Check to show buttons meant for others
 
         // Get the flags of the message that determine what type of message it is
         const itemInfo = message.getFlag("ironclaw2e", "itemInfo");
@@ -34,24 +34,28 @@ Hooks.on("renderChatMessage", function (message, html, data) {
 
         if (itemInfo) {
             if (showAuthor) {
-                const attackHolder = buttons.find('.attack-buttons');
-                attackHolder.find('.default-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
-                attackHolder.find('.skip-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
-                attackHolder.find('.spark-attack').click(Ironclaw2EActor.onChatSparkClick.bind(this));
+                const attackButtons = buttons.find('.attack-buttons');
+                attackButtons.find('.default-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
+                attackButtons.find('.skip-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
+                attackButtons.find('.spark-attack').click(Ironclaw2EActor.onChatSparkClick.bind(this));
 
-                const templateHolder = buttons.find('.template-buttons');
-                templateHolder.find('.place-template').click(Ironclaw2EActor.onPlaceExplosionTemplate.bind(this));
+                const templateButtons = buttons.find('.template-buttons');
+                templateButtons.find('.place-template').click(Ironclaw2EActor.onPlaceExplosionTemplate.bind(this));
+
+                const tacticsButtons = buttons.find('.tactics-buttons');
+                const tacticsBox = tacticsButtons.find('.tactics-checkbox');
+                tacticsBox.change(Ironclaw2EActor.onChangeTacticsUse.bind(this));
+                if (tacticsBox[0]) tacticsBox[0].checked = message.getFlag("ironclaw2e", "attackUsingTactics") ?? false; // Set the checkbox to its supposed state
             } else {
-                buttons.find('.attack-buttons').remove();
-                buttons.find('.template-buttons').remove();
+                buttons.find('.attack-holder').remove();
             }
             if (showOthers) {
-                const defenseHolder = buttons.find('.defense-buttons');
-                defenseHolder.find('.dodge-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
-                defenseHolder.find('.parry-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
-                defenseHolder.find('.special-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
-                defenseHolder.find('.resist-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
-                defenseHolder.find('.counter-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
+                const defenseButtons = buttons.find('.defense-buttons');
+                defenseButtons.find('.dodge-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
+                defenseButtons.find('.parry-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
+                defenseButtons.find('.special-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
+                defenseButtons.find('.resist-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
+                defenseButtons.find('.counter-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
             } else {
                 buttons.find('.defense-buttons').remove();
             }

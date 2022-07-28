@@ -983,7 +983,6 @@ export class Ironclaw2EItem extends Item {
         const itemData = item.data;
         const actor = this.actor;
 
-        // TODO: Make the system use speaker rather than these flags
         let flags = { "ironclaw2e.itemId": this.id, "ironclaw2e.itemActorId": actor?.id, "ironclaw2e.itemTokenId": actor?.token?.id, "ironclaw2e.itemSceneId": actor?.token?.parent?.id };
         if (item.type === "weapon") {
             flags = mergeObject(flags, {
@@ -1019,6 +1018,9 @@ export class Ironclaw2EItem extends Item {
         const actor = this.actor;
         const confirmSend = game.settings.get("ironclaw2e", "confirmItemInfo");
 
+        // Check whether the character even has Tactics to use
+        const hasTactics = actor?.data.data.skills?.tactics?.diceArray ? checkDiceArrayEmpty(actor.data.data.skills.tactics.diceArray) : false;
+
         const templateData = {
             "item": item,
             "itemData": itemData,
@@ -1028,7 +1030,9 @@ export class Ironclaw2EItem extends Item {
             "tokenId": actor?.token?.id ?? null,
             "sceneId": actor?.token?.parent?.id ?? null,
             "equipHandedness": (item.type === 'weapon' || item.type === 'shield' ? CommonSystemInfo.equipHandedness[itemData.equip] : ""),
-            "equipRange": (item.type === 'weapon' ? CommonSystemInfo.rangeBands[itemData.range] : "")
+            "equipRange": (item.type === 'weapon' ? CommonSystemInfo.rangeBands[itemData.range] : ""),
+            "hasTactics": hasTactics,
+            "checkTactics": false
         };
 
         const contents = await renderTemplate("systems/ironclaw2e/templates/chat/item-info.html", templateData);
@@ -1395,7 +1399,7 @@ export class Ironclaw2EItem extends Item {
      * @param {number} presettn The TN to use
      * @param {number} opposingsuccesses The number of opposing successes for resisted attacks
      */
-    async attackRoll(directroll = false, ignoreresist = false, presettn = 3, opposingsuccesses = -1, sourcemessage = null, defendermessage = null) {
+    async attackRoll(directroll = false, ignoreresist = false, presettn = 3, opposingsuccesses = -1, { sourcemessage = null, defendermessage = null, addtactics = false } = {}) {
         const item = this;
         const itemData = this.data;
         const actorData = this.actor ? this.actor.data : {};
@@ -1427,6 +1431,12 @@ export class Ironclaw2EItem extends Item {
             [target] = game.user.targets;
         }
 
+        // If the attack should roll tactics too, put them in the used stats
+        const usedStats = [...data.attackStats];
+        if (addtactics) {
+            usedStats.push("tactics");
+        }
+
         // Prepare the relevant data
         const exhaust = this.weaponGetGiftToExhaust();
         const canQuickroll = data.hasResist && !ignoreresist;
@@ -1448,7 +1458,7 @@ export class Ironclaw2EItem extends Item {
             exhaust.popupRefreshGift();
         } else {
             // Actually roll
-            this.genericItemRoll(data.attackStats, presettn, itemData.name, data.attackArray, 2, { "directroll": canQuickroll && directroll, target }, callback);
+            this.genericItemRoll(usedStats, presettn, itemData.name, data.attackArray, 2, { "directroll": canQuickroll && directroll, target }, callback);
         }
     }
 

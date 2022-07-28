@@ -718,15 +718,19 @@ export function getRangeBandMinMax(range, shorterOkay = false, longerOkay = fals
  * @returns {TokenPosition | null}
  */
 export function getTemplatePosition({ weaponTemplatePos = null, weaponTemplateId = "", weaponTemplateSceneId = "" }) {
+    // Try to find the actual template and use its position
     if (weaponTemplateId && weaponTemplateSceneId) {
         const templateScene = game.scenes.get(weaponTemplateSceneId);
         if (templateScene) {
             const template = templateScene.templates.get(weaponTemplateId);
-            const flagfoo = getCorrectElevationFlag();
-            return { "x": template.data.x, "y": template.data.y, "elevation": template.getFlag(flagfoo.modId, flagfoo.flagId) };
+            if (template) {
+                const flagfoo = getCorrectElevationFlag();
+                return { "x": template.data.x, "y": template.data.y, "elevation": template.getFlag(flagfoo.modId, flagfoo.flagId) };
+            }
         }
     }
 
+    // If not found, just use the stored position from the flags, inputted to this function
     return weaponTemplatePos;
 }
 
