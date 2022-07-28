@@ -978,7 +978,7 @@ export class Ironclaw2EItem extends Item {
     /**
      * Get the chat message flags for this item
      */
-    getItemFlags() {
+    getItemFlags({ useTactics = false } = {}) {
         const item = this.data;
         const itemData = item.data;
         const actor = this.actor;
@@ -987,7 +987,8 @@ export class Ironclaw2EItem extends Item {
         if (item.type === "weapon") {
             flags = mergeObject(flags, {
                 "ironclaw2e.weaponName": item.name, "ironclaw2e.weaponDescriptors": itemData.descriptorsSplit, "ironclaw2e.weaponEffects": itemData.effectsSplit,
-                "ironclaw2e.weaponAttackStats": itemData.attackStats, "ironclaw2e.weaponEquip": itemData.equip, "ironclaw2e.weaponRange": itemData.range
+                "ironclaw2e.weaponAttackStats": itemData.attackStats, "ironclaw2e.weaponEquip": itemData.equip, "ironclaw2e.weaponRange": itemData.range,
+                "ironclaw2e.attackUsingTactics": useTactics
             });
             if (itemData.multiAttackType) {
                 flags = mergeObject(flags, {
@@ -1020,6 +1021,7 @@ export class Ironclaw2EItem extends Item {
 
         // Check whether the character even has Tactics to use
         const hasTactics = actor?.data.data.skills?.tactics?.diceArray ? checkDiceArrayEmpty(actor.data.data.skills.tactics.diceArray) : false;
+        let useTactics = false; // Right now, just hardcode tactics to never be checked by default
 
         const templateData = {
             "item": item,
@@ -1032,13 +1034,13 @@ export class Ironclaw2EItem extends Item {
             "equipHandedness": (item.type === 'weapon' || item.type === 'shield' ? CommonSystemInfo.equipHandedness[itemData.equip] : ""),
             "equipRange": (item.type === 'weapon' ? CommonSystemInfo.rangeBands[itemData.range] : ""),
             "hasTactics": hasTactics,
-            "checkTactics": false
+            "checkTactics": useTactics
         };
 
         const contents = await renderTemplate("systems/ironclaw2e/templates/chat/item-info.html", templateData);
 
         let flags = { "ironclaw2e.itemInfo": true };
-        flags = mergeObject(flags, this.getItemFlags());
+        flags = mergeObject(flags, this.getItemFlags({ useTactics }));
 
         let chatData = {
             content: contents,

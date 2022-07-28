@@ -78,13 +78,13 @@
                     <button class="place-template" data-arearange="{{itemData.multiAttackRange}}">{{localize "ironclaw2e.chatInfo.itemInfo.placeTemplate"}}</button>
                 </div>
                 {{/if}}
-                {{#if hasTactics}}
-                <div class="tactics-buttons flexrow flex-center">
-                    <span class="normal-label">{{localize "ironclaw2e.chatInfo.itemInfo.useTactics"}}</span>
-                    <input class="tactics-checkbox" name="tactics-checkbox" type="checkbox" {{checked checkTactics}} />
-                </div>
-                {{/if}}
             </div>
+            {{#if hasTactics}}
+            <div class="tactics-buttons flexrow flex-center">
+                <span class="normal-label">{{localize "ironclaw2e.chatInfo.itemInfo.useTactics"}}</span>
+                <input class="tactics-checkbox" name="tactics-checkbox" type="checkbox" {{checked checkTactics}} disabled />
+            </div>
+            {{/if}}
             <div class="defense-buttons flexrow" data-defense="{{itemData.defendWith}}" data-hasresist="{{itemData.hasResist}}" data-weaponname="{{item.name}}">
                 {{#unless itemData.hasResist}}
                 {{#if standardDefense}}

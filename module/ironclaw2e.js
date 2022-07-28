@@ -332,6 +332,14 @@ function registerWorldSettings() {
         default: true,
         config: false
     });
+    game.settings.register("ironclaw2e", "showOthersTacticsUse", {
+        name: "ironclaw2e.config.showOthersTacticsUse",
+        hint: "ironclaw2e.config.showOthersTacticsUseHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
 
     // Initiative condition configs
     game.settings.register("ironclaw2e", "autoInitiativeConditions", {

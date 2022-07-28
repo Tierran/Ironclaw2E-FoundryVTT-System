@@ -17,6 +17,7 @@ Hooks.on("renderChatMessage", function (message, html, data) {
     const noButtons = game.settings.get("ironclaw2e", "chatButtons") === false;
     const showOthersToAll = game.settings.get("ironclaw2e", "showDefenseButtons");
     const showDescription = game.settings.get("ironclaw2e", "npcItemHasDescription");
+    const showTactics = game.settings.get("ironclaw2e", "showOthersTacticsUse");
     const buttons = html.find('.button-holder');
 
     // Chat message button system
@@ -33,6 +34,10 @@ Hooks.on("renderChatMessage", function (message, html, data) {
         const requestRoll = message.getFlag("ironclaw2e", "requestRoll");
 
         if (itemInfo) {
+            const tacticsButtons = buttons.find('.tactics-buttons');
+            const tacticsBox = tacticsButtons.find('.tactics-checkbox');
+            if (tacticsBox[0]) tacticsBox[0].checked = message.getFlag("ironclaw2e", "attackUsingTactics") ?? false; // Set the checkbox to its supposed state
+
             if (showAuthor) {
                 const attackButtons = buttons.find('.attack-buttons');
                 attackButtons.find('.default-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
@@ -42,12 +47,15 @@ Hooks.on("renderChatMessage", function (message, html, data) {
                 const templateButtons = buttons.find('.template-buttons');
                 templateButtons.find('.place-template').click(Ironclaw2EActor.onPlaceExplosionTemplate.bind(this));
 
-                const tacticsButtons = buttons.find('.tactics-buttons');
-                const tacticsBox = tacticsButtons.find('.tactics-checkbox');
+                // Only bind the tactics change here to ensure only the author and GM can do it
                 tacticsBox.change(Ironclaw2EActor.onChangeTacticsUse.bind(this));
-                if (tacticsBox[0]) tacticsBox[0].checked = message.getFlag("ironclaw2e", "attackUsingTactics") ?? false; // Set the checkbox to its supposed state
+                if (tacticsBox[0]) tacticsBox[0].disabled = false;
             } else {
                 buttons.find('.attack-holder').remove();
+                if (!showTactics) {
+                    // Remove the tactics checkbox from being visible
+                    tacticsButtons.remove();
+                }
             }
             if (showOthers) {
                 const defenseButtons = buttons.find('.defense-buttons');
