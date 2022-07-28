@@ -14,7 +14,9 @@
             </p>
             {{#if itemData.grantsMark}}<p>
                 <strong>{{localize "ironclaw2e.chatInfo.itemInfo.grantsMark"}}:</strong> {{itemData.markSkill}}
-            </p>{{/if}}
+            </p>{{else}}{{#if data.specialSkillUse}}<p>
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.giftSkill"}}:</strong> {{itemData.markSkill}}
+            </p>{{/if}}{{/if}}
             {{/if}}
             {{#if (typeCheck item.type "extraCareer")}}
             <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.name"}}:</strong> {{itemData.careerName}}</p>

@@ -94,8 +94,8 @@ For gifts that should interact with the system by giving situational bonuses, th
  - **Range Penalty Reduction**: A bonus that reduces the range penalty applied to attacks by the actor.  
  - **Encumbrance Limit Bonus**: A bonus to the carrying capacity of an actor.  
  - **Currency Value Change**: A way to allow a gift to change the value of a currency for an actor.  
- - **Stat Change**: An automated way to change the stats for an item when it is dragged to the actor from the Items Directory.  
- - **Dice Upgrade**: An automated way to change the dice for an item when it is dragged to the actor from the Items Directory.  
+ - **Stat Change**: An automated way to change the stats for an item when it is dragged to the actor from the Items Directory. Stat fields this works for are gift's use field, and weapon's attack, parry and counter fields.  
+ - **Dice Upgrade**: An automated way to change the dice for an item when it is dragged to the actor from the Items Directory. Applies to any and all dice in the item: shield cover die, armor dice, spark die, and dice embedded in the stat fields.  
  
 </details>
 
