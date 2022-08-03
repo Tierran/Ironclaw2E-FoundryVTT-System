@@ -9,19 +9,20 @@ While the system has compendiums, they **do not** contain characters, gifts, gea
 
 This system was built from the Boilerplate system found here: https://gitlab.com/asacolips-projects/foundry-mods/boilerplate  
 
-
 ## Usage
 
 For rolling actor dice pools, actor sheets have a button to open a dice poll popup, which allows you to select what pools to use for the roll. Weapons and gifts can also be rolled directly, as well as Soak, Dodge defense and Rally from the actor's sheet. The sheet's Rally roll will attempt to get the right range penalty if the user is targeting another token while Rallying. The system supports setting up gifts to grant a variety of bonuses to most of the roll types through the gift sheet, which can be set to trigger with specific conditions or when used with weapons that match its configured attributes.  
 
-Weapons and gifts can be set up to automatically select certain dice pools, as well as giving extra dice for the roll automatically. The system will also use the above-mentioned system to add relevant modifiers to the rolls. Armor and shields also work, and gifts that add dice (eg. Armored Fighter) can be set up through the special bonus system.  
+Weapons and gifts can be set up to automatically select certain dice pools, as well as giving extra dice for the roll automatically. The system will also use the above-mentioned bonus system to add relevant modifiers to the rolls. Armor and shields also work, and gifts that add dice (eg. Armored Fighter) can be set up through the special bonus system.  
 
 Extra Career gift is a special case and has its own item type, instead of being a normal gift. The system can handle an arbitrary number of them, but will only show the two top ones as dice pools.  
 
 The system has support for dragging items to the hotbar to create usable macros for their quick use. The specifics vary by item type, as weapons would ask how it is used (Attack, Spark, Parry, Counter) from its set pools or just pop up a dice pool selection with the only pool set, gifts would pop up either a dice pool, refresh or exhaust dialog, simpler used items would switch whether they are worn/held/lit, and simple gear will just output their info to chat. Holding the quickroll modifier key (default *Control*) when you drag an item to the hotbar will instead create a macro to always send the item's info to chat.  
 
 
-In sheets, things with red outlines signify a clickable function, while blue signifies a double-clickable. Single-clicks are usually some function, like opening the dice pool dialog, whereas double-clickable is usually for outputting info to the chat about the thing. Double-clicking on weapons sends an info message to chat with buttons for attacking with the weapon, placing an AoE template for relevant weapons, as well as defending against the weapon as the current actor. Rolling the defense first will allow the attacker to right click the opposing roll and select a context option to attack against the defense directly, with the attack roll automatically taking the right values from the defense roll. Weapon attack damage messages also have soak buttons for different damage levels that allow quickly rolling soak against the weapon as the current actor. Attacks that automatically hit (eg. explosions) don't allow a resistance roll immediately and instead ask for the attacker to roll the attack first, then the Soak button rolls both the resistance and the actual soak to reduce the damage. 
+In sheets, things with red outlines signify a clickable function, while blue signifies a double-clickable. Single-clicks are usually some function, like opening the dice pool dialog, whereas double-clickable is usually for outputting info to the chat about the thing. Double-clicking on weapons sends an info message to chat with buttons for attacking with the weapon, placing an AoE template for relevant weapons, as well as defending against the weapon as the current actor.  
+
+Rolling the defense first will allow the attacker to right click the opposing roll and select a context option to attack against the defense directly, with the attack roll automatically taking the right values from the defense roll. Weapon attack damage messages also have soak buttons for different damage levels that allow quickly rolling soak against the weapon as the current actor. Attacks that automatically hit (eg. explosions) don't allow a resistance roll immediately and instead ask for the attacker to roll the attack first, then the Soak button rolls both the resistance and the actual soak to reduce the damage.  
  
 The system has some additional context menu / right-click options for chat messages. Rolls done with the system's own 'dice rollers' have options to change the roll type, the target number or reroll a one, as well as some additional functions to resolve resisted or counter-attacks while the "Auto-calculate attack damage" option is on.  
 
@@ -35,11 +36,7 @@ Ironclaw's initiative system is supported, both the normal side-based and the al
 
 The Combat Tracker will show the result of the initiative check before the initiative itself for the GM, either as the number of successes, or as Tie (T), Failure (F), or Botch (B).  
 
-
-The Species and Career Template items are a way to group up the statistics, gifts and natural weapons they can involve. Actors do not own them like normal items, but instead dragging one over from the Items Directory onto an actor's sheet allows it to be applied onto the actor. In addition, the system has a configuration to automatically apply them based on the randomized token images of mooks and beasts as they are added onto scenes, if the settings are correct. More on that below.  
-
-The template data will overwrite the actor's own fields whether the template has data in them or not. By contrast, the system will ignore empty template item fields and will avoid creating duplicate gifts and weapons, basing the duplicate check on the exact name.  
-
+#### Module Support
 
 The system has support for the Drag Ruler module (https://github.com/manuelVo/foundryvtt-drag-ruler). The distance colors represent Stride (blue), Stride+Dash (green), Run (yellow) and over max distance (red).  
 
@@ -77,6 +74,7 @@ Most buttons in the sheet or the chat that perform rolls can be "quickrolled" by
 
 The "Using Tactics" checkbox in weapon item info messages controls whether the attack will use the Tactics skill automatically and is toggleable for the GM and the message's author (player sending it). Any gift bonuses that check for an attack using Tactics as a stat will work accordingly, eg. Counter-Tactics. If the checkbox is not visible, it means the attacker has no Tactics to use, or that the world configuration has hidden it from other players. Gift bonus checks will still work even if the checkbox is visually hidden. Note that if a weapon has Tactics set directly in the attack roll field, the checkbox is automatically removed as unneeded.  
 
+#### Setting up items
 
 Setting up dice pools for items follows this format: "*(trait or skill name)*, *(another name)*;*(any bonus dice in one line format)*", eg. "Body, Melee Combat, dodge,weathersense;d12". The order of skills and traits are arbitrary and can include spaces in the name, but every name must be separated with a comma. The semicolon (;) separates the stat names from bonus dice, which are formatted the same way as one line rolls. If there is no bonus dice, the semicolon can be omitted.  
 
@@ -84,6 +82,7 @@ For gifts that only grant situational bonuses to certain things without any rela
 
 Gifts that grant situational bonuses can be configured from the "Advanced Settings" tab. More on that below. Items that have weight can have their weight value set up as either a fractional value "1/8" or a decimal value "0.125", the system will detect the presence of a slash and treat the value accordingly.  
 
+#### Weapon-specific setups
 
 Both the *Effect* and *Descriptor* fields in weapons should be formatted so that every attribute is separated with a comma, eg. "Damage +2, Slaying, Awkward", for the system automations to support them. Weapons also have a field to give its opposing defensive pool for system and quick reference, normally this is just standard "defense" but some weapons with special defenses may have different pools. Weapons with resisted effects should set the resistance pool in the opposing defense field and toggle the "Defense is Resist" checkbox on. Wands and rods should also include "Wand" or "Rod" respectively as a descriptor even if that's not normal for Ironclaw.  
 
@@ -95,8 +94,14 @@ The weapon upgrade action field notes what action the upgrade process requires i
 
 Currently, the system does not allow dice pools to include items. Instead, the system tries to track what items should be included in which dice pools, eg. including worn armor in Soak rolls, as well as adding the gift special bonuses. Where these bonuses go is hard-coded though, so I'm afraid it won't be perfect.  
 
+#### Template items
 
-**For Chat Commands**:  
+The Species and Career Template items are a way to group up the statistics, gifts and natural weapons they can involve. Actors do not own them like normal items, but instead dragging one over from the Items Directory onto an actor's sheet allows it to be applied onto the actor. In addition, the system has a configuration to automatically apply them based on the randomized token images of mooks and beasts as they are added onto scenes, if the settings are correct. More on that below.  
+
+The template data will overwrite the actor's own fields whether the template has data in them or not. By contrast, the system will ignore empty template item fields and will avoid creating duplicate gifts and weapons, basing the duplicate check on the exact name.  
+
+#### Chat Commands module support
+
 The /iroll command can be used to quickly roll dice with the internal dice roller. It takes a one line format input after the command to roll dice as a highest roll type, with a semicolon followed by a number at the end changing it to a TN roll. Eg. "/iroll 3d6,d8" or "/iroll 3d6,d8;5"  
 
 The /popuproll command opens a standard roll dialog with the given dice pools already checked and optional extra dice and TN preset. It takes a dice pool format input, again with an additional semicolon and number changing the default roll type from highest to TN. However, the system will attempt to detect if the value after the first and only semicolon is a dice input or a TN. Eg. "/popuproll Dodge, Speed;d12;5" or "/popuproll will,presence;3"  

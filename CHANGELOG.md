@@ -1,8 +1,13 @@
+### 0.5.17 Shifting host release
+ - Moving things over to GitHub
+ - Formatted the readme a bit
+ - *Probably actually* the last Foundry VTT V9 update
+
 ### 0.5.16 Tactical shields release
  - Added a checkbox to use Tactics when attacking, to help with opposing gift bonuses checking for attacker using Tactics
  - Added equip style info to shields
  - ASCII art added to console
- - *Very possibly* the last Foundry VTT V9 update
+ - ~~*Very possibly* the last Foundry VTT V9 update~~
 
 ### 0.5.15 Upgraded rerolling release
  - Players can now use reroll gifts on rolls not made by them, if world configuration and gift settings allow
