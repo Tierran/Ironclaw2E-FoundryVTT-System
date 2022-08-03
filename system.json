@@ -2,7 +2,7 @@
   "name": "ironclaw2e",
   "title": "Ironclaw Second Edition",
   "description": "Ironclaw Second Edition system for FoundryVTT.",
-  "version": "0.5.16",
+  "version": "auto-filled",
   "minimumCoreVersion": "9",
   "compatibleCoreVersion": "9.269",
   "templateVersion": 27,
@@ -13,6 +13,7 @@
   "packs": [
     {
       "name": "macrospack",
+	  "system": "ironclaw2e",
       "label": "Pre-Packaged Macros",
       "system": "ironclaw2e",
       "module": "ironclaw2e",
@@ -21,6 +22,7 @@
     },
     {
       "name": "systeminfo",
+	  "system": "ironclaw2e",
       "label": "System Info",
       "system": "ironclaw2e",
       "module": "ironclaw2e",
@@ -29,6 +31,7 @@
     },
     {
       "name": "statuseffects",
+	  "system": "ironclaw2e",
       "label": "Status Effects",
       "system": "ironclaw2e",
       "module": "ironclaw2e",
@@ -48,8 +51,9 @@
   "gridUnits": "pc",
   "primaryTokenAttribute": "null",
   "secondaryTokenAttribute": "null",
-  "url": "https://gitlab.com/Hertzila/ironclaw2e-foundryvtt-system/",
-  "manifest": "https://gitlab.com/Hertzila/ironclaw2e-foundryvtt-system/-/raw/master/system.json",
-  "download": "https://gitlab.com/Hertzila/ironclaw2e-foundryvtt-system/-/archive/v0.5.16/ironclaw2e-foundryvtt-system-v0.5.16.zip",
+  "url": "https://github.com/Hertzila/Ironclaw2E-FoundryVTT-System",
+  "changelog": "https://github.com/Hertzila/Ironclaw2E-FoundryVTT-System/blob/master/CHANGELOG.md",
+  "manifest": "auto-filled",
+  "download": "auto-filled",
   "license": "LICENSE.txt"
 }
