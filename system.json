@@ -1,10 +1,16 @@
 {
   "name": "ironclaw2e",
+  "id": "ironclaw2e",
   "title": "Ironclaw Second Edition",
   "description": "Ironclaw Second Edition system for FoundryVTT.",
   "version": "0.5.17",
   "minimumCoreVersion": "9",
   "compatibleCoreVersion": "9.269",
+  "compatibility": {
+    "minimum": 9,
+    "verified": "9.269",
+    "maximum": 9
+  },
   "templateVersion": 27,
   "author": "Hertzila",
   "esmodules": [ "module/ironclaw2e.js" ],
@@ -13,27 +19,24 @@
   "packs": [
     {
       "name": "macrospack",
-	  "system": "ironclaw2e",
-      "label": "Pre-Packaged Macros",
       "system": "ironclaw2e",
+      "label": "Pre-Packaged Macros",
       "module": "ironclaw2e",
       "path": "packs/customizable-rolls.db",
       "entity": "Macro"
     },
     {
       "name": "systeminfo",
-	  "system": "ironclaw2e",
-      "label": "System Info",
       "system": "ironclaw2e",
+      "label": "System Info",
       "module": "ironclaw2e",
       "path": "packs/system-info.db",
       "entity": "JournalEntry"
     },
     {
       "name": "statuseffects",
-	  "system": "ironclaw2e",
-      "label": "Status Effects",
       "system": "ironclaw2e",
+      "label": "Status Effects",
       "module": "ironclaw2e",
       "path": "packs/status-effects.db",
       "entity": "JournalEntry"
@@ -46,7 +49,6 @@
       "path": "lang/en.json"
     }
   ],
-  "dependencies": [],
   "gridDistance": 1,
   "gridUnits": "pc",
   "primaryTokenAttribute": "null",
