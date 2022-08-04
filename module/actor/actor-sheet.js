@@ -25,7 +25,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
     get template() {
         const path = "systems/ironclaw2e/templates/actor";
 
-        return `${path}/actor-${this.actor.data.type}-sheet.html`;
+        return `${path}/actor-${this.actor.type}-sheet.html`;
     }
 
     /* -------------------------------------------- */
@@ -34,7 +34,6 @@ export class Ironclaw2EActorSheet extends ActorSheet {
     getData() {
         const baseData = super.getData();
         baseData.dtypes = ["String", "Number", "Boolean"];
-        //console.log(baseData);
 
         let sheetData = {};
         // Insert the basics
@@ -50,22 +49,22 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         sheetData.dtypes = baseData.dtypes;
 
         // Prepare items
-        if (this.actor.data.type == 'character') {
+        if (this.actor.type == 'character') {
             this._prepareCharacterItems(sheetData);
         }
-        if (this.actor.data.type == 'mook') {
+        if (this.actor.type == 'mook') {
             this._prepareCharacterItems(sheetData);
         }
-        if (this.actor.data.type == 'beast') {
+        if (this.actor.type == 'beast') {
             this._prepareBeastItems(sheetData);
         }
 
         // Grab the actual template data and effects
-        sheetData.data = baseData.data.data;
+        sheetData.data = baseData.data.system;
         sheetData.effects = baseData.effects;
 
         // Get whether the actor is flying for some things
-        sheetData.isFlying = baseData.data.data.isFlying === true;
+        sheetData.isFlying = baseData.data.system.isFlying === true;
         sheetData.templateHelp = this._prepateTemplateHelp(sheetData);
 
         //console.log(sheetData);
@@ -184,12 +183,12 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
     _prepateTemplateHelp(sheetData) {
         let help = {
-            "skillSystem": this.actor.data.type !== 'beast',
-            "favoredUse": this.actor.data.type === 'character',
-            "encumbranceInItems": this.actor.data.type === 'beast',
-            "armorsDisabled": this.actor.data.type === 'beast',
-            "shieldsDisabled": this.actor.data.type === 'beast',
-            "coinageDisabled": this.actor.data.type === 'beast',
+            "skillSystem": this.actor.type !== 'beast',
+            "favoredUse": this.actor.type === 'character',
+            "encumbranceInItems": this.actor.type === 'beast',
+            "armorsDisabled": this.actor.type === 'beast',
+            "shieldsDisabled": this.actor.type === 'beast',
+            "coinageDisabled": this.actor.type === 'beast',
             "showDirectoryOptions": (game.user.isGM && !this.actor.parent)
         };
         return help;
@@ -293,8 +292,8 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         for (let item of itemData) {
 
-            if (this.actor.data.data.processingLists?.statChange) { // Check if the processing list and stat change list even exist
-                for (let special of this.actor.data.data.processingLists.statChange) { // Loop through the stat change specials
+            if (this.actor.system.processingLists?.statChange) { // Check if the processing list and stat change list even exist
+                for (let special of this.actor.system.processingLists.statChange) { // Loop through the stat change specials
                     if (checkApplicability(special, item, this.actor)) { // Check if the current special applies
                         if (special.changeFrom && special.changeTo) { // Check whether the special has the necessary fields
                             for (let i = 0; i < special.changeFrom.length && i < special.changeTo.length; ++i) { // Go through all the potential changes
@@ -337,8 +336,8 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                 }
             }
 
-            if (this.actor.data.data.processingLists?.diceUpgrade) { // Check if the processing list and dice upgrade list even exist
-                for (let special of this.actor.data.data.processingLists.diceUpgrade) { // Loop through the dice upgrade specials
+            if (this.actor.system.processingLists?.diceUpgrade) { // Check if the processing list and dice upgrade list even exist
+                for (let special of this.actor.system.processingLists.diceUpgrade) { // Loop through the dice upgrade specials
                     if (checkApplicability(special, item, this.actor)) { // Check if the current special applies
                         let nameAdded = false;
 
@@ -456,7 +455,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         event.preventDefault();
         const element = event.currentTarget;
         const dataset = element.dataset;
-        const data = this.actor.data.data;
+        const data = this.actor.system;
 
         if (dataset.roll) {
             let selected = splitStatString(dataset.roll);
@@ -512,7 +511,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         event.preventDefault();
         const element = event.currentTarget;
         const dataset = element.dataset;
-        const data = this.actor.data.data;
+        const data = this.actor.system;
         let selected = [];
         const directroll = checkQuickModifierKey();
 
@@ -534,7 +533,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         event.preventDefault();
         const element = event.currentTarget;
         const dataset = element.dataset;
-        const data = this.actor.data.data;
+        const data = this.actor.system;
         let selected = [];
         const directroll = checkQuickModifierKey();
 
@@ -717,7 +716,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         event.preventDefault();
         const element = event.currentTarget;
         const dataset = element.dataset;
-        const data = this.actor.data.data;
+        const data = this.actor.system;
 
         if (dataset.roll && dataset.item) {
             const item = this.actor.items.get(dataset.item);
@@ -744,7 +743,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                     break;
                 case "template":
                     const attackToken = findActorToken(this.actor);
-                    const template = AbilityTemplateIronclaw.fromRange(item.data.data.multiAttackRange, { "elevation": attackToken.data.elevation, "originSheet": this });
+                    const template = AbilityTemplateIronclaw.fromRange(item.system.multiAttackRange, { "elevation": attackToken.elevation, "originSheet": this });
                     if (template) template.drawPreview();
                     break;
                 default:
@@ -763,7 +762,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         event.preventDefault();
         const element = event.currentTarget;
         const dataset = element.dataset;
-        const data = this.actor.data.data;
+        const data = this.actor.system;
 
         if (dataset.stat && dataset.item) {
             const item = this.actor.items.get(dataset.item);
@@ -771,13 +770,13 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
             if (dataset.stat === "readied") {
                 // Readied special case
-                if (item.data.data.hasOwnProperty("readied"))
+                if (item.system.hasOwnProperty("readied"))
                     item.weaponToggleReady();
             } else {
-                if (item.data.data.hasOwnProperty(dataset.stat)) {
+                if (item.system.hasOwnProperty(dataset.stat)) {
                     const propertyName = "data." + dataset.stat;
                     foobar = { "_id": item.id };
-                    foobar[propertyName] = !item.data.data[dataset.stat];
+                    foobar[propertyName] = !item.system[dataset.stat];
                 }
             }
 
@@ -796,7 +795,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         event.preventDefault();
         const element = event.currentTarget;
         const dataset = element.dataset;
-        const data = this.actor.data.data;
+        const data = this.actor.system;
 
         const li = $(event.currentTarget).parents(".item");
         const item = this.actor.items.get(li.data("itemId"));
@@ -812,7 +811,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         event.preventDefault();
         const element = event.currentTarget;
         const dataset = element.dataset;
-        const data = this.actor.data.data;
+        const data = this.actor.system;
 
         const li = $(event.currentTarget).parents(".effect");
         const cond = this.actor.getEmbeddedDocument("ActiveEffect", li.data("effectId"));

@@ -105,7 +105,7 @@ Hooks.once('init', function () {
     game.settings.register("ironclaw2e", "lastSystemVersionWorld", {
         scope: "world",
         type: String,
-        default: game.system.data.version,
+        default: game.system.version,
         config: false
     });
 
@@ -119,15 +119,7 @@ Hooks.once('init', function () {
     game.settings.register("ironclaw2e", "lastSystemVersionClient", {
         scope: "client",
         type: String,
-        default: game.system.data.version,
-        config: false
-    });
-
-    // TO BE REMOVED in the version 0.6, old single-setting version check stored in the client
-    game.settings.register("ironclaw2e", "lastSystemVersion", {
-        scope: "client",
-        type: String,
-        default: game.system.data.version,
+        default: game.system.version,
         config: false
     });
 
@@ -199,27 +191,20 @@ Hooks.once("ready", function () {
 
     // World Version checks 
     if (game.user.isGM) {
-        // TO BE REMOVED
-        const obsoleteLastVersion = game.settings.get("ironclaw2e", "lastSystemVersion");
-        if (checkIfNewerVersion("0.5.5", obsoleteLastVersion)) {
-            game.settings.set("ironclaw2e", "lastSystemVersion", game.system.data.version);
-        }
-        // REMOVE THE SPECIAL CHECK
-        const lastVersion = (checkIfNewerVersion("0.5.5", obsoleteLastVersion) ? obsoleteLastVersion : game.settings.get("ironclaw2e", "lastSystemVersionWorld"));
-        // TO BE REMOVED END
+        const lastVersion = game.settings.get("ironclaw2e", "lastSystemVersionWorld");
         console.log("Last system version played: " + lastVersion);
-        if (checkIfNewerVersion(game.system.data.version, lastVersion)) {
+        if (checkIfNewerVersion(game.system.version, lastVersion)) {
             upgradeVersion(lastVersion);
         }
-        game.settings.set("ironclaw2e", "lastSystemVersionWorld", game.system.data.version);
+        game.settings.set("ironclaw2e", "lastSystemVersionWorld", game.system.version);
     }
 
     // Client Version checks
     const lastClientVersion = game.settings.get("ironclaw2e", "lastSystemVersionClient");
-    if (checkIfNewerVersion(game.system.data.version, lastClientVersion)) {
+    if (checkIfNewerVersion(game.system.version, lastClientVersion)) {
         // Insert changelog popups here
     }
-    game.settings.set("ironclaw2e", "lastSystemVersionClient", game.system.data.version);
+    game.settings.set("ironclaw2e", "lastSystemVersionClient", game.system.version);
 
 
     console.log("Ironclaw2E System ready");

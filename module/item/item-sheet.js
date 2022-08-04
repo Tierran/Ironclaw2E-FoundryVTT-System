@@ -26,7 +26,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
 
         // Alternatively, you could use the following return statement to do a
         // unique item sheet by type, like `weapon-sheet.html`.
-        return `${path}/item-${this.item.data.type}-sheet.html`;
+        return `${path}/item-${this.item.type}-sheet.html`;
     }
 
     /* -------------------------------------------- */
@@ -34,10 +34,12 @@ export class Ironclaw2EItemSheet extends ItemSheet {
     /** @override */
     getData() {
         const baseData = super.getData();
+        baseData.dtypes = ["String", "Number", "Boolean"];
+
         let sheetData = {};
         // Insert the basics
         sheetData.item = baseData.data;
-        sheetData.data = baseData.data.data;
+        sheetData.data = baseData.data.system;
 
         // Insert necessary misc data
         sheetData.options = baseData.options;
@@ -67,7 +69,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         sheetData.isGM = game.user.isGM;
         sheetData.showDirectoryOptions = game.user.isGM && !this.item.parent;
         sheetData.rangeDistance = getRangeDistanceFromBand(sheetData.data.range);
-        sheetData.showGiftSkill = baseData.data.data.grantsMark || baseData.data.data.specialSkillUse;
+        sheetData.showGiftSkill = baseData.data.system.grantsMark || baseData.data.system.specialSkillUse;
 
         return sheetData;
     }
@@ -160,7 +162,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
                         for (let gift of gifts) {
                             if (gift.name === this.item.name) {
                                 console.log(gift); // Log all potential changes to console, just in case
-                                await gift.update({ "data.specialSettings": this.item.data.data.specialSettings });
+                                await gift.update({ "system.specialSettings": this.item.system.specialSettings });
                             }
                         }
                         ui.notifications.info("ironclaw2e.ui.itemUpdateComplete", { localize: true, permanent: true });

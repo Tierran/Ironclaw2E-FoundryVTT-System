@@ -22,7 +22,7 @@ export function hasConditionsIronclaw(conditions, target, warn = false) {
         if (!actor) return false;
         conditions = Array.isArray(conditions) ? conditions : [conditions];
 
-        return actor.data.effects.some(x => conditions.includes(x.data.flags?.core?.statusId));
+        return actor.effects.some(x => conditions.includes(x.flags?.core?.statusId));
     }
 }
 
@@ -50,7 +50,7 @@ export function getConditionNamesIronclaw(target, warn = false) {
         let actor = getTargetActor(target);
         if (!actor) return [];
 
-        actor.data.effects.forEach((value) => names.push(value.data.label));
+        actor.effects.forEach((value) => names.push(value.label));
     }
 
     return names;
@@ -80,7 +80,7 @@ export function getConditionsIronclaw(target, warn = false) {
         let actor = getTargetActor(target);
         if (!actor) return null;
 
-        actor.data.effects.forEach((value) => conds.push(value));
+        actor.effects.forEach((value) => conds.push(value));
     }
 
     return conds;
@@ -101,10 +101,10 @@ export function getSingleConditionIronclaw(name, target, warn = false) {
         const usedname = CommonConditionInfo.convertToCub(name);
         if (raw) {
             if (Array.isArray(raw)) {
-                cond = raw.find(x => usedname.includes(x?.data.label));
+                cond = raw.find(x => usedname.includes(x?.label));
             }
             else {
-                if (usedname.includes(raw?.data.label))
+                if (usedname.includes(raw?.label))
                     cond = raw;
             }
         }
@@ -113,7 +113,7 @@ export function getSingleConditionIronclaw(name, target, warn = false) {
         let actor = getTargetActor(target);
         if (!actor) return null;
 
-        cond = actor.data.effects.find((value) => value?.data.flags?.core?.statusId === name);
+        cond = actor.effects.find((value) => value?.flags?.core?.statusId === name);
     }
 
     return cond ?? null;
@@ -176,7 +176,7 @@ export async function removeConditionsIronclaw(conditions, target, checkfirst = 
         conditions = Array.isArray(conditions) ? conditions : [conditions];
 
         let removals = [];
-        actor.data.effects.forEach((value) => { if (conditions.includes(value.getFlag("core", "statusId"))) removals.push(value.id); });
+        actor.effects.forEach((value) => { if (conditions.includes(value.getFlag("core", "statusId"))) removals.push(value.id); });
         if (removals.length > 0)
             return await actor.deleteEmbeddedDocuments("ActiveEffect", removals);
     }
@@ -236,10 +236,10 @@ export function checkIfDefeatedIronclaw(target) {
         let raw = game.cub.getConditionEffects(target, { "warn": false });
         if (raw) {
             if (Array.isArray(raw)) {
-                return raw.some(x => CommonConditionInfo.defeatedCubList.has(x?.data.label));
+                return raw.some(x => CommonConditionInfo.defeatedCubList.has(x?.label));
             }
             else {
-                return CommonConditionInfo.defeatedCubList.has(raw?.data.label);
+                return CommonConditionInfo.defeatedCubList.has(raw?.label);
             }
         }
     }
@@ -247,7 +247,7 @@ export function checkIfDefeatedIronclaw(target) {
         let actor = getTargetActor(target);
         if (!actor) return false;
 
-        return actor.data.effects.some((value) => CommonConditionInfo.defeatedList.has(value?.data.flags?.core?.statusId));
+        return actor.effects.some((value) => CommonConditionInfo.defeatedList.has(value?.flags?.core?.statusId));
     }
 
     return false;
@@ -264,10 +264,10 @@ export function checkIfDisadvantagedIronclaw(target) {
         let raw = game.cub.getConditionEffects(target, { "warn": false });
         if (raw) {
             if (Array.isArray(raw)) {
-                return raw.some(x => CommonConditionInfo.combatAdvantageCubList.has(x?.data.label));
+                return raw.some(x => CommonConditionInfo.combatAdvantageCubList.has(x?.label));
             }
             else {
-                return CommonConditionInfo.combatAdvantageCubList.has(raw?.data.label);
+                return CommonConditionInfo.combatAdvantageCubList.has(raw?.label);
             }
         }
     }
@@ -275,7 +275,7 @@ export function checkIfDisadvantagedIronclaw(target) {
         let actor = getTargetActor(target);
         if (!actor) return false;
 
-        return actor.data.effects.some((value) => CommonConditionInfo.combatAdvantageList.has(value?.data.flags?.core?.statusId));
+        return actor.effects.some((value) => CommonConditionInfo.combatAdvantageList.has(value?.flags?.core?.statusId));
     }
 
     return false;

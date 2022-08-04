@@ -145,12 +145,12 @@ export class Ironclaw2EActor extends Actor {
                     return defenseActor.popupResistRoll({ "prechecked": splitStatString(defenseset.defense) }, { directroll, otheritem }, null, addMessageId);
                     break;
                 case "parry":
-                    const parries = defenseActor.items.filter(element => element.data.type === 'weapon' && element.data.data.canDefend);
+                    const parries = defenseActor.items.filter(element => element.type === 'weapon' && element.system.canDefend);
                     defenseOptions = parries;
                     validDefenses.parryvalid = true;
                     break;
                 case "counter":
-                    const counters = defenseActor.items.filter(element => element.data.type === 'weapon' && element.data.data.canCounter);
+                    const counters = defenseActor.items.filter(element => element.type === 'weapon' && element.system.canCounter);
                     defenseOptions = counters;
                     validDefenses.countervalid = true;
                     break;
@@ -254,14 +254,14 @@ export class Ironclaw2EActor extends Actor {
         // Function to execute on success, setting the proper flags to the item data message
         const onSuccess = async (x) => {
             const flags = {
-                "ironclaw2e.weaponTemplatePos": { "x": x.data.x, "y": x.data.y, "elevation": attackToken.data.elevation },
+                "ironclaw2e.weaponTemplatePos": { "x": x.x, "y": x.y, "elevation": attackToken.elevation },
                 "ironclaw2e.weaponTemplateId": x.id,
                 "ironclaw2e.weaponTemplateSceneId": x.parent?.id
             };
             message.update({ "_id": message.id, "flags": flags });
         };
 
-        const template = AbilityTemplateIronclaw.fromRange(dataset.arearange, { "elevation": attackToken.data.elevation, "successfunc": onSuccess });
+        const template = AbilityTemplateIronclaw.fromRange(dataset.arearange, { "elevation": attackToken.elevation, "successfunc": onSuccess });
         if (template) template.drawPreview();
     }
 
@@ -297,13 +297,13 @@ export class Ironclaw2EActor extends Actor {
         if (actor) {
             if (parryvalid) {
                 for (let foo of optionsource) {
-                    if (foo.data.data.canDefend)
+                    if (foo.system.canDefend)
                         options += `<option value="${foo.id}" data-type="parry">${game.i18n.format("ironclaw2e.dialog.defense.parryRoll", { "name": foo.name })}</option >`;
                 }
             }
             if (countervalid) {
                 for (let foo of optionsource) {
-                    if (foo.data.data.canCounter)
+                    if (foo.system.canCounter)
                         options += `<option value="${foo.id}" data-type="counter">${game.i18n.format("ironclaw2e.dialog.defense.counterRoll", { "name": foo.name })}</option >`;
                 }
             }
@@ -572,11 +572,11 @@ export class Ironclaw2EActor extends Actor {
         data.token.displayName = 20;
 
         if (data.type === 'character') {
-            data.token.actorLink = true;
-            data.token.vision = true;
+            data.prototypeToken.actorLink = true;
+            data.prototypeToken.vision = true;
         }
 
-        this.data.update(data);
+        this.update(data);
     }
 
     /** @override
@@ -585,14 +585,14 @@ export class Ironclaw2EActor extends Actor {
     prepareData() {
         // Performs the following, in order: data reset, prepareBaseData(), prepareEmbeddedDocuments(), prepareDerivedData()
         super.prepareData();
-        const actorData = this.data;
+        const actor = this;
 
         // If the actor is one with actual stats, do post-processing
-        if (actorData.type === "character" || actorData.type === "mook" || actorData.type === "beast") {
+        if (actor.type === "character" || actor.type === "mook" || actor.type === "beast") {
             // Battle Stat roll dice pool visuals
-            this._battleDataRollVisuals(actorData);
+            this._battleDataRollVisuals(actor);
             // Automatic Encumbrance Management
-            this._encumbranceAutoManagement(actorData);
+            this._encumbranceAutoManagement(actor);
         }
     }
 
@@ -605,77 +605,77 @@ export class Ironclaw2EActor extends Actor {
      */
     prepareEmbeddedDocuments() {
         super.prepareEmbeddedDocuments();
-        const actorData = this.data;
+        const actor = this;
 
-        this._prepareExtraCareerData(actorData);
-        this._prepareGiftData(actorData);
+        this._prepareExtraCareerData(actor);
+        this._prepareGiftData(actor);
     }
 
     /**
      * Prepare Extra Career item data
      */
-    _prepareExtraCareerData(actorData) {
-        const data = actorData.data;
+    _prepareExtraCareerData(actor) {
+        const system = actor.system;
 
         // Extra Career additions
-        const extraCareers = this.items.filter(element => element.data.type === 'extraCareer');
+        const extraCareers = this.items.filter(element => element.type === 'extraCareer');
         if (extraCareers.length > 0) {
-            data.hasExtraCareers = true;
-            extraCareers.sort((a, b) => a.data.sort - b.data.sort);
+            system.hasExtraCareers = true;
+            extraCareers.sort((a, b) => a.sort - b.sort);
             let ids = [];
-            extraCareers.forEach(x => { if (x.data.data.valid) ids.push(x.id); });
-            data.extraCareerIds = ids;
+            extraCareers.forEach(x => { if (x.system.valid) ids.push(x.id); });
+            system.extraCareerIds = ids;
         }
         else
-            data.hasExtraCareers = false;
+            system.hasExtraCareers = false;
     }
 
     /**
      * Prepare Gift item data
      */
-    _prepareGiftData(actorData) {
-        const data = actorData.data;
+    _prepareGiftData(actor) {
+        const system = actor.system;
 
         // Gift Skill marks
-        const markGifts = this.items.filter(element => element.data.type === 'gift' && element.data.data.grantsMark);
+        const markGifts = this.items.filter(element => element.type === 'gift' && element.system.grantsMark);
         let markMap = new Map();
         for (let gift of markGifts) {
-            const giftData = gift.data.data;
-            markMap.set(giftData.skillName, 1 + (markMap.get(giftData.skillName) ?? 0));
+            const giftSys = gift.system;
+            markMap.set(giftSys.skillName, 1 + (markMap.get(giftSys.skillName) ?? 0));
         }
-        data.tempMarks = markMap;
+        system.tempMarks = markMap;
 
         // Special settings
-        const specialGifts = this.items.filter(element => element.data.type === 'gift' && element.data.data.usedSpecialSettings?.length > 0);
+        const specialGifts = this.items.filter(element => element.type === 'gift' && element.system.usedSpecialSettings?.length > 0);
         if (specialGifts.length > 0) {
-            data.processingLists = {}; // If any of the actor's gifts have special settings, add the holding object for the lists
-            data.replacementLists = new Map(); // To store any replacement gifts, stored with the actor as derived data to avoid contaminating the actual gifts
+            system.processingLists = {}; // If any of the actor's gifts have special settings, add the holding object for the lists
+            system.replacementLists = new Map(); // To store any replacement gifts, stored with the actor as derived data to avoid contaminating the actual gifts
 
             for (let gift of specialGifts) {
-                for (let setting of gift.data.data.usedSpecialSettings) {
-                    if (!(setting.settingMode in data.processingLists)) {
+                for (let setting of gift.system.usedSpecialSettings) {
+                    if (!(setting.settingMode in system.processingLists)) {
                         // If the relevant array for a setting mode does not exist, add an empty one
-                        data.processingLists[setting.settingMode] = [];
+                        system.processingLists[setting.settingMode] = [];
                     }
                     // If the gift has the replacement field set, attempt to find what it replaces
                     if (setting.replaceName) {
-                        const replacement = specialGifts.find(x => makeCompareReady(x.name) === setting.replaceName)?.data.data.usedSpecialSettings.find(x => x.settingMode == setting.settingMode);
+                        const replacement = specialGifts.find(x => makeCompareReady(x.name) === setting.replaceName)?.system.usedSpecialSettings.find(x => x.settingMode == setting.settingMode);
                         if (replacement) { // If the replacement is found, add it to the map of replacements stored with the actor
                             if (replacement.giftId === setting.giftId) { // Check for an infinite loop
                                 console.warn("Potential infinite loop detected, bonus attempted to replace something with the same id as it: " + setting.giftName);
                                 continue;
                             }
 
-                            let stored = (data.replacementLists.has(replacement.giftId) ? data.replacementLists.get(replacement.giftId) : new Map());
+                            let stored = (system.replacementLists.has(replacement.giftId) ? system.replacementLists.get(replacement.giftId) : new Map());
                             stored.set(replacement.settingIndex, setting);
-                            data.replacementLists.set(replacement.giftId, stored);
+                            system.replacementLists.set(replacement.giftId, stored);
                         }
                         // Skip adding a replacing gift to the normal setting list
                         continue;
                     }
 
                     // Add the setting into the list
-                    data.processingLists[setting.settingMode].push(setting);
+                    system.processingLists[setting.settingMode].push(setting);
                 }
             }
         }
@@ -689,94 +689,94 @@ export class Ironclaw2EActor extends Actor {
      * Augment the basic actor data with additional dynamic data.
      */
     prepareDerivedData() {
-        const actorData = this.data;
+        const actor = this;
 
         // Make separate methods for each Actor type (character, npc, etc.) to keep
         // things organized.
-        if (actorData.type === 'character') this._prepareCharacterData(actorData);
-        if (actorData.type === 'mook') this._prepareMookData(actorData);
-        if (actorData.type === 'beast') this._prepareBeastData(actorData);
+        if (actor.type === 'character') this._prepareCharacterData(actor);
+        if (actor.type === 'mook') this._prepareMookData(actor);
+        if (actor.type === 'beast') this._prepareBeastData(actor);
     }
 
     /**
      * Prepare Character type specific data
      */
-    _prepareCharacterData(actorData) {
-        this._processTraits(actorData);
-        this._processSkills(actorData);
+    _prepareCharacterData(actor) {
+        this._processTraits(actor);
+        this._processSkills(actor);
 
-        this._processCoinageData(actorData);
-        this._processItemData(actorData);
+        this._processCoinageData(actor);
+        this._processItemData(actor);
 
-        this._processBattleData(actorData);
+        this._processBattleData(actor);
     }
 
     /**
      * Prepare Mook type specific data
      */
-    _prepareMookData(actorData) {
-        this._processTraits(actorData);
-        this._processSkills(actorData);
+    _prepareMookData(actor) {
+        this._processTraits(actor);
+        this._processSkills(actor);
 
-        this._processCoinageData(actorData);
-        this._processItemData(actorData);
+        this._processCoinageData(actor);
+        this._processItemData(actor);
 
-        this._processBattleData(actorData);
+        this._processBattleData(actor);
     }
 
     /**
      * Prepare Beast type specific data
      */
-    _prepareBeastData(actorData) {
-        this._processTraits(actorData);
-        this._processSkillsMinor(actorData);
+    _prepareBeastData(actor) {
+        this._processTraits(actor);
+        this._processSkillsMinor(actor);
 
-        this._processItemData(actorData);
+        this._processItemData(actor);
 
-        this._processBattleData(actorData);
+        this._processBattleData(actor);
     }
 
     /**
      * Process baseTraits template data
      */
-    _processTraits(actorData) {
-        const data = actorData.data;
+    _processTraits(actor) {
+        const system = actor.system;
 
-        for (let [key, trait] of Object.entries(data.traits)) {
+        for (let [key, trait] of Object.entries(system.traits)) {
             trait.diceArray = findTotalDice(trait.dice);
 
             // Make the name used for a trait more human-readable
             trait.usedTitle = convertCamelCase(key);
         }
 
-        data.traits.species.skills = [makeCompareReady(data.traits.species.speciesSkill1), makeCompareReady(data.traits.species.speciesSkill2), makeCompareReady(data.traits.species.speciesSkill3)];
-        data.traits.career.skills = [makeCompareReady(data.traits.career.careerSkill1), makeCompareReady(data.traits.career.careerSkill2), makeCompareReady(data.traits.career.careerSkill3)];
+        system.traits.species.skills = [makeCompareReady(system.traits.species.speciesSkill1), makeCompareReady(system.traits.species.speciesSkill2), makeCompareReady(system.traits.species.speciesSkill3)];
+        system.traits.career.skills = [makeCompareReady(system.traits.career.careerSkill1), makeCompareReady(system.traits.career.careerSkill2), makeCompareReady(system.traits.career.careerSkill3)];
 
-        if (!data.skills) {
-            data.traits.species.skillNames = [data.traits.species.speciesSkill1, data.traits.species.speciesSkill2, data.traits.species.speciesSkill3];
-            data.traits.career.skillNames = [data.traits.career.careerSkill1, data.traits.career.careerSkill2, data.traits.career.careerSkill3];
+        if (!system.skills) {
+            system.traits.species.skillNames = [system.traits.species.speciesSkill1, system.traits.species.speciesSkill2, system.traits.species.speciesSkill3];
+            system.traits.career.skillNames = [system.traits.career.careerSkill1, system.traits.career.careerSkill2, system.traits.career.careerSkill3];
         }
     }
 
     /**
      * Process baseSkills template data
      */
-    _processSkills(actorData) {
-        const data = actorData.data;
+    _processSkills(actor) {
+        const system = actor.system;
 
         let extracareers = [];
-        if (data.hasExtraCareers) {
-            data.extraCareerIds.forEach(x => extracareers.push(this.items.get(x)));
+        if (system.hasExtraCareers) {
+            system.extraCareerIds.forEach(x => extracareers.push(this.items.get(x)));
         }
 
-        for (let [key, skill] of Object.entries(data.skills)) {
+        for (let [key, skill] of Object.entries(system.skills)) {
             skill.diceArray = [0, 0, 0, 0, 0];
             skill.diceString = "";
             skill.totalDiceString = "";
             const comparekey = makeCompareReady(key);
 
             // Include the marks from Gifts to the calculation
-            skill.giftMarks = (data.tempMarks.has(comparekey) ? data.tempMarks.get(comparekey) : 0);
+            skill.giftMarks = (system.tempMarks.has(comparekey) ? system.tempMarks.get(comparekey) : 0);
             const marks = skill.marks + skill.giftMarks;
             // Marks
             if (marks > 0) {
@@ -790,19 +790,19 @@ export class Ironclaw2EActor extends Actor {
             }
 
             // Species and Career dice
-            for (let foo of data.traits.species.skills) {
+            for (let foo of system.traits.species.skills) {
                 if (foo == comparekey)
-                    skill.diceArray = addArrays(skill.diceArray, data.traits.species.diceArray);
+                    skill.diceArray = addArrays(skill.diceArray, system.traits.species.diceArray);
             }
-            for (let foo of data.traits.career.skills) {
+            for (let foo of system.traits.career.skills) {
                 if (foo == comparekey)
-                    skill.diceArray = addArrays(skill.diceArray, data.traits.career.diceArray);
+                    skill.diceArray = addArrays(skill.diceArray, system.traits.career.diceArray);
             }
-            if (data.hasExtraCareers) {
+            if (system.hasExtraCareers) {
                 extracareers.forEach(element => {
-                    for (let foo of element.data.data.skills) {
+                    for (let foo of element.system.skills) {
                         if (foo == comparekey)
-                            skill.diceArray = addArrays(skill.diceArray, element.data.data.diceArray);
+                            skill.diceArray = addArrays(skill.diceArray, element.system.diceArray);
                     }
                 });
             }
@@ -820,71 +820,71 @@ export class Ironclaw2EActor extends Actor {
     /**
      * Process skills data for actor types that lack baseSkills data
      */
-    _processSkillsMinor(actorData) {
-        const data = actorData.data;
+    _processSkillsMinor(actor) {
+        const system = actor.system;
 
         // Check whether the species and career traits either have no dice in them or have their first skill field be empty
-        if ((!checkDiceArrayEmpty(data.traits.species.diceArray) || !data.traits.species.speciesSkill1) && (!checkDiceArrayEmpty(data.traits.career.diceArray) || !data.traits.career.careerSkill1)) {
+        if ((!checkDiceArrayEmpty(system.traits.species.diceArray) || !system.traits.species.speciesSkill1) && (!checkDiceArrayEmpty(system.traits.career.diceArray) || !system.traits.career.careerSkill1)) {
             return; // If the check passes, abort processing
         }
-        if (data.skills) {
+        if (system.skills) {
             // If an actor with preset skills somehow ends up in this function, return out immediately.
-            return console.warn("An actor that has skills by default ended up in the function for actors without skills: " + actorData.name);
+            return console.warn("An actor that has skills by default ended up in the function for actors without skills: " + actor.name);
         }
 
         // Add the missing skill field
-        data.skills = {};
+        system.skills = {};
 
         let extracareers = [];
-        if (data.hasExtraCareers) {
-            data.extraCareerIds.forEach(x => extracareers.push(this.items.get(x)));
+        if (system.hasExtraCareers) {
+            system.extraCareerIds.forEach(x => extracareers.push(this.items.get(x)));
         }
 
         // Process trait skills
-        if (data.traits.species?.skillNames && checkDiceArrayEmpty(data.traits.species.diceArray)) { // Make sure there's actually something in the trait
-            for (let skill of data.traits.species.skillNames) { // Go through the skills
+        if (system.traits.species?.skillNames && checkDiceArrayEmpty(system.traits.species.diceArray)) { // Make sure there's actually something in the trait
+            for (let skill of system.traits.species.skillNames) { // Go through the skills
                 if (!skill) // If the skill is empty, skip it
                     continue;
                 const foo = makeCompareReady(skill); // Prepare the skill name
-                data.skills[foo] = data.skills[foo] ?? {}; // If the data object does not exist, make it
-                data.skills[foo].diceArray = addArrays(data.skills[foo].diceArray, data.traits.species.diceArray); // Add the trait dice array to the one present
-                data.skills[foo].totalDiceString = data.skills[foo].diceString = reformDiceString(data.skills[foo].diceArray, true); // Record the reformed dice string for UI presentation
-                data.skills[foo].usedTitle = skill; // Record the name used
+                system.skills[foo] = system.skills[foo] ?? {}; // If the data object does not exist, make it
+                system.skills[foo].diceArray = addArrays(system.skills[foo].diceArray, system.traits.species.diceArray); // Add the trait dice array to the one present
+                system.skills[foo].totalDiceString = system.skills[foo].diceString = reformDiceString(system.skills[foo].diceArray, true); // Record the reformed dice string for UI presentation
+                system.skills[foo].usedTitle = skill; // Record the name used
                 if (burdenedLimitedStat(foo)) { // If the name is limited, add the special icon
-                    data.skills[foo].usedTitle = String.fromCodePoint([9949]) + " " + data.skills[foo].usedTitle + " " + String.fromCodePoint([9949]);
+                    system.skills[foo].usedTitle = String.fromCodePoint([9949]) + " " + system.skills[foo].usedTitle + " " + String.fromCodePoint([9949]);
                 }
             }
         }
-        if (data.traits.career?.skillNames && checkDiceArrayEmpty(data.traits.career.diceArray)) {
-            for (let skill of data.traits.career.skillNames) {
+        if (system.traits.career?.skillNames && checkDiceArrayEmpty(system.traits.career.diceArray)) {
+            for (let skill of system.traits.career.skillNames) {
                 if (!skill)
                     continue;
                 const foo = makeCompareReady(skill);
-                data.skills[foo] = data.skills[foo] ?? {};
-                data.skills[foo].diceArray = addArrays(data.skills[foo].diceArray, data.traits.career.diceArray);
-                data.skills[foo].totalDiceString = data.skills[foo].diceString = reformDiceString(data.skills[foo].diceArray, true);
-                data.skills[foo].usedTitle = skill;
+                system.skills[foo] = system.skills[foo] ?? {};
+                system.skills[foo].diceArray = addArrays(system.skills[foo].diceArray, system.traits.career.diceArray);
+                system.skills[foo].totalDiceString = system.skills[foo].diceString = reformDiceString(system.skills[foo].diceArray, true);
+                system.skills[foo].usedTitle = skill;
                 if (burdenedLimitedStat(foo)) {
-                    data.skills[foo].usedTitle = String.fromCodePoint([9949]) + " " + data.skills[foo].usedTitle + " " + String.fromCodePoint([9949]);
+                    system.skills[foo].usedTitle = String.fromCodePoint([9949]) + " " + system.skills[foo].usedTitle + " " + String.fromCodePoint([9949]);
                 }
             }
         }
 
         // Process extra careers
-        if (data.hasExtraCareers) {
+        if (system.hasExtraCareers) {
             for (let extra of extracareers) {
-                if (!checkDiceArrayEmpty(extra.data.data.diceArray))
+                if (!checkDiceArrayEmpty(extra.system.diceArray))
                     continue;
-                for (let skill of extra.data.data.skillNames) {
+                for (let skill of extra.system.skillNames) {
                     if (!skill)
                         continue;
                     const foo = makeCompareReady(skill);
-                    data.skills[foo] = data.skills[foo] ?? {};
-                    data.skills[foo].diceArray = addArrays(data.skills[foo].diceArray, extra.data.data.diceArray);
-                    data.skills[foo].totalDiceString = data.skills[foo].diceString = reformDiceString(data.skills[foo].diceArray, true);
-                    data.skills[foo].usedTitle = skill;
+                    system.skills[foo] = system.skills[foo] ?? {};
+                    system.skills[foo].diceArray = addArrays(system.skills[foo].diceArray, extra.system.diceArray);
+                    system.skills[foo].totalDiceString = system.skills[foo].diceString = reformDiceString(system.skills[foo].diceArray, true);
+                    system.skills[foo].usedTitle = skill;
                     if (burdenedLimitedStat(foo)) {
-                        data.skills[foo].usedTitle = String.fromCodePoint([9949]) + " " + data.skills[foo].usedTitle + " " + String.fromCodePoint([9949]);
+                        system.skills[foo].usedTitle = String.fromCodePoint([9949]) + " " + system.skills[foo].usedTitle + " " + String.fromCodePoint([9949]);
                     }
                 }
             }
@@ -894,8 +894,8 @@ export class Ironclaw2EActor extends Actor {
     /**
      * Process derived data for battle calculations
      */
-    _processBattleData(actorData) {
-        const data = actorData.data;
+    _processBattleData(actor) {
+        const system = actor.system;
 
         // Base levels
         let stridebonus = 0;
@@ -903,16 +903,16 @@ export class Ironclaw2EActor extends Actor {
         let runbonus = 0;
         const sprintarray = this.sprintRoll(-1);
 
-        let speedint = getDiceArrayMaxValue(data.traits.speed.diceArray);
-        let bodyint = getDiceArrayMaxValue(data.traits.body.diceArray);
+        let speedint = getDiceArrayMaxValue(system.traits.speed.diceArray);
+        let bodyint = getDiceArrayMaxValue(system.traits.body.diceArray);
         let sprintint = getDiceArrayMaxValue(sprintarray);
 
         if (speedint < 0 || bodyint < 0) {
-            console.error("Battle data processing failed, unable to parse dice for " + actorData.name);
-            ui.notifications.error(game.i18n.format("ironclaw2e.ui.battleProcessingFailure", { "name": actorData.name }));
-            data.stride = 0;
-            data.dash = 0;
-            data.run = 0;
+            console.error("Battle data processing failed, unable to parse dice for " + actor.name);
+            ui.notifications.error(game.i18n.format("ironclaw2e.ui.battleProcessingFailure", { "name": actor.name }));
+            system.stride = 0;
+            system.dash = 0;
+            system.run = 0;
             return;
         }
 
@@ -921,8 +921,8 @@ export class Ironclaw2EActor extends Actor {
 
         // Apply normal move bonuses
         let badFooting = false; // Ignore bad footing check
-        if (data.processingLists?.moveBonus) { // Check if move bonuses even exist
-            for (let setting of data.processingLists.moveBonus) { // Loop through them
+        if (system.processingLists?.moveBonus) { // Check if move bonuses even exist
+            for (let setting of system.processingLists.moveBonus) { // Loop through them
                 if (checkApplicability(setting, null, this)) { // Check initial applicability
                     let used = setting; // Store the setting in a temp variable
                     let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
@@ -944,15 +944,15 @@ export class Ironclaw2EActor extends Actor {
                 }
             }
         }
-        data.ignoreBadFooting = badFooting;
+        system.ignoreBadFooting = badFooting;
 
         // Flying-related bonuses
         if (hasConditionsIronclaw("flying", this)) {
-            data.isFlying = true;
+            system.isFlying = true;
 
             // Apply the flying move bonuses
-            if (data.processingLists?.flyingBonus) {
-                for (let setting of data.processingLists.flyingBonus) { // Loop through them
+            if (system.processingLists?.flyingBonus) {
+                for (let setting of system.processingLists.flyingBonus) { // Loop through them
                     if (checkApplicability(setting, null, this)) { // Check initial applicability
                         let used = setting; // Store the setting in a temp variable
                         let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
@@ -972,38 +972,38 @@ export class Ironclaw2EActor extends Actor {
                 }
             }
         } else {
-            data.isFlying = false;
+            system.isFlying = false;
         }
 
         // Stride setup
-        data.stride = 1 + stridebonus;
+        system.stride = 1 + stridebonus;
         if (hasConditionsIronclaw(["slowed", "immobilized", "half-buried", "cannotmove"], this)) {
-            data.stride = 0;
+            system.stride = 0;
         }
         // Dash setup
-        data.dash = Math.round(speedint / 2) + (bodyint > speedint ? 1 : 0) + dashbonus;
+        system.dash = Math.round(speedint / 2) + (bodyint > speedint ? 1 : 0) + dashbonus;
         if (hasConditionsIronclaw(["burdened", "blinded", "slowed", "immobilized", "half-buried", "cannotmove"], this)) {
-            data.dash = 0;
+            system.dash = 0;
         }
 
         // Run setup
-        data.run = bodyint + (data.isFlying ? sprintint : speedint) + data.dash + runbonus;
+        system.run = bodyint + (system.isFlying ? sprintint : speedint) + system.dash + runbonus;
         if (hasConditionsIronclaw(["over-burdened", "immobilized", "half-buried", "cannotmove"], this)) {
-            data.run = 0;
+            system.run = 0;
         }
 
 
         // Sprint visual for the sheet
-        data.sprintString = reformDiceString(sprintarray, true);
+        system.sprintString = reformDiceString(sprintarray, true);
         // Initiative visual for the sheet
-        data.initiativeString = reformDiceString(this.initiativeRoll(-1), true);
+        system.initiativeString = reformDiceString(this.initiativeRoll(-1), true);
     }
 
     /**
      * Process derived data for money related stuff
      */
-    _processCoinageData(actorData) {
-        const data = actorData.data;
+    _processCoinageData(actor) {
+        const system = actor.system;
 
         let allvalue = 0;
         let allweight = 0;
@@ -1011,8 +1011,8 @@ export class Ironclaw2EActor extends Actor {
         let currencyValueChanges = {};
 
         // Get currency value changes
-        if (data.processingLists?.currencyValueChange) { // Check if currency value changes even exist
-            for (let setting of data.processingLists.currencyValueChange) { // Loop through them
+        if (system.processingLists?.currencyValueChange) { // Check if currency value changes even exist
+            for (let setting of system.processingLists.currencyValueChange) { // Loop through them
                 if (checkApplicability(setting, null, this)) { // Check initial applicability
                     let used = setting; // Store the setting in a temp variable
                     let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
@@ -1031,7 +1031,7 @@ export class Ironclaw2EActor extends Actor {
         }
 
         for (let [key, setting] of Object.entries(currencySettings)) {
-            if (!data.coinage.hasOwnProperty(key)) {
+            if (!system.coinage.hasOwnProperty(key)) {
                 // Check to make sure every currency that is kept track of actually exists in the settings
                 continue;
             }
@@ -1040,7 +1040,7 @@ export class Ironclaw2EActor extends Actor {
                 continue;
             }
 
-            let currency = data.coinage[key];
+            let currency = system.coinage[key];
             const valueString = (currencyValueChanges.hasOwnProperty(key) ? currencyValueChanges[key] : setting.value);
             currency.used = true;
             currency.name = setting.name;
@@ -1056,15 +1056,15 @@ export class Ironclaw2EActor extends Actor {
             allvalue += currency.totalValue;
             allweight += currency.totalWeight;
         }
-        data.coinageValue = Math.floor(allvalue).toString() + String.fromCodePoint([data.coinage.baseCurrency.sign]);
-        data.coinageWeight = allweight;
+        system.coinageValue = Math.floor(allvalue).toString() + String.fromCodePoint([system.coinage.baseCurrency.sign]);
+        system.coinageWeight = allweight;
     }
 
     /**
      * Process derived data from items 
      */
-    _processItemData(actorData) {
-        const data = actorData.data;
+    _processItemData(actor) {
+        const system = actor.system;
         const gear = this.items;
 
         let totalweight = 0;
@@ -1072,18 +1072,18 @@ export class Ironclaw2EActor extends Actor {
         let giftbonus = 0;
         for (let item of gear) {
 
-            if (item.data.data.totalWeight && !isNaN(item.data.data.totalWeight)) {
-                totalweight += item.data.data.totalWeight; // Check that the value exists and is not a NaN, then add it to totaled weight
+            if (item.system.totalWeight && !isNaN(item.system.totalWeight)) {
+                totalweight += item.system.totalWeight; // Check that the value exists and is not a NaN, then add it to totaled weight
             }
 
-            if (item.data.type === 'armor' && item.data.data.worn === true) {
+            if (item.type === 'armor' && item.system.worn === true) {
                 totalarmors++;
             }
         }
 
         // Apply encumbrance bonuses
-        if (data.processingLists?.encumbranceBonus) { // Check if move bonuses even exist
-            for (let setting of data.processingLists.encumbranceBonus) { // Loop through them
+        if (system.processingLists?.encumbranceBonus) { // Check if move bonuses even exist
+            for (let setting of system.processingLists.encumbranceBonus) { // Loop through them
                 if (checkApplicability(setting, null, this)) { // Check initial applicability
                     let used = setting; // Store the setting in a temp variable
                     let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
@@ -1101,22 +1101,22 @@ export class Ironclaw2EActor extends Actor {
             }
         }
 
-        const bodyarr = parseSingleDiceString(data.traits.body.dice);
+        const bodyarr = parseSingleDiceString(system.traits.body.dice);
         if (!Array.isArray(bodyarr)) {
-            console.error("Unable to parse body die for " + actorData.name);
+            console.error("Unable to parse body die for " + actor.name);
             return;
         }
 
-        data.encumbranceNone = Math.round(((bodyarr[1] / 2) - 1) * bodyarr[0] + giftbonus);
-        data.encumbranceBurdened = Math.round((bodyarr[1] - 1) * bodyarr[0] + giftbonus * 2);
-        data.encumbranceOverBurdened = Math.round(((bodyarr[1] / 2) * 3 - 1) * bodyarr[0] + giftbonus * 3);
+        system.encumbranceNone = Math.round(((bodyarr[1] / 2) - 1) * bodyarr[0] + giftbonus);
+        system.encumbranceBurdened = Math.round((bodyarr[1] - 1) * bodyarr[0] + giftbonus * 2);
+        system.encumbranceOverBurdened = Math.round(((bodyarr[1] / 2) * 3 - 1) * bodyarr[0] + giftbonus * 3);
 
         const coinshaveweight = game.settings.get("ironclaw2e", "coinsHaveWeight");
-        if (coinshaveweight === true && data.coinageWeight) {
-            totalweight += data.coinageWeight;
+        if (coinshaveweight === true && system.coinageWeight) {
+            totalweight += system.coinageWeight;
         }
-        data.totalWeight = totalweight;
-        data.totalArmors = totalarmors;
+        system.totalWeight = totalweight;
+        system.totalArmors = totalarmors;
     }
 
     /* -------------------------------------------- */
@@ -1126,8 +1126,8 @@ export class Ironclaw2EActor extends Actor {
     /**
      * Derive battle statistical roll dice pools for sheet visuals, mostly for title-texts
      */
-    _battleDataRollVisuals(actorData) {
-        const data = actorData.data;
+    _battleDataRollVisuals(actor) {
+        const system = actor.system;
         const burdened = hasConditionsIronclaw("burdened", this);
         const visualData = {};
 
@@ -1148,28 +1148,28 @@ export class Ironclaw2EActor extends Actor {
         visualData.rally = reformDiceString(this._getAllDicePools([...CommonSystemInfo.rallyBaseStats], burdened).totalDice, true);
         visualData.rallyPool = [...CommonSystemInfo.rallyBaseStats].join(", ");
 
-        data.visualData = visualData;
+        system.visualData = visualData;
     }
 
     /** 
      *  Automatic encumbrance management, performed if the setting is enabled
      */
-    async _encumbranceAutoManagement(actorData, sleeptime = 100) {
+    async _encumbranceAutoManagement(actor, sleeptime = 100) {
         // To combat race conditions
         if (sleeptime > 0) await game.ironclaw2e.sleep(sleeptime);
 
         const manageburdened = game.settings.get("ironclaw2e", "manageEncumbranceAuto");
-        const data = actorData.data;
+        const system = actor.system;
 
         if (manageburdened) {
-            if (data.totalWeight > data.encumbranceOverBurdened || data.totalArmors > 3) {
+            if (system.totalWeight > system.encumbranceOverBurdened || system.totalArmors > 3) {
                 await this.addEffect(["burdened", "over-burdened", "cannotmove"]);
             }
-            else if (data.totalWeight > data.encumbranceBurdened || data.totalArmors == 3) {
+            else if (system.totalWeight > system.encumbranceBurdened || system.totalArmors == 3) {
                 await this.deleteEffect(["cannotmove"], false);
                 await this.addEffect(["burdened", "over-burdened"]);
             }
-            else if (data.totalWeight > data.encumbranceNone || data.totalArmors == 2) {
+            else if (system.totalWeight > system.encumbranceNone || system.totalArmors == 2) {
                 await this.deleteEffect(["over-burdened", "cannotmove"], false);
                 await this.addEffect(["burdened"]);
             }
@@ -1197,7 +1197,7 @@ export class Ironclaw2EActor extends Actor {
         // Update prototype token, if applicable
         if (!this.isToken) {
             await this.update({
-                "token": lightdata
+                "prototypeToken": lightdata
             });
         }
     }
@@ -1211,39 +1211,39 @@ export class Ironclaw2EActor extends Actor {
      * @protected
      */
     _getDicePools(traitnames, skillnames, isburdened, addplus = false) {
-        const data = this.data.data;
+        const system = this.system;
         let label = "";
         let labelgiven = addplus;
         let totaldice = [];
 
-        if (data.traits && Array.isArray(traitnames) && traitnames.length > 0) { // If the actor has traits and the list of traits to use is given
-            for (let [key, trait] of Object.entries(data.traits)) { // Loop through the traits
+        if (system.traits && Array.isArray(traitnames) && traitnames.length > 0) { // If the actor has traits and the list of traits to use is given
+            for (let [key, trait] of Object.entries(system.traits)) { // Loop through the traits
                 if (traitnames.includes(makeCompareReady(key)) || (trait.name && traitnames.includes(makeCompareReady(trait.name)))) { // If the traitnames include either the key or the name of the trait (career / species name)
                     totaldice.push((isburdened && burdenedLimitedStat(key) ? enforceLimit(trait.diceArray, CommonSystemInfo.burdenedLimit) : trait.diceArray)); // Add the trait to the total dice pool, limited by burdened if applicable
                     if (labelgiven) // Check if the label has been given to add something in between names
                         label += " + ";
-                    label += (data.hasExtraCareers && key === "career" ? trait.name : convertCamelCase(key)); // Add the name to the label, either a de-camelcased trait name or the career name if extra careers are a thing
+                    label += (system.hasExtraCareers && key === "career" ? trait.name : convertCamelCase(key)); // Add the name to the label, either a de-camelcased trait name or the career name if extra careers are a thing
                     labelgiven = true; // Mark the label as given
                 }
             }
-            if (data.hasExtraCareers) { // Check if extra careers are a thing
+            if (system.hasExtraCareers) { // Check if extra careers are a thing
                 let extracareers = [];
-                data.extraCareerIds.forEach(x => extracareers.push(this.items.get(x))); // Grab each extra career from the ids
+                system.extraCareerIds.forEach(x => extracareers.push(this.items.get(x))); // Grab each extra career from the ids
                 for (let [index, extra] of extracareers.entries()) { // Loop through the careers
-                    let key = makeCompareReady(extra.data.data.careerName); // Make a comparable key out of the career name
+                    let key = makeCompareReady(extra.system.careerName); // Make a comparable key out of the career name
                     if (traitnames.includes(key)) {
                         // Even if extra careers can't be part of the standard burdened lists, check it just in case of a custom burdened list, though usually the extra career die is just added to the total dice pool
-                        totaldice.push((isburdened && burdenedLimitedStat(key) ? enforceLimit(extra.data.data.diceArray, CommonSystemInfo.burdenedLimit) : extra.data.data.diceArray));
+                        totaldice.push((isburdened && burdenedLimitedStat(key) ? enforceLimit(extra.system.diceArray, CommonSystemInfo.burdenedLimit) : extra.system.diceArray));
                         if (labelgiven)
                             label += " + ";
-                        label += extra.data.data.careerName; // Add the career name as a label
+                        label += extra.system.careerName; // Add the career name as a label
                         labelgiven = true;
                     }
                 }
             }
         }
-        if (data.skills && Array.isArray(skillnames) && skillnames.length > 0) { // If the actor has skills and the lists of skills to use is given
-            for (let [key, skill] of Object.entries(data.skills)) { // Loop through the skills
+        if (system.skills && Array.isArray(skillnames) && skillnames.length > 0) { // If the actor has skills and the lists of skills to use is given
+            for (let [key, skill] of Object.entries(system.skills)) { // Loop through the skills
                 if (skillnames.includes(makeCompareReady(key))) {
                     totaldice.push((isburdened && burdenedLimitedStat(key) ? enforceLimit(skill.diceArray, CommonSystemInfo.burdenedLimit) : skill.diceArray)); // Add the skill to the total dice pool, limited by burdened if applicable
                     if (labelgiven)
@@ -1350,14 +1350,14 @@ export class Ironclaw2EActor extends Actor {
      * @returns {any} The replacement setting if it exists
      */
     _checkForReplacement(setting) {
-        const data = this.data.data;
-        if (!data.processingLists || !data.replacementLists) {
+        const system = this.system;
+        if (!system.processingLists || !system.replacementLists) {
             console.warn("Attempted to check for replacements despite the fact that no special settings are present for the actor: " + this.name);
             return null;
         }
 
-        if (data.replacementLists.has(setting.giftId)) { // Check for and get the list of replacements for a given gift
-            const foo = data.replacementLists.get(setting.giftId);
+        if (system.replacementLists.has(setting.giftId)) { // Check for and get the list of replacements for a given gift
+            const foo = system.replacementLists.get(setting.giftId);
             if (foo.has(setting.settingIndex)) { // Check for and get the actual replacement based on the index of the setting
                 const bar = foo.get(setting.settingIndex)
                 if (setting.settingMode == bar.settingMode) {
@@ -1400,9 +1400,9 @@ export class Ironclaw2EActor extends Actor {
      * @private
      */
     _getGiftSpecialConstruction(specialname, prechecked = [], otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", item = null, otheritem = null, defensecheck = false, defensetype = "") {
-        const data = this.data.data;
-        if (data.processingLists?.[specialname]) { // Check if they even exist
-            for (let setting of data.processingLists[specialname]) { // Loop through them
+        const system = this.system;
+        if (system.processingLists?.[specialname]) { // Check if they even exist
+            for (let setting of system.processingLists[specialname]) { // Loop through them
                 if (checkApplicability(setting, item, this, { otheritem, defensecheck, defensetype })) { // Check initial applicability
                     let used = setting; // Store the setting in a temp variable
                     let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
@@ -1487,10 +1487,9 @@ export class Ironclaw2EActor extends Actor {
      * @private
      */
     _getArmorConstruction(otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", autocheck = true) {
-        const data = this.data.data;
-        let armors = this.items.filter(element => element.data.data.worn === true);
+        let armors = this.items.filter(element => element.system.worn === true);
         for (let i = 0; i < armors.length && i < 3; ++i) {
-            const foo = formDicePoolField(armors[i].data.data.armorArray, armors[i].data.name, `${armors[i].data.name}: ${reformDiceString(armors[i].data.data.armorArray, true)}`, autocheck, { "itemid": armors[i].id },
+            const foo = formDicePoolField(armors[i].system.armorArray, armors[i].name, `${armors[i].name}: ${reformDiceString(armors[i].system.armorArray, true)}`, autocheck, { "itemid": armors[i].id },
                 { otherkeys, otherdice, othernames, otherbools, otherinputs });
             otherkeys = foo.otherkeys;
             otherdice = foo.otherdice;
@@ -1513,10 +1512,9 @@ export class Ironclaw2EActor extends Actor {
      * @private
      */
     _getShieldConstruction(otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", autocheck = true) {
-        const data = this.data.data;
-        let shield = this.items.find(element => element.data.data.held === true);
+        let shield = this.items.find(element => element.system.held === true);
         if (shield) {
-            const foo = formDicePoolField(shield.data.data.coverArray, shield.data.name, `${shield.data.name}: ${reformDiceString(shield.data.data.coverArray, true)}`, autocheck, { "itemid": shield.id },
+            const foo = formDicePoolField(shield.system.coverArray, shield.name, `${shield.name}: ${reformDiceString(shield.system.coverArray, true)}`, autocheck, { "itemid": shield.id },
                 { otherkeys, otherdice, othernames, otherbools, otherinputs });
             otherkeys = foo.otherkeys;
             otherdice = foo.otherdice;
@@ -1539,7 +1537,7 @@ export class Ironclaw2EActor extends Actor {
      * @private
      */
     _getStatusBonusConstruction(bonustype, skipcheck, otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "") {
-        const data = this.data.data;
+        const system = this.system;
         let replaceSettings = []; // Bonuses that would replace the base bonus
         let addSettings = []; // Bonuses that would add to the base bonus
 
@@ -1560,8 +1558,8 @@ export class Ironclaw2EActor extends Actor {
         }
 
         if (skipcheck || hasConditionsIronclaw(bonusName, this)) { // If the check is skipped or the actor has a "Guarding" condition
-            if (data.processingLists?.[bonusList]) { // Check if move bonuses even exist
-                for (let setting of data.processingLists[bonusList]) { // Loop through them
+            if (system.processingLists?.[bonusList]) { // Check if move bonuses even exist
+                for (let setting of system.processingLists[bonusList]) { // Loop through them
                     if (checkApplicability(setting, null, this)) { // Check initial applicability
                         let used = setting; // Store the setting in a temp variable
                         let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
@@ -1640,26 +1638,26 @@ export class Ironclaw2EActor extends Actor {
             }
         };
 
-        let lightsources = this.items.filter(element => element.data.type == "illumination");
+        let lightsources = this.items.filter(element => element.type == "illumination");
 
-        if (!lightsource.data.data.lighted) { // Light the light source
+        if (!lightsource.system.lighted) { // Light the light source
             updatedlightdata = {
                 "light": {
-                    "dim": lightsource.data.data.dimLight, "bright": lightsource.data.data.brightLight, "angle": lightsource.data.data.lightAngle,
-                    "color": lightsource.data.data.lightColor, "alpha": lightsource.data.data.lightAlpha, "animation": {
-                        "type": lightsource.data.data.lightAnimationType, "speed": lightsource.data.data.lightAnimationSpeed, "intensity": lightsource.data.data.lightAnimationIntensity
+                    "dim": lightsource.system.dimLight, "bright": lightsource.system.brightLight, "angle": lightsource.system.lightAngle,
+                    "color": lightsource.system.lightColor, "alpha": lightsource.system.lightAlpha, "animation": {
+                        "type": lightsource.system.lightAnimationType, "speed": lightsource.system.lightAnimationSpeed, "intensity": lightsource.system.lightAnimationIntensity
                     }
                 }
             };
             const index = lightsources.findIndex(element => element.id == lightsource.id);
             if (index > -1)
                 lightsources.splice(index, 1); // Exclude from dousing
-            await lightsource.update({ "_id": lightsource.id, "data.lighted": true });
+            await lightsource.update({ "_id": lightsource.id, "system.lighted": true });
         }
 
         let doused = [];
         for (let l of lightsources) { // Douse all other light sources, including the caller if it was previously lighted
-            doused.push({ "_id": l.id, "data.lighted": false });
+            doused.push({ "_id": l.id, "system.lighted": false });
         }
         await this.updateEmbeddedDocuments("Item", doused);
         await this._updateTokenLighting(updatedlightdata);
@@ -1677,14 +1675,14 @@ export class Ironclaw2EActor extends Actor {
             }
         };
 
-        let lightsources = this.items.filter(element => element.data.type == "illumination");
-        let activesource = lightsources.find(element => element.data.data.lighted == true);
+        let lightsources = this.items.filter(element => element.type == "illumination");
+        let activesource = lightsources.find(element => element.system.lighted == true);
         if (activesource) {
             updatedlightdata = {
                 "light": {
-                    "dim": lightsource.data.data.dimLight, "bright": lightsource.data.data.brightLight, "angle": lightsource.data.data.lightAngle,
-                    "color": lightsource.data.data.lightColor, "alpha": lightsource.data.data.lightAlpha, "animation": {
-                        "type": lightsource.data.data.lightAnimationType, "speed": lightsource.data.data.lightAnimationSpeed, "intensity": lightsource.data.data.lightAnimationIntensity
+                    "dim": lightsource.system.dimLight, "bright": lightsource.system.brightLight, "angle": lightsource.system.lightAngle,
+                    "color": lightsource.system.lightColor, "alpha": lightsource.system.lightAlpha, "animation": {
+                        "type": lightsource.system.lightAnimationType, "speed": lightsource.system.lightAnimationSpeed, "intensity": lightsource.system.lightAnimationIntensity
                     }
                 }
             };
@@ -1827,71 +1825,70 @@ export class Ironclaw2EActor extends Actor {
      * @param {object | Ironclaw2EItem} item
      */
     async applyTemplate(item, { wait = -1, confirm = true } = {}) {
-        const actorData = this.data;
-        const data = actorData.data;
-        const itemData = (item instanceof Ironclaw2EItem ? item.data : item);
+        const actor = this;
+        const system = this.system;
         let updateData = {};
 
         // Optional sleep to help avert race conditions
         if (wait > 0) await game.ironclaw2e.sleep(wait);
 
         // Simple stat updates
-        const usedName = (itemData.data.forcedName ? itemData.data.forcedName : itemData.name);
-        if (itemData.type === "speciesTemplate") {
-            if (confirm && data.traits.species.name) {
+        const usedName = (item.system.forcedName ? item.system.forcedName : item.name);
+        if (item.type === "speciesTemplate") {
+            if (confirm && system.traits.species.name) {
                 // Confirmation on whether to replace the existing data
                 const confirmation = await popupConfirmationBox("ironclaw2e.dialog.templateReplacementSpecies.title", "ironclaw2e.dialog.templateReplacementSpecies.note", "ironclaw2e.dialog.replace",
-                    { "actorname": actorData.name, "itemname": usedName });
+                    { "actorname": actor.name, "itemname": usedName });
                 if (confirmation.confirmed === false) return;
             }
             updateData = {
-                "data.traits.species.name": usedName,
-                "data.traits.species.speciesSkill1": itemData.data.skill1,
-                "data.traits.species.speciesSkill2": itemData.data.skill2,
-                "data.traits.species.speciesSkill3": itemData.data.skill3,
+                "system.traits.species.name": usedName,
+                "system.traits.species.speciesSkill1": item.system.skill1,
+                "system.traits.species.speciesSkill2": item.system.skill2,
+                "system.traits.species.speciesSkill3": item.system.skill3,
 
-                "data.attributes.habitat": itemData.data.attributes.habitat,
-                "data.attributes.diet": itemData.data.attributes.diet,
-                "data.attributes.cycle": itemData.data.attributes.cycle,
-                "data.attributes.senses": itemData.data.attributes.senses,
+                "system.attributes.habitat": item.system.attributes.habitat,
+                "system.attributes.diet": item.system.attributes.diet,
+                "system.attributes.cycle": item.system.attributes.cycle,
+                "system.attributes.senses": item.system.attributes.senses,
             };
             // Increased Trait handling
-            if (itemData.data.traitIncreases.increase1) {
-                const trait = makeCompareReady(itemData.data.traitIncreases.increase1);
-                if (data.traits[trait]?.dice) {
-                    const betterDice = reformDiceString(diceFieldUpgrade(findTotalDice(data.traits[trait].dice), 1));
-                    const fieldName = "data.traits." + trait + ".dice";
+            if (item.system.traitIncreases.increase1) {
+                const trait = makeCompareReady(item.system.traitIncreases.increase1);
+                if (system.traits[trait]?.dice) {
+                    const betterDice = reformDiceString(diceFieldUpgrade(findTotalDice(system.traits[trait].dice), 1));
+                    const fieldName = "system.traits." + trait + ".dice";
                     updateData[fieldName] = betterDice;
                 }
             }
-            if (itemData.data.traitIncreases.increase2) {
-                const trait = makeCompareReady(itemData.data.traitIncreases.increase2);
-                if (data.traits[trait]?.dice) {
-                    const betterDice = reformDiceString(diceFieldUpgrade(findTotalDice(data.traits[trait].dice), 1));
-                    const fieldName = "data.traits." + trait + ".dice";
+            if (item.system.traitIncreases.increase2) {
+                const trait = makeCompareReady(item.system.traitIncreases.increase2);
+                if (system.traits[trait]?.dice) {
+                    const betterDice = reformDiceString(diceFieldUpgrade(findTotalDice(system.traits[trait].dice), 1));
+                    const fieldName = "system.traits." + trait + ".dice";
                     updateData[fieldName] = betterDice;
                 }
             }
-            if (itemData.data.traitIncreases.increase3) {
-                const trait = makeCompareReady(itemData.data.traitIncreases.increase3);
-                if (data.traits[trait]?.dice) {
-                    const betterDice = reformDiceString(diceFieldUpgrade(findTotalDice(data.traits[trait].dice), 1));
-                    const fieldName = "data.traits." + trait + ".dice";
+            if (item.system.traitIncreases.increase3) {
+                const trait = makeCompareReady(item.system.traitIncreases.increase3);
+                if (system.traits[trait]?.dice) {
+                    const betterDice = reformDiceString(diceFieldUpgrade(findTotalDice(system.traits[trait].dice), 1));
+                    const fieldName = "system.traits." + trait + ".dice";
                     updateData[fieldName] = betterDice;
                 }
             }
-        } else if (itemData.type === "careerTemplate") {
-            if (confirm && data.traits.career.name) {
+        } else if (item.type === "careerTemplate") {
+            if (confirm && system.traits.career.name) {
                 // Confirmation on whether to replace the existing data
                 const confirmation = await popupConfirmationBox("ironclaw2e.dialog.templateReplacementCareer.title", "ironclaw2e.dialog.templateReplacementCareer.note", "ironclaw2e.dialog.replace",
-                    { "actorname": actorData.name, "itemname": usedName });
+                    { "actorname": actor.name, "itemname": usedName });
                 if (confirmation.confirmed === false) return;
             }
             updateData = {
-                "data.traits.career.name": usedName,
-                "data.traits.career.careerSkill1": itemData.data.skill1,
-                "data.traits.career.careerSkill2": itemData.data.skill2,
-                "data.traits.career.careerSkill3": itemData.data.skill3
+                "system.traits.career.name": usedName,
+                "system.traits.career.careerSkill1": item.system.skill1,
+                "system.traits.career.careerSkill2": item.system.skill2,
+                "system.traits.career.careerSkill3": item.system.skill3
             };
         }
 
@@ -1900,13 +1897,13 @@ export class Ironclaw2EActor extends Actor {
 
         // Getting and making the embedded documents, if the actor doesn't yet have them
         let itemIds = [];
-        if (itemData.data.gifts.gift1) itemIds.push(itemData.data.gifts.gift1);
-        if (itemData.data.gifts.gift2) itemIds.push(itemData.data.gifts.gift2);
-        if (itemData.data.gifts.gift3) itemIds.push(itemData.data.gifts.gift3);
-        if (itemData.type === "speciesTemplate") {
-            if (itemData.data.weapons?.weapon1) itemIds.push(itemData.data.weapons.weapon1);
-            if (itemData.data.weapons?.weapon2) itemIds.push(itemData.data.weapons.weapon2);
-            if (itemData.data.weapons?.weapon3) itemIds.push(itemData.data.weapons.weapon3);
+        if (item.system.gifts.gift1) itemIds.push(item.system.gifts.gift1);
+        if (item.system.gifts.gift2) itemIds.push(item.system.gifts.gift2);
+        if (item.system.gifts.gift3) itemIds.push(item.system.gifts.gift3);
+        if (item.type === "speciesTemplate") {
+            if (item.system.weapons?.weapon1) itemIds.push(item.system.weapons.weapon1);
+            if (item.system.weapons?.weapon2) itemIds.push(item.system.weapons.weapon2);
+            if (item.system.weapons?.weapon3) itemIds.push(item.system.weapons.weapon3);
         }
 
         let itemCreateData = [];
@@ -1942,13 +1939,13 @@ export class Ironclaw2EActor extends Actor {
      * @returns {{reduction: number, autocheck: boolean}}
      */
     getRangePenaltyReduction(item = null, rallycheck = false) {
-        const data = this.data.data;
-        const itemData = item?.data?.data;
+        const system = this.system;
+        const itemData = item?.system;
         let reduction = 0;
         let autocheck = true;
         // Grab the penalty reduction degree from the special settings
-        if (data.processingLists?.rangePenaltyReduction) { // Check if range penalty reduction bonuses even exist
-            for (let setting of data.processingLists.rangePenaltyReduction) { // Loop through them
+        if (system.processingLists?.rangePenaltyReduction) { // Check if range penalty reduction bonuses even exist
+            for (let setting of system.processingLists.rangePenaltyReduction) { // Loop through them
                 if (checkApplicability(setting, item, this, { rallycheck })) { // Check initial applicability
                     let used = setting; // Store the setting in a temp variable
                     let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
@@ -1967,7 +1964,7 @@ export class Ironclaw2EActor extends Actor {
         }
 
         // Check whether the attack 'item' is representing is magical, and whether the character has a wand readied, in which case, toggle the auto-check off
-        if (itemData?.descriptorsSplit?.includes("magic") && this.items.some(element => element.data.data.readied === true && element.data.data.descriptorsSplit?.includes("wand"))) {
+        if (itemData?.descriptorsSplit?.includes("magic") && this.items.some(element => element.system.readied === true && element.system.descriptorsSplit?.includes("wand"))) {
             autocheck = false;
         }
 
@@ -1983,12 +1980,12 @@ export class Ironclaw2EActor extends Actor {
      * @returns {Map<string,object>} Every reroll type that is allowed, plus special setting data for each
      */
     getGiftRerollTypes(stats = [], hasone = false, isauthor = false, addbasicreroll = true) {
-        const data = this.data.data;
+        const system = this.system;
         let rerollTypes = new Map();
         let itemlessdata = { "statArray": stats };
         // Check if any of the reroll types the actor has applies, then grab those
-        if (data.processingLists?.rerollBonus) { // Check if reroll bonuses even exist
-            for (let setting of data.processingLists.rerollBonus) { // Loop through them
+        if (system.processingLists?.rerollBonus) { // Check if reroll bonuses even exist
+            for (let setting of system.processingLists.rerollBonus) { // Loop through them
                 if (checkApplicability(setting, null, this, { itemlessdata, "hasoneinroll": hasone, isauthor })) { // Check initial applicability
                     let used = setting; // Store the setting in a temp variable
                     let replacement = this._checkForReplacement(used); // Store the potential replacement if any in a temp variable
@@ -2024,9 +2021,9 @@ export class Ironclaw2EActor extends Actor {
         for (let name of giftnames) {
             const gift = findInItems(this.items, name, "gift");
             // If a gift with the name was found, it is usable and it has a dice array
-            if (gift && gift.data.data.giftUsable && gift.data.data.giftArray) {
+            if (gift && gift.system.giftUsable && gift.system.giftArray) {
                 // Add a dialog dice pool construction of the gift
-                const foo = formDicePoolField(gift.data.data.giftArray, gift.name, `${gift.name}: ${reformDiceString(gift.data.data.giftArray, true)}`, true, { "itemid": gift.id, "exhaustonuse": gift.data.data.exhaustWhenUsed },
+                const foo = formDicePoolField(gift.system.giftArray, gift.name, `${gift.name}: ${reformDiceString(gift.system.giftArray, true)}`, true, { "itemid": gift.id, "exhaustonuse": gift.system.exhaustWhenUsed },
                     { otherkeys, otherdice, othernames, otherbools, otherinputs });
                 otherkeys = foo.otherkeys;
                 otherdice = foo.otherdice;
@@ -2051,7 +2048,6 @@ export class Ironclaw2EActor extends Actor {
      * @returns {any} Exact return type depends on the returntype parameter, null if no normal return path
      */
     initiativeRoll(returntype, tntouse = 2, directroll = false) {
-        const data = this.data.data;
         let formconstruction = ``;
         let constructionkeys = new Map();
         let constructionarray = new Map();
@@ -2104,7 +2100,7 @@ export class Ironclaw2EActor extends Actor {
                 break;
         }
 
-        console.error("Initiative roll return type defaulted for actor: " + this.data.name);
+        console.error("Initiative roll return type defaulted for actor: " + this.name);
         return null;
     }
 
@@ -2115,7 +2111,7 @@ export class Ironclaw2EActor extends Actor {
      * @returns {any} Exact return type depends on the returntype parameter, null if no normal return path
      */
     sprintRoll(returntype, directroll = false) {
-        const data = this.data.data;
+        const system = this.system;
         let formconstruction = ``;
         let constructionkeys = new Map();
         let constructionarray = new Map();
@@ -2143,13 +2139,13 @@ export class Ironclaw2EActor extends Actor {
             case 0:
                 this.basicRollSelector({
                     "prechecked": prechecked, "tnyes": false, "tnnum": 3, "otherkeys": constructionkeys, "otherdice": constructionarray, "otherinputs": formconstruction, "otherbools": constructionbools, "othernames": constructionnames,
-                    "otherlabel": game.i18n.localize("ironclaw2e.chat.rollingSprint") + ", " + game.i18n.format("ironclaw2e.chat.rollingSprintExtra", { "stride": `+-${data.stride}` })
+                    "otherlabel": game.i18n.localize("ironclaw2e.chat.rollingSprint") + ", " + game.i18n.format("ironclaw2e.chat.rollingSprintExtra", { "stride": `+-${system.stride}` })
                 }, { directroll });
                 return;
                 break;
         }
 
-        console.error("Sprint roll return type defaulted for actor: " + this.data.name);
+        console.error("Sprint roll return type defaulted for actor: " + this.name);
         return null;
     }
 
@@ -2168,7 +2164,6 @@ export class Ironclaw2EActor extends Actor {
 
     async popupRallyRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "" } = {}, { directroll = false, targetpos = null } = {},
         successfunc = null) {
-        const data = this.data.data;
         let checkedstats = [...prechecked];
         let constructionkeys = new Map(otherkeys);
         let constructionarray = new Map(otherdice);
@@ -2202,7 +2197,6 @@ export class Ironclaw2EActor extends Actor {
     }
 
     popupSoakRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "" } = {}, { directroll = false, checkweak = false, checkarmor = true } = {}, successfunc = null) {
-        const data = this.data.data;
         let checkedstats = [...prechecked];
         let constructionkeys = new Map(otherkeys);
         let constructionarray = new Map(otherdice);
@@ -2242,7 +2236,6 @@ export class Ironclaw2EActor extends Actor {
 
     popupDefenseRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "" } = {}, { directroll = false, isparry = false, isspecial = false, otheritem = null } = {},
         item = null, successfunc = null) {
-        const data = this.data.data;
         let checkedstats = [...prechecked];
         let constructionkeys = new Map(otherkeys);
         let constructionarray = new Map(otherdice);
@@ -2297,7 +2290,6 @@ export class Ironclaw2EActor extends Actor {
     }
 
     popupAttackRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "" } = {}, { directroll = false, target = null } = {}, item = null, successfunc = null) {
-        const data = this.data.data;
         let checkedstats = [...prechecked];
         let constructionkeys = new Map(otherkeys);
         let constructionarray = new Map(otherdice);
@@ -2343,7 +2335,6 @@ export class Ironclaw2EActor extends Actor {
     }
 
     popupCounterRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "" } = {}, { directroll = false, otheritem = null } = {}, item = null, successfunc = null) {
-        const data = this.data.data;
         let checkedstats = [...prechecked];
         let constructionkeys = new Map(otherkeys);
         let constructionarray = new Map(otherdice);
@@ -2375,7 +2366,6 @@ export class Ironclaw2EActor extends Actor {
     }
 
     popupResistRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "" } = {}, { directroll = false, otheritem = null } = {}, item = null, successfunc = null) {
-        const data = this.data.data;
         let checkedstats = [...prechecked];
         let constructionkeys = new Map(otherkeys);
         let constructionarray = new Map(otherdice);
@@ -2619,11 +2609,11 @@ export class Ironclaw2EActor extends Actor {
      * @returns {Promise<DiceReturn> | Promise<null>}
      */
     popupSelectRolled({ tnyes = false, tnnum = 3, prechecked = [], otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherinputs = "", extradice = "", otherlabel = "" } = {}, successfunc = null, autocondition = null) {
-        const data = this.data.data;
+        const system = this.system;
         let formconstruction = ``;
         let firstelement = "";
-        const hastraits = data.hasOwnProperty("traits");
-        const hasskills = data.hasOwnProperty("skills");
+        const hastraits = system.hasOwnProperty("traits");
+        const hasskills = system.hasOwnProperty("skills");
         const conditionRemoval = game.settings.get("ironclaw2e", "autoConditionRemoval");
         const giftUseToChat = game.settings.get("ironclaw2e", "sendGiftUseExhaustMessage");
 
@@ -2633,8 +2623,8 @@ export class Ironclaw2EActor extends Actor {
         }
 
         let extracareers = [];
-        if (data.hasExtraCareers) { // Check if the actor has any extra careers to show
-            data.extraCareerIds.forEach(x => extracareers.push(this.items.get(x)));
+        if (system.hasExtraCareers) { // Check if the actor has any extra careers to show
+            system.extraCareerIds.forEach(x => extracareers.push(this.items.get(x)));
         }
 
         let statuseffectnotes = "";
@@ -2660,13 +2650,13 @@ export class Ironclaw2EActor extends Actor {
         if (hastraits) {
             formconstruction += `<h2>${game.i18n.localize("ironclaw2e.actor.traits")}:</h2>
        <div class="grid-2row grid-minimal">` + "\n";;
-            for (let [key, trait] of Object.entries(data.traits)) {
+            for (let [key, trait] of Object.entries(system.traits)) {
                 const lowerkey = makeCompareReady(key); // Separate variable for prechecked in traits to account for using the species or career name in the pre-checked
                 const isPrechecked = prechecked.includes(lowerkey) || (trait.name && prechecked.includes(makeCompareReady(trait.name)));
                 if (firstelement == "")
                     firstelement = lowerkey;
                 formconstruction += `<div class="form-group flex-group-center flex-tight">
-       <label class="normal-label">${(data.hasExtraCareers && key === "career" ? trait.name : convertCamelCase(key))}: ${reformDiceString(trait.diceArray)}</label>
+       <label class="normal-label">${(system.hasExtraCareers && key === "career" ? trait.name : convertCamelCase(key))}: ${reformDiceString(trait.diceArray)}</label>
 	   <input type="checkbox" id="${lowerkey}" name="trait" value="${lowerkey}" ${isPrechecked ? "checked" : ""}></input>
       </div>`+ "\n";
             }
@@ -2675,11 +2665,11 @@ export class Ironclaw2EActor extends Actor {
                 for (let [index, extra] of extracareers.entries()) {
                     if (index >= 2)
                         break; // For UI reasons, only show up to two extra careers on dice pool selection, these should select themselves from the top of the list in the sheet
-                    const lowerkey = makeCompareReady(extra.data.data.careerName);
+                    const lowerkey = makeCompareReady(extra.system.careerName);
                     if (firstelement == "")
                         firstelement = lowerkey;
                     formconstruction += `<div class="form-group flex-group-center flex-tight">
-       <label class="normal-label">${extra.data.data.careerName}: ${reformDiceString(extra.data.data.diceArray)}</label>
+       <label class="normal-label">${extra.system.careerName}: ${reformDiceString(extra.system.diceArray)}</label>
 	   <input type="checkbox" id="${lowerkey}" name="trait" value="${lowerkey}" ${prechecked.includes(lowerkey) ? "checked" : ""}></input>
       </div>`+ "\n";
                 }
@@ -2689,7 +2679,7 @@ export class Ironclaw2EActor extends Actor {
         if (hasskills) {
             formconstruction += `<h2>${game.i18n.localize("ironclaw2e.actor.skills")}:</h2>
        <div class="grid grid-3col grid-minimal">` + "\n";
-            for (let [key, skill] of Object.entries(data.skills)) {
+            for (let [key, skill] of Object.entries(system.skills)) {
                 const lowerkey = makeCompareReady(key);
                 if (firstelement == "")
                     firstelement = lowerkey;
@@ -2703,7 +2693,7 @@ export class Ironclaw2EActor extends Actor {
         }
 
         if (firstelement == "") {
-            console.warn("Somehow, an empty actor sheet was received! " + this.data.name);
+            console.warn("Somehow, an empty actor sheet was received! " + this.name);
             return null;
         }
 
@@ -2715,7 +2705,7 @@ export class Ironclaw2EActor extends Actor {
                 title: game.i18n.localize("ironclaw2e.dialog.dicePool.title"),
                 content: `
      <form class="ironclaw2e">
-     <h1>${game.i18n.format("ironclaw2e.dialog.dicePool.header", { "name": this.data.name })}</h1>
+     <h1>${game.i18n.format("ironclaw2e.dialog.dicePool.header", { "name": this.name })}</h1>
      ${labelNotice}
      <span class="small-text">${game.i18n.format("ironclaw2e.dialog.dicePool.showUp", { "alias": getMacroSpeaker(this).alias })}</span>
      <div class="form-group">

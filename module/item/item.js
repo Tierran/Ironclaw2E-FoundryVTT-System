@@ -34,7 +34,7 @@ export class Ironclaw2EItem extends Item {
      * @param {object} target
      */
     static transferTemplateFlags(source, target) {
-        const sourceFlags = source?.data.flags?.ironclaw2e;
+        const sourceFlags = source?.flags?.ironclaw2e;
         if ("weaponTemplatePos" in sourceFlags) {
             const flags = {
                 "ironclaw2e.weaponTemplatePos": sourceFlags.weaponTemplatePos,
@@ -77,208 +77,208 @@ export class Ironclaw2EItem extends Item {
      */
     prepareDerivedData() {
         // Get the Item's data
-        const itemData = this.data;
-        const actorData = this.actor ? this.actor.data : {};
-        const data = itemData.data;
+        const item = this;
+        const actor = this.actor ? this.actor : {};
+        const system = item.system;
 
         // Check if the item has the weight attribute, then use it and quantity to calculate total weight
-        if (data.hasOwnProperty("weight")) {
+        if (system.hasOwnProperty("weight")) {
             let usedWeight = 0;
-            if (typeof (data.weight) !== "string") { // Both to ensure that the .includes doesn't fail and for legacy compatability
-                usedWeight = data.weight;
-            } else if (data.weight.includes("/")) {
-                const foobar = data.weight.split("/");
+            if (typeof (system.weight) !== "string") { // Both to ensure that the .includes doesn't fail and for legacy compatability
+                usedWeight = system.weight;
+            } else if (system.weight.includes("/")) {
+                const foobar = system.weight.split("/");
                 if (foobar.length > 1) {
                     const foo = parseInt(foobar[0]);
                     const bar = parseInt(foobar[1]);
                     if (!isNaN(foo) && !isNaN(bar) && bar != 0) {
                         usedWeight = foo / bar;
                     } else {
-                        ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": itemData.name, "weight": data.weight }));
+                        ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight }));
                     }
                 } else {
-                    ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": itemData.name, "weight": data.weight }));
+                    ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight }));
                 }
             } else {
-                const foobar = parseFloat(data.weight);
+                const foobar = parseFloat(system.weight);
                 if (!isNaN(foobar)) {
                     usedWeight = foobar;
                 } else {
-                    ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": itemData.name, "weight": data.weight }));
+                    ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight }));
                 }
             }
 
-            data.totalWeight = usedWeight * data.quantity;
+            system.totalWeight = usedWeight * system.quantity;
         }
 
-        if (itemData.type === 'gift') this._prepareGiftData(itemData, actorData);
-        if (itemData.type === 'extraCareer') this._prepareCareerData(itemData, actorData);
-        if (itemData.type === 'weapon') this._prepareWeaponData(itemData, actorData);
-        if (itemData.type === 'armor') this._prepareArmorData(itemData, actorData);
-        if (itemData.type === 'shield') this._prepareShieldData(itemData, actorData);
-        if (itemData.type === 'illumination') this._prepareIlluminationData(itemData, actorData);
+        if (item.type === 'gift') this._prepareGiftData(item, actor);
+        if (item.type === 'extraCareer') this._prepareCareerData(item, actor);
+        if (item.type === 'weapon') this._prepareWeaponData(item, actor);
+        if (item.type === 'armor') this._prepareArmorData(item, actor);
+        if (item.type === 'shield') this._prepareShieldData(item, actor);
+        if (item.type === 'illumination') this._prepareIlluminationData(item, actor);
     }
 
     /**
      * Process Gift type specific data
      */
-    _prepareGiftData(itemData, actorData) {
-        const data = itemData.data;
+    _prepareGiftData(item, actor) {
+        const system = item.system;
         // Dice
-        if (data.useDice.length > 0) {
-            let firstsplit = splitStatsAndBonus(data.useDice);
-            data.giftStats = firstsplit[0];
-            data.giftArray = (firstsplit[1].length > 0 ? findTotalDice(firstsplit[1]) : null);
-            data.canUse = true;
+        if (system.useDice.length > 0) {
+            let firstsplit = splitStatsAndBonus(system.useDice);
+            system.giftStats = firstsplit[0];
+            system.giftArray = (firstsplit[1].length > 0 ? findTotalDice(firstsplit[1]) : null);
+            system.canUse = true;
         }
-        else if (data.exhaustWhenUsed) {
-            data.giftStats = null;
-            data.giftArray = null;
-            data.canUse = true;
+        else if (system.exhaustWhenUsed) {
+            system.giftStats = null;
+            system.giftArray = null;
+            system.canUse = true;
         }
         else {
-            data.giftStats = null;
-            data.giftArray = null;
-            data.canUse = false;
+            system.giftStats = null;
+            system.giftArray = null;
+            system.canUse = false;
         }
         // Tags
-        if (data.giftTags.length > 0) {
-            data.giftTagsSplit = splitStatString(data.giftTags);
+        if (system.giftTags.length > 0) {
+            system.giftTagsSplit = splitStatString(system.giftTags);
         }
         // Skill Mark
-        if (data.grantsMark) {
-            data.skillName = makeCompareReady(data.giftSkill);
+        if (system.grantsMark) {
+            system.skillName = makeCompareReady(system.giftSkill);
         }
         // Usability
         // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored giftUsable as true, otherwise it is false
-        data.giftUsable = (data.exhaustWhenUsed === false || !data.exhausted);
+        system.giftUsable = (system.exhaustWhenUsed === false || !system.exhausted);
 
         // Special settings
-        if (data.specialSettings?.length > 0) {
+        if (system.specialSettings?.length > 0) {
             // If special settings exist, make a new array where the actual processed version of the special settings exist
             // This helps prevent data corruption
-            data.usedSpecialSettings = [];
+            system.usedSpecialSettings = [];
 
-            for (let i = 0; i < data.specialSettings.length; ++i) {
+            for (let i = 0; i < system.specialSettings.length; ++i) {
                 // Clone the object in the stored array into the actually used array
-                data.usedSpecialSettings.push({ ...data.specialSettings[i] });
+                system.usedSpecialSettings.push({ ...system.specialSettings[i] });
 
-                data.usedSpecialSettings[i].giftName = itemData.name;
-                data.usedSpecialSettings[i].giftId = itemData._id;
-                data.usedSpecialSettings[i].settingIndex = i;
-                data.usedSpecialSettings[i].refreshedState = data.giftUsable;
+                system.usedSpecialSettings[i].giftName = item.name;
+                system.usedSpecialSettings[i].giftId = item._id;
+                system.usedSpecialSettings[i].settingIndex = i;
+                system.usedSpecialSettings[i].refreshedState = system.giftUsable;
                 // If the special is of a type that does not use items but preset data, set the itemless boolean to "true"
-                data.usedSpecialSettings[i].itemless = CommonSystemInfo.giftItemlessOptions.has(data.usedSpecialSettings[i].settingMode);
+                system.usedSpecialSettings[i].itemless = CommonSystemInfo.giftItemlessOptions.has(system.usedSpecialSettings[i].settingMode);
 
                 // Applicability settings
                 // Self settings
-                if (data.usedSpecialSettings[i].typeField) {
-                    data.usedSpecialSettings[i].typeArray = splitStatString(data.usedSpecialSettings[i].typeField);
+                if (system.usedSpecialSettings[i].typeField) {
+                    system.usedSpecialSettings[i].typeArray = splitStatString(system.usedSpecialSettings[i].typeField);
                 }
 
-                if (data.usedSpecialSettings[i].nameField) {
-                    data.usedSpecialSettings[i].nameArray = splitStatString(data.usedSpecialSettings[i].nameField, false);
-                    data.usedSpecialSettings[i].nameArray.forEach((val, index) => data.usedSpecialSettings[i].nameArray[index] = val.toLowerCase());
+                if (system.usedSpecialSettings[i].nameField) {
+                    system.usedSpecialSettings[i].nameArray = splitStatString(system.usedSpecialSettings[i].nameField, false);
+                    system.usedSpecialSettings[i].nameArray.forEach((val, index) => system.usedSpecialSettings[i].nameArray[index] = val.toLowerCase());
                 }
 
-                if (data.usedSpecialSettings[i].tagField) {
-                    data.usedSpecialSettings[i].tagArray = splitStatString(data.usedSpecialSettings[i].tagField);
+                if (system.usedSpecialSettings[i].tagField) {
+                    system.usedSpecialSettings[i].tagArray = splitStatString(system.usedSpecialSettings[i].tagField);
                 }
 
-                if (data.usedSpecialSettings[i].descriptorField) {
-                    data.usedSpecialSettings[i].descriptorArray = splitStatString(data.usedSpecialSettings[i].descriptorField);
+                if (system.usedSpecialSettings[i].descriptorField) {
+                    system.usedSpecialSettings[i].descriptorArray = splitStatString(system.usedSpecialSettings[i].descriptorField);
                 }
 
-                if (data.usedSpecialSettings[i].effectField) {
-                    data.usedSpecialSettings[i].effectArray = splitStatString(data.usedSpecialSettings[i].effectField);
+                if (system.usedSpecialSettings[i].effectField) {
+                    system.usedSpecialSettings[i].effectArray = splitStatString(system.usedSpecialSettings[i].effectField);
                 }
 
                 // Special case for gifts that can be generically tied to skills
-                if (data.usedSpecialSettings[i].statField === "-" && CommonSystemInfo.giftGenericSkillOptions.has(data.usedSpecialSettings[i].settingMode)) {
-                    data.specialSkillUse = true;
-                    if (data.giftSkill) data.usedSpecialSettings[i].statArray = splitStatString(data.giftSkill);
+                if (system.usedSpecialSettings[i].statField === "-" && CommonSystemInfo.giftGenericSkillOptions.has(system.usedSpecialSettings[i].settingMode)) {
+                    system.specialSkillUse = true;
+                    if (system.giftSkill) system.usedSpecialSettings[i].statArray = splitStatString(system.giftSkill);
                 }
-                else if (data.usedSpecialSettings[i].statField) {
-                    data.usedSpecialSettings[i].statArray = splitStatString(data.usedSpecialSettings[i].statField);
-                }
-
-                if (data.usedSpecialSettings[i].conditionField) {
-                    data.usedSpecialSettings[i].conditionArray = splitStatString(data.usedSpecialSettings[i].conditionField);
+                else if (system.usedSpecialSettings[i].statField) {
+                    system.usedSpecialSettings[i].statArray = splitStatString(system.usedSpecialSettings[i].statField);
                 }
 
-                if (data.usedSpecialSettings[i].equipField) {
-                    data.usedSpecialSettings[i].equipArray = splitStatString(data.usedSpecialSettings[i].equipField);
+                if (system.usedSpecialSettings[i].conditionField) {
+                    system.usedSpecialSettings[i].conditionArray = splitStatString(system.usedSpecialSettings[i].conditionField);
                 }
 
-                if (data.usedSpecialSettings[i].rangeField) {
-                    data.usedSpecialSettings[i].rangeArray = splitStatString(data.usedSpecialSettings[i].rangeField);
+                if (system.usedSpecialSettings[i].equipField) {
+                    system.usedSpecialSettings[i].equipArray = splitStatString(system.usedSpecialSettings[i].equipField);
                 }
 
-                if (data.usedSpecialSettings[i].otherOwnedItemField) {
-                    data.usedSpecialSettings[i].otherOwnedItemArray = splitStatString(data.usedSpecialSettings[i].otherOwnedItemField);
+                if (system.usedSpecialSettings[i].rangeField) {
+                    system.usedSpecialSettings[i].rangeArray = splitStatString(system.usedSpecialSettings[i].rangeField);
+                }
+
+                if (system.usedSpecialSettings[i].otherOwnedItemField) {
+                    system.usedSpecialSettings[i].otherOwnedItemArray = splitStatString(system.usedSpecialSettings[i].otherOwnedItemField);
                 }
 
                 // Other settings
-                if (data.usedSpecialSettings[i].nameOtherField) {
-                    data.usedSpecialSettings[i].nameOtherArray = splitStatString(data.usedSpecialSettings[i].nameOtherField, false);
-                    data.usedSpecialSettings[i].nameOtherArray.forEach((val, index) => data.usedSpecialSettings[i].nameOtherArray[index] = val.toLowerCase());
+                if (system.usedSpecialSettings[i].nameOtherField) {
+                    system.usedSpecialSettings[i].nameOtherArray = splitStatString(system.usedSpecialSettings[i].nameOtherField, false);
+                    system.usedSpecialSettings[i].nameOtherArray.forEach((val, index) => system.usedSpecialSettings[i].nameOtherArray[index] = val.toLowerCase());
                 }
 
-                if (data.usedSpecialSettings[i].descriptorOtherField) {
-                    data.usedSpecialSettings[i].descriptorOtherArray = splitStatString(data.usedSpecialSettings[i].descriptorOtherField);
+                if (system.usedSpecialSettings[i].descriptorOtherField) {
+                    system.usedSpecialSettings[i].descriptorOtherArray = splitStatString(system.usedSpecialSettings[i].descriptorOtherField);
                 }
 
-                if (data.usedSpecialSettings[i].effectOtherField) {
-                    data.usedSpecialSettings[i].effectOtherArray = splitStatString(data.usedSpecialSettings[i].effectOtherField);
+                if (system.usedSpecialSettings[i].effectOtherField) {
+                    system.usedSpecialSettings[i].effectOtherArray = splitStatString(system.usedSpecialSettings[i].effectOtherField);
                 }
 
-                if (data.usedSpecialSettings[i].statOtherField) {
-                    data.usedSpecialSettings[i].statOtherArray = splitStatString(data.usedSpecialSettings[i].statOtherField);
+                if (system.usedSpecialSettings[i].statOtherField) {
+                    system.usedSpecialSettings[i].statOtherArray = splitStatString(system.usedSpecialSettings[i].statOtherField);
                 }
 
-                if (data.usedSpecialSettings[i].equipOtherField) {
-                    data.usedSpecialSettings[i].equipOtherArray = splitStatString(data.usedSpecialSettings[i].equipOtherField);
+                if (system.usedSpecialSettings[i].equipOtherField) {
+                    system.usedSpecialSettings[i].equipOtherArray = splitStatString(system.usedSpecialSettings[i].equipOtherField);
                 }
 
-                if (data.usedSpecialSettings[i].rangeOtherField) {
-                    data.usedSpecialSettings[i].rangeOtherArray = splitStatString(data.usedSpecialSettings[i].rangeOtherField);
+                if (system.usedSpecialSettings[i].rangeOtherField) {
+                    system.usedSpecialSettings[i].rangeOtherArray = splitStatString(system.usedSpecialSettings[i].rangeOtherField);
                 }
 
                 // Effect settings
-                if (data.usedSpecialSettings[i].bonusSourcesField) {
-                    data.usedSpecialSettings[i].bonusSources = splitStatString(data.usedSpecialSettings[i].bonusSourcesField);
+                if (system.usedSpecialSettings[i].bonusSourcesField) {
+                    system.usedSpecialSettings[i].bonusSources = splitStatString(system.usedSpecialSettings[i].bonusSourcesField);
                 }
 
-                if (!data.usedSpecialSettings[i].hasOwnProperty("bonusStatsField") || data.usedSpecialSettings[i].bonusStatsField === "-") {
+                if (!system.usedSpecialSettings[i].hasOwnProperty("bonusStatsField") || system.usedSpecialSettings[i].bonusStatsField === "-") {
                     // If the stat field doesn't exist or is just a dash, interpret that as skipping the field
-                } else if (data.usedSpecialSettings[i].bonusStatsField) {
-                    data.usedSpecialSettings[i].bonusStats = splitStatString(data.usedSpecialSettings[i].bonusStatsField);
+                } else if (system.usedSpecialSettings[i].bonusStatsField) {
+                    system.usedSpecialSettings[i].bonusStats = splitStatString(system.usedSpecialSettings[i].bonusStatsField);
                 } else { // If the bonus field has stuff, use it, otherwise use the normal gift stuff
-                    data.usedSpecialSettings[i].bonusStats = data.giftStats;
+                    system.usedSpecialSettings[i].bonusStats = system.giftStats;
                 }
 
-                if (!data.usedSpecialSettings[i].hasOwnProperty("bonusDiceField") || data.usedSpecialSettings[i].bonusDiceField === "-") {
+                if (!system.usedSpecialSettings[i].hasOwnProperty("bonusDiceField") || system.usedSpecialSettings[i].bonusDiceField === "-") {
                     // If the dice field doesn't exist or is just a dash, interpret that as skipping the field
-                } else if (data.usedSpecialSettings[i].bonusDiceField) {
-                    data.usedSpecialSettings[i].bonusDice = findTotalDice(data.usedSpecialSettings[i].bonusDiceField);
+                } else if (system.usedSpecialSettings[i].bonusDiceField) {
+                    system.usedSpecialSettings[i].bonusDice = findTotalDice(system.usedSpecialSettings[i].bonusDiceField);
                 } else { // If the bonus field has stuff, use it, otherwise use the normal gift stuff
-                    data.usedSpecialSettings[i].bonusDice = data.giftArray;
+                    system.usedSpecialSettings[i].bonusDice = system.giftArray;
                 }
 
-                if (data.usedSpecialSettings[i].replaceNameField) {
-                    data.usedSpecialSettings[i].replaceName = makeCompareReady(data.usedSpecialSettings[i].replaceNameField);
+                if (system.usedSpecialSettings[i].replaceNameField) {
+                    system.usedSpecialSettings[i].replaceName = makeCompareReady(system.usedSpecialSettings[i].replaceNameField);
                 }
 
-                if (data.usedSpecialSettings[i].changeFromField && data.usedSpecialSettings[i].changeToField) {
+                if (system.usedSpecialSettings[i].changeFromField && system.usedSpecialSettings[i].changeToField) {
                     // Check that both from and to fields have stuff, and then ensure that both have the same length before assiging them
-                    const foo = splitStatString(data.usedSpecialSettings[i].changeFromField, false);
-                    const bar = splitStatString(data.usedSpecialSettings[i].changeToField, false);
+                    const foo = splitStatString(system.usedSpecialSettings[i].changeFromField, false);
+                    const bar = splitStatString(system.usedSpecialSettings[i].changeToField, false);
                     if (foo.length === bar.length) {
-                        data.usedSpecialSettings[i].changeFrom = foo;
-                        data.usedSpecialSettings[i].changeTo = bar;
+                        system.usedSpecialSettings[i].changeFrom = foo;
+                        system.usedSpecialSettings[i].changeTo = bar;
                     } else {
-                        data.usedSpecialSettings[i].changeFrom = null;
-                        data.usedSpecialSettings[i].changeTo = null;
+                        system.usedSpecialSettings[i].changeFrom = null;
+                        system.usedSpecialSettings[i].changeTo = null;
                     }
                 }
             }
@@ -288,78 +288,78 @@ export class Ironclaw2EItem extends Item {
     /**
      * Process Extra Career type specific data
      */
-    _prepareCareerData(itemData, actorData) {
-        const data = itemData.data;
+    _prepareCareerData(item, actor) {
+        const system = item.system;
 
-        data.careerName = (data.forcedCareerName?.length > 0 ? data.forcedCareerName : itemData.name);
-        if (data.dice.length > 0) {
-            data.diceArray = findTotalDice(data.dice);
-            data.valid = checkDiceArrayEmpty(data.diceArray);
-            data.skills = [makeCompareReady(data.careerSkill1), makeCompareReady(data.careerSkill2), makeCompareReady(data.careerSkill3)];
-            data.skillNames = [data.careerSkill1, data.careerSkill2, data.careerSkill3];
+        system.careerName = (system.forcedCareerName?.length > 0 ? system.forcedCareerName : item.name);
+        if (system.dice.length > 0) {
+            system.diceArray = findTotalDice(system.dice);
+            system.valid = checkDiceArrayEmpty(system.diceArray);
+            system.skills = [makeCompareReady(system.careerSkill1), makeCompareReady(system.careerSkill2), makeCompareReady(system.careerSkill3)];
+            system.skillNames = [system.careerSkill1, system.careerSkill2, system.careerSkill3];
         } else {
-            data.valid = false;
+            system.valid = false;
         }
     }
 
     /**
      * Process Weapon type specific data
      */
-    _prepareWeaponData(itemData, actorData) {
-        const data = itemData.data;
+    _prepareWeaponData(item, actor) {
+        const system = item.system;
 
         // Attack
-        if (data.attackDice.length > 0) {
-            let attacksplit = splitStatsAndBonus(data.attackDice);
-            data.attackStats = attacksplit[0];
-            data.attackArray = (attacksplit[1].length > 0 ? findTotalDice(attacksplit[1]) : null);
-            data.canAttack = true;
+        if (system.attackDice.length > 0) {
+            let attacksplit = splitStatsAndBonus(system.attackDice);
+            system.attackStats = attacksplit[0];
+            system.attackArray = (attacksplit[1].length > 0 ? findTotalDice(attacksplit[1]) : null);
+            system.canAttack = true;
         }
         else {
-            data.attackStats = null;
-            data.attackArray = null;
-            data.canAttack = false;
+            system.attackStats = null;
+            system.attackArray = null;
+            system.canAttack = false;
         }
         // Defense
-        if (data.defenseDice.length > 0) {
-            let defensesplit = splitStatsAndBonus(data.defenseDice);
-            data.defenseStats = defensesplit[0];
-            data.defenseArray = (defensesplit[1].length > 0 ? findTotalDice(defensesplit[1]) : null);
-            data.canDefend = true;
+        if (system.defenseDice.length > 0) {
+            let defensesplit = splitStatsAndBonus(system.defenseDice);
+            system.defenseStats = defensesplit[0];
+            system.defenseArray = (defensesplit[1].length > 0 ? findTotalDice(defensesplit[1]) : null);
+            system.canDefend = true;
         }
         else {
-            data.defenseStats = null;
-            data.defenseArray = null;
-            data.canDefend = false;
+            system.defenseStats = null;
+            system.defenseArray = null;
+            system.canDefend = false;
         }
         // Counter
-        if (data.counterDice.length > 0) {
-            let countersplit = splitStatsAndBonus(data.counterDice);
-            data.counterStats = countersplit[0];
-            data.counterArray = (countersplit[1].length > 0 ? findTotalDice(countersplit[1]) : null);
-            data.canCounter = true;
+        if (system.counterDice.length > 0) {
+            let countersplit = splitStatsAndBonus(system.counterDice);
+            system.counterStats = countersplit[0];
+            system.counterArray = (countersplit[1].length > 0 ? findTotalDice(countersplit[1]) : null);
+            system.canCounter = true;
         }
         else {
-            data.counterStats = null;
-            data.counterArray = null;
-            data.canCounter = false;
+            system.counterStats = null;
+            system.counterArray = null;
+            system.canCounter = false;
         }
         // Spark
-        if (data.useSpark && data.sparkDie.length > 0) {
-            data.sparkArray = findTotalDice(data.sparkDie);
-            data.canSpark = true;
+        if (system.useSpark && system.sparkDie.length > 0) {
+            system.sparkArray = findTotalDice(system.sparkDie);
+            system.canSpark = true;
         }
         else {
-            data.sparkArray = null;
-            data.canSpark = false;
+            system.sparkArray = null;
+            system.canSpark = false;
         }
         // Effects
-        if (data.effect.length > 0) {
-            data.effectsSplit = splitStatString(data.effect);
+        if (system.effect.length > 0) {
+            system.effectsSplit = splitStatString(system.effect);
             // Damage
-            const foo = data.effectsSplit.findIndex(element => element.includes("damage"));
+            const foo = system.effectsSplit.findIndex(element => element.includes("damage"));
             if (foo >= 0) {
-                let bar = data.effectsSplit[foo];
+                let bar = system.effectsSplit[foo];
                 let flat = false;
                 if (bar.includes("flat")) {
                     bar = bar.replaceAll("flat", "");
@@ -367,13 +367,13 @@ export class Ironclaw2EItem extends Item {
                 }
                 if (bar.length > 0) {
                     const damage = parseInt(bar.match(/([0-9])+/i)?.[0]); // Grabs the first number group of the damage, which should always return the correct damage number
-                    data.damageEffect = isNaN(damage) ? -1 : damage;
-                    data.damageFlat = flat && data.damageEffect >= 0;
-                } else { data.damageEffect = -1; }
-            } else { data.damageEffect = -1; }
+                    system.damageEffect = isNaN(damage) ? -1 : damage;
+                    system.damageFlat = flat && system.damageEffect >= 0;
+                } else { system.damageEffect = -1; }
+            } else { system.damageEffect = -1; }
             //Multi-attack
             let multiType = "";
-            const multi = data.effectsSplit.findIndex(element => {
+            const multi = system.effectsSplit.findIndex(element => {
                 if (element.includes("group")) {
                     multiType = "group";
                     return true;
@@ -393,84 +393,84 @@ export class Ironclaw2EItem extends Item {
                 return false;
             });
             if (multi > 0) {
-                data.multiAttackType = multiType;
+                system.multiAttackType = multiType;
                 if (multiType === "sweep" || multiType === "explosion") {
-                    const multiString = data.effectsSplit[multi].replaceAll(/([:;])/g, "");
+                    const multiString = system.effectsSplit[multi].replaceAll(/([:;])/g, "");
                     const distString = multiString.substring(multiType.length);
                     if (CommonSystemInfo.rangeBandsArray.includes(distString)) {
-                        data.multiAttackRange = distString;
-                        data.multiAttackRangeShown = CommonSystemInfo.rangeBands[distString];
+                        system.multiAttackRange = distString;
+                        system.multiAttackRangeShown = CommonSystemInfo.rangeBands[distString];
                     }
                 }
-                data.attackAutoHits = (multiType === "explosion") && data.hasResist;
-                data.attackHasTemplate = data.attackAutoHits && data.multiAttackRange;
-            } else { data.multiAttackType = ""; }
+                system.attackAutoHits = (multiType === "explosion") && system.hasResist;
+                system.attackHasTemplate = system.attackAutoHits && system.multiAttackRange;
+            } else { system.multiAttackType = ""; }
             // Condition effects
-            const conds = CommonConditionInfo.getMatchedConditions(data.effectsSplit);
-            data.effectConditions = "";
-            data.effectConditionsLabel = "";
+            const conds = CommonConditionInfo.getMatchedConditions(system.effectsSplit);
+            system.effectConditions = "";
+            system.effectConditionsLabel = "";
             if (conds.length > 0) {
                 conds.forEach(element => {
-                    data.effectConditions += element.id + ",";
-                    data.effectConditionsLabel += game.i18n.localize(element.label) + ",";
+                    system.effectConditions += element.id + ",";
+                    system.effectConditionsLabel += game.i18n.localize(element.label) + ",";
                 });
-                data.effectConditions = data.effectConditions.slice(0, -1);
-                data.effectConditionsLabel = data.effectConditionsLabel.slice(0, -1);
+                system.effectConditions = system.effectConditions.slice(0, -1);
+                system.effectConditionsLabel = system.effectConditionsLabel.slice(0, -1);
             }
         } else {
-            data.effectsSplit = null;
+            system.effectsSplit = null;
         }
         // Defense
-        if (data.defendWith.length > 0) {
-            data.opposingDefenseStats = splitStatString(data.defendWith);
+        if (system.defendWith.length > 0) {
+            system.opposingDefenseStats = splitStatString(system.defendWith);
         } else {
-            data.opposingDefenseStats = null;
+            system.opposingDefenseStats = null;
         }
         // Descriptors
-        if (data.descriptors.length > 0) {
-            data.descriptorsSplit = splitStatString(data.descriptors);
+        if (system.descriptors.length > 0) {
+            system.descriptorsSplit = splitStatString(system.descriptors);
             // Special check to make sure wands have "wand" as a descriptor as far as the system is concerned
-            if (!data.descriptorsSplit.includes("wand") && itemData.name.toLowerCase().includes("wand")) {
-                data.descriptorsSplit.push("wand");
+            if (!system.descriptorsSplit.includes("wand") && item.name.toLowerCase().includes("wand")) {
+                system.descriptorsSplit.push("wand");
             }
         } else {
-            data.descriptorsSplit = null;
+            system.descriptorsSplit = null;
         }
     }
 
     /**
      * Process Armor type specific data
      */
-    _prepareArmorData(itemData, actorData) {
-        const data = itemData.data;
+    _prepareArmorData(item, actor) {
+        const system = item.system;
 
         // Armor
-        if (data.armorDice.length > 0) {
-            data.armorArray = findTotalDice(data.armorDice);
+        if (system.armorDice.length > 0) {
+            system.armorArray = findTotalDice(system.armorDice);
         } else {
-            data.armorArray = [0, 0, 0, 0, 0];
+            system.armorArray = [0, 0, 0, 0, 0];
         }
     }
 
     /**
      * Process Shield type specific data
      */
-    _prepareShieldData(itemData, actorData) {
-        const data = itemData.data;
+    _prepareShieldData(item, actor) {
+        const system = item.system;
 
         // Shield
-        if (data.coverDie.length > 0) {
-            data.coverArray = findTotalDice(data.coverDie);
+        if (system.coverDie.length > 0) {
+            system.coverArray = findTotalDice(system.coverDie);
         } else {
-            data.coverArray = [0, 0, 0, 0, 0];
+            system.coverArray = [0, 0, 0, 0, 0];
         }
     }
 
     /**
      * Process Light Source type specific data
      */
-    _prepareIlluminationData(itemData, actorData) {
-        const data = itemData.data;
+    _prepareIlluminationData(item, actor) {
+
     }
 
     /* -------------------------------------------- */
@@ -484,22 +484,22 @@ export class Ironclaw2EItem extends Item {
      * @returns {Promise<boolean | null>} Returns either whether gift is exhausted or not, or null in case of an error
      */
     async giftToggleExhaust(toggle = "toggle", sendToChat = false) {
-        const itemData = this.data;
-        const data = itemData.data;
-        if (!(itemData.type === 'gift')) {
-            console.error("Gift exhaust toggle attempted on a non-gift item: " + itemData.name);
+        const item = this;
+        const system = this.system;
+        if (!(item.type === 'gift')) {
+            console.error("Gift exhaust toggle attempted on a non-gift item: " + item.name);
             return null;
         }
 
         // If the gift does not exhaust when used, return out
-        if (data.exhaustWhenUsed === false) {
+        if (system.exhaustWhenUsed === false) {
             return null;
         }
 
         let endState = null;
         switch (toggle) {
             case "toggle":
-                endState = !data.readied;
+                endState = !system.readied;
                 break;
             case "true": // Exhausted
                 endState = true;
@@ -516,23 +516,23 @@ export class Ironclaw2EItem extends Item {
             return null;
         }
 
-        const statechanging = (endState !== data.exhausted);
+        const statechanging = (endState !== system.exhausted);
         if (statechanging) {
-            await this.update({ "_id": this.id, "data.exhausted": endState });
+            await this.update({ "_id": this.id, "system.exhausted": endState });
 
             if (sendToChat) {
                 let speaker = getMacroSpeaker(this.actor);
                 let contents = "";
                 if (endState) {
                     contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
-                <img class="item-image" src="${itemData.img}" title="${itemData.name}" width="20" height="20"/>
-                <div class="chat-header-small">${game.i18n.format("ironclaw2e.dialog.exhaustGift.chatMessage", { "item": itemData.name })}</div>
+                <img class="item-image" src="${item.img}" title="${item.name}" width="20" height="20"/>
+                <div class="chat-header-small">${game.i18n.format("ironclaw2e.dialog.exhaustGift.chatMessage", { "item": item.name })}</div>
                 </header>
                 </div>`;
                 } else {
                     contents = `<div class="ironclaw2e"><header class="chat-item flexrow">
-                <img class="item-image" src="${itemData.img}" title="${itemData.name}" width="20" height="20"/>
-                <div class="chat-header-small">${game.i18n.format("ironclaw2e.dialog.refreshGift.chatMessage", { "item": itemData.name })}</div>
+                <img class="item-image" src="${item.img}" title="${item.name}" width="20" height="20"/>
+                <div class="chat-header-small">${game.i18n.format("ironclaw2e.dialog.refreshGift.chatMessage", { "item": item.name })}</div>
                 </header>
                 </div>`;
                 }
@@ -552,24 +552,24 @@ export class Ironclaw2EItem extends Item {
      * Add a new special setting to a gift
      */
     async giftAddSpecialSetting() {
-        const itemData = this.data;
-        const data = itemData.data;
-        if (!(itemData.type === 'gift')) {
-            console.error("Gift special setting adding attempted on a non-gift item: " + itemData.name);
+        const item = this;
+        const system = item.system;
+        if (!(item.type === 'gift')) {
+            console.error("Gift special setting adding attempted on a non-gift item: " + item.name);
             return;
         }
 
         // Panic escape in case the special settings ever get corrupted
-        if (!Array.isArray(data.specialSettings)) {
-            console.warn("Gift special options are not an array somehow, resetting...: " + data.specialSettings);
-            await this.update({ "data.specialSettings": [] });
+        if (!Array.isArray(system.specialSettings)) {
+            console.warn("Gift special options are not an array somehow, resetting...: " + system.specialSettings);
+            await this.update({ "system.specialSettings": [] });
         }
 
-        let specialSettings = data.specialSettings;
+        let specialSettings = system.specialSettings;
         let setting = getSpecialOptionPrototype("attackBonus");
         specialSettings.push(setting);
 
-        await this.update({ "data.specialSettings": specialSettings });
+        await this.update({ "system.specialSettings": specialSettings });
         this.giftChangeSpecialSetting(specialSettings.length - 1, "attackBonus", true);
     }
 
@@ -578,23 +578,23 @@ export class Ironclaw2EItem extends Item {
      * @param {number} index Index of the setting
      */
     async giftDeleteSpecialSetting(index) {
-        const itemData = this.data;
-        const data = itemData.data;
-        if (!(itemData.type === 'gift')) {
-            console.error("Gift special setting deletion attempted on a non-gift item: " + itemData.name);
+        const item = this;
+        const system = item.system;
+        if (!(item.type === 'gift')) {
+            console.error("Gift special setting deletion attempted on a non-gift item: " + item.name);
             return;
         }
 
         // Panic escape in case the special settings ever get corrupted
-        if (!Array.isArray(data.specialSettings)) {
-            console.warn("Gift special options are not an array somehow, resetting...: " + data.specialSettings);
-            return await this.update({ "data.specialSettings": [] });
+        if (!Array.isArray(system.specialSettings)) {
+            console.warn("Gift special options are not an array somehow, resetting...: " + system.specialSettings);
+            return await this.update({ "system.specialSettings": [] });
         }
 
-        let specialSettings = data.specialSettings;
+        let specialSettings = system.specialSettings;
         specialSettings.splice(index, 1);
 
-        await this.update({ "data.specialSettings": specialSettings });
+        await this.update({ "system.specialSettings": specialSettings });
     }
 
     /**
@@ -604,20 +604,20 @@ export class Ironclaw2EItem extends Item {
      * @param {boolean} force Whether to force a change even into the same type
      */
     async giftChangeSpecialSetting(index, settingmode, force = false) {
-        const itemData = this.data;
-        const data = itemData.data;
-        if (!(itemData.type === 'gift')) {
-            console.error("Gift special setting change attempted on a non-gift item: " + itemData.name);
+        const item = this;
+        const system = item.system;
+        if (!(item.type === 'gift')) {
+            console.error("Gift special setting change attempted on a non-gift item: " + item.name);
             return null;
         }
 
         // Panic escape in case the special settings ever get corrupted
-        if (!Array.isArray(data.specialSettings)) {
-            console.warn("Gift special options are not an array somehow, resetting...: " + data.specialSettings);
-            return await this.update({ "data.specialSettings": [] });
+        if (!Array.isArray(system.specialSettings)) {
+            console.warn("Gift special options are not an array somehow, resetting...: " + system.specialSettings);
+            return await this.update({ "system.specialSettings": [] });
         }
 
-        let specialSettings = data.specialSettings;
+        let specialSettings = system.specialSettings;
         let oldSetting = specialSettings[index];
 
         // If the setting mode in the setting is the same as the settingmode for the function, and force is not set, return out
@@ -637,31 +637,31 @@ export class Ironclaw2EItem extends Item {
         }
 
         specialSettings[index] = newSetting;
-        return this.update({ "data.specialSettings": specialSettings });
+        return this.update({ "system.specialSettings": specialSettings });
     }
 
     /**
      * Make sure the special settings array of the gift has no extra data haunting the system
      */
     async giftValidateSpecialSetting() {
-        const itemData = this.data;
-        const data = itemData.data;
-        if (!(itemData.type === 'gift')) {
-            console.error("Gift special setting validation attempted on a non-gift item: " + itemData.name);
+        const item = this;
+        const system = item.system;
+        if (!(item.type === 'gift')) {
+            console.error("Gift special setting validation attempted on a non-gift item: " + item.name);
             return null;
         }
 
         // Panic escape in case the special settings ever get corrupted
-        if (!Array.isArray(data.specialSettings)) {
-            console.warn("Gift special options are not an array somehow, resetting...: " + data.specialSettings);
-            return await this.update({ "data.specialSettings": [] });
+        if (!Array.isArray(system.specialSettings)) {
+            console.warn("Gift special options are not an array somehow, resetting...: " + system.specialSettings);
+            return await this.update({ "system.specialSettings": [] });
         }
 
         let specialSettings = [];
 
         // The actual data validation
-        for (let i = 0; i < data.specialSettings.length; ++i) {
-            let oldSetting = data.specialSettings[i];
+        for (let i = 0; i < system.specialSettings.length; ++i) {
+            let oldSetting = system.specialSettings[i];
             if (!oldSetting.settingMode) {
                 console.error("A special bonus setting lacked a settingMode: " + this.name);
                 return null;
@@ -683,7 +683,7 @@ export class Ironclaw2EItem extends Item {
 
         if (specialSettings.length == 0) // Special exception to return the item in case the function was successful, but there was nothing to validate
             return this;
-        return this.update({ "data.specialSettings": specialSettings });
+        return this.update({ "system.specialSettings": specialSettings });
     }
 
     /**
@@ -693,16 +693,16 @@ export class Ironclaw2EItem extends Item {
      * @param {any} value
      */
     async giftChangeSpecialField(index, name, value) {
-        const itemData = this.data;
-        const data = itemData.data;
-        if (!(itemData.type === 'gift')) {
-            console.error("Gift special setting change attempted on a non-gift item: " + itemData.name);
+        const item = this;
+        const system = item.system;
+        if (!(item.type === 'gift')) {
+            console.error("Gift special setting change attempted on a non-gift item: " + item.name);
             return null;
         }
 
-        let specialSettings = data.specialSettings;
+        let specialSettings = system.specialSettings;
         specialSettings[index][name] = value;
-        return this.update({ "data.specialSettings": specialSettings });
+        return this.update({ "system.specialSettings": specialSettings });
     }
 
     /**
@@ -711,10 +711,10 @@ export class Ironclaw2EItem extends Item {
      * @returns {Ironclaw2EItem} The gift to exhaust
      */
     weaponGetGiftToExhaust(notifications = true) {
-        const itemData = this.data;
-        const data = itemData.data;
-        if (!(itemData.type === 'weapon')) {
-            console.error("Weapon get exhaust gift attempted on a non-weapon item: " + itemData.name);
+        const item = this;
+        const system = item.system;
+        if (!(item.type === 'weapon')) {
+            console.error("Weapon get exhaust gift attempted on a non-weapon item: " + item.name);
             return;
         }
 
@@ -723,11 +723,11 @@ export class Ironclaw2EItem extends Item {
             return null;
         }
 
-        if (data.exhaustGift && data.exhaustGiftName.length > 0) {
+        if (system.exhaustGift && system.exhaustGiftName.length > 0) {
             // Could use a simple .getName(), but the function below is more typo-resistant
-            const giftToExhaust = findInItems(this.actor?.items, data.exhaustGiftName, "gift");
+            const giftToExhaust = findInItems(this.actor?.items, system.exhaustGiftName, "gift");
             if (!giftToExhaust) {
-                if (notifications) ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustFailure", { "name": itemData.name, "gift": data.exhaustGiftName, "actor": this.actor.name }));
+                if (notifications) ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustFailure", { "name": item.name, "gift": system.exhaustGiftName, "actor": this.actor.name }));
                 return null;
             }
             return giftToExhaust;
@@ -743,10 +743,10 @@ export class Ironclaw2EItem extends Item {
      * @returns {Ironclaw2EItem} The weapon to upgrade from
      */
     weaponGetWeaponToUpgrade(notifications = true) {
-        const itemData = this.data;
-        const data = itemData.data;
-        if (!(itemData.type === 'weapon')) {
-            console.error("Weapon get weapon upgrade attempted on a non-weapon item: " + itemData.name);
+        const item = this;
+        const system = item.system;
+        if (!(item.type === 'weapon')) {
+            console.error("Weapon get weapon upgrade attempted on a non-weapon item: " + item.name);
             return;
         }
 
@@ -755,11 +755,11 @@ export class Ironclaw2EItem extends Item {
             return null;
         }
 
-        if (data.upgradeWeapon && data.upgradeWeaponName.length > 0) {
+        if (system.upgradeWeapon && system.upgradeWeaponName.length > 0) {
             // Could use a simple .getName(), but the function below is more typo-resistant
-            const weaponToUpgrade = findInItems(this.actor?.items, data.upgradeWeaponName, "weapon");
+            const weaponToUpgrade = findInItems(this.actor?.items, system.upgradeWeaponName, "weapon");
             if (!weaponToUpgrade) {
-                if (notifications) ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponUpgradeFindFailure", { "name": itemData.name, "weapon": data.upgradeWeaponName, "actor": this.actor.name }));
+                if (notifications) ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponUpgradeFindFailure", { "name": item.name, "weapon": system.upgradeWeaponName, "actor": this.actor.name }));
                 return null;
             }
             return weaponToUpgrade;
@@ -775,17 +775,17 @@ export class Ironclaw2EItem extends Item {
      * @returns {Promise<boolean | null>} Returns either the state the weapon was set to, or null in case of an error
      */
     async weaponToggleReady(toggle = "toggle") {
-        const itemData = this.data;
-        const data = itemData.data;
-        if (!(itemData.type === 'weapon')) {
-            console.error("Weapon ready toggle attempted on a non-weapon item: " + itemData.name);
+        const item = this;
+        const system = item.system;
+        if (!(item.type === 'weapon')) {
+            console.error("Weapon ready toggle attempted on a non-weapon item: " + item.name);
             return null;
         }
 
         let endState = null;
         switch (toggle) {
             case "toggle":
-                endState = !data.readied;
+                endState = !system.readied;
                 break;
             case "true":
                 endState = true;
@@ -802,16 +802,16 @@ export class Ironclaw2EItem extends Item {
 
             if (endState === true) {
                 // Weapon gift exhausting
-                if (data.exhaustGift && data.exhaustGiftWhenReadied) {
+                if (system.exhaustGift && system.exhaustGiftWhenReadied) {
                     const sendToChat = game.settings.get("ironclaw2e", "sendWeaponReadyExhaustMessage");
                     const needsRefreshed = game.settings.get("ironclaw2e", "weaponExhaustNeedsRefreshed");
                     const exhaust = this.weaponGetGiftToExhaust();
 
                     // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively
                     if (!exhaust) {
-                        ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
+                        ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": item.name }));
                         return null;
-                    } else if (needsRefreshed && exhaust?.data.data.giftUsable === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
+                    } else if (needsRefreshed && exhaust?.system.giftUsable === false) { // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
                         const confirmation = await exhaust?.popupGiftExhaustToggle(false);
                         if (confirmation !== false) {
                             return null;
@@ -825,16 +825,16 @@ export class Ironclaw2EItem extends Item {
                 }
 
                 // Weapon upgrading from another
-                if (data.upgradeWeapon && data.upgradeWeaponName) {
+                if (system.upgradeWeapon && system.upgradeWeaponName) {
                     const upgrade = this.weaponGetWeaponToUpgrade();
 
                     // If the weapon has a weapon to upgrade from that can't be found or is stowed, warn about it or pop a ready request about it respectively
                     if (!upgrade) {
-                        ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponUpgradeFindAbort", { "name": itemData.name }));
+                        ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponUpgradeFindAbort", { "name": item.name }));
                         return null;
-                    } else if (upgrade?.data.data.readied === false) { // If the weapon needs a readied weapon to upgrade from and the weapon is not readied, immediately pop up a ready request on that weapon
+                    } else if (upgrade?.system.readied === false) { // If the weapon needs a readied weapon to upgrade from and the weapon is not readied, immediately pop up a ready request on that weapon
                         const confirmation = await popupConfirmationBox("ironclaw2e.dialog.readyWeapon.upgradeTitle", "ironclaw2e.dialog.readyWeapon.upgradeHeader",
-                            "ironclaw2e.dialog.ready", { "itemname": upgrade.data.name, "actorname": this.actor.name, "targetname": itemData.name });
+                            "ironclaw2e.dialog.ready", { "itemname": upgrade.name, "actorname": this.actor.name, "targetname": item.name });
                         if (confirmation.confirmed === true) {
                             if (await upgrade.weaponToggleReady("true") !== true) {
                                 return null;
@@ -846,14 +846,14 @@ export class Ironclaw2EItem extends Item {
 
                     // Confirm taking the required action to upgrade the weapon
                     const upgrading = await popupConfirmationBox("ironclaw2e.dialog.upgradeWeapon.title", "ironclaw2e.dialog.upgradeWeapon.header",
-                        "ironclaw2e.dialog.upgrade", { "itemname": itemData.name, "actorname": this.actor.name, "targetname": data.upgradeWeaponAction });
+                        "ironclaw2e.dialog.upgrade", { "itemname": item.name, "actorname": this.actor.name, "targetname": system.upgradeWeaponAction });
 
                     // If confirmed, actually stow the weapon this one is upgraded from, and add the given upgrade condition to the actor, if a condition is selected
                     if (upgrading.confirmed) {
                         const worked = await upgrade.weaponToggleReady("false");
                         if (worked === false) {
-                            if (data.upgradeWeaponCondition) {
-                                await this.actor.addEffect(data.upgradeWeaponCondition);
+                            if (system.upgradeWeaponCondition) {
+                                await this.actor.addEffect(system.upgradeWeaponCondition);
                             }
                         } else {
                             return null;
@@ -865,7 +865,7 @@ export class Ironclaw2EItem extends Item {
             }
 
             // Actually update
-            await this.update({ "_id": this.id, "data.readied": endState });
+            await this.update({ "_id": this.id, "system.readied": endState });
         }
 
         return endState;
@@ -875,10 +875,10 @@ export class Ironclaw2EItem extends Item {
      * Weapon auto-stow
      */
     async weaponAutoStow() {
-        const itemData = this.data;
-        const data = itemData.data;
-        if (!(itemData.type === 'weapon')) {
-            console.error("Weapon ready toggle attempted on a non-weapon item: " + itemData.name);
+        const item = this;
+        const system = item.system;
+        if (!(item.type === 'weapon')) {
+            console.error("Weapon ready toggle attempted on a non-weapon item: " + item.name);
             return;
         }
 
@@ -887,7 +887,7 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        if (data.autoStow) {
+        if (system.autoStow) {
             await this.weaponToggleReady("false");
         }
     }
@@ -897,26 +897,26 @@ export class Ironclaw2EItem extends Item {
      * @returns {Promise<boolean>} Returns whether the weapon is ready to use
      */
     async weaponReadyWhenUsed() {
-        const itemData = this.data;
-        const data = itemData.data;
-        if (!(itemData.type === 'weapon')) {
-            console.error("Weapon ready toggle attempted on a non-weapon item: " + itemData.name);
+        const item = this;
+        const system = item.system;
+        if (!(item.type === 'weapon')) {
+            console.error("Weapon ready toggle attempted on a non-weapon item: " + item.name);
             return false;
         }
 
         // If the weapon is already readied, return true
-        if (data.readied) {
+        if (system.readied) {
             return true;
         }
 
         // If the weapon doesn't need to be readied, return true
-        if (!data.readyWhenUsed) {
+        if (!system.readyWhenUsed) {
             return true;
         }
 
         const confirm = game.settings.get("ironclaw2e", "askReadyWhenUsed");
         if (confirm) {
-            const confirmation = await popupConfirmationBox("ironclaw2e.dialog.readyWeapon.title", "ironclaw2e.dialog.readyWeapon.header", "ironclaw2e.dialog.ready", { "itemname": itemData.name, "actorname": this.actor.name });
+            const confirmation = await popupConfirmationBox("ironclaw2e.dialog.readyWeapon.title", "ironclaw2e.dialog.readyWeapon.header", "ironclaw2e.dialog.ready", { "itemname": item.name, "actorname": this.actor.name });
             if (!confirmation.confirmed) {
                 return false;
             }
@@ -936,9 +936,9 @@ export class Ironclaw2EItem extends Item {
     async roll() {
         // Basic template rendering data
         const token = this.actor.token;
-        const item = this.data;
-        const actorData = this.actor ? this.actor.data.data : {};
-        const itemData = item.data;
+        const item = this;
+        const actorSys = this.actor ? this.actor.system : {};
+        const itemSys = item.system;
         const directroll = checkQuickModifierKey();
 
         switch (item.type) {
@@ -947,10 +947,10 @@ export class Ironclaw2EItem extends Item {
                 break;
             case 'weapon':
                 let rolls = [];
-                if (itemData.canAttack) rolls.push(0);
-                if (itemData.canSpark) rolls.push(1);
-                if (itemData.canDefend) rolls.push(2);
-                if (itemData.canCounter) rolls.push(3);
+                if (itemSys.canAttack) rolls.push(0);
+                if (itemSys.canSpark) rolls.push(1);
+                if (itemSys.canDefend) rolls.push(2);
+                if (itemSys.canCounter) rolls.push(3);
 
                 if (rolls.length == 1) {
                     this._itemRollSelection(rolls[0], directroll);
@@ -964,10 +964,10 @@ export class Ironclaw2EItem extends Item {
                 }
                 break;
             case 'armor':
-                this.update({ "data.worn": !itemData.worn });
+                this.update({ "system.worn": !itemSys.worn });
                 break;
             case 'shield':
-                this.update({ "data.held": !itemData.held });
+                this.update({ "system.held": !itemSys.held });
                 break;
             default:
                 this.sendInfoToChat();
@@ -979,28 +979,28 @@ export class Ironclaw2EItem extends Item {
      * Get the chat message flags for this item
      */
     getItemFlags({ useTactics = false } = {}) {
-        const item = this.data;
-        const itemData = item.data;
+        const item = this;
+        const itemSys = item.system;
         const actor = this.actor;
 
         let flags = { "ironclaw2e.itemId": this.id, "ironclaw2e.itemActorId": actor?.id, "ironclaw2e.itemTokenId": actor?.token?.id, "ironclaw2e.itemSceneId": actor?.token?.parent?.id };
         if (item.type === "weapon") {
             flags = mergeObject(flags, {
-                "ironclaw2e.weaponName": item.name, "ironclaw2e.weaponDescriptors": itemData.descriptorsSplit, "ironclaw2e.weaponEffects": itemData.effectsSplit,
-                "ironclaw2e.weaponAttackStats": itemData.attackStats, "ironclaw2e.weaponEquip": itemData.equip, "ironclaw2e.weaponRange": itemData.range,
+                "ironclaw2e.weaponName": item.name, "ironclaw2e.weaponDescriptors": itemSys.descriptorsSplit, "ironclaw2e.weaponEffects": itemSys.effectsSplit,
+                "ironclaw2e.weaponAttackStats": itemSys.attackStats, "ironclaw2e.weaponEquip": itemSys.equip, "ironclaw2e.weaponRange": itemSys.range,
                 "ironclaw2e.attackUsingTactics": useTactics
             });
-            if (itemData.multiAttackType) {
+            if (itemSys.multiAttackType) {
                 flags = mergeObject(flags, {
-                    "ironclaw2e.weaponMultiAttack": itemData.multiAttackType, "ironclaw2e.weaponMultiRange": itemData.multiAttackRange ?? null,
+                    "ironclaw2e.weaponMultiAttack": itemSys.multiAttackType, "ironclaw2e.weaponMultiRange": itemSys.multiAttackRange ?? null,
                 });
             }
         }
         const foundToken = findActorToken(actor);
         if (foundToken) {
             const rangePenalty = actor.getRangePenaltyReduction(this);
-            let userPos = { "x": foundToken.data.x, "y": foundToken.data.y };
-            if (foundToken.data.elevation) userPos.elevation = foundToken.data.elevation;
+            let userPos = { "x": foundToken.x, "y": foundToken.y };
+            if (foundToken.elevation) userPos.elevation = foundToken.elevation;
             flags = mergeObject(flags, {
                 "ironclaw2e.itemUserPos": userPos,
                 "ironclaw2e.itemUserRangeReduction": rangePenalty.reduction, "ironclaw2e.itemUserRangeAutocheck": rangePenalty.autocheck
@@ -1014,14 +1014,14 @@ export class Ironclaw2EItem extends Item {
      *  Send information about the item to the chat as a message
      */
     async sendInfoToChat() {
-        const item = this.data;
-        const itemData = item.data;
+        const item = this;
+        const itemSys = item.system;
         const actor = this.actor;
         const confirmSend = game.settings.get("ironclaw2e", "confirmItemInfo");
 
         // Check whether the character even has Tactics to use, if not, set hasTactics to false to remove the Tactics checkbox from the chat message
-        let hasTactics = actor?.data.data.skills?.tactics?.diceArray ? checkDiceArrayEmpty(actor.data.data.skills.tactics.diceArray) : false;
-        if (itemData.attackStats?.includes("tactics")) {
+        let hasTactics = actor?.system.skills?.tactics?.diceArray ? checkDiceArrayEmpty(actor.system.skills.tactics.diceArray) : false;
+        if (itemSys.attackStats?.includes("tactics")) {
             hasTactics = false; // If the weapon has manually set Tactics in the attack stats, remove the checkbox
         }
 
@@ -1029,14 +1029,14 @@ export class Ironclaw2EItem extends Item {
 
         const templateData = {
             "item": item,
-            "itemData": itemData,
+            "itemData": itemSys,
             "hasButtons": item.type === "weapon",
-            "standardDefense": checkStandardDefense(itemData.defendWith),
+            "standardDefense": checkStandardDefense(itemSys.defendWith),
             "actorId": actor?.id ?? null,
             "tokenId": actor?.token?.id ?? null,
             "sceneId": actor?.token?.parent?.id ?? null,
-            "equipHandedness": (item.type === 'weapon' || item.type === 'shield' ? CommonSystemInfo.equipHandedness[itemData.equip] : ""),
-            "equipRange": (item.type === 'weapon' ? CommonSystemInfo.rangeBands[itemData.range] : ""),
+            "equipHandedness": (item.type === 'weapon' || item.type === 'shield' ? CommonSystemInfo.equipHandedness[itemSys.equip] : ""),
+            "equipRange": (item.type === 'weapon' ? CommonSystemInfo.rangeBands[itemSys.range] : ""),
             "hasTactics": hasTactics,
             "useTactics": useTactics
         };
@@ -1056,10 +1056,10 @@ export class Ironclaw2EItem extends Item {
         if (confirmSend) {
             let confirmed = false;
             let dlog = new Dialog({
-                title: game.i18n.format("ironclaw2e.dialog.chatInfo.itemInfo.title", { "name": this.data.name }),
+                title: game.i18n.format("ironclaw2e.dialog.chatInfo.itemInfo.title", { "name": item.name }),
                 content: `
      <form>
-      <h1>${game.i18n.format("ironclaw2e.dialog.chatInfo.itemInfo.header", { "name": this.data.name })}</h1>
+      <h1>${game.i18n.format("ironclaw2e.dialog.chatInfo.itemInfo.header", { "name": item.name })}</h1>
      </form>
      `,
                 buttons: {
@@ -1103,13 +1103,13 @@ export class Ironclaw2EItem extends Item {
             return null;
         }
 
-        const item = this.data;
-        const itemData = item.data;
+        const item = this;
+        const itemSys = item.system;
         if (item.type !== 'weapon') {
             console.error("A non-weapon type attempted to send Attack Data: " + item.name);
             return null;
         }
-        if (itemData.effect.length == 0) {
+        if (itemSys.effect.length == 0) {
             return null; // If the weapon has no effects listed, return out
         }
 
@@ -1118,7 +1118,7 @@ export class Ironclaw2EItem extends Item {
             let updatedata = {
                 flags: {
                     "ironclaw2e.hangingAttack": "counter", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
-                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.hangingSlaying": itemData.effectsSplit?.includes("slaying") ?? false
+                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.hangingSlaying": itemSys.effectsSplit?.includes("slaying") ?? false
                 }
             };
             info.message?.update(updatedata);
@@ -1128,32 +1128,32 @@ export class Ironclaw2EItem extends Item {
         const successes = (isNaN(info.tnData.successes) ? 0 : info.tnData.successes);
         const ties = (isNaN(info.tnData.ties) ? 0 : info.tnData.ties);
         const success = successes > 0;
-        let usedsuccesses = (success || itemData.hasResist ? successes : ties); // Ties don't count for resisted weapons
+        let usedsuccesses = (success || itemSys.hasResist ? successes : ties); // Ties don't count for resisted weapons
 
-        if (ignoreresist === false && itemData.hasResist) { // If the weapon's attack is a resisted one, set the flags accordingly
+        if (ignoreresist === false && itemSys.hasResist) { // If the weapon's attack is a resisted one, set the flags accordingly
             let updatedata = {
                 flags: {
                     "ironclaw2e.hangingAttack": "resist", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
-                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.hangingSlaying": itemData.effectsSplit?.includes("slaying") ?? false, "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses
+                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.hangingSlaying": itemSys.effectsSplit?.includes("slaying") ?? false, "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses
                 }
             };
             info.message?.update(updatedata);
             // If the resist has not yet been rolled, return out after setting the resist flags
-            if (opposingsuccesses < 0 && !itemData.attackAutoHits)
+            if (opposingsuccesses < 0 && !itemSys.attackAutoHits)
                 return null;
         }
         else { // Else, treat it as a normal attack and set the flags to store the information for future reference
             let updatedata = {
                 flags: {
                     "ironclaw2e.hangingAttack": "attack", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
-                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.hangingSlaying": itemData.effectsSplit?.includes("slaying") ?? false, "ironclaw2e.attackSuccess": success, "ironclaw2e.attackSuccessCount": usedsuccesses
+                    "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.hangingSlaying": itemSys.effectsSplit?.includes("slaying") ?? false, "ironclaw2e.attackSuccess": success, "ironclaw2e.attackSuccessCount": usedsuccesses
                 }
             };
             info.message?.update(updatedata);
         }
 
         // Send to chat if there are successes, failures are displayed as well, or the attack is an explosion
-        const toChat = usedsuccesses > 0 || game.settings.get("ironclaw2e", "calculateDisplaysFailed") || itemData.attackAutoHits;
+        const toChat = usedsuccesses > 0 || game.settings.get("ironclaw2e", "calculateDisplaysFailed") || itemSys.attackAutoHits;
         if (onlyupdate) {
             return null; // Return out to not send anything in update mode
         } else if (toChat) {
@@ -1177,7 +1177,7 @@ export class Ironclaw2EItem extends Item {
         let forceSlaying = false;
         const success = message.getFlag("ironclaw2e", "resistSuccess");
         const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
-        const isSlaying = this.data.data.effectsSplit?.includes("slaying") ?? false;
+        const isSlaying = this.system.effectsSplit?.includes("slaying") ?? false;
 
         let resolvedopfor = new Promise((resolve) => {
             let dlog = new Dialog({
@@ -1268,19 +1268,19 @@ export class Ironclaw2EItem extends Item {
         if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
             return null; // If the system is turned off, return out
         }
-        const item = this.data;
-        const itemData = item.data;
+        const item = this;
+        const itemSys = item.system;
 
         const usedsuccesses = opposingrolled ? rawsuccesses - opposingsuccesses : rawsuccesses;
-        const successfulAttack = usedsuccesses > 0 || itemData.attackAutoHits;
+        const successfulAttack = usedsuccesses > 0 || itemSys.attackAutoHits;
         const negativeSuccesses = usedsuccesses <= 0; // More like non-positive, but I prefer two-word variable names
 
-        const flat = itemData.damageFlat ?? false;
-        const slaying = forceslaying || (itemData.effectsSplit?.includes("slaying") ?? false);
-        const impaling = itemData.effectsSplit?.includes("impaling") ?? false;
-        const critical = itemData.effectsSplit?.includes("critical") ?? false;
-        const penetrating = itemData.effectsSplit?.includes("penetrating") ?? false;
-        const weak = itemData.effectsSplit?.includes("weak") ?? false;
+        const flat = itemSys.damageFlat ?? false;
+        const slaying = forceslaying || (itemSys.effectsSplit?.includes("slaying") ?? false);
+        const impaling = itemSys.effectsSplit?.includes("impaling") ?? false;
+        const critical = itemSys.effectsSplit?.includes("critical") ?? false;
+        const penetrating = itemSys.effectsSplit?.includes("penetrating") ?? false;
+        const weak = itemSys.effectsSplit?.includes("weak") ?? false;
 
         // Account for multiple damage-multiplying effects
         const effectCount = (slaying ? 1 : 0) + (impaling ? 1 : 0) + (critical ? 1 : 0);
@@ -1291,34 +1291,34 @@ export class Ironclaw2EItem extends Item {
             // The damage calculcations might look a little off, it's to avoid calculating the default damage increase from successes more than once
             if (slaying && critical) {
                 hasMultipleBaseEffects = true;
-                combinedDamage = itemData.damageEffect + (usedsuccesses * 2) + Math.floor(usedsuccesses * 0.5);
+                combinedDamage = itemSys.damageEffect + (usedsuccesses * 2) + Math.floor(usedsuccesses * 0.5);
             }
             if (impaling) {
-                combinedImpalingDamage = itemData.damageEffect + (usedsuccesses * 2) + (slaying ? (usedsuccesses) : 0) + (critical ? Math.floor(usedsuccesses * 0.5) : 0);
+                combinedImpalingDamage = itemSys.damageEffect + (usedsuccesses * 2) + (slaying ? (usedsuccesses) : 0) + (critical ? Math.floor(usedsuccesses * 0.5) : 0);
             }
         }
 
         const templateData = {
             "item": item,
-            "itemData": itemData,
+            "itemData": itemSys,
             "successfulAttack": successfulAttack,
-            "hasResist": itemData.hasResist,
+            "hasResist": itemSys.hasResist,
             "success": success,
             "negativeSuccesses": negativeSuccesses,
-            "resultStyle": "color:" + (successfulAttack ? (success || itemData.attackAutoHits ? CommonSystemInfo.resultColors.success : CommonSystemInfo.resultColors.tie) : CommonSystemInfo.resultColors.failure),
+            "resultStyle": "color:" + (successfulAttack ? (success || itemSys.attackAutoHits ? CommonSystemInfo.resultColors.success : CommonSystemInfo.resultColors.tie) : CommonSystemInfo.resultColors.failure),
 
             "isFlat": flat,
             "isSlaying": slaying,
             "isImpaling": impaling,
             "isCritical": critical,
-            "isNormal": itemData.damageEffect >= 0,
-            "isConditional": itemData.damageEffect < 0,
+            "isNormal": itemSys.damageEffect >= 0,
+            "isConditional": itemSys.damageEffect < 0,
             "isPenetrating": penetrating,
             "isWeak": weak,
-            "doubleDamage": itemData.damageEffect + (usedsuccesses * 2),
-            "criticalDamage": itemData.damageEffect + Math.floor(usedsuccesses * 1.5),
-            "normalDamage": itemData.damageEffect + usedsuccesses,
-            "flatDamage": itemData.damageEffect,
+            "doubleDamage": itemSys.damageEffect + (usedsuccesses * 2),
+            "criticalDamage": itemSys.damageEffect + Math.floor(usedsuccesses * 1.5),
+            "normalDamage": itemSys.damageEffect + usedsuccesses,
+            "flatDamage": itemSys.damageEffect,
 
             "hasMultipleMultipliers": effectCount >= 2,
             hasMultipleBaseEffects,
@@ -1328,7 +1328,7 @@ export class Ironclaw2EItem extends Item {
 
         const contents = await renderTemplate("systems/ironclaw2e/templates/chat/damage-info.html", templateData);
 
-        let flags = { "ironclaw2e.attackDamageInfo": true, "ironclaw2e.attackDamageAutoHits": itemData.attackAutoHits, "ironclaw2e.attackDamageDefense": itemData.opposingDefenseStats, "ironclaw2e.attackDamageSlaying": slaying };
+        let flags = { "ironclaw2e.attackDamageInfo": true, "ironclaw2e.attackDamageAutoHits": itemSys.attackAutoHits, "ironclaw2e.attackDamageDefense": itemSys.opposingDefenseStats, "ironclaw2e.attackDamageSlaying": slaying };
         flags = mergeObject(flags, this.getItemFlags());
 
         let chatData = {
@@ -1347,25 +1347,24 @@ export class Ironclaw2EItem extends Item {
     // Gift Rolls
 
     giftRoll(directroll = false) {
-        const theitem = this;
-        const itemData = this.data;
-        const data = itemData.data;
+        const item = this;
+        const system = item.system;
 
-        if (!(itemData.type === 'gift')) {
-            console.error("Gift roll attempted on a non-gift item: " + itemData.name);
+        if (!(item.type === 'gift')) {
+            console.error("Gift roll attempted on a non-gift item: " + item.name);
             return;
         }
 
-        if (data.canUse == false) {
+        if (system.canUse == false) {
             return;
         }
-        if (data.exhaustWhenUsed == false || data.exhausted == false) {
-            if (data.giftStats || data.giftArray)
-                this.genericItemRoll(data.giftStats, data.defaultTN, itemData.name, data.giftArray, 0, { directroll }, (data.exhaustWhenUsed ? (x => { this.giftToggleExhaust("true"); }) : null));
-            else if (data.exhaustWhenUsed) // Check just in case, even though there should never be a situation where canUse is set, but neither rollable stats / dice nor exhaustWhenUsed aren't
+        if (system.exhaustWhenUsed == false || system.exhausted == false) {
+            if (system.giftStats || system.giftArray)
+                this.genericItemRoll(system.giftStats, system.defaultTN, item.name, system.giftArray, 0, { directroll }, (system.exhaustWhenUsed ? (x => { this.giftToggleExhaust("true"); }) : null));
+            else if (system.exhaustWhenUsed) // Check just in case, even though there should never be a situation where canUse is set, but neither rollable stats / dice nor exhaustWhenUsed aren't
                 this.popupExhaustGift();
         }
-        else if (data.exhaustWhenUsed == true && data.exhausted == true) {
+        else if (system.exhaustWhenUsed == true && system.exhausted == true) {
             this.popupRefreshGift();
         }
     }
@@ -1407,22 +1406,21 @@ export class Ironclaw2EItem extends Item {
      */
     async attackRoll(directroll = false, ignoreresist = false, presettn = 3, opposingsuccesses = -1, { sourcemessage = null, defendermessage = null, addtactics = false } = {}) {
         const item = this;
-        const itemData = this.data;
-        const actorData = this.actor ? this.actor.data : {};
-        const data = itemData.data;
+        const actor = this.actor ? this.actor : {};
+        const itemSys = item.system;
 
-        if (!(itemData.type === 'weapon')) {
-            console.error("Attack roll attempted on a non-weapon item: " + itemData.name);
+        if (!(item.type === 'weapon')) {
+            console.error("Attack roll attempted on a non-weapon item: " + item.name);
             return;
         }
 
         // Make sure this weapon can actually attack
-        if (data.canAttack == false) {
+        if (itemSys.canAttack == false) {
             return;
         }
 
         // If the weapon isn't readied and auto-ready is toggled on
-        if (this.actor && !data.readied && data.readyWhenUsed) {
+        if (this.actor && !itemSys.readied && itemSys.readyWhenUsed) {
             const usable = await this.weaponReadyWhenUsed();
             if (!usable) {
                 return; // If the weapon is not usable, return out
@@ -1432,20 +1430,20 @@ export class Ironclaw2EItem extends Item {
         // Grab the user's target
         let target = null;
         if (defendermessage) {
-            target = getTokenFromSpeaker(defendermessage.data.speaker);
+            target = getTokenFromSpeaker(defendermessage.speaker);
         } else if (game.user.targets?.size > 0) {
             [target] = game.user.targets;
         }
 
         // If the attack should roll tactics too, put them in the used stats
-        const usedStats = [...data.attackStats];
+        const usedStats = [...itemSys.attackStats];
         if (addtactics) {
             usedStats.push("tactics");
         }
 
         // Prepare the relevant data
         const exhaust = this.weaponGetGiftToExhaust();
-        const canQuickroll = data.hasResist && !ignoreresist;
+        const canQuickroll = itemSys.hasResist && !ignoreresist;
         const sendToChat = game.settings.get("ironclaw2e", "sendWeaponExhaustMessage");
         const donotdisplay = game.settings.get("ironclaw2e", "calculateDoesNotDisplay");
         const needsRefreshed = game.settings.get("ironclaw2e", "weaponExhaustNeedsRefreshed");
@@ -1457,14 +1455,14 @@ export class Ironclaw2EItem extends Item {
         });
 
         // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively instead of the roll
-        if (data.exhaustGift && !data.exhaustGiftWhenReadied && !exhaust) {
-            ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
-        } else if (data.exhaustGift && !data.exhaustGiftWhenReadied && needsRefreshed && exhaust?.data.data.giftUsable === false) {
+        if (itemSys.exhaustGift && !itemSys.exhaustGiftWhenReadied && !exhaust) {
+            ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": item.name }));
+        } else if (itemSys.exhaustGift && !itemSys.exhaustGiftWhenReadied && needsRefreshed && exhaust?.system.giftUsable === false) {
             // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust.popupRefreshGift();
         } else {
             // Actually roll
-            this.genericItemRoll(usedStats, presettn, itemData.name, data.attackArray, 2, { "directroll": canQuickroll && directroll, target }, callback);
+            this.genericItemRoll(usedStats, presettn, item.name, itemSys.attackArray, 2, { "directroll": canQuickroll && directroll, target }, callback);
         }
     }
 
@@ -1475,22 +1473,22 @@ export class Ironclaw2EItem extends Item {
      * @param {string} extradice Extra dice
      */
     async defenseRoll(directroll = false, otheritem = null, extradice = "") {
-        const itemData = this.data;
-        const actorData = this.actor ? this.actor.data : {};
-        const data = itemData.data;
+        const item = this;
+        const actor = this.actor ? this.actor : {};
+        const itemSys = item.system;
 
-        if (!(itemData.type === 'weapon')) {
-            console.error("Defense roll attempted on a non-weapon item: " + itemData.name);
+        if (!(item.type === 'weapon')) {
+            console.error("Defense roll attempted on a non-weapon item: " + item.name);
             return;
         }
 
         // Make sure the weapon can actually defend
-        if (data.canDefend == false) {
+        if (itemSys.canDefend == false) {
             return;
         }
 
         // If the weapon isn't readied and auto-ready is toggled on
-        if (this.actor && !data.readied && data.readyWhenUsed) {
+        if (this.actor && !itemSys.readied && itemSys.readyWhenUsed) {
             const usable = await this.weaponReadyWhenUsed();
             if (!usable) {
                 return; // If the weapon is not usable, return out
@@ -1498,7 +1496,7 @@ export class Ironclaw2EItem extends Item {
         }
 
         // Pop the roll
-        this.genericItemRoll(data.defenseStats, -1, itemData.name, data.defenseArray, 1, { directroll, otheritem, extradice },
+        this.genericItemRoll(itemSys.defenseStats, -1, item.name, itemSys.defenseArray, 1, { directroll, otheritem, extradice },
             (x => { Ironclaw2EActor.addCallbackToAttackMessage(x?.message, otheritem?.messageId); }));
     }
 
@@ -1510,22 +1508,21 @@ export class Ironclaw2EItem extends Item {
      */
     async counterRoll(directroll = false, otheritem = null, extradice = "") {
         const item = this;
-        const itemData = this.data;
-        const actorData = this.actor ? this.actor.data : {};
-        const data = itemData.data;
+        const actor = this.actor ? this.actor : {};
+        const itemSys = item.system;
 
-        if (!(itemData.type === 'weapon')) {
-            console.error("Counter roll attempted on a non-weapon item: " + itemData.name);
+        if (!(item.type === 'weapon')) {
+            console.error("Counter roll attempted on a non-weapon item: " + item.name);
             return;
         }
 
         // Make sure the weapon can actually counter
-        if (data.canCounter == false) {
+        if (itemSys.canCounter == false) {
             return;
         }
 
         // If the weapon isn't readied and auto-ready is toggled on
-        if (this.actor && !data.readied && data.readyWhenUsed) {
+        if (this.actor && !itemSys.readied && itemSys.readyWhenUsed) {
             const usable = await this.weaponReadyWhenUsed();
             if (!usable) {
                 return; // If the weapon is not usable, return out
@@ -1544,14 +1541,14 @@ export class Ironclaw2EItem extends Item {
         });
 
         // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively instead of the roll
-        if (data.exhaustGift && !data.exhaustGiftWhenReadied && !exhaust) {
-            ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": itemData.name }));
-        } else if (data.exhaustGift && !data.exhaustGiftWhenReadied && needsRefreshed && exhaust?.data.data.giftUsable === false) {
+        if (itemSys.exhaustGift && !itemSys.exhaustGiftWhenReadied && !exhaust) {
+            ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustAbort", { "name": item.name }));
+        } else if (itemSys.exhaustGift && !itemSys.exhaustGiftWhenReadied && needsRefreshed && exhaust?.system.giftUsable === false) {
             // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
             exhaust.popupRefreshGift();
         } else {
             // Actually roll
-            this.genericItemRoll(data.counterStats, -1, itemData.name, data.counterArray, 3, { directroll, otheritem, extradice }, callback);
+            this.genericItemRoll(itemSys.counterStats, -1, item.name, itemSys.counterArray, 3, { directroll, otheritem, extradice }, callback);
         }
     }
 
@@ -1560,22 +1557,22 @@ export class Ironclaw2EItem extends Item {
      * @param {boolean} directroll Whether to attempt to roll without a dialog
      */
     async sparkRoll(directroll = false) {
-        const itemData = this.data;
-        const actorData = this.actor ? this.actor.data : {};
-        const data = itemData.data;
+        const item = this;
+        const actor = this.actor ? this.actor : {};
+        const system = item.system;
 
-        if (!(itemData.type === 'weapon')) {
-            console.error("Spark roll attempted on a non-weapon item: " + itemData.name);
+        if (!(item.type === 'weapon')) {
+            console.error("Spark roll attempted on a non-weapon item: " + item.name);
             return;
         }
 
         // Make sure the weapon has a spark roll
-        if (data.canSpark == false) {
+        if (system.canSpark == false) {
             return;
         }
 
         // If the weapon isn't readied and auto-ready is toggled on
-        if (this.actor && !data.readied && data.readyWhenUsed) {
+        if (this.actor && !system.readied && system.readyWhenUsed) {
             const usable = await this.weaponReadyWhenUsed();
             if (!usable) {
                 return; // If the weapon is not usable, return out
@@ -1585,17 +1582,17 @@ export class Ironclaw2EItem extends Item {
         let roll = null;
         // Depending on the directroll setting, either show the simple dialog or do the roll automatically
         if (!directroll) {
-            roll = await rollHighestOneLine(data.sparkDie, game.i18n.localize("ironclaw2e.dialog.sparkRoll.label"), "ironclaw2e.dialog.sparkRoll.title", this.actor);
+            roll = await rollHighestOneLine(system.sparkDie, game.i18n.localize("ironclaw2e.dialog.sparkRoll.label"), "ironclaw2e.dialog.sparkRoll.title", this.actor);
         } else {
-            const foo = findTotalDice(data.sparkDie);
+            const foo = findTotalDice(system.sparkDie);
             roll = await CardinalDiceRoller.rollHighestArray(foo, game.i18n.localize("ironclaw2e.dialog.sparkRoll.label"), this.actor);
         }
         // In case the spark botches, check the settings and if set, automatically reduce it by one level
         if (roll && roll.highest === 1) {
             const autoDwindle = game.settings.get("ironclaw2e", "sparkDieAutoDwindle");
             if (autoDwindle) {
-                const newDie = reduceDiceStringSet(data.sparkArray, 1, true);
-                await this.update({ "_id": this.id, "data.sparkDie": newDie });
+                const newDie = reduceDiceStringSet(system.sparkArray, 1, true);
+                await this.update({ "_id": this.id, "system.sparkDie": newDie });
             }
         }
     }
@@ -1612,6 +1609,8 @@ export class Ironclaw2EItem extends Item {
      * @param {Function} callback The function to execute after the dice are rolled
      */
     genericItemRoll(stats, tn, diceid, dicearray, rolltype = 0, { directroll = false, otheritem = null, target = null, extradice = "" } = {}, callback = null) {
+        const system = this.system;
+
         let tnyes = (tn > 0);
         let usedtn = (tn > 0 ? tn : 3);
         if (this.actor) {
@@ -1631,22 +1630,22 @@ export class Ironclaw2EItem extends Item {
 
             switch (rolltype) {
                 case 0: // Generic gift roll
-                    diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.giftRoll") + (this.data.data.exhaustWhenUsed ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.gift") + " <strong>" + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.exhausted") + "</strong>" : ": ");
+                    diceinput.otherlabel = this.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.giftRoll") + (system.exhaustWhenUsed ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.gift") + " <strong>" + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.exhausted") + "</strong>" : ": ");
                     this.actor.basicRollSelector(diceinput, { directroll }, callback);
                     break;
                 case 1: // Parry roll
-                    diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.parryRoll") + ": ";
+                    diceinput.otherlabel = this.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.parryRoll") + ": ";
                     this.actor.popupDefenseRoll(diceinput, { directroll, "isparry": true, otheritem }, this, callback);
                     break;
                 case 2: // Attack roll
-                    diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect +
-                        (this.data.data.opposingDefenseStats?.length > 0 ? ", " + (this.data.data.hasResist ? game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith") + " " + this.data.data.defendWith + " vs. 3 " : game.i18n.localize("ironclaw2e.chatInfo.itemInfo.opposingDefense") + ": " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attack") + " vs. " + this.data.data.defendWith) : "") : ": ");
-                    if (this.weaponGetGiftToExhaust()?.data.data.giftUsable === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
+                    diceinput.otherlabel = this.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attackRoll") + (system.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + system.effect +
+                        (system.opposingDefenseStats?.length > 0 ? ", " + (system.hasResist ? game.i18n.localize("ironclaw2e.chatInfo.itemInfo.resistWith") + " " + system.defendWith + " vs. 3 " : game.i18n.localize("ironclaw2e.chatInfo.itemInfo.opposingDefense") + ": " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.attack") + " vs. " + system.defendWith) : "") : ": ");
+                    if (this.weaponGetGiftToExhaust()?.system.giftUsable === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
                     this.actor.popupAttackRoll(diceinput, { directroll, target }, this, callback);
                     break;
                 case 3: // Counter roll
-                    diceinput.otherlabel = this.data.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.counterRoll") + (this.data.data.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + this.data.data.effect : ": ");
-                    if (this.weaponGetGiftToExhaust()?.data.data.giftUsable === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
+                    diceinput.otherlabel = this.name + " " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.counterRoll") + (system.effect ? ", " + game.i18n.localize("ironclaw2e.chatInfo.itemInfo.effect") + ": " + system.effect : ": ");
+                    if (this.weaponGetGiftToExhaust()?.system.giftUsable === false) formconstruction += `<strong>${game.i18n.localize("ironclaw2e.dialog.dicePool.giftExhausted")}</strong>` + "\n";
                     this.actor.popupCounterRoll(diceinput, { directroll, otheritem }, this, callback);
                     break;
                 default:
@@ -1676,13 +1675,12 @@ export class Ironclaw2EItem extends Item {
      * @param {boolean} mode What state to change to, true for Exhausted and false for Refreshed
      */
     async popupGiftExhaustToggle(mode) {
-        if (this.data.type != "gift") {
+        if (this.type != "gift") {
             console.error("Tried to set exhaust on a non-gift item: " + this);
             return null;
         }
 
-        const item = this.data;
-        const itemData = item.data;
+        const item = this;
         const speaker = getMacroSpeaker(this.actor);
 
         const sendToChat = game.settings.get("ironclaw2e", "defaultSendGiftExhaust");
@@ -1716,23 +1714,23 @@ export class Ironclaw2EItem extends Item {
      * Pop up a dialog box to pick what way to use a weapon
      */
     popupWeaponRollType() {
-        if (this.data.type != "weapon")
+        if (this.type != "weapon")
             return console.error("Tried to popup a weapon roll question a non-weapon item: " + this);
 
-        const item = this.data;
-        const itemData = item.data;
+        const item = this;
+        const itemSys = item.system;
         const exhaust = this.weaponGetGiftToExhaust();
 
         // If the weapon has been marked to exhaust a gift, but no such gift is found, pop a warning
-        if (itemData.exhaustGift && !exhaust) {
-            ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustFailure", { "name": itemData.name, "gift": data.exhaustGiftName, "actor": this.actor.name }));
+        if (itemSys.exhaustGift && !exhaust) {
+            ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustFailure", { "name": item.name, "gift": system.exhaustGiftName, "actor": this.actor.name }));
         }
 
         // Check if the weapon has an auto-exhaust gift and whether all possible uses would exhaust the gift
-        if (exhaust && !itemData.canDefend && !itemData.canSpark) {
+        if (exhaust && !itemSys.canDefend && !itemSys.canSpark) {
             const needsRefreshed = game.settings.get("ironclaw2e", "weaponExhaustNeedsRefreshed");
             // If the weapon needs a refreshed gift to use and the gift is not refreshed, immediately pop up a refresh request on that gift
-            if (needsRefreshed && exhaust?.data.data.giftUsable === false) {
+            if (needsRefreshed && exhaust?.system.giftUsable === false) {
                 exhaust?.popupRefreshGift();
                 return;
             }
@@ -1742,22 +1740,22 @@ export class Ironclaw2EItem extends Item {
         let constructionstring = `<div class="form-group">
 	   <div class="form-group">`;
 
-        if (itemData.canAttack) {
+        if (itemSys.canAttack) {
             constructionstring += `<label>${game.i18n.localize("ironclaw2e.attack")}:</label>
 	    <input type="radio" id="attack" name="weapon" value="0" ${first ? "" : "checked"}></input>`;
             first = first || "attack";
         }
-        if (itemData.canSpark) {
+        if (itemSys.canSpark) {
             constructionstring += `<label>${game.i18n.localize("ironclaw2e.spark")}:</label>
 	    <input type="radio" id="spark" name="weapon" value="1" ${first ? "" : "checked"}></input>`;
             first = first || "spark";
         }
-        if (itemData.canDefend) {
+        if (itemSys.canDefend) {
             constructionstring += `<label>${game.i18n.localize("ironclaw2e.parry")}:</label>
 	    <input type="radio" id="defend" name="weapon" value="2" ${first ? "" : "checked"}></input>`;
             first = first || "defend";
         }
-        if (itemData.canCounter) {
+        if (itemSys.canCounter) {
             constructionstring += `<label>${game.i18n.localize("ironclaw2e.counter")}:</label>
 	    <input type="radio" id="counter" name="weapon" value="3" ${first ? "" : "checked"}></input>`;
             first = first || "counter";
@@ -1773,7 +1771,7 @@ export class Ironclaw2EItem extends Item {
             title: game.i18n.format("ironclaw2e.dialog.weaponRoll.title", { "name": speaker.alias }),
             content: `
      <form>
-      <h1>${game.i18n.format("ironclaw2e.dialog.weaponRoll.header", { "item": this.data.name, "actor": this.actor?.data.name })}</h1>
+      <h1>${game.i18n.format("ironclaw2e.dialog.weaponRoll.header", { "item": this.name, "actor": this.actor?.name })}</h1>
       ${constructionstring}
      </form>
      `,
