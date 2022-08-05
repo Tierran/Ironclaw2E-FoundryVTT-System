@@ -1242,7 +1242,7 @@ export async function rerollDialog(message, actor) {
         "favorExists": rerollIntersection.usableRerolls.hasOwnProperty("FAVOR"),
         "luckExists": rerollIntersection.usableRerolls.hasOwnProperty("LUCK"),
         "luckSelections": luckSelections,
-        "alias": message.data.speaker.alias,
+        "alias": message.speaker.alias,
         "gmIgnore": GMPrivilege
     };
     const contents = await renderTemplate("systems/ironclaw2e/templates/popup/reroll-popup.html", templateData);
