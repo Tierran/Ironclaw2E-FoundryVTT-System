@@ -636,8 +636,8 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const type = message.getFlag("ironclaw2e", "rollType");
                 const messageid = message.getFlag("ironclaw2e", "defenseForAttack");
                 const attackMessage = game.messages.get(messageid);
-                const tn = (type === "HIGH" ? message.roll.result : 3);
-                const resists = (type === "TN" ? message.roll.result : -1);
+                const tn = (type === "HIGH" ? message.rolls[0].result : 3);
+                const resists = (type === "TN" ? message.rolls[0].result : -1);
                 Ironclaw2EActor.triggerAttackerRoll(attackMessage, "attack", false, type === "HIGH", message, tn, resists);
             }
         });

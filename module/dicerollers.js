@@ -116,7 +116,7 @@ export class CardinalDiceRoller {
      * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
      */
     static async copyToRollTN(tni, message, sendinchat = true, rerolltype = "", copyoptions = {}) {
-        if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
+        if (!(message) || message.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
             console.warn("Somehow, a message that isn't a roll got into 'copyToRollTN'.");
             console.warn(message);
             return;
@@ -127,9 +127,9 @@ export class CardinalDiceRoller {
             return;
         }
 
-        const usedSpeaker = (copyoptions.replacespeaker ? { "alias": (message.data.speaker?.alias ?? game.i18n.localize("ironclaw2e.chatInfo.miniRoll")) } : message.data.speaker);
+        const usedSpeaker = (copyoptions.replacespeaker ? { "alias": (message.speaker?.alias ?? game.i18n.localize("ironclaw2e.chatInfo.miniRoll")) } : message.speaker);
         let intermediary = [...message.getFlag("ironclaw2e", "rollIntermediary")];
-        let rollString = CardinalDiceRoller.copyDicePoolResult(message.roll);
+        let rollString = CardinalDiceRoller.copyDicePoolResult(message.rolls?.[0]);
         let directCopy = true;
         let rerollFlavor = "";
         if (rerolltype) {
@@ -225,7 +225,7 @@ export class CardinalDiceRoller {
      * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
      */
     static async copyToRollHighest(message, sendinchat = true, rerolltype = "", copyoptions = {}) {
-        if (!(message) || message.data.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
+        if (!(message) || message.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
             console.warn("Somehow, a message that isn't a roll got into 'copyToRollHighest'.");
             console.warn(message);
             return;
@@ -236,9 +236,9 @@ export class CardinalDiceRoller {
             return;
         }
 
-        const usedSpeaker = (copyoptions.replacespeaker ? { "alias": (message.data.speaker?.alias ?? game.i18n.localize("ironclaw2e.chatInfo.miniRoll")) } : message.data.speaker);
+        const usedSpeaker = (copyoptions.replacespeaker ? { "alias": (message.speaker?.alias ?? game.i18n.localize("ironclaw2e.chatInfo.miniRoll")) } : message.speaker);
         let intermediary = [...message.getFlag("ironclaw2e", "rollIntermediary")];
-        let rollString = CardinalDiceRoller.copyDicePoolResult(message.roll);
+        let rollString = CardinalDiceRoller.copyDicePoolResult(message.rolls?.[0]);
         let directCopy = true;
         let rerollFlavor = "";
         if (rerolltype) {
@@ -525,7 +525,7 @@ export class CardinalDiceRoller {
         let rollString = "";
         let directCopy = true;
         let rerollFlavor = "";
-        let rollUsed = message.roll;
+        let rollUsed = message.rolls?.[0];
         switch (reroll) {
             case "ONE":
                 rollString = CardinalDiceRoller.copyRerollHighestOne(rollUsed, intermediary);
@@ -570,6 +570,11 @@ export class CardinalDiceRoller {
      */
     static copyDicePoolResult(roll) {
         let formula = "";
+        if (!roll) {
+            console.warn("A non-existant roll was given to the copy function");
+            return formula;
+        }
+
         if (roll.terms.length === 0) {
             console.warn("A roll with zero terms given to a copy function");
             return formula;
@@ -633,10 +638,15 @@ export class CardinalDiceRoller {
      * @private
      */
     static copyRerollHighestOne(roll, intermediary) {
-        // The recreated formula
         let formula = "";
+        if (!roll) {
+            console.warn("A non-existant roll was given to the reroll one function");
+            return formula;
+        }
+
+        // The recreated formula
         if (roll.terms.length === 0) {
-            console.warn("A roll with zero terms given to a copy function");
+            console.warn("A roll with zero terms given to the reroll one function");
             return formula;
         }
         // The size of the one found, the index of the found one
@@ -1200,7 +1210,7 @@ export async function rerollDialog(message, actor) {
         console.error("A non-GM user tried to open a reroll dialog without a set actor: " + actor);
         return null;
     }
-    const messageRoll = message.roll;
+    const messageRoll = message.rolls?.[0];
     if (!messageRoll) {
         console.error("A reroll dialog opened on a message with no roll attached: " + message);
         return null;
