@@ -92,7 +92,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         // Iterate through items, allocating to containers
         for (let i of sheetData.items) {
-            let item = i.data;
+            let item = i;
             i.img = i.img || DEFAULT_TOKEN;
 
             // Switch-case to append the item to the proper list
@@ -147,7 +147,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         // Iterate through items, allocating to containers
         for (let i of sheetData.items) {
-            let item = i.data;
+            let item = i;
             i.img = i.img || DEFAULT_TOKEN;
 
             // Switch-case to append the item to the proper list, but also remove the default warning since beasts might end up having misc stuff, even if they're not supposed to
@@ -273,10 +273,10 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const itemData = {
             name: name,
             type: type,
-            data: data
+            system: data
         };
         // Remove the type from the dataset since it's in the itemData.type prop.
-        delete itemData.data["type"];
+        delete itemData.system["type"];
 
         // Finally, create the item!
         return await Item.create(itemData, { parent: this.actor });
@@ -300,31 +300,31 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                                 let nameAdded = false;
 
                                 const reg = new RegExp("(" + special.changeFrom[i] + "|" + makeCompareReady(special.changeFrom[i]) + ")", "gi"); // Prepare the regex
-                                if (item.data.useDice) { // Check if the item even has anything in the roll field
+                                if (item.system.useDice) { // Check if the item even has anything in the roll field
                                     // Replace the roll field with a case-insensitive regex-replaced version with the from-word changed to to-word, with regex to account both for space and no-space versions
-                                    item.data.useDice = item.data.useDice.replace(reg, special.changeTo[i]);
+                                    item.system.useDice = item.system.useDice.replace(reg, special.changeTo[i]);
                                     if (nameAdded === false && special.nameAdditionField) { // If the item's name has not been changed yet and there is anything in the addition field
                                         item.name += " " + special.nameAdditionField; // Append the name
                                         nameAdded = true; // Set the bool to mark that the item's name has been changed already
                                     }
                                 }
 
-                                if (item.data.attackDice) {
-                                    item.data.attackDice = item.data.attackDice.replace(reg, special.changeTo[i]);
+                                if (item.system.attackDice) {
+                                    item.system.attackDice = item.system.attackDice.replace(reg, special.changeTo[i]);
                                     if (nameAdded === false && special.nameAdditionField) {
                                         item.name += " " + special.nameAdditionField;
                                         nameAdded = true;
                                     }
                                 }
-                                if (item.data.defenseDice) {
-                                    item.data.defenseDice = item.data.defenseDice.replace(reg, special.changeTo[i]);
+                                if (item.system.defenseDice) {
+                                    item.system.defenseDice = item.system.defenseDice.replace(reg, special.changeTo[i]);
                                     if (nameAdded === false && special.nameAdditionField) {
                                         item.name += " " + special.nameAdditionField;
                                         nameAdded = true;
                                     }
                                 }
-                                if (item.data.counterDice) {
-                                    item.data.counterDice = item.data.counterDice.replace(reg, special.changeTo[i]);
+                                if (item.system.counterDice) {
+                                    item.system.counterDice = item.system.counterDice.replace(reg, special.changeTo[i]);
                                     if (nameAdded === false && special.nameAdditionField) {
                                         item.name += " " + special.nameAdditionField;
                                         nameAdded = true;
@@ -341,12 +341,12 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                     if (checkApplicability(special, item, this.actor)) { // Check if the current special applies
                         let nameAdded = false;
 
-                        if (item.data.useDice) { // Check if the item even has anything in the roll field
-                            const foo = item.data.useDice.split(";"); // Split the roll field into stats and dice
+                        if (item.system.useDice) { // Check if the item even has anything in the roll field
+                            const foo = item.system.useDice.split(";"); // Split the roll field into stats and dice
                             if (foo.length > 1) { // If it has dice
                                 let bar = findTotalDice(foo[1]); // Find the total amount of dice in it
                                 if (checkDiceArrayEmpty(bar)) { // Assuming any dice were found
-                                    item.data.useDice = foo[0] + ";" + reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true); // Replace the roll field with the original stats and a reformed, upgraded dice string
+                                    item.system.useDice = foo[0] + ";" + reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true); // Replace the roll field with the original stats and a reformed, upgraded dice string
                                     if (nameAdded === false && special.nameAdditionField) { // If the item's name has not been changed yet and there is anything in the addition field
                                         item.name += " " + special.nameAdditionField; // Append the name
                                         nameAdded = true; // Set the bool to mark that the item's name has been changed already
@@ -355,12 +355,12 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                             }
                         }
 
-                        if (item.data.attackDice) {
-                            const foo = item.data.attackDice.split(";");
+                        if (item.system.attackDice) {
+                            const foo = item.system.attackDice.split(";");
                             if (foo.length > 1) {
                                 let bar = findTotalDice(foo[1]);
                                 if (checkDiceArrayEmpty(bar)) {
-                                    item.data.attackDice = foo[0] + ";" + reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
+                                    item.system.attackDice = foo[0] + ";" + reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
                                     if (nameAdded === false && special.nameAdditionField) {
                                         item.name += " " + special.nameAdditionField;
                                         nameAdded = true;
@@ -368,12 +368,12 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                                 }
                             }
                         }
-                        if (item.data.defenseDice) {
-                            const foo = item.data.defenseDice.split(";");
+                        if (item.system.defenseDice) {
+                            const foo = item.system.defenseDice.split(";");
                             if (foo.length > 1) {
                                 let bar = findTotalDice(foo[1]);
                                 if (checkDiceArrayEmpty(bar)) {
-                                    item.data.defenseDice = foo[0] + ";" + reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
+                                    item.system.defenseDice = foo[0] + ";" + reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
                                     if (nameAdded === false && special.nameAdditionField) {
                                         item.name += " " + special.nameAdditionField;
                                         nameAdded = true;
@@ -381,12 +381,12 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                                 }
                             }
                         }
-                        if (item.data.counterDice) {
-                            const foo = item.data.counterDice.split(";");
+                        if (item.system.counterDice) {
+                            const foo = item.system.counterDice.split(";");
                             if (foo.length > 1) {
                                 let bar = findTotalDice(foo[1]);
                                 if (checkDiceArrayEmpty(bar)) {
-                                    item.data.counterDice = foo[0] + ";" + reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
+                                    item.system.counterDice = foo[0] + ";" + reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
                                     if (nameAdded === false && special.nameAdditionField) {
                                         item.name += " " + special.nameAdditionField;
                                         nameAdded = true;
@@ -394,10 +394,10 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                                 }
                             }
                         }
-                        if (item.data.sparkDie) {
-                            let bar = findTotalDice(item.data.sparkDie);
+                        if (item.system.sparkDie) {
+                            let bar = findTotalDice(item.system.sparkDie);
                             if (checkDiceArrayEmpty(bar)) {
-                                item.data.sparkDie = reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
+                                item.system.sparkDie = reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
                                 if (nameAdded === false && special.nameAdditionField) {
                                     item.name += " " + special.nameAdditionField;
                                     nameAdded = true;
@@ -405,10 +405,10 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                             }
                         }
 
-                        if (item.data.armorDice) {
-                            let bar = findTotalDice(item.data.armorDice);
+                        if (item.system.armorDice) {
+                            let bar = findTotalDice(item.system.armorDice);
                             if (checkDiceArrayEmpty(bar)) {
-                                item.data.armorDice = reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
+                                item.system.armorDice = reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
                                 if (nameAdded === false && special.nameAdditionField) {
                                     item.name += " " + special.nameAdditionField;
                                     nameAdded = true;
@@ -416,10 +416,10 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                             }
                         }
 
-                        if (item.data.coverDie) {
-                            let bar = findTotalDice(item.data.coverDie);
+                        if (item.system.coverDie) {
+                            let bar = findTotalDice(item.system.coverDie);
                             if (checkDiceArrayEmpty(bar)) {
-                                item.data.coverDie = reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
+                                item.system.coverDie = reformDiceString(diceFieldUpgrade(bar, special.upgradeStepsNumber), true);
                                 if (nameAdded === false && special.nameAdditionField) {
                                     item.name += " " + special.nameAdditionField;
                                     nameAdded = true;

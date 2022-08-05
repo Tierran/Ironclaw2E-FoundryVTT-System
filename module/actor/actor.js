@@ -124,7 +124,7 @@ export class Ironclaw2EActor extends Actor {
 
         let otheritem = {};
         const messageId = message.id;
-        const messageFlags = message?.data?.flags?.ironclaw2e;
+        const messageFlags = message?.flags?.ironclaw2e;
         if (messageFlags) {
             otheritem = Ironclaw2EActor.getOtherItemFlags(messageFlags, messageId);
         }
@@ -190,7 +190,7 @@ export class Ironclaw2EActor extends Actor {
         let defenseStats = null;
         let otheritem = {};
         const messageId = message.id;
-        const messageFlags = message?.data?.flags?.ironclaw2e;
+        const messageFlags = message?.flags?.ironclaw2e;
         if (messageFlags) {
             autoHits = messageFlags.attackDamageAutoHits;
             defenseStats = messageFlags.attackDamageDefense;
@@ -244,7 +244,7 @@ export class Ironclaw2EActor extends Actor {
             return;
         }
 
-        const messageFlags = message?.data?.flags?.ironclaw2e;
+        const messageFlags = message?.flags?.ironclaw2e;
         const otheritem = Ironclaw2EActor.getAttackerItemFlags(messageFlags);
         const attackToken = Ironclaw2EActor.getAttackerToken(otheritem);
         if (!attackToken) {
@@ -375,7 +375,7 @@ export class Ironclaw2EActor extends Actor {
      * @param {number} resists
      */
     static triggerAttackerRoll(message, rolltype, directroll = false, skipresist = false, defenders = null, presettn = 3, resists = -1) {
-        const messageFlags = message?.data?.flags?.ironclaw2e;
+        const messageFlags = message?.flags?.ironclaw2e;
         const otheritem = Ironclaw2EActor.getAttackerItemFlags(messageFlags);
         if (!otheritem) {
             console.error("Attacker chat roll failed to get the proper information from message flags: " + message);
@@ -1916,9 +1916,9 @@ export class Ironclaw2EActor extends Actor {
                 bar = game.items.getName(foo);
             }
             // If something was found, make sure the actor does not already have it, then add it to the list to make
-            if (bar && bar.data) {
+            if (bar && bar.system) {
                 if (!this.items.getName(bar.name))
-                    itemCreateData.push(bar.data);
+                    itemCreateData.push(bar);
             } else {
                 console.warn("Template item creation failed for id: " + foo);
             }
@@ -2176,7 +2176,7 @@ export class Ironclaw2EActor extends Actor {
         if (targetpos) {
             const foundToken = findActorToken(this);
             if (foundToken) {
-                const dist = getDistanceBetweenPositions(foundToken.data, targetpos);
+                const dist = getDistanceBetweenPositions(foundToken, targetpos);
                 const reduction = this.getRangePenaltyReduction(null, true).reduction;
                 const penalty = getRangeDiceFromDistance(dist, reduction, false, true);
                 // Check if the penalty even exists before popping up the roll field
@@ -2263,7 +2263,7 @@ export class Ironclaw2EActor extends Actor {
         if (otheritem) {
             const foundToken = findActorToken(this);
             if (foundToken && otheritem.attackerPos) {
-                const dist = getDistanceBetweenPositions(otheritem.attackerPos, foundToken.data, { usecombatrules: true });
+                const dist = getDistanceBetweenPositions(otheritem.attackerPos, foundToken, { usecombatrules: true });
                 const range = getDistancePenaltyConstruction(constructionkeys, constructionarray, constructionnames, constructionbools, formconstruction, dist, { "reduction": otheritem.attackerRangeReduction, "autocheck": otheritem.attackerRangeAutocheck });
                 formconstruction = range.otherinputs;
                 constructionkeys = range.otherkeys;
@@ -2388,7 +2388,7 @@ export class Ironclaw2EActor extends Actor {
             const foundToken = findActorToken(this);
             if (foundToken && otheritem.attackerPos) {
                 // Use either the template if it exists, or the token data if the attack explosion spot is not indicated, or the attack is direct
-                const dist = getDistanceBetweenPositions(otheritem.attackerPos, otheritem.templatePos || foundToken.data, { usecombatrules: true });
+                const dist = getDistanceBetweenPositions(otheritem.attackerPos, otheritem.templatePos || foundToken, { usecombatrules: true });
                 const range = getDistancePenaltyConstruction(constructionkeys, constructionarray, constructionnames, constructionbools, formconstruction, dist, { "reduction": otheritem.attackerRangeReduction, "autocheck": otheritem.attackerRangeAutocheck });
                 formconstruction = range.otherinputs;
                 constructionkeys = range.otherkeys;
@@ -2398,7 +2398,7 @@ export class Ironclaw2EActor extends Actor {
 
                 // Potential extra range penalty from explosion
                 if (otheritem.templatePos) {
-                    const exploDist = getDistanceBetweenPositions(otheritem.templatePos, foundToken.data, { usecombatrules: true });
+                    const exploDist = getDistanceBetweenPositions(otheritem.templatePos, foundToken, { usecombatrules: true });
                     const exploRange = getDistancePenaltyConstruction(constructionkeys, constructionarray, constructionnames, constructionbools, formconstruction, exploDist, { "autocheck": otheritem.attackerRangeAutocheck, "explosionpenalty": true });
                     formconstruction = exploRange.otherinputs;
                     constructionkeys = exploRange.otherkeys;

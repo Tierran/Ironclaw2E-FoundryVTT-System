@@ -69,7 +69,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         sheetData.isGM = game.user.isGM;
         sheetData.showDirectoryOptions = game.user.isGM && !this.item.parent;
         sheetData.rangeDistance = getRangeDistanceFromBand(sheetData.data.range);
-        sheetData.showGiftSkill = baseData.data.system.grantsMark || baseData.data.system.specialSkillUse;
+        sheetData.showGiftSkill = sheetData.data.grantsMark || sheetData.data.specialSkillUse;
 
         return sheetData;
     }
@@ -178,7 +178,6 @@ export class Ironclaw2EItemSheet extends ItemSheet {
      * @param {Event} event Originationg event
      */
     _onCopyAllAspects(event) {
-        const itemData = this.item.data;
         if (game.user.isGM) {
             // Pop a dialog to confirm
             let confirmed = false;
@@ -207,14 +206,13 @@ export class Ironclaw2EItemSheet extends ItemSheet {
                     if (confirmed) { // Only copy the item data and replace existing ones if confirmed
                         const items = getAllItemsInWorld(this.item.type);
                         items.delete(this.item);
-                        // Clone the data to ensure no derived data leaks into the actual database
-                        const cloneData = (await this.item.clone()).data;
-                        cloneData.reset();
+                        // Grab the source data only
+                        const sorsa = this.item._source;
                         ui.notifications.info("ironclaw2e.ui.itemUpdateInProgress", { localize: true, permanent: true });
                         for (let item of items) {
                             if (item.name === this.item.name) {
                                 console.log(item); // Log all potential changes to console, just in case
-                                await item.update({ "data": cloneData.data, "img": cloneData.img });
+                                await item.update({ "system": sorsa.system, "img": sorsa.img });
                             }
                         }
                         ui.notifications.info("ironclaw2e.ui.itemUpdateComplete", { localize: true, permanent: true });

@@ -23,7 +23,7 @@ export const measureDistances = function (segments, options = {}) {
 
         // Standard Euclidean measurement
         if (rule === "EUCL" || rule === "RDCL") {
-            return Math.round(Math.hypot(nx, ny) * canvas.scene.data.gridDistance);
+            return Math.round(Math.hypot(nx, ny) * canvas.scene.gridDistance);
         }
 
         // The one-two, or five-ten, compromise
@@ -34,6 +34,6 @@ export const measureDistances = function (segments, options = {}) {
         }
 
         // Diagonal movement same as orthogonal
-        else return (ns + nd) * canvas.scene.data.gridDistance;
+        else return (ns + nd) * canvas.scene.gridDistance;
     });
 };

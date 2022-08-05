@@ -527,7 +527,7 @@ export function findActorToken(actor) {
     }
     else {
         let tokenarray = actor.getActiveTokens(true);
-        if (tokenarray.length > 0 && tokenarray[0]?.data?.actorLink === true)
+        if (tokenarray.length > 0 && tokenarray[0]?.actorLink === true)
             foundtoken = tokenarray[0].document;
     }
     return foundtoken;
@@ -725,7 +725,7 @@ export function getTemplatePosition({ weaponTemplatePos = null, weaponTemplateId
             const template = templateScene.templates.get(weaponTemplateId);
             if (template) {
                 const flagfoo = getCorrectElevationFlag();
-                return { "x": template.data.x, "y": template.data.y, "elevation": template.getFlag(flagfoo.modId, flagfoo.flagId) };
+                return { "x": template.x, "y": template.y, "elevation": template.getFlag(flagfoo.modId, flagfoo.flagId) };
             }
         }
     }
@@ -815,59 +815,58 @@ export function checkApplicability(special, item, actor,
         }
     } else if (item) {
         // If an item has been given
-        const itemData = (item instanceof Ironclaw2EItem ? item.data : item);
-        if (special.typeArray && !special.typeArray.includes(makeCompareReady(itemData.type))) {
+        if (special.typeArray && !special.typeArray.includes(makeCompareReady(item.type))) {
             return false;
         }
-        if (special.nameArray && !special.nameArray.some(x => itemData.name.toLowerCase().includes(x))) {
+        if (special.nameArray && !special.nameArray.some(x => item.name.toLowerCase().includes(x))) {
             return false;
         }
-        if (special.equipArray && !special.equipArray.includes(makeCompareReady(itemData.data.equip))) {
+        if (special.equipArray && !special.equipArray.includes(makeCompareReady(item.system.equip))) {
             return false;
         }
-        if (special.rangeArray && !special.rangeArray.includes(makeCompareReady(itemData.data.range))) {
+        if (special.rangeArray && !special.rangeArray.includes(makeCompareReady(item.system.range))) {
             return false;
         }
 
         // If the target is an already existing item, take advantage of the preprocessed data
         if (item instanceof Ironclaw2EItem) {
-            if (special.tagArray && !special.tagArray.some(x => itemData.data.giftTagsSplit?.includes(x))) {
+            if (special.tagArray && !special.tagArray.some(x => item.system.giftTagsSplit?.includes(x))) {
                 return false;
             }
-            if (special.descriptorArray && !special.descriptorArray.some(x => itemData.data.descriptorsSplit?.includes(x))) {
+            if (special.descriptorArray && !special.descriptorArray.some(x => item.system.descriptorsSplit?.includes(x))) {
                 return false;
             }
-            if (special.effectArray && !special.effectArray.some(x => itemData.data.effectsSplit?.includes(x))) {
+            if (special.effectArray && !special.effectArray.some(x => item.system.effectsSplit?.includes(x))) {
                 return false;
             }
             if (special.statArray) {
-                if (itemData.data.giftStats && !special.statArray.some(x => itemData.data.giftStats?.includes(x)))
+                if (item.system.giftStats && !special.statArray.some(x => item.system.giftStats?.includes(x)))
                     return false;
                 // Complicated check, it checks whether any of the weapon fields exist, then if it can find anything matching from the stats if they exist, it then inverts that value to mean whether nothing was found
-                if (itemData.data.attackStats || itemData.data.defenseStats || itemData.data.counterStats) {
-                    if (!((itemData.data.attackStats && special.statArray.some(x => itemData.data.attackStats?.includes(x))) ||
-                        (itemData.data.defenseStats && special.statArray.some(x => itemData.data.defenseStats?.includes(x))) ||
-                        (itemData.data.counterStats && special.statArray.some(x => itemData.data.counterStats?.includes(x)))))
+                if (item.system.attackStats || item.system.defenseStats || item.system.counterStats) {
+                    if (!((item.system.attackStats && special.statArray.some(x => item.system.attackStats?.includes(x))) ||
+                        (item.system.defenseStats && special.statArray.some(x => item.system.defenseStats?.includes(x))) ||
+                        (item.system.counterStats && special.statArray.some(x => item.system.counterStats?.includes(x)))))
                         return false; // If nothing was found, return false
                 }
             }
         } else { // Otherwise, do special versions of checks for the raw data
-            if (special.tagArray && !special.tagArray.some(x => splitStatString(itemData.data.giftTags)?.includes(x))) {
+            if (special.tagArray && !special.tagArray.some(x => splitStatString(item.system.giftTags)?.includes(x))) {
                 return false;
             }
-            if (special.descriptorArray && !special.descriptorArray.some(x => splitStatString(itemData.data.descriptors)?.includes(x))) {
+            if (special.descriptorArray && !special.descriptorArray.some(x => splitStatString(item.system.descriptors)?.includes(x))) {
                 return false;
             }
-            if (special.effectArray && !special.effectArray.some(x => splitStatString(itemData.data.effect)?.includes(x))) {
+            if (special.effectArray && !special.effectArray.some(x => splitStatString(item.system.effect)?.includes(x))) {
                 return false;
             }
             if (special.statArray) {
-                if (itemData.data.useDice && !special.statArray.some(x => splitStatsAndBonus(itemData.data.useDice)[0]?.includes(x)))
+                if (item.system.useDice && !special.statArray.some(x => splitStatsAndBonus(item.system.useDice)[0]?.includes(x)))
                     return false;
-                if (itemData.data.attackDice || itemData.data.defenseDice || itemData.data.counterDice) {
-                    if (!((itemData.data.attackDice && special.statArray.some(x => splitStatsAndBonus(itemData.data.attackDice)[0]?.includes(x))) ||
-                        (itemData.data.defenseDice && special.statArray.some(x => splitStatsAndBonus(itemData.data.defenseDice)[0]?.includes(x))) ||
-                        (itemData.data.counterDice && special.statArray.some(x => splitStatsAndBonus(itemData.data.counterDice)[0]?.includes(x)))))
+                if (item.system.attackDice || item.system.defenseDice || item.system.counterDice) {
+                    if (!((item.system.attackDice && special.statArray.some(x => splitStatsAndBonus(item.system.attackDice)[0]?.includes(x))) ||
+                        (item.system.defenseDice && special.statArray.some(x => splitStatsAndBonus(item.system.defenseDice)[0]?.includes(x))) ||
+                        (item.system.counterDice && special.statArray.some(x => splitStatsAndBonus(item.system.counterDice)[0]?.includes(x)))))
                         return false;
                 }
             }
@@ -885,7 +884,7 @@ export function checkApplicability(special, item, actor,
         }
         if (special.needsSecondReadiedWeapon === true && item) {
             // Listed under Actor-specific checks, but needs both actor and item to be present
-            const anotherReadiedWeapon = actor.items.some(x => x.id !== item.id && x.type === "weapon" && x.data.data.readied === true);
+            const anotherReadiedWeapon = actor.items.some(x => x.id !== item.id && x.type === "weapon" && x.system.readied === true);
             if (anotherReadiedWeapon === false)
                 return false;
         }
@@ -917,8 +916,8 @@ export function checkApplicability(special, item, actor,
             if (requireSuccess && special.useActualRange && (!otheritem.attackerPos || !foundToken || !functionalRange)) {
                 return false; // If the special uses actual range, the system settings require that this check goes through and either the attacker or defender position can't be determined, fail the check
             } else if (special.useActualRange) {
-                if (otheritem?.attackerPos && foundToken?.data && functionalRange) {
-                    const dist = getDistanceBetweenPositions(otheritem.attackerPos, foundToken.data);
+                if (otheritem?.attackerPos && foundToken && functionalRange) {
+                    const dist = getDistanceBetweenPositions(otheritem.attackerPos, foundToken);
                     if (!checkIfWithinRange(dist, functionalRange)) {
                         return false; // If the range check goes through and either the distance between defender and attacker is less than min or more than max, fail the check
                     }
@@ -1093,7 +1092,7 @@ export function findInItems(itemlist, itemname, itemtype = null) {
     // First remove all whitespace from the itemname, then make a case-insensitive regexp from it
     const regex = new RegExp(`^${itemname.replace(/\s/g, '')}\$`, "gi");
     // Go through all the items until the itemname regexp (and optionally the itemtype) match with something
-    return itemlist.find(element => (useitemtype ? element.data.type === itemtype : true) && regex.test(element.data.name.replace(/\s/g, '')));
+    return itemlist.find(element => (useitemtype ? element.type === itemtype : true) && regex.test(element.name.replace(/\s/g, '')));
 }
 
 /**

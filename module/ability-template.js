@@ -76,7 +76,7 @@ export class AbilityTemplateIronclaw extends MeasuredTemplate {
             if (now - moveTime <= 20) return;
             const center = event.data.getLocalPosition(this.layer);
             const snapped = canvas.grid.getSnappedPosition(center.x, center.y, 2);
-            this.data.update({ x: snapped.x, y: snapped.y });
+            this.update({ x: snapped.x, y: snapped.y });
             this.refresh();
             moveTime = now;
         };
@@ -95,8 +95,8 @@ export class AbilityTemplateIronclaw extends MeasuredTemplate {
         handlers.lc = async event => {
             handlers.rc(event);
             const destination = canvas.grid.getSnappedPosition(this.data.x, this.data.y, 2);
-            await this.data.update(destination);
-            const [finished] = await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.data]);
+            await this.update(destination);
+            const [finished] = await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this]);
             const flagfoo = getCorrectElevationFlag();
             await finished?.setFlag(flagfoo.modId, flagfoo.flagId, this.elevation);
             if (this.successFunc) this.successFunc(finished);

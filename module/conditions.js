@@ -190,7 +190,7 @@ export async function removeConditionsIronclaw(conditions, target, checkfirst = 
  */
 export function getBaseConditionIronclaw(condition, warn = false) {
     const iseffect = condition instanceof ActiveEffect;
-    let name = iseffect ? condition?.data?.label : condition;
+    let name = iseffect ? condition?.label : condition;
 
     if (game.ironclaw2e.useCUBConditions) {
         if (!iseffect) {
@@ -199,7 +199,7 @@ export function getBaseConditionIronclaw(condition, warn = false) {
         return game.cub.getCondition(name, null, { "warn": warn });
     } else {
         if (iseffect) {
-            name = condition?.data?.flags?.core?.statusId || name;
+            name = condition?.flags?.core?.statusId || name;
         } else {
             name = makeCompareReady(name);
         }
@@ -216,7 +216,7 @@ export function getBaseConditionIronclaw(condition, warn = false) {
  * @returns {boolean} Returns true if the effect matches
  */
 export function checkConditionIronclaw(condition, name, warn = false) {
-    const usedcond = condition instanceof ActiveEffect ? condition.data : condition;
+    const usedcond = condition;
     if (game.ironclaw2e.useCUBConditions) {
         const tocheck = CommonConditionInfo.convertToCub(name);
         return tocheck.includes(usedcond?.label);
@@ -293,7 +293,7 @@ export function checkConditionQuota(condition) {
     if (typeof (condition) === "string") {
         return CommonConditionInfo.quotaList.has(condition);
     }
-    const usedcond = condition instanceof ActiveEffect ? condition.data : condition;
+    const usedcond = condition;
     if (game.ironclaw2e.useCUBConditions) {
         return CommonConditionInfo.quotaCubList.has(usedcond?.label);
     } else {
@@ -321,7 +321,7 @@ export function getTargetConditionQuota(condition, target) {
     }
 
     // Get the used condition from either the name or the given condition
-    const usedcond = (typeof (condition) === "string" ? getSingleConditionIronclaw(condition, target) : condition)?.data;
+    const usedcond = (typeof (condition) === "string" ? getSingleConditionIronclaw(condition, target) : condition);
     if (usedcond) {
         return usedcond?.flags?.ironclaw2e?.quota ?? 0;
     }

@@ -12,19 +12,19 @@ function wildcardTemplateApplying(token, options, user) {
         return;
     }
     // Only execute if the token is not set as linked
-    if (token?.data.actorLink !== false) {
+    if (token?.actorLink !== false) {
         return;
     }
     // Only execute if the option is set for the actor
-    if (token?.actor?.data.data.applyTemplateOnSpawn !== true) {
+    if (token?.actor?.system.applyTemplateOnSpawn !== true) {
         return;
     }
-    const actorData = token.actor.data;
+    const actor = token.actor;
     // Species templates
     const speciesActive = game.settings.get("ironclaw2e", "templateSpeciesActive");
     const speciesFolder = game.settings.get("ironclaw2e", "templateSpeciesFolder");
     let speciesSuccessful = null;
-    if (speciesActive && speciesFolder && !actorData.data.traits.species.name) {
+    if (speciesActive && speciesFolder && !actor.system.traits.species.name) {
         // If the setting is on, has a folder and there is no species name
         const folder = game.folders.get(speciesFolder);
         const templates = folder.contents;
@@ -35,7 +35,7 @@ function wildcardTemplateApplying(token, options, user) {
             }
             // Check if the current template's name shows up anywhere in the token image's name
             const reg = new RegExp("(" + foo.name + ")", "gi"); // Prepare the regex
-            if (reg.test(token.data.img)) {
+            if (reg.test(token.img)) {
                 speciesSuccessful = foo;
                 break;
             }
@@ -45,7 +45,7 @@ function wildcardTemplateApplying(token, options, user) {
     const careerActive = game.settings.get("ironclaw2e", "templateCareerActive");
     const careerFolder = game.settings.get("ironclaw2e", "templateCareerFolder");
     let careerSuccessful = null;
-    if (careerActive && careerFolder && !actorData.data.traits.career.name) {
+    if (careerActive && careerFolder && !actor.system.traits.career.name) {
         // If the setting is on, has a folder and there is no career name
         const folder = game.folders.get(careerFolder);
         const templates = folder.contents;
@@ -56,7 +56,7 @@ function wildcardTemplateApplying(token, options, user) {
             }
             // Check if the current template's name shows up anywhere in the token image's name
             const reg = new RegExp("(" + foo.name + ")", "gi"); // Prepare the regex
-            if (reg.test(token.data.img)) {
+            if (reg.test(token.img)) {
                 careerSuccessful = foo;
                 break;
             }

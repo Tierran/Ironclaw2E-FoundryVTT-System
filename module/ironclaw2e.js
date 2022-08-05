@@ -676,13 +676,13 @@ Hooks.on("chatCommandsReady", chatCommandsIntegration);
 async function createIronclaw2EMacro(data, slot) {
     if (data.type !== "Item") return;
     if (!("data" in data)) return ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.macroOwnedItemsWarning"));
-    const item = data.data;
+    const item = data;
     const justInfo = checkQuickModifierKey();
 
     // Create the macro command
     const command = `game.ironclaw2e.rollItemMacro("${item.name}", ${justInfo ? "true" : "false"});`;
     const usedName = item.name + (justInfo ? " To Chat" : "");
-    let macro = game.macros.find(m => (m?.data.name === usedName) && (m?.data.command === command));
+    let macro = game.macros.find(m => (m?.name === usedName) && (m?.command === command));
     if (!macro) {
         macro = await Macro.create({
             name: usedName,

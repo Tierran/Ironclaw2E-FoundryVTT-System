@@ -86,7 +86,7 @@ Hooks.on("renderChatMessage", function (message, html, data) {
 
     // Description hiding system, only go here if some descriptions should be hidden
     if (showDescription == false && !game.user.isGM) {
-        const actor = getActorFromSpeaker(message.data.speaker);
+        const actor = getActorFromSpeaker(message.speaker);
         // If the actor exists and has no player owner
         const hideDescription = (actor && actor?.hasPlayerOwner === false);
         if (hideDescription) {
@@ -280,7 +280,7 @@ async function onRequestRollTrigger(event) {
         return null;
     }
     const direct = checkQuickModifierKey();
-    const messageFlags = message?.data?.flags?.ironclaw2e;
+    const messageFlags = message?.flags?.ironclaw2e;
 
     // Check to make sure the flags actually exist
     if (messageFlags) {
@@ -315,8 +315,8 @@ export function showScrollingDistanceText(origintoken, targettoken) {
                 usecombatrules = true;
         }
         // Double-check that everything that should exist does
-        if (targettoken.hud && targettoken.data && origintoken.data) {
-            const distance = getDistanceBetweenPositions(origintoken.data, targettoken.data, { usecombatrules });
+        if (targettoken.hud && targettoken && origintoken) {
+            const distance = getDistanceBetweenPositions(origintoken, targettoken, { usecombatrules });
             const range = getRangeBandFromDistance(distance, true);
             const text = game.i18n.format("ironclaw2e.ui.rangeScrolling", { "range": range });
             targettoken.hud.createScrollingText(text, { anchor: CONST.TEXT_ANCHOR_POINTS.BOTTOM, direction: CONST.TEXT_ANCHOR_POINTS.TOP, duration, jitter: 0.1, fontSize: 28, stroke: 0x000000, strokeThickness: 4 });
@@ -344,9 +344,9 @@ export function ironclawDragRulerIntegration(SpeedProvider) {
         }
 
         getRanges(token) {
-            const stridespeed = token.actor?.data.data.stride || 0;
-            const dashspeed = token.actor?.data.data.dash || 0;
-            const runspeed = token.actor?.data.data.run || 0;
+            const stridespeed = token.actor?.system.stride || 0;
+            const dashspeed = token.actor?.system.dash || 0;
+            const runspeed = token.actor?.system.run || 0;
 
             const ranges = [
                 { range: stridespeed, color: "stride" },
@@ -362,7 +362,7 @@ export function ironclawDragRulerIntegration(SpeedProvider) {
             options.token = token;
             const costs = area.map(space => terrainRuler.getCost(space.x, space.y, options));
             // If the token has flying or the actor ignores bad footing, it ignores all difficult terrain
-            const ignored = hasConditionsIronclaw("flying", token) || token?.actor?.data.data.ignoreBadFooting;
+            const ignored = hasConditionsIronclaw("flying", token) || token?.actor?.system.ignoreBadFooting;
             if (ignored) {
                 return 1;
             }
@@ -404,7 +404,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const message = game.messages.get(li.data("messageId"));
                 const type = message.getFlag("ironclaw2e", "rollType");
                 // Check that the message has a roll, and is not of TN type
-                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type === "HIGH";
+                const allowed = message.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type === "HIGH";
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
             },
             callback: li => {
@@ -419,7 +419,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const message = game.messages.get(li.data("messageId"));
                 const type = message.getFlag("ironclaw2e", "rollType");
                 // Check that the message has a roll, and is of TN type
-                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type === "TN";
+                const allowed = message.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type === "TN";
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
             },
             callback: li => {
@@ -434,7 +434,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const message = game.messages.get(li.data("messageId"));
                 const type = message.getFlag("ironclaw2e", "rollType");
                 // Check that the message has a roll, and is not of Highest type
-                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type === "TN";
+                const allowed = message.type == CONST.CHAT_MESSAGE_TYPES.ROLL && type && type === "TN";
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
             },
             callback: li => {
@@ -451,7 +451,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const hasOne = message.getFlag("ironclaw2e", "hasOne");
                 const type = message.getFlag("ironclaw2e", "rollType");
                 // Check that the message has a roll, is rerollable either because it has the new intermediary array stored or because it is the original and has a one
-                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && rerollable && hasOne && type !== "MINI";
+                const allowed = message.type == CONST.CHAT_MESSAGE_TYPES.ROLL && rerollable && hasOne && type !== "MINI";
                 return allowed && (game.user.isGM || message.isAuthor) && message.isContentVisible;
             },
             callback: li => {
@@ -477,7 +477,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const usableRerolls = actor ? actor.getGiftRerollTypes?.(statsUsed, hasOne, message.isAuthor, false)?.size > 0 : game.user.isGM;
                 const type = message.getFlag("ironclaw2e", "rollType");
                 // Check that the message has a roll, is rerollable because it has the new intermediary array stored, and either that the current selected actor has rerolls or the user is a GM
-                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && rerollable && usableRerolls && type !== "MINI";
+                const allowed = message.type == CONST.CHAT_MESSAGE_TYPES.ROLL && rerollable && usableRerolls && type !== "MINI";
                 return allowed && message.isContentVisible;
             },
             callback: li => {
@@ -497,7 +497,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const successes = message.getFlag("ironclaw2e", "attackSuccessCount");
                 const actor = getHangingActor(message);
                 // Check whether the attack effect calculation is active, the message has a roll, has a weapon id and a positive number of successes set and has explicitly been set to have a hanging normal attack
-                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && successes > 0 && type === "attack";
+                const allowed = active && message.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && successes > 0 && type === "attack";
                 return allowed && (game.user.isGM || (message.isAuthor && actor.isOwner)) && message.isContentVisible;
             },
             callback: li => {
@@ -520,7 +520,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const successes = message.getFlag("ironclaw2e", "attackSuccessCount");
                 const actor = getHangingActor(message);
                 // Check whether the attack effect calculation is active, the message has a roll, doesn't already have slaying, has a weapon id and a positive number of successes set and has explicitly been set to have a hanging normal attack
-                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && !isslaying && weaponid && successes > 0 && type === "attack";
+                const allowed = active && message.type == CONST.CHAT_MESSAGE_TYPES.ROLL && !isslaying && weaponid && successes > 0 && type === "attack";
                 return allowed && (message.isAuthor && actor.isOwner) && message.isContentVisible;
             },
             callback: li => {
@@ -541,7 +541,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
                 const actor = getHangingActor(message);
                 // Check whether the attack effect calculation is active, the message has a roll, has a weapon id set and has explicitly been set to have a hanging counter-attack
-                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && type === "counter";
+                const allowed = active && message.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && type === "counter";
                 return allowed && (message.isAuthor && actor.isOwner) && message.isContentVisible;
             },
             callback: li => {
@@ -563,7 +563,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
                 const actor = getHangingActor(message);
                 // Check whether the attack effect calculation is active, the message has a roll, has a weapon id and a positive number of successes set and has explicitly been set to have a hanging resist attack
-                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && successes > 0 && type === "resist";
+                const allowed = active && message.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && successes > 0 && type === "resist";
                 return allowed && (message.isAuthor && actor.isOwner) && message.isContentVisible;
             },
             callback: li => {
@@ -585,7 +585,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
                 const actor = getHangingActor(message);
                 // Check whether the attack effect calculation is active, the message has a roll, has a weapon id and a positive number of successes set and has explicitly been set to have a hanging resist attack
-                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && successes > 0 && type === "resist";
+                const allowed = active && message.type == CONST.CHAT_MESSAGE_TYPES.ROLL && weaponid && successes > 0 && type === "resist";
                 return allowed && (message.isAuthor && actor.isOwner) && message.isContentVisible;
             },
             callback: li => {
@@ -608,7 +608,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const successes = message.getFlag("ironclaw2e", "resistSuccessCount");
                 const actor = getHangingActor(message);
                 // Check whether the attack effect calculation is active, the message has a roll, doesn't already have slaying, has a weapon id and a positive number of successes set and has explicitly been set to have a hanging resist attack
-                const allowed = active && message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && !isslaying && weaponid && successes > 0 && type === "resist";
+                const allowed = active && message.type == CONST.CHAT_MESSAGE_TYPES.ROLL && !isslaying && weaponid && successes > 0 && type === "resist";
                 return allowed && (message.isAuthor && actor.isOwner) && message.isContentVisible;
             },
             callback: li => {
@@ -628,7 +628,7 @@ function addIronclawChatLogContext(html, entryOptions) {
                 const messageid = message.getFlag("ironclaw2e", "defenseForAttack");
                 const attackMessage = game.messages.get(messageid);
                 // Check that the message is a roll and that the message has a callback id to the attacker's item info chat message
-                const allowed = message.data.type == CONST.CHAT_MESSAGE_TYPES.ROLL && attackMessage && type;
+                const allowed = message.type == CONST.CHAT_MESSAGE_TYPES.ROLL && attackMessage && type;
                 return allowed && (game.user.isGM || attackMessage.isAuthor) && attackMessage.isContentVisible && message.isContentVisible;
             },
             callback: async li => {
