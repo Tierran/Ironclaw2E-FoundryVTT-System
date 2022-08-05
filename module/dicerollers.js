@@ -66,6 +66,7 @@ export class CardinalDiceRoller {
             return null;
 
         let roll = await new Roll("{" + rollstring + "}cs>" + tni).evaluate({ async: true });
+        const typeText = game.i18n.localize("ironclaw2e.chat.rollingTN") + ": ";
 
         const successes = roll.total;
         let highest = 0;
@@ -78,7 +79,7 @@ export class CardinalDiceRoller {
             if (x.result === 1) hasOne = true;
         });
 
-        const flavorstring = CardinalDiceRoller.flavorStringTN(successes, ties, highest, label);
+        const flavorstring = CardinalDiceRoller.flavorStringTN(successes, ties, highest, typeText, label);
 
         /** @type TNData */
         let tnData = { "successes": successes, "ties": ties };
@@ -158,8 +159,7 @@ export class CardinalDiceRoller {
             if (x.result === 1) hasOne = true;
         });
 
-        const flavorstring = CardinalDiceRoller.flavorStringTN(successes, ties, highest,
-            `${(directCopy ? game.i18n.localize("ironclaw2e.chatInfo.copy") : rerollFlavor)} ${game.i18n.localize("ironclaw2e.chatInfo.tn")}: ` + label);
+        const flavorstring = CardinalDiceRoller.flavorStringTN(successes, ties, highest, `${(directCopy ? game.i18n.localize("ironclaw2e.chatInfo.copy") : rerollFlavor)} ${game.i18n.localize("ironclaw2e.chatInfo.tn")}:`, label);
 
         /** @type TNData */
         let tnData = { "successes": successes, "ties": ties };
@@ -190,7 +190,8 @@ export class CardinalDiceRoller {
             return null;
 
         let roll = await new Roll("{" + rollstring + "}kh1").evaluate({ async: true });
-        const flavorstring = CardinalDiceRoller.flavorStringHighest(roll.total, label);
+        const typeText = game.i18n.localize("ironclaw2e.chat.rollingHighest") + ": ";
+        const flavorstring = CardinalDiceRoller.flavorStringHighest(roll.total, typeText, label);
 
         const hasOne = roll.terms[0].results.some(x => x.result === 1); // Find if one of the dice rolled a "1"
 
@@ -255,8 +256,7 @@ export class CardinalDiceRoller {
         }
 
         let roll = await new Roll("{" + rollString + "}kh1").evaluate({ async: true });
-        const flavorstring = CardinalDiceRoller.flavorStringHighest(roll.total,
-            `${(directCopy ? game.i18n.localize("ironclaw2e.chatInfo.copy") : rerollFlavor)} ${game.i18n.localize("ironclaw2e.chatInfo.high")}: ` + label);
+        const flavorstring = CardinalDiceRoller.flavorStringHighest(roll.total, `${(directCopy ? game.i18n.localize("ironclaw2e.chatInfo.copy") : rerollFlavor)} ${game.i18n.localize("ironclaw2e.chatInfo.high")}:`, label);
 
         const hasOne = roll.terms[0].results.some(x => x.result === 1); // Find if one of the dice "rolled" a "1"
 
@@ -312,9 +312,9 @@ export class CardinalDiceRoller {
             hasOne = roll.terms[0].results.some(x => x.result === 1); // Find if one of the dice "rolled" a "1"
         }
 
-        const label = game.i18n.format("ironclaw2e.chatInfo.miniRollFor", { "reason": reason });
-        const flavorstring = useTN ? CardinalDiceRoller.flavorStringTN(successes, ties, highest, label) :
-            (picklowest ? CardinalDiceRoller.flavorStringLowest(roll.total, label) : CardinalDiceRoller.flavorStringHighest(roll.total, label));
+        const typeText = game.i18n.format("ironclaw2e.chatInfo.miniRollFor", { "reason": reason });
+        const flavorstring = useTN ? CardinalDiceRoller.flavorStringTN(successes, ties, highest, typeText, "") :
+            (picklowest ? CardinalDiceRoller.flavorStringLowest(roll.total, typeText, "") : CardinalDiceRoller.flavorStringHighest(roll.total, typeText, ""));
 
         /** @type TNData */
         let tnData = useTN ? { "successes": successes, "ties": ties } : null;
@@ -322,7 +322,7 @@ export class CardinalDiceRoller {
         let messageData = {
             speaker: chatspeaker ?? getMacroSpeaker(null),
             flavor: flavorstring,
-            flags: { "ironclaw2e.rollType": "MINI", "ironclaw2e.targetNumber": useTN ? tni : -1, "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": label, "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
+            flags: { "ironclaw2e.rollType": "MINI", "ironclaw2e.targetNumber": useTN ? tni : -1, "ironclaw2e.rollIntermediary": intermediary, "ironclaw2e.label": "", "ironclaw2e.originalRoll": false, "ironclaw2e.hasOne": hasOne }
         };
         if (playsound === false) messageData.sound = null;
         let msg = await roll.toMessage(messageData, { create: sendinchat });
@@ -454,30 +454,36 @@ export class CardinalDiceRoller {
      * @param {number} ties The number of ties for the roll
      * @param {number} highest The highest die result for the roll
      * @param {string} label Label to put in front of the dice results
+     * @param {string} typetext The text clarifying what type of roll this is
      * @returns {string} The formed flavor string
      * @private
      */
-    static flavorStringTN(successes, ties, highest, label) {
+    static flavorStringTN(successes, ties, highest, typetext, label) {
         const botched = highest == 1; // Whether the roll was botched based on whether the highest-showing die is 1
         if (successes > 0) {
-            return (label.length > 0 ? "<p>" + label + "</p>" : "") +
+            // Check to make sure typetext and label each have stuff, then check if there's already HTML paragraph tags at the start and end
+            return (typetext?.length > 0 ? (typetext.startsWith("<p>") && typetext.endsWith("</p>") ? typetext : "<p>" + typetext + "</p>") : "") +
+                (label?.length > 0 ? (label.startsWith("<p>") && label.endsWith("</p>") ? label : "<p>" + label + "</p>") : "") +
                 `<p style="font-size:${CommonSystemInfo.resultFontSize};margin-bottom:${CommonSystemInfo.resultTNMarginSize};color:${CommonSystemInfo.resultColors.success}">${game.i18n.format("ironclaw2e.chat.success", { "successes": successes })}</p>` +
-                CardinalDiceRoller.flavorStringHighest(highest, "", true);
+                CardinalDiceRoller.flavorStringHighest(highest, "", "", true);
         }
         else {
             if (botched) {
-                return (label.length > 0 ? "<p>" + label + "</p>" : "") +
+                return (typetext?.length > 0 ? (typetext.startsWith("<p>") && typetext.endsWith("</p>") ? typetext : "<p>" + typetext + "</p>") : "") +
+                    (label?.length > 0 ? (label.startsWith("<p>") && label.endsWith("</p>") ? label : "<p>" + label + "</p>") : "") +
                     `<p style="font-size:${CommonSystemInfo.resultFontSize};color:${CommonSystemInfo.resultColors.botch}">${game.i18n.localize("ironclaw2e.chat.botch")}</p>`;
             }
             else if (ties > 0) {
-                return (label.length > 0 ? "<p>" + label + "</p>" : "") +
+                return (typetext?.length > 0 ? (typetext.startsWith("<p>") && typetext.endsWith("</p>") ? typetext : "<p>" + typetext + "</p>") : "") +
+                    (label?.length > 0 ? (label.startsWith("<p>") && label.endsWith("</p>") ? label : "<p>" + label + "</p>") : "") +
                     `<p style="font-size:${CommonSystemInfo.resultFontSize};margin-bottom:${CommonSystemInfo.resultTNMarginSize};color:${CommonSystemInfo.resultColors.tie}">${game.i18n.format("ironclaw2e.chat.tie", { "ties": ties })}</p>` +
-                    CardinalDiceRoller.flavorStringHighest(highest, "", true);
+                    CardinalDiceRoller.flavorStringHighest(highest, "", "", true);
             }
             else {
-                return (label.length > 0 ? "<p>" + label + "</p>" : "") +
+                return (typetext?.length > 0 ? (typetext.startsWith("<p>") && typetext.endsWith("</p>") ? typetext : "<p>" + typetext + "</p>") : "") +
+                    (label?.length > 0 ? (label.startsWith("<p>") && label.endsWith("</p>") ? label : "<p>" + label + "</p>") : "") +
                     `<p style="font-size:${CommonSystemInfo.resultFontSize};margin-bottom:${CommonSystemInfo.resultTNMarginSize};color:${CommonSystemInfo.resultColors.failure}">${game.i18n.localize("ironclaw2e.chat.failure")}</p>` +
-                    CardinalDiceRoller.flavorStringHighest(highest, "", true);
+                    CardinalDiceRoller.flavorStringHighest(highest, "", "", true);
             }
         }
     }
@@ -486,12 +492,15 @@ export class CardinalDiceRoller {
      * Helper function for the highest dice rollers to form the chat message flavor text properly
      * @param {number} highest The highest die result for the roll
      * @param {string} label Label to put in front of the dice results
+     * @param {string} typetext The text clarifying what type of roll this is
      * @param {boolean} small Whether to ask for the small version of the string
      * @returns {string} The formed flavor string
      * @private
      */
-    static flavorStringHighest(highest, label, small = false) {
-        return (label.length > 0 ? "<p>" + label + "</p>" : "") + (small ? `<p style="font-size:${CommonSystemInfo.resultSmallFontSize};margin-top:0px;` : `<p style="font-size:${CommonSystemInfo.resultFontSize};`) + `
+    static flavorStringHighest(highest, typetext, label, small = false) {
+        return (typetext?.length > 0 ? (typetext.startsWith("<p>") && typetext.endsWith("</p>") ? typetext : "<p>" + typetext + "</p>") : "") +
+            (label?.length > 0 ? (label.startsWith("<p>") && label.endsWith("</p>") ? label : "<p>" + label + "</p>") : "") +
+            (small ? `<p style="font-size:${CommonSystemInfo.resultSmallFontSize};margin-top:0px;` : `<p style="font-size:${CommonSystemInfo.resultFontSize};`) + `
     color:${(highest > 1 ? CommonSystemInfo.resultColors.normal : CommonSystemInfo.resultColors.botch)}">${game.i18n.format("ironclaw2e.chat.highest", { "highest": highest })}</p>`;
     }
 
@@ -500,12 +509,15 @@ export class CardinalDiceRoller {
      * This is used basically just for luck rerolls to pick the lowest die possible
      * @param {number} lowest The lowest die result for the roll
      * @param {string} label Label to put in front of the dice results
+     * @param {string} typetext The text clarifying what type of roll this is
      * @param {boolean} small Whether to ask for the small version of the string
      * @returns {string} The formed flavor string
      * @private
      */
-    static flavorStringLowest(lowest, label, small = false) {
-        return (label.length > 0 ? "<p>" + label + "</p>" : "") + (small ? `<p style="font-size:${CommonSystemInfo.resultSmallFontSize};margin-top:0px;` : `<p style="font-size:${CommonSystemInfo.resultFontSize};`) + `
+    static flavorStringLowest(lowest, typetext, label, small = false) {
+        return (typetext?.length > 0 ? (typetext.startsWith("<p>") && typetext.endsWith("</p>") ? typetext : "<p>" + typetext + "</p>") : "") +
+            (label?.length > 0 ? (label.startsWith("<p>") && label.endsWith("</p>") ? label : "<p>" + label + "</p>") : "") +
+            (small ? `<p style="font-size:${CommonSystemInfo.resultSmallFontSize};margin-top:0px;` : `<p style="font-size:${CommonSystemInfo.resultFontSize};`) + `
     color:${(lowest > 1 ? CommonSystemInfo.resultColors.normal : CommonSystemInfo.resultColors.botch)}">${game.i18n.format("ironclaw2e.chat.lowest", { "lowest": lowest })}</p>`;
     }
 

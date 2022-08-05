@@ -2790,11 +2790,7 @@ export class Ironclaw2EActor extends Actor {
                         let doubleDice = (DOUBLE ? DOUBLE.checked : false);
 
                         let labelgiven = false;
-                        let label = "";
-                        if (IFTN)
-                            label = game.i18n.localize("ironclaw2e.chat.rollingTN") + ": ";
-                        else
-                            label = game.i18n.localize("ironclaw2e.chat.rollingHighest") + ": ";
+                        let label = "<p>";
 
                         if (hastraits || hasskills) { // Get the dice pools from the checked traits and skills and add them to the roll
                             const statfoobar = this._getDicePools(traitvalues, skillvalues, isburdened, labelgiven);
@@ -2824,7 +2820,7 @@ export class Ironclaw2EActor extends Actor {
                         if (doubleDice) {
                             label += ", " + game.i18n.localize("ironclaw2e.chat.doubleDice");
                         } // Set the labels
-                        label += ".";
+                        label += ".</p>";
                         if (typeof (otherlabel) === 'string' && otherlabel.length > 0)
                             label += `<p style="color:black">${otherlabel}</p>`;
 
@@ -2886,7 +2882,7 @@ export class Ironclaw2EActor extends Actor {
         }
 
         // Set the label
-        let label = all.label + (doubledice ? ", " + game.i18n.localize("ironclaw2e.chat.doubleDice") : "") + ".";
+        let label = "<p>" + all.label + (doubledice ? ", " + game.i18n.localize("ironclaw2e.chat.doubleDice") : "") + ".</p>";
         // If it exists, set the separate label
         if (typeof (otherlabel) === 'string' && otherlabel.length > 0)
             label += `<p style="color:black">${otherlabel}</p>`;
