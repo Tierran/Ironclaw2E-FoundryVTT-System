@@ -2,64 +2,64 @@
     <h3 class="header-label flexrow flex-center">{{localize "ironclaw2e.sheets.actor.battleStatistics"}}</h3>
     <div class="flexrow flex-group-center flex-tight">
         <div></div>
-        <span class="rollable roll-init normal-label" {{#if (isCombatantNoInit actor._id)}} style="color:forestgreen" title="{{localize "ironclaw2e.chat.rollingInitiativeCheck"}}" {{/if}}>{{localize "ironclaw2e.sheets.actor.initiative"}}: {{data.initiativeString}}</span>
+        <span class="rollable roll-init normal-label" {{#if (isCombatantNoInit actor._id)}} style="color:forestgreen" title="{{localize "ironclaw2e.chat.rollingInitiativeCheck"}}" {{/if}}>{{localize "ironclaw2e.sheets.actor.initiative"}}: {{system.initiativeString}}</span>
         <div></div>
     </div>
     <div class="flexrow flex-group-center flex-tight">
         {{#if isFlying}}
-        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.flyingStride"}}: {{data.stride}}</span>
-        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.flyingDash"}}: {{data.dash}}</span>
-        <span class="rollable roll-sprint normal-label">{{localize "ironclaw2e.sheets.actor.flyingSprint"}}: {{data.sprintString}}</span>
-        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.flyingRun"}}: {{data.run}}</span>
+        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.flyingStride"}}: {{system.stride}}</span>
+        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.flyingDash"}}: {{system.dash}}</span>
+        <span class="rollable roll-sprint normal-label">{{localize "ironclaw2e.sheets.actor.flyingSprint"}}: {{system.sprintString}}</span>
+        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.flyingRun"}}: {{system.run}}</span>
         {{else}}
-        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.stride"}}: {{data.stride}}</span>
-        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.dash"}}: {{data.dash}}</span>
-        <span class="rollable roll-sprint normal-label">{{localize "ironclaw2e.sheets.actor.sprint"}}: {{data.sprintString}}</span>
-        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.run"}}: {{data.run}}</span>
+        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.stride"}}: {{system.stride}}</span>
+        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.dash"}}: {{system.dash}}</span>
+        <span class="rollable roll-sprint normal-label">{{localize "ironclaw2e.sheets.actor.sprint"}}: {{system.sprintString}}</span>
+        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.run"}}: {{system.run}}</span>
         {{/if}}
     </div>
     <div class="grid grid-3col">
-        <div class="rollable roll-soak flex-group-center flex-tight" {{#if (propertyExists data "visualData")}} title="{{localize "ironclaw2e.sheets.actor.visual.soak" dice=data.visualData.soakPool}}" {{/if}}>
-            <span class="normal-label">{{localize "ironclaw2e.sheets.actor.soakRoll"}}{{#if (propertyExists data "visualData")}}: {{data.visualData.soak}}{{/if}}</span>
+        <div class="rollable roll-soak flex-group-center flex-tight" {{#if (propertyExists system "visualData")}} title="{{localize "ironclaw2e.sheets.actor.visual.soak" dice=system.visualData.soakPool}}" {{/if}}>
+            <span class="normal-label">{{localize "ironclaw2e.sheets.actor.soakRoll"}}{{#if (propertyExists system "visualData")}}: {{system.visualData.soak}}{{/if}}</span>
         </div>
-        <div class="rollable roll-defense flex-group-center flex-tight" {{#if (propertyExists data "visualData")}} title="{{localize "ironclaw2e.sheets.actor.visual.dodge" dice=data.visualData.dodgePool}}" {{/if}}>
-            <span class="normal-label">{{localize "ironclaw2e.sheets.actor.dodgeRoll"}}{{#if (propertyExists data "visualData")}}: {{data.visualData.dodge}}{{/if}}</span>
+        <div class="rollable roll-defense flex-group-center flex-tight" {{#if (propertyExists system "visualData")}} title="{{localize "ironclaw2e.sheets.actor.visual.dodge" dice=system.visualData.dodgePool}}" {{/if}}>
+            <span class="normal-label">{{localize "ironclaw2e.sheets.actor.dodgeRoll"}}{{#if (propertyExists system "visualData")}}: {{system.visualData.dodge}}{{/if}}</span>
         </div>
-        <div class="rollable roll-rally flex-group-center flex-tight" {{#if (propertyExists data "visualData")}} title="{{localize "ironclaw2e.sheets.actor.visual.rally" dice=data.visualData.rallyPool}}" {{/if}}>
-            <span class="normal-label">{{localize "ironclaw2e.sheets.actor.rallyRoll"}}{{#if (propertyExists data "visualData")}}: {{data.visualData.rally}}{{/if}}</span>
+        <div class="rollable roll-rally flex-group-center flex-tight" {{#if (propertyExists system "visualData")}} title="{{localize "ironclaw2e.sheets.actor.visual.rally" dice=system.visualData.rallyPool}}" {{/if}}>
+            <span class="normal-label">{{localize "ironclaw2e.sheets.actor.rallyRoll"}}{{#if (propertyExists system "visualData")}}: {{system.visualData.rally}}{{/if}}</span>
         </div>
     </div>
     <div>
         <ol class="items-list">
             {{#each actor.weapons as |item id|}}
-            {{#if item.data.showInBattleStats}}
+            {{#if item.system.showInBattleStats}}
             <li class="item flexrow" data-item-id="{{item._id}}">
                 <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
-                <h4 title="{{localize "ironclaw2e.chatInfo.itemInfo.effect"}}: {{item.data.effect}}&#013;{{localize "ironclaw2e.chatInfo.itemInfo.descriptors"}}: {{item.data.descriptors}}&#013;{{#if item.data.hasResist}}{{localize "ironclaw2e.chatInfo.itemInfo.resistWith"}}{{else}}{{localize "ironclaw2e.chatInfo.itemInfo.opposingDefense"}}{{/if}}: {{item.data.defendWith}}" class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
+                <h4 title="{{localize "ironclaw2e.chatInfo.itemInfo.effect"}}: {{item.system.effect}}&#013;{{localize "ironclaw2e.chatInfo.itemInfo.descriptors"}}: {{item.system.descriptors}}&#013;{{#if item.system.hasResist}}{{localize "ironclaw2e.chatInfo.itemInfo.resistWith"}}{{else}}{{localize "ironclaw2e.chatInfo.itemInfo.opposingDefense"}}{{/if}}: {{item.system.defendWith}}" class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                 <div class="item-controls flexrow">
-                    <a class="rollable roll-item-change" title="{{#if item.data.readied}}{{localize "ironclaw2e.sheets.actor.putAwayTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.readyTooltip" name=item.name}}{{/if}}" data-stat="readied" data-item="{{item._id}}"><span>{{#if item.data.readied}}{{localize "ironclaw2e.sheets.actor.readied"}}{{else}}{{localize "ironclaw2e.sheets.actor.stowed"}}{{/if}}</span></a>
+                    <a class="rollable roll-item-change" title="{{#if item.system.readied}}{{localize "ironclaw2e.sheets.actor.putAwayTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.readyTooltip" name=item.name}}{{/if}}" data-stat="readied" data-item="{{item._id}}"><span>{{#if item.system.readied}}{{localize "ironclaw2e.sheets.actor.readied"}}{{else}}{{localize "ironclaw2e.sheets.actor.stowed"}}{{/if}}</span></a>
                 </div>
                 <div style="max-width: 10%"></div>
                 <div class="item-controls flexrow">
-                    {{#if item.data.attackDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.attackTooltip" name=item.name}}" data-roll="attack" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-attack.svg" width="24" height="24" /></a>{{/if}}
-                    {{#if item.data.useSpark}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.sparkTooltip"}}: {{item.data.sparkDie}}" data-roll="spark" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-spark.svg" width="24" height="24" /></a>{{/if}}
+                    {{#if item.system.attackDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.attackTooltip" name=item.name}}" data-roll="attack" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-attack.svg" width="24" height="24" /></a>{{/if}}
+                    {{#if item.system.useSpark}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.sparkTooltip"}}: {{item.system.sparkDie}}" data-roll="spark" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-spark.svg" width="24" height="24" /></a>{{/if}}
                     <div></div>
-                    {{#if item.data.attackHasTemplate}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.templateTooltip" name=item.name radius=item.data.multiAttackRangeShown}}" data-roll="template" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-template.svg" width="24" height="24" /></a>{{/if}}
+                    {{#if item.system.attackHasTemplate}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.templateTooltip" name=item.name radius=item.system.multiAttackRangeShown}}" data-roll="template" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-template.svg" width="24" height="24" /></a>{{/if}}
                     <div></div>
-                    {{#if item.data.defenseDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.parryTooltip" name=item.name}}" data-roll="defense" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-parry.svg" width="24" height="24" /></a>{{/if}}
+                    {{#if item.system.defenseDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.parryTooltip" name=item.name}}" data-roll="defense" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-parry.svg" width="24" height="24" /></a>{{/if}}
                     <div></div>
-                    {{#if item.data.counterDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.counterTooltip" name=item.name}}" data-roll="counter" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-counter.svg" width="24" height="24" /></a>{{/if}}
+                    {{#if item.system.counterDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.counterTooltip" name=item.name}}" data-roll="counter" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-counter.svg" width="24" height="24" /></a>{{/if}}
                 </div>
             </li>
             {{/if}}
             {{/each}}
             {{#each actor.armors as |item id|}}
-            {{#if item.data.showInBattleStats}}
+            {{#if item.system.showInBattleStats}}
             <li class="item flexrow" data-item-id="{{item._id}}">
                 <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
                 <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                 <div class="item-controls">
-                    <a class="rollable roll-item-change" title="{{#if item.data.worn}}{{localize "ironclaw2e.sheets.actor.takeOff"}}{{else}}{{localize "ironclaw2e.sheets.actor.wear"}}{{/if}}" data-stat="worn" data-item="{{item._id}}"><span>{{#if item.data.worn}}{{localize "ironclaw2e.sheets.actor.worn"}}{{else}}{{localize "ironclaw2e.sheets.actor.off"}}{{/if}}</span></a>
+                    <a class="rollable roll-item-change" title="{{#if item.system.worn}}{{localize "ironclaw2e.sheets.actor.takeOff"}}{{else}}{{localize "ironclaw2e.sheets.actor.wear"}}{{/if}}" data-stat="worn" data-item="{{item._id}}"><span>{{#if item.system.worn}}{{localize "ironclaw2e.sheets.actor.worn"}}{{else}}{{localize "ironclaw2e.sheets.actor.off"}}{{/if}}</span></a>
                 </div>
                 <div style="max-width: 10%"></div>
                 <div class="item-controls"></div>
@@ -67,12 +67,12 @@
             {{/if}}
             {{/each}}
             {{#each actor.shields as |item id|}}
-            {{#if item.data.showInBattleStats}}
+            {{#if item.system.showInBattleStats}}
             <li class="item flexrow" data-item-id="{{item._id}}">
                 <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
                 <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                 <div class="item-controls">
-                    <a class="rollable roll-item-change" title="{{#if item.data.held}}{{localize "ironclaw2e.sheets.actor.unequip"}}{{else}}{{localize "ironclaw2e.sheets.actor.equip"}}{{/if}}" data-stat="held" data-item="{{item._id}}"><span>{{#if item.data.held}}{{localize "ironclaw2e.sheets.actor.held"}}{{else}}{{localize "ironclaw2e.sheets.actor.off"}}{{/if}}</span></a>
+                    <a class="rollable roll-item-change" title="{{#if item.system.held}}{{localize "ironclaw2e.sheets.actor.unequip"}}{{else}}{{localize "ironclaw2e.sheets.actor.equip"}}{{/if}}" data-stat="held" data-item="{{item._id}}"><span>{{#if item.system.held}}{{localize "ironclaw2e.sheets.actor.held"}}{{else}}{{localize "ironclaw2e.sheets.actor.off"}}{{/if}}</span></a>
                 </div>
                 <div style="max-width: 10%"></div>
                 <div class="item-controls"></div>
@@ -80,12 +80,12 @@
             {{/if}}
             {{/each}}
             {{#each actor.gifts as |item id|}}
-            {{#if item.data.showInBattleStats}}
+            {{#if item.system.showInBattleStats}}
             <li class="item flexrow" data-item-id="{{item._id}}">
                 <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
                 <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                 <div class="item-controls">
-                    {{#if item.data.exhaustWhenUsed}}<a class="rollable roll-item-change" title="{{#if item.data.exhausted}}{{localize "ironclaw2e.sheets.actor.refresh"}}{{else}}{{localize "ironclaw2e.sheets.actor.exhaust"}}{{/if}}" data-stat="exhausted" data-item="{{item._id}}"><span>{{#if item.data.exhausted}}{{localize "ironclaw2e.sheets.actor.exhausted"}}{{else}}{{localize "ironclaw2e.sheets.actor.refreshed"}}{{/if}}</span></a>{{/if}}
+                    {{#if item.system.exhaustWhenUsed}}<a class="rollable roll-item-change" title="{{#if item.system.exhausted}}{{localize "ironclaw2e.sheets.actor.refresh"}}{{else}}{{localize "ironclaw2e.sheets.actor.exhaust"}}{{/if}}" data-stat="exhausted" data-item="{{item._id}}"><span>{{#if item.system.exhausted}}{{localize "ironclaw2e.sheets.actor.exhausted"}}{{else}}{{localize "ironclaw2e.sheets.actor.refreshed"}}{{/if}}</span></a>{{/if}}
                 </div>
                 <div style="max-width: 10%"></div>
                 <div class="item-controls">
@@ -95,18 +95,18 @@
             {{/if}}
             {{/each}}
             {{#each actor.lightItems as |item id|}}
-            {{#if item.data.showInBattleStats}}
+            {{#if item.system.showInBattleStats}}
             <li class="item flexrow" data-item-id="{{item._id}}">
                 <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
                 <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                 <div class="item-controls flexrow">
-                    <a class="rollable roll-item" title="{{#if item.data.lighted}}{{localize "ironclaw2e.sheets.actor.douse"}}{{else}}{{localize "ironclaw2e.sheets.actor.light"}}{{/if}} {{item.name}}" data-roll="light" data-item="{{item._id}}"><img src="{{#if item.data.lighted}}systems/ironclaw2e/icons/illumination-light.svg{{else}}systems/ironclaw2e/icons/illumination-douse.svg{{/if}}" width="24" height="24" /></a>
+                    <a class="rollable roll-item" title="{{#if item.system.lighted}}{{localize "ironclaw2e.sheets.actor.douse"}}{{else}}{{localize "ironclaw2e.sheets.actor.light"}}{{/if}} {{item.name}}" data-roll="light" data-item="{{item._id}}"><img src="{{#if item.system.lighted}}systems/ironclaw2e/icons/illumination-light.svg{{else}}systems/ironclaw2e/icons/illumination-douse.svg{{/if}}" width="24" height="24" /></a>
                 </div>
             </li>
             {{/if}}
             {{/each}}
             {{#each actor.gear as |item id|}}
-            {{#if item.data.showInBattleStats}}
+            {{#if item.system.showInBattleStats}}
             <li class="item flexrow" data-item-id="{{item._id}}">
                 <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
                 <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>

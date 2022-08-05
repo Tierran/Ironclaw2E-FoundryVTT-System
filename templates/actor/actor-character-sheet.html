@@ -11,10 +11,10 @@
                     {{!-- "flex-group-center" is also defined in the _grid.scss file and it will add a small amount of padding, a border, and will center all of its child elements content and text. --}}
                     {{!-- The grid classes are defined in scss/global/_grid.scss. To use, use both the "grid" and "grid-Ncol" class where "N" can be any number from 1 to 12 and will create that number of columns.  --}}
                     <div class="traits grid-2row">
-                        {{#each data.traits as |trait key|}}
+                        {{#each system.traits as |trait key|}}
                         <div class="trait flexrow flex-group-center">
-                            <label for="data.traits.{{key}}.dice" class="resource-label">{{trait.usedTitle}}</label>
-                            <input type="text" name="data.traits.{{key}}.dice" value="{{trait.dice}}" data-dtype="String" onfocus="this.select();" />
+                            <label for="system.traits.{{key}}.dice" class="resource-label">{{trait.usedTitle}}</label>
+                            <input type="text" name="system.traits.{{key}}.dice" value="{{trait.dice}}" data-dtype="String" onfocus="this.select();" />
                         </div>
                         {{/each}}
                     </div>
@@ -22,8 +22,8 @@
             </div>
             <div class="flexrow flex-center">
                 <div class="flexrow flex-group-center flex-tight" width="200">
-                    <label for="data.experience" class="resource-label">{{localize "ironclaw2e.sheets.actor.experience"}}</label>
-                    <input type="text" name="data.experience" value="{{data.experience}}" data-dtype="Number" />
+                    <label for="system.experience" class="resource-label">{{localize "ironclaw2e.sheets.actor.experience"}}</label>
+                    <input type="text" name="system.experience" value="{{system.experience}}" data-dtype="Number" />
                 </div>
                 <div class="rollable roll-order flex-group-center">
                     <span class="normal-label">{{localize "ironclaw2e.sheets.actor.openDicePool"}}</span>
@@ -54,24 +54,24 @@
             <div class="flex-group flex-tight flexcol">
                 <div class="flexrow">
                     <label class="header-label" style="max-width:100px">{{localize "ironclaw2e.sheets.actor.motto"}}</label>
-                    <input class="center-text" type="text" name="data.motto" value="{{data.motto}}" data-dtype="String" />
+                    <input class="center-text" type="text" name="system.motto" value="{{system.motto}}" data-dtype="String" />
                 </div>
             </div>
             <div class="flex-group flex-tight flexcol">
                 <div class="flexrow">
                     <label class="header-label" style="max-width:100px">{{localize "ironclaw2e.sheets.actor.goal" number="1"}}</label>
-                    <input class="center-text" type="text" name="data.goal1" value="{{data.goal1}}" data-dtype="String" />
+                    <input class="center-text" type="text" name="system.goal1" value="{{system.goal1}}" data-dtype="String" />
                 </div>
                 <div class="flexrow">
                     <label class="header-label" style="max-width:100px">{{localize "ironclaw2e.sheets.actor.goal" number="2"}}</label>
-                    <input class="center-text" type="text" name="data.goal2" value="{{data.goal2}}" data-dtype="String" />
+                    <input class="center-text" type="text" name="system.goal2" value="{{system.goal2}}" data-dtype="String" />
                 </div>
                 <div class="flexrow">
                     <label class="header-label" style="max-width:100px">{{localize "ironclaw2e.sheets.actor.goal" number="3"}}</label>
-                    <input class="center-text" type="text" name="data.goal3" value="{{data.goal3}}" data-dtype="String" />
+                    <input class="center-text" type="text" name="system.goal3" value="{{system.goal3}}" data-dtype="String" />
                 </div>
             </div>
-            <div style="height:calc(100% - 120px)">{{editor content=data.biography target="data.biography" button=true owner=owner editable=editable}}</div>
+            <div style="height:calc(100% - 120px)">{{editor richDescription target="system.description" button=true editable=editable}}</div>
         </div>
 
         {{!-- Battle Stats Tab --}}

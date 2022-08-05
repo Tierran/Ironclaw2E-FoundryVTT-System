@@ -1029,7 +1029,7 @@ export class Ironclaw2EItem extends Item {
 
         const templateData = {
             "item": item,
-            "itemData": itemSys,
+            "itemSys": itemSys,
             "hasButtons": item.type === "weapon",
             "standardDefense": checkStandardDefense(itemSys.defendWith),
             "actorId": actor?.id ?? null,
@@ -1300,7 +1300,7 @@ export class Ironclaw2EItem extends Item {
 
         const templateData = {
             "item": item,
-            "itemData": itemSys,
+            "itemSys": itemSys,
             "successfulAttack": successfulAttack,
             "hasResist": itemSys.hasResist,
             "success": success,

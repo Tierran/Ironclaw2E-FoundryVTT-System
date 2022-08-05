@@ -6,30 +6,30 @@
             <div class="grid grid-3col">
                 <div class="resource">
                     <label class="resource-label">Quantity</label>
-                    <input type="text" name="data.quantity" value="{{data.quantity}}" data-dtype="Number" />
+                    <input type="text" name="system.quantity" value="{{system.quantity}}" data-dtype="Number" />
                 </div>
                 <div class="resource">
                     <label class="resource-label">Weight</label>
-                    <input type="text" name="data.weight" value="{{data.weight}}" data-dtype="String" />
+                    <input type="text" name="system.weight" value="{{system.weight}}" data-dtype="String" />
                 </div>
                 <div class="resource flexcol">
                     <label class="resource-label">Total Weight:</label>
-                    <span class="normal-text" name="data.totalWeight">{{data.totalWeight}} stones</span>
+                    <span class="normal-text" name="system.totalWeight">{{system.totalWeight}} stones</span>
                 </div>
             </div>
             <div class="resource flexrow flex-group-center">
                 <label class="header-label">Shield Cover Die:</label>
-                <input style="max-width: 80px" type="text" name="data.coverDie" value="{{data.coverDie}}" data-dtype="String" />
+                <input style="max-width: 80px" type="text" name="system.coverDie" value="{{system.coverDie}}" data-dtype="String" />
                 <label class="header-label">Held:</label>
-                <input type="checkbox" name="data.held" {{checked data.held}} data-dtype="Boolean" />
+                <input type="checkbox" name="system.held" {{checked system.held}} data-dtype="Boolean" />
             </div>
             <div class="resource flexrow flex-group-center flex-tight">
                 <label class="resource-label">Held with:</label>
-                <select name="data.equip">
-                    {{selectOptions selectables.handedness selected=data.equip localize=false}}
+                <select name="system.equip">
+                    {{selectOptions selectables.handedness selected=system.equip localize=false}}
                 </select>
                 <label class="resource-label">Show in Battle Stats:</label>
-                <input type="checkbox" name="data.showInBattleStats" {{checked data.showInBattleStats}} data-dtype="Boolean" />
+                <input type="checkbox" name="system.showInBattleStats" {{checked system.showInBattleStats}} data-dtype="Boolean" />
             </div>
         </div>
     </header>
@@ -44,7 +44,7 @@
 
         {{!-- Description Tab --}}
         <div class="tab" data-group="primary" data-tab="description">
-            {{editor content=data.description target="data.description" button=true owner=owner editable=editable}}
+            {{editor richDescription target="system.description" button=true editable=editable}}
         </div>
     </section>
 </form>

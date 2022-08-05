@@ -5,9 +5,9 @@
             <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
             <div class="flexrow flex-group-center flex-tight">
                 <label class="header-label">Exhausted:</label>
-                <input type="checkbox" name="data.exhausted" {{checked data.exhausted}} data-dtype="Boolean" />
+                <input type="checkbox" name="system.exhausted" {{checked system.exhausted}} data-dtype="Boolean" />
                 <label class="header-label">Show In Battle Stats:</label>
-                <input type="checkbox" name="data.showInBattleStats" {{checked data.showInBattleStats}} data-dtype="Boolean" />
+                <input type="checkbox" name="system.showInBattleStats" {{checked system.showInBattleStats}} data-dtype="Boolean" />
             </div>
         </div>
     </header>
@@ -24,7 +24,7 @@
 
         {{!-- Description Tab --}}
         <div class="tab" data-group="primary" data-tab="description">
-            {{editor content=data.description target="data.description" button=true owner=owner editable=editable}}
+            {{editor richDescription target="system.description" button=true editable=editable}}
         </div>
 
         {{!-- Attributes Tab --}}
@@ -32,26 +32,26 @@
             <div class="flexcol">
                 <div class="resource flex-group-center">
                     <label class="resource-label">Tags:</label>
-                    <input type="text" name="data.giftTags" value="{{data.giftTags}}" data-dtype="String" />
+                    <input type="text" name="system.giftTags" value="{{system.giftTags}}" data-dtype="String" />
                 </div>
                 <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Refresh:</label>
-                    <input type="text" name="data.refresh" value="{{data.refresh}}" data-dtype="String" />
+                    <input type="text" name="system.refresh" value="{{system.refresh}}" data-dtype="String" />
                     <label class="normal-label">Exhausts when used:</label>
-                    <input type="checkbox" name="data.exhaustWhenUsed" {{checked data.exhaustWhenUsed}} data-dtype="Boolean" />
+                    <input type="checkbox" name="system.exhaustWhenUsed" {{checked system.exhaustWhenUsed}} data-dtype="Boolean" />
                     <label class="normal-label">Grants a Skill Mark:</label>
-                    <input type="checkbox" name="data.grantsMark" {{checked data.grantsMark}} data-dtype="Boolean" />
+                    <input type="checkbox" name="system.grantsMark" {{checked system.grantsMark}} data-dtype="Boolean" />
                 </div>
                 <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Gift dice:</label>
-                    <input type="text" name="data.useDice" value="{{data.useDice}}" data-dtype="String" />
+                    <input type="text" name="system.useDice" value="{{system.useDice}}" data-dtype="String" />
                     <label class="normal-label">Default TN:</label>
-                    <input type="text" name="data.defaultTN" value="{{data.defaultTN}}" data-dtype="Number" />
+                    <input type="text" name="system.defaultTN" value="{{system.defaultTN}}" data-dtype="Number" />
                 </div>
                 {{#if showGiftSkill}}
                 <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Gift Skill Name:</label>
-                    <input type="text" name="data.giftSkill" value="{{data.giftSkill}}" data-dtype="String" />
+                    <input type="text" name="system.giftSkill" value="{{system.giftSkill}}" data-dtype="String" />
                 </div>
                 {{/if}}
             </div>
@@ -76,7 +76,7 @@
                     <span class="normal-label">Add new Special Setting</span>
                 </div>
                 <div class="flexcol">
-                    {{#each data.specialSettings as |special|}}
+                    {{#each system.specialSettings as |special|}}
                     <div class="special-option flex-group-center" data-special-index="{{@index}}">
                         <h3 class="flex-center">
                             <select style="width: 90%" class="change-setting-mode">

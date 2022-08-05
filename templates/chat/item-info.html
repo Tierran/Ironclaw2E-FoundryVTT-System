@@ -4,62 +4,62 @@
         <h3 class="chat-header">{{item.name}}</h3>
     </header>
     <div class="chat-content">
-        <div class="chat-item item-description">{{{itemData.description}}}</div>
+        <div class="chat-item item-description">{{{itemSys.description}}}</div>
         <div class="chat-item item-statistics">
             {{#if (typeCheck item.type "gift")}}
-            <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.tags"}}:</strong> {{itemData.giftTags}}</p>
+            <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.tags"}}:</strong> {{itemSys.giftTags}}</p>
             <p>
-                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.refresh"}}:</strong> {{itemData.refresh}}, <strong>{{localize "ironclaw2e.chatInfo.itemInfo.exhausted"}}:</strong>
-                {{#if itemData.exhaustWhenUsed}}{{#if itemData.exhausted}} {{localize "ironclaw2e.yes"}}{{else}}{{localize "ironclaw2e.no"}}{{/if}}{{else}}{{localize "ironclaw2e.never"}}{{/if}}
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.refresh"}}:</strong> {{itemSys.refresh}}, <strong>{{localize "ironclaw2e.chatInfo.itemInfo.exhausted"}}:</strong>
+                {{#if itemSys.exhaustWhenUsed}}{{#if itemSys.exhausted}} {{localize "ironclaw2e.yes"}}{{else}}{{localize "ironclaw2e.no"}}{{/if}}{{else}}{{localize "ironclaw2e.never"}}{{/if}}
             </p>
-            {{#if itemData.grantsMark}}<p>
-                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.grantsMark"}}:</strong> {{itemData.markSkill}}
-            </p>{{else}}{{#if data.specialSkillUse}}<p>
-                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.giftSkill"}}:</strong> {{itemData.markSkill}}
+            {{#if itemSys.grantsMark}}<p>
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.grantsMark"}}:</strong> {{itemSys.markSkill}}
+            </p>{{else}}{{#if itemSys.specialSkillUse}}<p>
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.giftSkill"}}:</strong> {{itemSys.markSkill}}
             </p>{{/if}}{{/if}}
             {{/if}}
             {{#if (typeCheck item.type "extraCareer")}}
-            <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.name"}}:</strong> {{itemData.careerName}}</p>
-            <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.dice"}}:</strong> {{itemData.dice}}</p>
-            <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.skills"}}:</strong> {{itemData.careerSkill1}}, {{itemData.careerSkill2}}, {{itemData.careerSkill3}}</p>
+            <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.name"}}:</strong> {{itemSys.careerName}}</p>
+            <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.dice"}}:</strong> {{itemSys.dice}}</p>
+            <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.skills"}}:</strong> {{itemSys.careerSkill1}}, {{itemSys.careerSkill2}}, {{itemSys.careerSkill3}}</p>
             {{/if}}
             {{#if (typeCheck item.type "weapon")}}
-            <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.effect"}}:</strong> {{itemData.effect}}</p>
-            <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.descriptors"}}:</strong> {{itemData.descriptors}}</p>
+            <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.effect"}}:</strong> {{itemSys.effect}}</p>
+            <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.descriptors"}}:</strong> {{itemSys.descriptors}}</p>
             <p>
                 <strong>{{localize "ironclaw2e.chatInfo.itemInfo.equip"}}:</strong> {{equipHandedness}},
                 <strong>{{localize "ironclaw2e.chatInfo.itemInfo.range"}}:</strong> {{equipRange}}
             </p>
-            {{#if itemData.exhaustGift}}{{#if itemData.exhaustGiftName}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.exhaustGift"}}:</strong> {{itemData.exhaustGiftName}}</p>{{/if}}{{/if}}
-            {{#if itemData.upgradeWeapon}}{{#if itemData.upgradeWeaponName}}<p>
-                {{{localize "ironclaw2e.chatInfo.itemInfo.upgradeWeapon" weapon=itemData.upgradeWeaponName action=itemData.upgradeWeaponAction}}}
+            {{#if itemSys.exhaustGift}}{{#if itemSys.exhaustGiftName}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.exhaustGift"}}:</strong> {{itemSys.exhaustGiftName}}</p>{{/if}}{{/if}}
+            {{#if itemSys.upgradeWeapon}}{{#if itemSys.upgradeWeaponName}}<p>
+                {{{localize "ironclaw2e.chatInfo.itemInfo.upgradeWeapon" weapon=itemSys.upgradeWeaponName action=itemSys.upgradeWeaponAction}}}
             </p>{{/if}}{{/if}}
-            {{#if itemData.attackDice}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.attackDice"}}:</strong> {{itemData.attackDice}}</p>{{/if}}
-            {{#if itemData.useSpark}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.sparkDice"}}:</strong> {{itemData.sparkDie}}</p>{{/if}}
-            {{#if itemData.defenseDice}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.parryDice"}}:</strong> {{itemData.defenseDice}}</p>{{/if}}
-            {{#if itemData.counterDice}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.counterDice"}}:</strong> {{itemData.counterDice}}</p>{{/if}}
-            {{#if itemData.hasResist}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.resistWith"}}:</strong> {{itemData.defendWith}} vs. 3</p>{{else}}
-            <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.opposingDefense"}}:</strong> {{localize "ironclaw2e.chatInfo.itemInfo.attack"}} vs. {{itemData.defendWith}}</p>{{/if}}
+            {{#if itemSys.attackDice}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.attackDice"}}:</strong> {{itemSys.attackDice}}</p>{{/if}}
+            {{#if itemSys.useSpark}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.sparkDice"}}:</strong> {{itemSys.sparkDie}}</p>{{/if}}
+            {{#if itemSys.defenseDice}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.parryDice"}}:</strong> {{itemSys.defenseDice}}</p>{{/if}}
+            {{#if itemSys.counterDice}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.counterDice"}}:</strong> {{itemSys.counterDice}}</p>{{/if}}
+            {{#if itemSys.hasResist}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.resistWith"}}:</strong> {{itemSys.defendWith}} vs. 3</p>{{else}}
+            <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.opposingDefense"}}:</strong> {{localize "ironclaw2e.chatInfo.itemInfo.attack"}} vs. {{itemSys.defendWith}}</p>{{/if}}
             {{/if}}
             {{#if (typeCheck item.type "illumination")}}
             <p>
-                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.dimLight"}}:</strong> {{itemData.dimLight}}, <strong>{{localize "ironclaw2e.chatInfo.itemInfo.brightLight"}}:</strong> {{itemData.brightLight}},
-                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.angle"}}:</strong> {{itemData.lightAngle}}
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.dimLight"}}:</strong> {{itemSys.dimLight}}, <strong>{{localize "ironclaw2e.chatInfo.itemInfo.brightLight"}}:</strong> {{itemSys.brightLight}},
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.angle"}}:</strong> {{itemSys.lightAngle}}
             </p>
             {{/if}}
             {{#if (typeCheck item.type "armor")}}
             <p>
-                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.armorDice"}}:</strong> {{itemData.armorDice}},
-                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.worn"}}:</strong> {{#if itemData.worn}}{{localize "ironclaw2e.yes"}}{{else}}{{localize "ironclaw2e.no"}}{{/if}}
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.armorDice"}}:</strong> {{itemSys.armorDice}},
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.worn"}}:</strong> {{#if itemSys.worn}}{{localize "ironclaw2e.yes"}}{{else}}{{localize "ironclaw2e.no"}}{{/if}}
             </p>
             {{/if}}
             {{#if (typeCheck item.type "shield")}}
             <p>
-                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.coverDie"}}:</strong> {{itemData.coverDie}},
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.coverDie"}}:</strong> {{itemSys.coverDie}},
                 <strong>{{localize "ironclaw2e.chatInfo.itemInfo.heldWith"}}:</strong> {{equipHandedness}},
             </p>
             <p>
-                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.held"}}:</strong> {{#if itemData.held}}{{localize "ironclaw2e.yes"}}{{else}}{{localize "ironclaw2e.no"}}{{/if}}
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.held"}}:</strong> {{#if itemSys.held}}{{localize "ironclaw2e.yes"}}{{else}}{{localize "ironclaw2e.no"}}{{/if}}
             </p>
             {{/if}}
         </div>
@@ -68,14 +68,14 @@
             <div class="attack-holder">
                 <div class="attack-buttons flexrow">
                     <button class="default-attack" data-skipresist="false">{{localize "ironclaw2e.chatInfo.itemInfo.attackWith" name=item.name}}</button>
-                    {{#if itemData.hasResist}}<button class="skip-attack small-text" style="max-width:4em" title="{{localize "ironclaw2e.chatInfo.itemInfo.attackBasicHint" name=item.name}}" data-skipresist="true">
+                    {{#if itemSys.hasResist}}<button class="skip-attack small-text" style="max-width:4em" title="{{localize "ironclaw2e.chatInfo.itemInfo.attackBasicHint" name=item.name}}" data-skipresist="true">
                         {{localize "ironclaw2e.chatInfo.itemInfo.attackBasic"}}
                     </button>{{/if}}
-                    {{#if itemData.canSpark}}<button class="spark-attack small-text" style="max-width:4em">{{localize "ironclaw2e.chatInfo.itemInfo.attackSpark"}}</button>{{/if}}
+                    {{#if itemSys.canSpark}}<button class="spark-attack small-text" style="max-width:4em">{{localize "ironclaw2e.chatInfo.itemInfo.attackSpark"}}</button>{{/if}}
                 </div>
-                {{#if itemData.attackHasTemplate}}
+                {{#if itemSys.attackHasTemplate}}
                 <div class="template-buttons flexrow">
-                    <button class="place-template" data-arearange="{{itemData.multiAttackRange}}">{{localize "ironclaw2e.chatInfo.itemInfo.placeTemplate"}}</button>
+                    <button class="place-template" data-arearange="{{itemSys.multiAttackRange}}">{{localize "ironclaw2e.chatInfo.itemInfo.placeTemplate"}}</button>
                 </div>
                 {{/if}}
             </div>
@@ -85,8 +85,8 @@
                 <input class="tactics-checkbox" name="tactics-checkbox" type="checkbox" {{checked useTactics}} disabled />
             </div>
             {{/if}}
-            <div class="defense-buttons flexrow" data-defense="{{itemData.defendWith}}" data-hasresist="{{itemData.hasResist}}" data-weaponname="{{item.name}}">
-                {{#unless itemData.hasResist}}
+            <div class="defense-buttons flexrow" data-defense="{{itemSys.defendWith}}" data-hasresist="{{itemSys.hasResist}}" data-weaponname="{{item.name}}">
+                {{#unless itemSys.hasResist}}
                 {{#if standardDefense}}
                 <button class="dodge-defense" data-defensetype="dodge">{{localize "ironclaw2e.chatInfo.itemInfo.dodgeDefense"}}</button>
                 <button class="parry-defense small-text" data-defensetype="parry">{{localize "ironclaw2e.chatInfo.itemInfo.parryDefense"}}</button>
@@ -94,7 +94,7 @@
                 <button class="special-defense" data-defensetype="special">{{localize "ironclaw2e.chatInfo.itemInfo.specialDefense"}}</button>
                 {{/if}}
                 {{/unless}}
-                {{#if itemData.hasResist}}{{#unless itemData.attackAutoHits}}
+                {{#if itemSys.hasResist}}{{#unless itemSys.attackAutoHits}}
                 <button class="resist-defense" data-defensetype="resist">{{localize "ironclaw2e.chatInfo.itemInfo.resistAgainst"}}</button>
                 {{/unless}}{{/if}}
                 <button class="counter-defense small-text" data-defensetype="counter">{{localize "ironclaw2e.chatInfo.itemInfo.counterDefense"}}</button>

@@ -32,14 +32,14 @@ export class Ironclaw2EItemSheet extends ItemSheet {
     /* -------------------------------------------- */
 
     /** @override */
-    getData() {
+    async getData() {
         const baseData = super.getData();
         baseData.dtypes = ["String", "Number", "Boolean"];
 
         let sheetData = {};
         // Insert the basics
         sheetData.item = baseData.data;
-        sheetData.data = baseData.data.system;
+        sheetData.system = baseData.data.system;
 
         // Insert necessary misc data
         sheetData.options = baseData.options;
@@ -48,6 +48,9 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         sheetData.limited = baseData.limited;
         sheetData.title = baseData.title;
         sheetData.dtypes = baseData.dtypes;
+
+        // Prepare the description editor
+        sheetData.richDescription = await TextEditor.enrichHTML(sheetData.system.description, { async: true });
 
         // Add structural sheet stuff
         let currencyOptions = {};
@@ -68,8 +71,8 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         sheetData.selectables = selectables;
         sheetData.isGM = game.user.isGM;
         sheetData.showDirectoryOptions = game.user.isGM && !this.item.parent;
-        sheetData.rangeDistance = getRangeDistanceFromBand(sheetData.data.range);
-        sheetData.showGiftSkill = sheetData.data.grantsMark || sheetData.data.specialSkillUse;
+        sheetData.rangeDistance = getRangeDistanceFromBand(sheetData.system.range);
+        sheetData.showGiftSkill = sheetData.system.grantsMark || sheetData.system.specialSkillUse;
 
         return sheetData;
     }

@@ -2,20 +2,20 @@
     <div class="speciesstuff">
         <div class="flexrow flex-tight">
             <h3 class="header-label flexrow flex-center">{{localize "ironclaw2e.sheets.actor.details.species"}}</h3>
-            <input class="bold-text" name="data.traits.species.name" type="text" value="{{data.traits.species.name}}" placeholder="{{localize "ironclaw2e.sheets.actor.details.speciesName"}}" data-dtype="String" />
+            <input class="bold-text" name="system.traits.species.name" type="text" value="{{system.traits.species.name}}" placeholder="{{localize "ironclaw2e.sheets.actor.details.speciesName"}}" data-dtype="String" />
         </div>
         <div class="flex-group-center flex-tight arrange-vertically">
             <div class="trait flexrow flex-center">
-                <label for="data.traits.species.speciesSkill1" class="normal-label">{{localize "ironclaw2e.sheets.actor.details.speciesSkills"}}</label>
-                <input type="text" name="data.traits.species.speciesSkill1" value="{{data.traits.species.speciesSkill1}}" data-dtype="String" />
-                <input type="text" name="data.traits.species.speciesSkill2" value="{{data.traits.species.speciesSkill2}}" data-dtype="String" />
-                <input type="text" name="data.traits.species.speciesSkill3" value="{{data.traits.species.speciesSkill3}}" data-dtype="String" />
+                <label for="system.traits.species.speciesSkill1" class="normal-label">{{localize "ironclaw2e.sheets.actor.details.speciesSkills"}}</label>
+                <input type="text" name="system.traits.species.speciesSkill1" value="{{system.traits.species.speciesSkill1}}" data-dtype="String" />
+                <input type="text" name="system.traits.species.speciesSkill2" value="{{system.traits.species.speciesSkill2}}" data-dtype="String" />
+                <input type="text" name="system.traits.species.speciesSkill3" value="{{system.traits.species.speciesSkill3}}" data-dtype="String" />
             </div>
             <div class="attributes grid grid-4col grid-minimal">
-                {{#each data.attributes as |attribute key|}}
+                {{#each system.attributes as |attribute key|}}
                 <div class="trait flexrow flex-center flex-tight arrange-vertically">
-                    <label for="data.attributes.{{key}}" class="normal-label">{{key}}</label>
-                    <input type="text" name="data.attributes.{{key}}" value="{{attribute}}" data-dtype="String" />
+                    <label for="system.attributes.{{key}}" class="normal-label">{{key}}</label>
+                    <input type="text" name="system.attributes.{{key}}" value="{{attribute}}" data-dtype="String" />
                 </div>
                 {{/each}}
             </div>
@@ -24,20 +24,20 @@
     <div class="careerstuff">
         <div class="flexrow flex-tight">
             <h3 class="header-label flexrow flex-center">{{localize "ironclaw2e.sheets.actor.details.career"}}</h3>
-            <input class="bold-text" name="data.traits.career.name" type="text" value="{{data.traits.career.name}}" placeholder="{{localize "ironclaw2e.sheets.actor.details.careerName"}}" data-dtype="String" />
+            <input class="bold-text" name="system.traits.career.name" type="text" value="{{system.traits.career.name}}" placeholder="{{localize "ironclaw2e.sheets.actor.details.careerName"}}" data-dtype="String" />
         </div>
         <div class="flex-group-center flex-tight arrange-vertically">
             <div class="trait flexrow flex-center">
-                <label for="data.traits.career.careerSkill1" class="normal-label">{{localize "ironclaw2e.sheets.actor.details.careerSkills"}}</label>
-                <input type="text" name="data.traits.career.careerSkill1" value="{{data.traits.career.careerSkill1}}" data-dtype="String" />
-                <input type="text" name="data.traits.career.careerSkill2" value="{{data.traits.career.careerSkill2}}" data-dtype="String" />
-                <input type="text" name="data.traits.career.careerSkill3" value="{{data.traits.career.careerSkill3}}" data-dtype="String" />
+                <label for="system.traits.career.careerSkill1" class="normal-label">{{localize "ironclaw2e.sheets.actor.details.careerSkills"}}</label>
+                <input type="text" name="system.traits.career.careerSkill1" value="{{system.traits.career.careerSkill1}}" data-dtype="String" />
+                <input type="text" name="system.traits.career.careerSkill2" value="{{system.traits.career.careerSkill2}}" data-dtype="String" />
+                <input type="text" name="system.traits.career.careerSkill3" value="{{system.traits.career.careerSkill3}}" data-dtype="String" />
             </div>
         </div>
     </div>
     <h2 class="header-label flexrow flex-center">{{localize "ironclaw2e.sheets.actor.details.skills"}}</h2>
     <div class="skillgrid grid grid-3col">
-        {{#each data.skills as |skill key|}}
+        {{#each system.skills as |skill key|}}
         <div class="skill flexcol flex-group-center flex-tight">
             <span class="resource-label">{{skill.usedTitle}}</span>
             <div class="skill flexrow">
@@ -45,13 +45,13 @@
             </div>
             {{#if ../templateHelp.skillSystem}}
             <div class="skill flexrow flex-center">
-                <label for="data.skills.{{key}}.marks" class="normal-label" style="flex:0 0 58px">{{#if skill.giftMarks}}*{{/if}}{{localize "ironclaw2e.sheets.actor.details.marks"}}</label>
-                <input type="text" style="flex:0 0 32px" name="data.skills.{{key}}.marks" value="{{skill.marks}}" data-dtype="Number" onfocus="this.select();" />
+                <label for="system.skills.{{key}}.marks" class="normal-label" style="flex:0 0 58px">{{#if skill.giftMarks}}*{{/if}}{{localize "ironclaw2e.sheets.actor.details.marks"}}</label>
+                <input type="text" style="flex:0 0 32px" name="system.skills.{{key}}.marks" value="{{skill.marks}}" data-dtype="Number" onfocus="this.select();" />
                 <span class="small-label" style="flex:0 0 110px">{{localize "ironclaw2e.sheets.actor.details.marksDice" dice=skill.diceString}}</span>
             </div>
             {{#if ../templateHelp.favoredUse}}
             <div class="skill flexrow">
-                <input class="favored-use" type="text" name="data.skills.{{key}}.favoreduse" placeholder="{{localize "ironclaw2e.sheets.actor.details.favoredUse"}}" value="{{skill.favoreduse}}" data-dtype="String" />
+                <input class="favored-use" type="text" name="system.skills.{{key}}.favoreduse" placeholder="{{localize "ironclaw2e.sheets.actor.details.favoredUse"}}" value="{{skill.favoreduse}}" data-dtype="String" />
             </div>
             {{/if}}
             {{/if}}

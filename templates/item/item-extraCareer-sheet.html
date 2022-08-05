@@ -4,10 +4,10 @@
         <div class="header-fields">
             <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
             <div class="resource flexrow flex-group-center flex-tight">
-                <label for="data.forcedCareerName" class="resource-label">Override Name:</label>
-                <input type="text" name="data.forcedCareerName" value="{{data.forcedCareerName}}" placeholder="{{item.name}}" data-dtype="String" />
-                <label for="data.dice" class="resource-label">Dice:</label>
-                <input type="text" name="data.dice" value="{{data.dice}}" data-dtype="String" />
+                <label for="system.forcedCareerName" class="resource-label">Override Name:</label>
+                <input type="text" name="system.forcedCareerName" value="{{system.forcedCareerName}}" placeholder="{{item.name}}" data-dtype="String" />
+                <label for="system.dice" class="resource-label">Dice:</label>
+                <input type="text" name="system.dice" value="{{system.dice}}" data-dtype="String" />
             </div>
         </div>
     </header>
@@ -25,13 +25,13 @@
             <div class="flexcol">
                 <div class="resource flex-group-center">
                     <label class="resource-label">Tags:</label>
-                    <input type="text" name="data.giftTags" value="{{data.giftTags}}" data-dtype="String" />
+                    <input type="text" name="system.giftTags" value="{{system.giftTags}}" data-dtype="String" />
                 </div>
                 <div class="resource flexrow flex-group-center">
                     <label class="normal-label">Career Skills:</label>
-                    <input type="text" name="data.careerSkill1" value="{{data.careerSkill1}}" data-dtype="String" />
-                    <input type="text" name="data.careerSkill2" value="{{data.careerSkill2}}" data-dtype="String" />
-                    <input type="text" name="data.careerSkill3" value="{{data.careerSkill3}}" data-dtype="String" />
+                    <input type="text" name="system.careerSkill1" value="{{system.careerSkill1}}" data-dtype="String" />
+                    <input type="text" name="system.careerSkill2" value="{{system.careerSkill2}}" data-dtype="String" />
+                    <input type="text" name="system.careerSkill3" value="{{system.careerSkill3}}" data-dtype="String" />
                 </div>
             </div>
         </div>

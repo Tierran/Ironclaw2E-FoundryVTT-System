@@ -31,7 +31,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
     /* -------------------------------------------- */
 
     /** @override */
-    getData() {
+    async getData() {
         const baseData = super.getData();
         baseData.dtypes = ["String", "Number", "Boolean"];
 
@@ -60,8 +60,11 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         }
 
         // Grab the actual template data and effects
-        sheetData.data = baseData.data.system;
+        sheetData.system = baseData.data.system;
         sheetData.effects = baseData.effects;
+
+        // Prepare the description / biography editor
+        sheetData.richDescription = await TextEditor.enrichHTML(sheetData.system.description, { async: true });
 
         // Get whether the actor is flying for some things
         sheetData.isFlying = baseData.data.system.isFlying === true;

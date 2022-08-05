@@ -3,12 +3,12 @@
     <div class="flexcol">
         <div class="flexrow flex-group-left flex-tight">
             <span class="resource-label">{{localize "ironclaw2e.sheets.actor.gear.encumbrance"}}</span>
-            <span class="normal-label rollable roll-enc-effect" data-removals="cannotmove,over-burdened,burdened" data-additions="">{{localize "ironclaw2e.none"}}: {{data.encumbranceNone}}</span>
-            <span class="normal-label rollable roll-enc-effect" data-removals="cannotmove,over-burdened" data-additions="burdened">{{localize "ironclaw2e.effect.status.burdened"}}: {{data.encumbranceBurdened}}</span>
-            <span class="normal-label rollable roll-enc-effect" data-removals="cannotmove" data-additions="burdened,over-burdened">{{localize "ironclaw2e.effect.status.over-burdened"}}: {{data.encumbranceOverBurdened}}</span>
+            <span class="normal-label rollable roll-enc-effect" data-removals="cannotmove,over-burdened,burdened" data-additions="">{{localize "ironclaw2e.none"}}: {{system.encumbranceNone}}</span>
+            <span class="normal-label rollable roll-enc-effect" data-removals="cannotmove,over-burdened" data-additions="burdened">{{localize "ironclaw2e.effect.status.burdened"}}: {{system.encumbranceBurdened}}</span>
+            <span class="normal-label rollable roll-enc-effect" data-removals="cannotmove" data-additions="burdened,over-burdened">{{localize "ironclaw2e.effect.status.over-burdened"}}: {{system.encumbranceOverBurdened}}</span>
         </div>
-        <span class="bold-text allow-selection">{{localize "ironclaw2e.sheets.actor.gear.totalCarried" weight=(valueRoundTo data.totalWeight 2)}}</span>
-        <span class="bold-text allow-selection">{{localize "ironclaw2e.sheets.actor.gear.armorNumber" number=data.totalArmors}}</span>
+        <span class="bold-text allow-selection">{{localize "ironclaw2e.sheets.actor.gear.totalCarried" weight=(valueRoundTo system.totalWeight 2)}}</span>
+        <span class="bold-text allow-selection">{{localize "ironclaw2e.sheets.actor.gear.armorNumber" number=system.totalArmors}}</span>
     </div>
     {{/unless}}
     <ol class="items-list">
@@ -24,18 +24,18 @@
             <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
             <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
             <div class="item-controls flexrow">
-                {{#if item.data.attackDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.attackTooltip" name=item.name}}" data-roll="attack" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-attack.svg" width="24" height="24" /></a>{{/if}}
-                {{#if item.data.useSpark}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.sparkTooltip"}}: {{item.data.sparkDie}}" data-roll="spark" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-spark.svg" width="24" height="24" /></a>{{/if}}
+                {{#if item.system.attackDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.attackTooltip" name=item.name}}" data-roll="attack" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-attack.svg" width="24" height="24" /></a>{{/if}}
+                {{#if item.system.useSpark}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.sparkTooltip"}}: {{item.system.sparkDie}}" data-roll="spark" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-spark.svg" width="24" height="24" /></a>{{/if}}
                 <div></div>
-                {{#if item.data.attackHasTemplate}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.templateTooltip" name=item.name radius=item.data.multiAttackRangeShown}}" data-roll="template" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-template.svg" width="24" height="24" /></a>{{/if}}
+                {{#if item.system.attackHasTemplate}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.templateTooltip" name=item.name radius=item.system.multiAttackRangeShown}}" data-roll="template" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-template.svg" width="24" height="24" /></a>{{/if}}
                 <div></div>
-                {{#if item.data.defenseDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.parryTooltip" name=item.name}}" data-roll="defense" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-parry.svg" width="24" height="24" /></a>{{/if}}
+                {{#if item.system.defenseDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.parryTooltip" name=item.name}}" data-roll="defense" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-parry.svg" width="24" height="24" /></a>{{/if}}
                 <div></div>
-                {{#if item.data.counterDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.counterTooltip" name=item.name}}" data-roll="counter" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-counter.svg" width="24" height="24" /></a>{{/if}}
+                {{#if item.system.counterDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.counterTooltip" name=item.name}}" data-roll="counter" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/weapon-counter.svg" width="24" height="24" /></a>{{/if}}
             </div>
             <div class="item-controls">
-                <a class="rollable roll-item-change" title="{{#if item.data.readied}}{{localize "ironclaw2e.sheets.actor.putAwayTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.readyTooltip" name=item.name}}{{/if}}" data-stat="readied" data-item="{{item._id}}"><span>{{#if item.data.readied}}{{localize "ironclaw2e.sheets.actor.readied"}}{{else}}{{localize "ironclaw2e.sheets.actor.stowed"}}{{/if}}</span></a>
-                <a class="rollable roll-item-change" title="{{#if item.data.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.hideBattleTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.showBattleTooltip" name=item.name}}{{/if}}" data-stat="showInBattleStats" data-item="{{item._id}}"><span>{{#if item.data.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.shown"}}{{else}}{{localize "ironclaw2e.sheets.actor.hidden"}}{{/if}}</span></a>
+                <a class="rollable roll-item-change" title="{{#if item.system.readied}}{{localize "ironclaw2e.sheets.actor.putAwayTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.readyTooltip" name=item.name}}{{/if}}" data-stat="readied" data-item="{{item._id}}"><span>{{#if item.system.readied}}{{localize "ironclaw2e.sheets.actor.readied"}}{{else}}{{localize "ironclaw2e.sheets.actor.stowed"}}{{/if}}</span></a>
+                <a class="rollable roll-item-change" title="{{#if item.system.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.hideBattleTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.showBattleTooltip" name=item.name}}{{/if}}" data-stat="showInBattleStats" data-item="{{item._id}}"><span>{{#if item.system.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.shown"}}{{else}}{{localize "ironclaw2e.sheets.actor.hidden"}}{{/if}}</span></a>
             </div>
             <div class="item-controls-small">
                 <a class="item-control item-edit" title="{{localize "ironclaw2e.sheets.actor.gear.editItem"}}"><i class="fas fa-edit"></i></a>
@@ -56,8 +56,8 @@
             <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
             <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
             <div class="item-controls">
-                <a class="rollable roll-item-change" title="{{#if item.data.worn}}{{localize "ironclaw2e.sheets.actor.takeOff"}}{{else}}{{localize "ironclaw2e.sheets.actor.wear"}}{{/if}}" data-stat="worn" data-item="{{item._id}}"><span>{{#if item.data.worn}}{{localize "ironclaw2e.sheets.actor.worn"}}{{else}}{{localize "ironclaw2e.sheets.actor.off"}}{{/if}}</span></a>
-                <a class="rollable roll-item-change" title="{{#if item.data.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.hideBattleTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.showBattleTooltip" name=item.name}}{{/if}}" data-stat="showInBattleStats" data-item="{{item._id}}"><span>{{#if item.data.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.shown"}}{{else}}{{localize "ironclaw2e.sheets.actor.hidden"}}{{/if}}</span></a>
+                <a class="rollable roll-item-change" title="{{#if item.system.worn}}{{localize "ironclaw2e.sheets.actor.takeOff"}}{{else}}{{localize "ironclaw2e.sheets.actor.wear"}}{{/if}}" data-stat="worn" data-item="{{item._id}}"><span>{{#if item.system.worn}}{{localize "ironclaw2e.sheets.actor.worn"}}{{else}}{{localize "ironclaw2e.sheets.actor.off"}}{{/if}}</span></a>
+                <a class="rollable roll-item-change" title="{{#if item.system.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.hideBattleTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.showBattleTooltip" name=item.name}}{{/if}}" data-stat="showInBattleStats" data-item="{{item._id}}"><span>{{#if item.system.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.shown"}}{{else}}{{localize "ironclaw2e.sheets.actor.hidden"}}{{/if}}</span></a>
             </div>
             <div class="item-controls-small">
                 <a class="item-control item-edit" title="{{localize "ironclaw2e.sheets.actor.gear.editItem"}}"><i class="fas fa-edit"></i></a>
@@ -79,8 +79,8 @@
             <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
             <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
             <div class="item-controls">
-                <a class="rollable roll-item-change" title="{{#if item.data.held}}{{localize "ironclaw2e.sheets.actor.unequip"}}{{else}}{{localize "ironclaw2e.sheets.actor.equip"}}{{/if}}" data-stat="held" data-item="{{item._id}}"><span>{{#if item.data.held}}{{localize "ironclaw2e.sheets.actor.held"}}{{else}}{{localize "ironclaw2e.sheets.actor.off"}}{{/if}}</span></a>
-                <a class="rollable roll-item-change" title="{{#if item.data.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.hideBattleTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.showBattleTooltip" name=item.name}}{{/if}}" data-stat="showInBattleStats" data-item="{{item._id}}"><span>{{#if item.data.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.shown"}}{{else}}{{localize "ironclaw2e.sheets.actor.hidden"}}{{/if}}</span></a>
+                <a class="rollable roll-item-change" title="{{#if item.system.held}}{{localize "ironclaw2e.sheets.actor.unequip"}}{{else}}{{localize "ironclaw2e.sheets.actor.equip"}}{{/if}}" data-stat="held" data-item="{{item._id}}"><span>{{#if item.system.held}}{{localize "ironclaw2e.sheets.actor.held"}}{{else}}{{localize "ironclaw2e.sheets.actor.off"}}{{/if}}</span></a>
+                <a class="rollable roll-item-change" title="{{#if item.system.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.hideBattleTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.showBattleTooltip" name=item.name}}{{/if}}" data-stat="showInBattleStats" data-item="{{item._id}}"><span>{{#if item.system.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.shown"}}{{else}}{{localize "ironclaw2e.sheets.actor.hidden"}}{{/if}}</span></a>
             </div>
             <div class="item-controls-small">
                 <a class="item-control item-edit" title="{{localize "ironclaw2e.sheets.actor.gear.editItem"}}"><i class="fas fa-edit"></i></a>

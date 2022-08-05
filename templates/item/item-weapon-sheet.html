@@ -6,23 +6,23 @@
             <div class="grid grid-3col">
                 <div class="resource">
                     <label class="resource-label">Quantity</label>
-                    <input type="text" name="data.quantity" value="{{data.quantity}}" data-dtype="Number" />
+                    <input type="text" name="system.quantity" value="{{system.quantity}}" data-dtype="Number" />
                 </div>
                 <div class="resource">
                     <label class="resource-label">Weight</label>
-                    <input type="text" name="data.weight" value="{{data.weight}}" data-dtype="String" />
+                    <input type="text" name="system.weight" value="{{system.weight}}" data-dtype="String" />
                 </div>
                 <div class="resource flexcol">
                     <label class="resource-label">Total Weight:</label>
-                    <span class="normal-text" name="data.totalWeight">{{data.totalWeight}} stones</span>
+                    <span class="normal-text" name="system.totalWeight">{{system.totalWeight}} stones</span>
                 </div>
             </div>
             <div class="resource flexrow flex-group-center flex-tight">
                 <label class="resource-label">Readied:</label>
-                <input type="checkbox" name="data.readied" {{checked data.readied}} data-dtype="Boolean" />
+                <input type="checkbox" name="system.readied" {{checked system.readied}} data-dtype="Boolean" />
                 <div>|</div>
                 <label class="resource-label">Show in Battle Stats:</label>
-                <input type="checkbox" name="data.showInBattleStats" {{checked data.showInBattleStats}} data-dtype="Boolean" />
+                <input type="checkbox" name="system.showInBattleStats" {{checked system.showInBattleStats}} data-dtype="Boolean" />
             </div>
         </div>
     </header>
@@ -39,7 +39,7 @@
 
         {{!-- Description Tab --}}
         <div class="tab" data-group="primary" data-tab="description">
-            {{editor content=data.description target="data.description" button=true owner=owner editable=editable}}
+            {{editor richDescription target="system.description" button=true editable=editable}}
         </div>
 
         {{!-- Attributes Tab --}}
@@ -49,87 +49,87 @@
                 <div class="resource flex-group-center">
                     <label class="resource-label">Effect:</label>
                     <div class="resource flexrow flex-center">
-                        <label class="resource-label" style="max-width:160px">{{#if data.hasResist}}Resist With:{{else}}Opposing Defense:{{/if}}</label>
-                        {{#unless data.hasResist}}<span class="resource-label" style="max-width:120px">Attack vs.</span>{{/unless}}
-                        <input type="text" name="data.defendWith" value="{{data.defendWith}}" data-dtype="String" />
-                        {{#if data.hasResist}}<span class="resource-label" style="max-width:60px">vs. 3</span>{{/if}}
+                        <label class="resource-label" style="max-width:160px">{{#if system.hasResist}}Resist With:{{else}}Opposing Defense:{{/if}}</label>
+                        {{#unless system.hasResist}}<span class="resource-label" style="max-width:120px">Attack vs.</span>{{/unless}}
+                        <input type="text" name="system.defendWith" value="{{system.defendWith}}" data-dtype="String" />
+                        {{#if system.hasResist}}<span class="resource-label" style="max-width:60px">vs. 3</span>{{/if}}
                     </div>
-                    <input type="text" name="data.effect" value="{{data.effect}}" data-dtype="String" />
+                    <input type="text" name="system.effect" value="{{system.effect}}" data-dtype="String" />
                 </div>
                 <div class="resource flex-group-center">
                     <label class="resource-label">Descriptors:</label>
-                    <input type="text" name="data.descriptors" value="{{data.descriptors}}" data-dtype="String" />
+                    <input type="text" name="system.descriptors" value="{{system.descriptors}}" data-dtype="String" />
                 </div>
                 <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Equips to:</label>
-                    <select name="data.equip">
-                        {{selectOptions selectables.handedness selected=data.equip localize=false}}
+                    <select name="system.equip">
+                        {{selectOptions selectables.handedness selected=system.equip localize=false}}
                     </select>
                     <label class="resource-label" title="Range in paces:  {{rangeDistance}}pc">Range:</label>
-                    <select name="data.range" title="Range in paces:  {{rangeDistance}}pc">
-                        {{selectOptions selectables.range selected=data.range localize=false}}
+                    <select name="system.range" title="Range in paces:  {{rangeDistance}}pc">
+                        {{selectOptions selectables.range selected=system.range localize=false}}
                     </select>
                 </div>
                 <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Use Spark:</label>
-                    <input type="checkbox" name="data.useSpark" {{checked data.useSpark}} data-dtype="Boolean" />
+                    <input type="checkbox" name="system.useSpark" {{checked system.useSpark}} data-dtype="Boolean" />
                     <label class="resource-label">Defense is Resist:</label>
-                    <input type="checkbox" name="data.hasResist" {{checked data.hasResist}} data-dtype="Boolean" />
+                    <input type="checkbox" name="system.hasResist" {{checked system.hasResist}} data-dtype="Boolean" />
                     <label class="resource-label">Auto-Stow:</label>
-                    <input type="checkbox" name="data.autoStow" {{checked data.autoStow}} data-dtype="Boolean" />
+                    <input type="checkbox" name="system.autoStow" {{checked system.autoStow}} data-dtype="Boolean" />
                     <label class="resource-label">Ready on Use:</label>
-                    <input type="checkbox" name="data.readyWhenUsed" {{checked data.readyWhenUsed}} data-dtype="Boolean" />
+                    <input type="checkbox" name="system.readyWhenUsed" {{checked system.readyWhenUsed}} data-dtype="Boolean" />
                 </div>
                 <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Exhausts a Gift:</label>
-                    <input type="checkbox" name="data.exhaustGift" {{checked data.exhaustGift}} data-dtype="Boolean" />
-                    {{#if data.exhaustGift}}
+                    <input type="checkbox" name="system.exhaustGift" {{checked system.exhaustGift}} data-dtype="Boolean" />
+                    {{#if system.exhaustGift}}
                     <label class="resource-label">Exhausts when Readied:</label>
-                    <input type="checkbox" name="data.exhaustGiftWhenReadied" {{checked data.exhaustGiftWhenReadied}} data-dtype="Boolean" />
+                    <input type="checkbox" name="system.exhaustGiftWhenReadied" {{checked system.exhaustGiftWhenReadied}} data-dtype="Boolean" />
                     {{/if}}
                 </div>
-                {{#if data.exhaustGift}}
+                {{#if system.exhaustGift}}
                 <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Auto-Exhaust Gift Name:</label>
-                    <input type="text" name="data.exhaustGiftName" value="{{data.exhaustGiftName}}" data-dtype="String" />
+                    <input type="text" name="system.exhaustGiftName" value="{{system.exhaustGiftName}}" data-dtype="String" />
                 </div>
                 {{/if}}
                 <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Upgrades from a Weapon:</label>
-                    <input type="checkbox" name="data.upgradeWeapon" {{checked data.upgradeWeapon}} data-dtype="Boolean" />
-                    {{#if data.upgradeWeapon}}
+                    <input type="checkbox" name="system.upgradeWeapon" {{checked system.upgradeWeapon}} data-dtype="Boolean" />
+                    {{#if system.upgradeWeapon}}
                     <label class="resource-label">Upgrade Action:</label>
-                    <input type="text" name="data.upgradeWeaponAction" value="{{data.upgradeWeaponAction}}" data-dtype="String" />
+                    <input type="text" name="system.upgradeWeaponAction" value="{{system.upgradeWeaponAction}}" data-dtype="String" />
                     <label class="resource-label">Upgrade Condition:</label>
-                    <select name="data.upgradeWeaponCondition" data-dtype="String">
-                        {{selectOptions selectables.systemConditions selected=data.upgradeWeaponCondition blank="ironclaw2e.none" localize=true}}
+                    <select name="system.upgradeWeaponCondition" data-dtype="String">
+                        {{selectOptions selectables.systemConditions selected=system.upgradeWeaponCondition blank="ironclaw2e.none" localize=true}}
                     </select>
                     {{/if}}
                 </div>
-                {{#if data.upgradeWeapon}}
+                {{#if system.upgradeWeapon}}
                 <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Auto-Upgrade Weapon Name:</label>
-                    <input type="text" name="data.upgradeWeaponName" value="{{data.upgradeWeaponName}}" data-dtype="String" />
+                    <input type="text" name="system.upgradeWeaponName" value="{{system.upgradeWeaponName}}" data-dtype="String" />
                 </div>
                 {{/if}}
                 <h3 class="header-label">Dice Pools</h3>
                 <div class="resource flex-group-center">
                     <label class="resource-label">Attack Pool:</label>
-                    <input type="text" name="data.attackDice" value="{{data.attackDice}}" data-dtype="String" />
+                    <input type="text" name="system.attackDice" value="{{system.attackDice}}" data-dtype="String" />
                 </div>
-                {{#if data.useSpark}}
+                {{#if system.useSpark}}
                 <div class="resource flexrow flex-group-center">
                     <label class="resource-label">Spark Die:</label>
-                    <input type="text" name="data.sparkDie" value="{{data.sparkDie}}" data-dtype="String" />
+                    <input type="text" name="system.sparkDie" value="{{system.sparkDie}}" data-dtype="String" />
                 </div>
                 {{/if}}
                 <div class="resource flex-group-center">
                     <label class="resource-label">Defense Pool:</label>
-                    <input type="text" name="data.defenseDice" value="{{data.defenseDice}}" data-dtype="String" />
+                    <input type="text" name="system.defenseDice" value="{{system.defenseDice}}" data-dtype="String" />
                 </div>
                 <div class="resource flex-group-center">
                     <label class="resource-label">Counter Pool:</label>
-                    <input type="text" name="data.counterDice" value="{{data.counterDice}}" data-dtype="String" />
+                    <input type="text" name="system.counterDice" value="{{system.counterDice}}" data-dtype="String" />
                 </div>
             </div>
         </div>

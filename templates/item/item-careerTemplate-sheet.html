@@ -4,8 +4,8 @@
         <div class="header-fields">
             <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
             <div class="resource flexrow flex-group-center flex-tight">
-                <label for="data.forcedName" class="resource-label">Override Career Name:</label>
-                <input type="text" name="data.forcedName" value="{{data.forcedName}}" placeholder="{{item.name}}" data-dtype="String" />
+                <label for="system.forcedName" class="resource-label">Override Career Name:</label>
+                <input type="text" name="system.forcedName" value="{{system.forcedName}}" placeholder="{{item.name}}" data-dtype="String" />
             </div>
         </div>
     </header>
@@ -24,18 +24,18 @@
                 <h2 class="normal-label">Career Template Data:</h2>
                 <div class="resource flexrow flex-group-center">
                     <label class="normal-label">Career Skills:</label>
-                    <input type="text" name="data.skill1" value="{{data.skill1}}" data-dtype="String" />
-                    <input type="text" name="data.skill2" value="{{data.skill2}}" data-dtype="String" />
-                    <input type="text" name="data.skill3" value="{{data.skill3}}" data-dtype="String" />
+                    <input type="text" name="system.skill1" value="{{system.skill1}}" data-dtype="String" />
+                    <input type="text" name="system.skill2" value="{{system.skill2}}" data-dtype="String" />
+                    <input type="text" name="system.skill3" value="{{system.skill3}}" data-dtype="String" />
                 </div>
             </div>
             <div class="flexcol">
                 <h2 class="normal-label">Career Item Additions:</h2>
                 <div class="resource flexrow flex-group-center">
                     <label class="normal-label">Career Gifts:</label>
-                    <input type="text" name="data.gifts.gift1" value="{{data.gifts.gift1}}" placeholder="ID or Name" data-dtype="String" />
-                    <input type="text" name="data.gifts.gift2" value="{{data.gifts.gift2}}" placeholder="ID or Name" data-dtype="String" />
-                    <input type="text" name="data.gifts.gift3" value="{{data.gifts.gift3}}" placeholder="ID or Name" data-dtype="String" />
+                    <input type="text" name="system.gifts.gift1" value="{{system.gifts.gift1}}" placeholder="ID or Name" data-dtype="String" />
+                    <input type="text" name="system.gifts.gift2" value="{{system.gifts.gift2}}" placeholder="ID or Name" data-dtype="String" />
+                    <input type="text" name="system.gifts.gift3" value="{{system.gifts.gift3}}" placeholder="ID or Name" data-dtype="String" />
                 </div>
             </div>
         </div>

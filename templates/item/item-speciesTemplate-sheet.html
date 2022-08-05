@@ -4,8 +4,8 @@
         <div class="header-fields">
             <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
             <div class="resource flexrow flex-group-center flex-tight">
-                <label for="data.forcedName" class="resource-label">Override Species Name:</label>
-                <input type="text" name="data.forcedName" value="{{data.forcedName}}" placeholder="{{item.name}}" data-dtype="String" />
+                <label for="system.forcedName" class="resource-label">Override Species Name:</label>
+                <input type="text" name="system.forcedName" value="{{system.forcedName}}" placeholder="{{item.name}}" data-dtype="String" />
             </div>
         </div>
     </header>
@@ -24,15 +24,15 @@
                 <h2 class="normal-label">Species Template Data:</h2>
                 <div class="resource flexrow flex-group-center">
                     <label class="normal-label">Species Skills:</label>
-                    <input type="text" name="data.skill1" value="{{data.skill1}}" data-dtype="String" />
-                    <input type="text" name="data.skill2" value="{{data.skill2}}" data-dtype="String" />
-                    <input type="text" name="data.skill3" value="{{data.skill3}}" data-dtype="String" />
+                    <input type="text" name="system.skill1" value="{{system.skill1}}" data-dtype="String" />
+                    <input type="text" name="system.skill2" value="{{system.skill2}}" data-dtype="String" />
+                    <input type="text" name="system.skill3" value="{{system.skill3}}" data-dtype="String" />
                 </div>
                 <div class="attributes grid grid-4col grid-minimal">
-                    {{#each data.attributes as |attribute key|}}
+                    {{#each system.attributes as |attribute key|}}
                     <div class="trait flexrow flex-center flex-tight arrange-vertically">
-                        <label for="data.attributes.{{key}}" class="normal-label">{{key}}</label>
-                        <input type="text" name="data.attributes.{{key}}" value="{{attribute}}" data-dtype="String" />
+                        <label for="system.attributes.{{key}}" class="normal-label">{{key}}</label>
+                        <input type="text" name="system.attributes.{{key}}" value="{{attribute}}" data-dtype="String" />
                     </div>
                     {{/each}}
                 </div>
@@ -41,22 +41,22 @@
                 <h2 class="normal-label">Species Item Additions:</h2>
                 <div class="resource flexrow flex-group-center">
                     <label class="normal-label">Species Gifts:</label>
-                    <input type="text" name="data.gifts.gift1" value="{{data.gifts.gift1}}" placeholder="ID or Name" data-dtype="String" />
-                    <input type="text" name="data.gifts.gift2" value="{{data.gifts.gift2}}" placeholder="ID or Name" data-dtype="String" />
-                    <input type="text" name="data.gifts.gift3" value="{{data.gifts.gift3}}" placeholder="ID or Name" data-dtype="String" />
+                    <input type="text" name="system.gifts.gift1" value="{{system.gifts.gift1}}" placeholder="ID or Name" data-dtype="String" />
+                    <input type="text" name="system.gifts.gift2" value="{{system.gifts.gift2}}" placeholder="ID or Name" data-dtype="String" />
+                    <input type="text" name="system.gifts.gift3" value="{{system.gifts.gift3}}" placeholder="ID or Name" data-dtype="String" />
                 </div>
                 <div class="resource flexrow flex-group-center">
                     <label class="normal-label">Species Weapons:</label>
-                    <input type="text" name="data.weapons.weapon1" value="{{data.weapons.weapon1}}" placeholder="ID or Name" data-dtype="String" />
-                    <input type="text" name="data.weapons.weapon2" value="{{data.weapons.weapon2}}" placeholder="ID or Name" data-dtype="String" />
-                    <input type="text" name="data.weapons.weapon3" value="{{data.weapons.weapon3}}" placeholder="ID or Name" data-dtype="String" />
+                    <input type="text" name="system.weapons.weapon1" value="{{system.weapons.weapon1}}" placeholder="ID or Name" data-dtype="String" />
+                    <input type="text" name="system.weapons.weapon2" value="{{system.weapons.weapon2}}" placeholder="ID or Name" data-dtype="String" />
+                    <input type="text" name="system.weapons.weapon3" value="{{system.weapons.weapon3}}" placeholder="ID or Name" data-dtype="String" />
                 </div>
                 <span class="bold-text">These are separate from Gifts for internal reasons, even though game mechanically they're the same</span>
                 <div class="resource flexrow flex-group-center">
                     <label class="normal-label">Increased Trait:</label>
-                    <input type="text" name="data.traitIncreases.increase1" value="{{data.traitIncreases.increase1}}" placeholder="Trait Name" data-dtype="String" />
-                    <input type="text" name="data.traitIncreases.increase2" value="{{data.traitIncreases.increase2}}" placeholder="Trait Name" data-dtype="String" />
-                    <input type="text" name="data.traitIncreases.increase3" value="{{data.traitIncreases.increase3}}" placeholder="Trait Name" data-dtype="String" />
+                    <input type="text" name="system.traitIncreases.increase1" value="{{system.traitIncreases.increase1}}" placeholder="Trait Name" data-dtype="String" />
+                    <input type="text" name="system.traitIncreases.increase2" value="{{system.traitIncreases.increase2}}" placeholder="Trait Name" data-dtype="String" />
+                    <input type="text" name="system.traitIncreases.increase3" value="{{system.traitIncreases.increase3}}" placeholder="Trait Name" data-dtype="String" />
                 </div>
             </div>
         </div>
