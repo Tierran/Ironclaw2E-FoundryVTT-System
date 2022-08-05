@@ -1227,7 +1227,7 @@ export class Ironclaw2EItem extends Item {
                         resolve(null);
                     }
                 }
-            });
+            }, { focus: false });
             dlog.render(true);
         });
         let opposingsuccesses = await resolvedopfor;
@@ -1799,7 +1799,7 @@ export class Ironclaw2EItem extends Item {
                     }
                 }
             }
-        });
+        }, { focus: false });
         dlog.render(true);
     }
 }

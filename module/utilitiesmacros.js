@@ -199,7 +199,7 @@ export async function requestRollPopup(readydice = "", readygifts = "", tnnum = 
                 requestRollToMessage(dices, tn, { "speaker": (usernumber === 1 ? macroSpeaker : userSpeaker), "whisper": whisper, "requestedgifts": gifts });
             }
         }
-    });
+    }, { focus: false });
     dlog.render(true);
 }
 

@@ -361,7 +361,7 @@ export class Ironclaw2EActor extends Actor {
                     }
                 }
             }
-        });
+        }, { focus: false });
         dlog.render(true);
     }
 
@@ -2513,7 +2513,7 @@ export class Ironclaw2EActor extends Actor {
                     }
                 }
             }
-        });
+        }, { focus: false });
         dlog.render(true);
     }
 
@@ -2586,7 +2586,7 @@ export class Ironclaw2EActor extends Actor {
                     }
                 }
             }
-        });
+        }, { focus: false });
         dlog.render(true);
     }
 
@@ -2850,7 +2850,7 @@ export class Ironclaw2EActor extends Actor {
                     }
                     resolve(rollreturn);
                 }
-            }, { width: 620 });
+            }, { width: 620, focus: false });
             dlog.render(true);
         });
         return resolvedroll;

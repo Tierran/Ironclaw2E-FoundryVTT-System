@@ -886,7 +886,7 @@ export async function rollTargetNumberDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0
                     resolve(null);
                 }
             }
-        });
+        }, { focus: false });
         dlog.render(true);
     });
     return await resolvedroll;
@@ -967,7 +967,7 @@ export async function rollHighestDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4
                     resolve(null);
                 }
             }
-        });
+        }, { focus: false });
         dlog.render(true);
     });
     return await resolvedroll;
@@ -1030,7 +1030,7 @@ export async function rollTargetNumberOneLine(tnnum = 3, readydice = "", label =
                     resolve(null);
                 }
             }
-        });
+        }, { focus: false });
         dlog.render(true);
     });
     return await resolvedroll;
@@ -1086,7 +1086,7 @@ export async function rollHighestOneLine(readydice = "", label = "", rolltitle =
                     resolve(null);
                 }
             }
-        });
+        }, { focus: false });
         dlog.render(true);
     });
     return await resolvedroll;
@@ -1152,7 +1152,7 @@ export async function rollVariableOneLine(tnyes = false, tnnum = 3, readydice = 
                     resolve(null);
                 }
             }
-        });
+        }, { focus: false });
         dlog.render(true);
     });
     return await resolvedroll;
@@ -1203,7 +1203,7 @@ export async function copyToRollTNDialog(message, rolltitle = "") {
                     resolve(null);
                 }
             }
-        });
+        }, { focus: false });
         dlog.render(true);
     });
     return await resolvedroll;
@@ -1310,7 +1310,7 @@ export async function rerollDialog(message, actor) {
                     resolve(null);
                 }
             }
-        });
+        }, { focus: false });
         dlog.render(true);
     });
     return await resolvedroll;
