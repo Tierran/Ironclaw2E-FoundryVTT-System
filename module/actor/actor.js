@@ -20,7 +20,7 @@ import { getDistanceBetweenPositions } from "../helpers.js";
 import { formDicePoolField } from "../helpers.js";
 import { checkConditionQuota, CommonConditionInfo, getConditionSelectObject, getSingleConditionIronclaw, getTargetConditionQuota, setTargetConditionQuota } from "../conditions.js";
 import { checkStandardDefense, CommonSystemInfo, getRangeDiceFromDistance } from "../systeminfo.js";
-import { AoETemplateIronclaw } from "../ability-template.js";
+import { AoETemplateIronclaw } from "../aoe-template.js";
 // For condition management
 import { hasConditionsIronclaw } from "../conditions.js";
 import { getConditionNamesIronclaw } from "../conditions.js";

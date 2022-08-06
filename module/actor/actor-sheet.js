@@ -3,7 +3,7 @@ import { CommonSystemInfo } from "../systeminfo.js";
 import { getBaseConditionIronclaw, setTargetConditionQuota } from "../conditions.js";
 import { hasConditionsIronclaw } from "../conditions.js";
 import { Ironclaw2EItem } from "../item/item.js";
-import { AoETemplateIronclaw } from "../ability-template.js";
+import { AoETemplateIronclaw } from "../aoe-template.js";
 
 /**
  * Extend the basic ActorSheet
