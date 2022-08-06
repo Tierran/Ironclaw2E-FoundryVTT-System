@@ -20,7 +20,7 @@ import { getDistanceBetweenPositions } from "../helpers.js";
 import { formDicePoolField } from "../helpers.js";
 import { checkConditionQuota, CommonConditionInfo, getConditionSelectObject, getSingleConditionIronclaw, getTargetConditionQuota, setTargetConditionQuota } from "../conditions.js";
 import { checkStandardDefense, CommonSystemInfo, getRangeDiceFromDistance } from "../systeminfo.js";
-import { AbilityTemplateIronclaw } from "../ability-template.js";
+import { AoETemplateIronclaw } from "../ability-template.js";
 // For condition management
 import { hasConditionsIronclaw } from "../conditions.js";
 import { getConditionNamesIronclaw } from "../conditions.js";
@@ -261,7 +261,7 @@ export class Ironclaw2EActor extends Actor {
             message.update({ "_id": message.id, "flags": flags });
         };
 
-        const template = AbilityTemplateIronclaw.fromRange(dataset.arearange, { "elevation": attackToken.elevation, "successfunc": onSuccess });
+        const template = AoETemplateIronclaw.fromRange(dataset.arearange, { "elevation": attackToken.elevation, "successfunc": onSuccess });
         if (template) template.drawPreview();
     }
 

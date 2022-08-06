@@ -3,7 +3,7 @@ import { CommonSystemInfo } from "../systeminfo.js";
 import { getBaseConditionIronclaw, setTargetConditionQuota } from "../conditions.js";
 import { hasConditionsIronclaw } from "../conditions.js";
 import { Ironclaw2EItem } from "../item/item.js";
-import { AbilityTemplateIronclaw } from "../ability-template.js";
+import { AoETemplateIronclaw } from "../ability-template.js";
 
 /**
  * Extend the basic ActorSheet
@@ -746,7 +746,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                     break;
                 case "template":
                     const attackToken = findActorToken(this.actor);
-                    const template = AbilityTemplateIronclaw.fromRange(item.system.multiAttackRange, { "elevation": attackToken.elevation, "originSheet": this });
+                    const template = AoETemplateIronclaw.fromRange(item.system.multiAttackRange, { "elevation": attackToken.elevation, "originSheet": this });
                     if (template) template.drawPreview();
                     break;
                 default:

@@ -5,7 +5,7 @@ import { CommonSystemInfo, getRangeDistanceFromBand } from "./systeminfo.js";
  * A helper class for building MeasuredTemplates for AoE attacks
  * @extends {MeasuredTemplate}
  */
-export class AbilityTemplateIronclaw extends MeasuredTemplate {
+export class AoETemplateIronclaw extends MeasuredTemplate {
 
     /**
      * A factory method to create an AbilityTemplate instance based on a range
@@ -76,7 +76,7 @@ export class AbilityTemplateIronclaw extends MeasuredTemplate {
             if (now - moveTime <= 20) return;
             const center = event.data.getLocalPosition(this.layer);
             const snapped = canvas.grid.getSnappedPosition(center.x, center.y, 2);
-            this.update({ x: snapped.x, y: snapped.y });
+            this.document.updateSource({ x: snapped.x, y: snapped.y });
             this.refresh();
             moveTime = now;
         };
@@ -87,6 +87,7 @@ export class AbilityTemplateIronclaw extends MeasuredTemplate {
             canvas.stage.off("mousemove", handlers.mm);
             canvas.stage.off("mousedown", handlers.lc);
             canvas.app.view.oncontextmenu = null;
+            canvas.app.view.onwheel = null;
             initialLayer.activate();
             this.originSheet?.maximize();
         };
@@ -94,17 +95,29 @@ export class AbilityTemplateIronclaw extends MeasuredTemplate {
         // Confirm the workflow (left-click)
         handlers.lc = async event => {
             handlers.rc(event);
-            const destination = canvas.grid.getSnappedPosition(this.data.x, this.data.y, 2);
-            await this.update(destination);
-            const [finished] = await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this]);
+            const destination = canvas.grid.getSnappedPosition(this.document.x, this.document.y, 2);
+            await this.document.updateSource(destination);
+            const [finished] = await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.document.toObject()]);
             const flagfoo = getCorrectElevationFlag();
             await finished?.setFlag(flagfoo.modId, flagfoo.flagId, this.elevation);
             if (this.successFunc) this.successFunc(finished);
+        };
+
+        // Rotate the template by 3 degree increments (mouse-wheel)
+        handlers.mw = event => {
+            if (event.ctrlKey) event.preventDefault(); // Avoid zooming the browser window
+            event.stopPropagation();
+            let delta = canvas.grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
+            let snap = event.shiftKey ? delta : 5;
+            const update = { direction: this.document.direction + (snap * Math.sign(event.deltaY)) };
+            this.document.updateSource(update);
+            this.refresh();
         };
 
         // Activate listeners
         canvas.stage.on("mousemove", handlers.mm);
         canvas.stage.on("mousedown", handlers.lc);
         canvas.app.view.oncontextmenu = handlers.rc;
+        canvas.app.view.onwheel = handlers.mw;
     }
 }
