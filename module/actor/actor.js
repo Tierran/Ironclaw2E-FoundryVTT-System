@@ -563,20 +563,27 @@ export class Ironclaw2EActor extends Actor {
     /* -------------------------------------------- */
 
 
+    /** @override
+     * Tweak the actor creation data before the actual creation
+     */
     async _preCreate(data, options, user) {
+        await super._preCreate(data, options, user);
+
         const autoPrototypeSetup = game.settings.get("ironclaw2e", "autoPrototypeSetup");
         if (!autoPrototypeSetup) // If not enabled, immediately return out of the function
             return;
 
-        data.token = {};
-        data.token.displayName = 20;
+        let prototypeToken = data.prototypeToken ?? {};
+        prototypeToken.displayName = CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER;
 
         if (data.type === 'character') {
-            data.prototypeToken.actorLink = true;
-            data.prototypeToken.vision = true;
+            prototypeToken.actorLink = true;
+            prototypeToken.displayName = CONST.TOKEN_DISPLAY_MODES.OWNER;
+            if (!prototypeToken.sight) prototypeToken.sight = {};
+            prototypeToken.sight.enabled = true;
         }
 
-        this.update(data);
+        return this.updateSource({ prototypeToken });
     }
 
     /** @override
