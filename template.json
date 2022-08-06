@@ -2,6 +2,9 @@
   "Actor": {
     "types": [ "character", "mook", "beast", "marker" ],
     "templates": {
+      "baseCommon": {
+        "description": ""
+      },
       "baseTraits": {
         "traits": {
           "body": {
@@ -170,8 +173,7 @@
       }
     },
     "character": {
-      "templates": [ "baseTraits", "baseSkills", "baseAttributes", "baseMoney" ],
-      "description": "",
+      "templates": [ "baseCommon", "baseTraits", "baseSkills", "baseAttributes", "baseMoney" ],
       "motto": "",
       "goals": {
         "goal1": "",
@@ -181,17 +183,15 @@
       "experience": 0
     },
     "mook": {
-      "templates": [ "baseTraits", "baseSkills", "baseAttributes", "baseMoney" ],
-      "description": "",
+      "templates": [ "baseCommon", "baseTraits", "baseSkills", "baseAttributes", "baseMoney" ],
       "applyTemplateOnSpawn": true
     },
     "beast": {
-      "templates": [ "baseTraits", "baseAttributes" ],
-      "description": "",
+      "templates": [ "baseCommon", "baseTraits", "baseAttributes" ],
       "applyTemplateOnSpawn": false
     },
     "marker": {
-      "description": ""
+      "templates": [ "baseCommon" ]
     }
   },
   "Item": {
@@ -280,7 +280,7 @@
       "brightLight": 0,
       "lightAngle": 360,
       "lightColor": "#ffffff",
-      "lightAlpha": 0.3,
+      "lightAlpha": 0.2,
       "lightAnimationType": "",
       "lightAnimationSpeed": 5,
       "lightAnimationIntensity": 5
