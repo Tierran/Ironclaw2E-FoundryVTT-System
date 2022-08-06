@@ -1191,13 +1191,13 @@ export class Ironclaw2EActor extends Actor {
     async _updateTokenLighting(lightdata) {
         let foundtoken = findActorToken(this);
         if (foundtoken) {
-            await foundtoken.update(lightdata);
+            await foundtoken.update({ "light": lightdata });
         }
 
         // Update prototype token, if applicable
         if (!this.isToken) {
             await this.update({
-                "prototypeToken": lightdata
+                "prototypeToken.light": lightdata
             });
         }
     }
@@ -1631,10 +1631,8 @@ export class Ironclaw2EActor extends Actor {
             return;
         }
         let updatedlightdata = {
-            "light": {
-                "dim": 0, "bright": 0, "angle": 360, "color": "#ffffff", "alpha": 0.25, "animation": {
-                    "type": "", "speed": 5, "intensity": 5
-                }
+            "dim": 0, "bright": 0, "angle": 360, "color": "#ffffff", "alpha": 0.25, "animation": {
+                "type": "", "speed": 5, "intensity": 5
             }
         };
 
@@ -1642,11 +1640,9 @@ export class Ironclaw2EActor extends Actor {
 
         if (!lightsource.system.lighted) { // Light the light source
             updatedlightdata = {
-                "light": {
-                    "dim": lightsource.system.dimLight, "bright": lightsource.system.brightLight, "angle": lightsource.system.lightAngle,
-                    "color": lightsource.system.lightColor, "alpha": lightsource.system.lightAlpha, "animation": {
-                        "type": lightsource.system.lightAnimationType, "speed": lightsource.system.lightAnimationSpeed, "intensity": lightsource.system.lightAnimationIntensity
-                    }
+                "dim": lightsource.system.dimLight, "bright": lightsource.system.brightLight, "angle": lightsource.system.lightAngle,
+                "color": lightsource.system.lightColor, "alpha": lightsource.system.lightAlpha, "animation": {
+                    "type": lightsource.system.lightAnimationType, "speed": lightsource.system.lightAnimationSpeed, "intensity": lightsource.system.lightAnimationIntensity
                 }
             };
             const index = lightsources.findIndex(element => element.id == lightsource.id);
@@ -1668,10 +1664,8 @@ export class Ironclaw2EActor extends Actor {
      */
     refreshLightSource() {
         let updatedlightdata = {
-            "light": {
-                "dim": 0, "bright": 0, "angle": 360, "color": "#ffffff", "alpha": 0.25, "animation": {
-                    "type": "", "speed": 5, "intensity": 5
-                }
+            "dim": 0, "bright": 0, "angle": 360, "color": "#ffffff", "alpha": 0.25, "animation": {
+                "type": "", "speed": 5, "intensity": 5
             }
         };
 
@@ -1679,11 +1673,9 @@ export class Ironclaw2EActor extends Actor {
         let activesource = lightsources.find(element => element.system.lighted == true);
         if (activesource) {
             updatedlightdata = {
-                "light": {
-                    "dim": lightsource.system.dimLight, "bright": lightsource.system.brightLight, "angle": lightsource.system.lightAngle,
-                    "color": lightsource.system.lightColor, "alpha": lightsource.system.lightAlpha, "animation": {
-                        "type": lightsource.system.lightAnimationType, "speed": lightsource.system.lightAnimationSpeed, "intensity": lightsource.system.lightAnimationIntensity
-                    }
+                "dim": lightsource.system.dimLight, "bright": lightsource.system.brightLight, "angle": lightsource.system.lightAngle,
+                "color": lightsource.system.lightColor, "alpha": lightsource.system.lightAlpha, "animation": {
+                    "type": lightsource.system.lightAnimationType, "speed": lightsource.system.lightAnimationSpeed, "intensity": lightsource.system.lightAnimationIntensity
                 }
             };
         }

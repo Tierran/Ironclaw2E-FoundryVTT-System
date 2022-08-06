@@ -66,7 +66,8 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         }
         let selectables = {
             "handedness": CommonSystemInfo.equipHandedness, "range": CommonSystemInfo.rangeBands, "giftOptions": CommonSystemInfo.giftSpecialOptions, "giftStates": CommonSystemInfo.giftWorksStates,
-            "currencyOptions": currencyOptions, "giftBonusUses": CommonSystemInfo.giftBonusAutoUseOptions, "giftRerolls": getSpecialSettingsRerolls(), "systemConditions": getConditionSelectObject()
+            "currencyOptions": currencyOptions, "giftBonusUses": CommonSystemInfo.giftBonusAutoUseOptions, "giftRerolls": getSpecialSettingsRerolls(), "systemConditions": getConditionSelectObject(),
+            "lightAnimations": CONFIG.Canvas.lightAnimations
         };
         sheetData.selectables = selectables;
         sheetData.isGM = game.user.isGM;
