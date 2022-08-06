@@ -8,10 +8,10 @@ import { CommonSystemInfo, getRangeDistanceFromBand } from "./systeminfo.js";
 export class AoETemplateIronclaw extends MeasuredTemplate {
 
     /**
-     * A factory method to create an AbilityTemplate instance based on a range
+     * A factory method to create an AoETemplateIronclaw instance based on a range
      * @param {string | number} range The range used for the template's radius
      * @param {Function} successfunc Function called when the template is successfully placed
-     * @returns {AbilityTemplate | null} The template object, or null if the range given is invalid
+     * @returns {AoETemplateIronclaw | null} The template object, or null if the range given is invalid
      */
     static fromRange(range, { elevation = 0, successfunc = null, originSheet = null } = {}) {
         const usedNumber = (typeof (range) === "string" ? getRangeDistanceFromBand(range) : range);
