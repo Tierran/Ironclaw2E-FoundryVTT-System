@@ -174,6 +174,23 @@ export async function upgradeVersion(lastversion) {
 
         console.log("0.5.15, item upgrade, done!");
     }
+
+    // Version 0.6.0 check
+    version = "0.6.0";
+    if (checkIfNewerVersion(version, lastversion)) {
+        ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationNotice", { "version": version }), { permanent: true });
+
+        // Move character biography to a unified 'description' variable
+        let actorsToChange = getAllActorsInWorld();
+        for (let actor of actorsToChange) {
+            await giftUpgradePointSixZero(actor);
+        }
+
+        // In case of potential problems the GM might need to check
+        ui.notifications.info(game.i18n.format("ironclaw2e.ui.dataMigrationComplete", { "version": version }), { permanent: true });
+
+        console.log("0.6.0, actor upgrade, done!");
+    }
 }
 
 /**
@@ -328,6 +345,16 @@ async function giftUpgradePointFiveFifteen(item) {
     }
     await item.update(updateData);
     return item;
+}
+
+async function giftUpgradePointSixZero(actor) {
+    let actorSys = actor.system;
+    let updateData = {};
+    if (!actorSys.description) { // Only update if the actor is missing the description field
+        updateData["system.description"] = actorSys.biography ?? "";
+        await actor.update(updateData);
+    }
+    return actor;
 }
 
 /**

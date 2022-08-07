@@ -419,7 +419,6 @@ export function specialSettingsRerollIntersection(rerolltypes) {
     let first = null;
     for (let [key, value] of rerolltypes) {
         if (!first) first = key;
-        console.log(value);
         foo[key] = value?.identifierOverride || game.i18n.localize(CommonSystemInfo.rerollTypes[key]);
     }
     return { "usableRerolls": foo, "firstType": first };
