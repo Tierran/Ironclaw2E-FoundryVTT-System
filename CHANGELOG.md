@@ -1,5 +1,5 @@
 ### 0.6.0 New tens release 
- - Updated system for Founcry VTT V10
+ - Updated system for Foundry VTT V10
  - Shifted things to use the V10 data structure
  - Made diceroll chat message text more unified and consistent in look and formatting
  - Misc issue fixes
