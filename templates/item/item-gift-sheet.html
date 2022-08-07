@@ -62,7 +62,7 @@
             <div class="flexcol">
                 {{#if showDirectoryOptions}}
                 <div>
-                    <h3 class="normal-label flex-center">GM Directory Settings</h3>
+                    <h2 class="normal-label flex-center">GM Directory Settings</h2>
                     <div class="rollable copy-special-settings flex-group-center">
                         <span class="normal-label">Copy Special Settings to every Gift with same name</span>
                     </div>
@@ -78,12 +78,12 @@
                 <div class="flexcol">
                     {{#each system.specialSettings as |special|}}
                     <div class="special-option flex-group-center" data-special-index="{{@index}}">
-                        <h3 class="flex-center">
+                        <h4 class="flex-center">
                             <select style="width: 90%" class="change-setting-mode">
                                 {{selectOptions ../selectables.giftOptions selected=special.settingMode localize=false}}
                             </select>
                             <a style="width: 10%" class="rollable delete-special-option" title="Delete Special Option"><i class="fas fa-trash"></i></a>
-                        </h3>
+                        </h4>
                         <div class="applicability-configuration flexcol">
                             <h4 class="header-label">Applicability Configuration</h4>
                             <div class="grid-2col grid-minimal flex-group-center flex-tight">
