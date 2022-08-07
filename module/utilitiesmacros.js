@@ -686,26 +686,6 @@ Hooks.on("getItemDirectoryFolderContext", addIronclawItemDirectoryFolderContext)
 function addIronclawItemDirectoryEntryContext(html, entryOptions) {
     entryOptions.push(
         {
-            name: "ironclaw2e.context.items.copyID",
-            icon: '<i class="fas fa-id-card"></i>',
-            condition: li => {
-                return game.user.isGM;
-            },
-            callback: li => {
-                const id = li.data("documentId");
-                const item = game.items.get(id);
-                const chatContents = `
-                <div class="ironclaw2e">
-                    <span>${item.name} ID: <p class="allow-selection">${id}</p></span>
-                </div>`;
-                let chatData = {
-                    "content": chatContents
-                };
-                ChatMessage.applyRollMode(chatData, "selfroll");
-                CONFIG.ChatMessage.documentClass.create(chatData);
-            }
-        },
-        {
             name: "ironclaw2e.context.items.sendToChat",
             icon: '<i class="fas fa-comment-dots"></i>',
             condition: li => {
