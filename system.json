@@ -11,10 +11,10 @@
     "maximum": 10
   },
   "templateVersion": 28,
-  "author": "Hertzila",
   "authors": [
     {
-      "name": "Hertzila"
+      "name": "Hertzila",
+      "url": "https://github.com/Hertzila"
     }
   ],
   "esmodules": [ "module/ironclaw2e.js" ],
