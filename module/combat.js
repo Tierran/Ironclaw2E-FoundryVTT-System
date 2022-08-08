@@ -258,6 +258,7 @@ export class Ironclaw2ECombat extends Combat {
         const settings = game.settings.get("core", Combat.CONFIG_SETTING);
         let updateData = { round: 1, turn: 0 };
         updateData.flags = { "ironclaw2e.sideBased": settings.sideBased, "ironclaw2e.initiativeType": settings.initType, "ironclaw2e.manualTN": settings.manualTN };
+        this._playCombatSound("startEncounter");
         return this.update(updateData);
     }
 
