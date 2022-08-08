@@ -260,6 +260,10 @@
   "ironclaw2e.config.rightButtonOptionHint": "The action the extra right button below a token does.",
 
 
+  "ironclaw2e.config.vision.nightVision": "Night Vision",
+  "ironclaw2e.config.vision.echolocation": "Echolocation",
+
+
   "ironclaw2e.dialog.roll": "Roll!",
   "ironclaw2e.dialog.resolve": "Resolve",
   "ironclaw2e.dialog.add": "Add",

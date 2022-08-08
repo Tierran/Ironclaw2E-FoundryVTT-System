@@ -38,7 +38,7 @@ import { registerHandlebarsHelpers } from "./handlebars.js";
 
 import { WildcardTemplateConfig, WorldSettingsConfig } from "./config.js";
 import { CoinageSettingsConfig } from "./config.js";
-import { measureDistances } from "./canvas.js";
+import { IronclawVisionModes, measureDistances } from "./canvas.js";
 
 /* -------------------------------------------- */
 /*  Base Hooks                                  */
@@ -143,6 +143,9 @@ Hooks.once('init', function () {
 
     // Dice roller init
     CardinalDiceRoller.cardinalInitialization();
+
+    // Define system vision modes
+    CONFIG.Canvas.visionModes = IronclawVisionModes();
 
     const asciiArt = `  _____                      _                
   \\_   \\_ __ ___  _ __   ___| | __ ___      __
