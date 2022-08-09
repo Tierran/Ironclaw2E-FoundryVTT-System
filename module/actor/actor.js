@@ -656,7 +656,7 @@ export class Ironclaw2EActor extends Actor {
         const specialGifts = this.items.filter(element => element.type === 'gift' && element.system.usedSpecialSettings?.length > 0);
         if (specialGifts.length > 0) {
             system.processingLists = {}; // If any of the actor's gifts have special settings, add the holding object for the lists
-            system.replacementLists = new Map(); // To store any replacement gifts, stored with the actor as derived data to avoid contaminating the actual gifts
+            system.replacementLists = new Map(); // To store any gifts that get replaced by others, stored with the actor as derived data to avoid contaminating the actual gifts
 
             for (let gift of specialGifts) {
                 for (let setting of gift.system.usedSpecialSettings) {
@@ -667,14 +667,17 @@ export class Ironclaw2EActor extends Actor {
                     // If the gift has the replacement field set, attempt to find what it replaces
                     if (setting.replaceName) {
                         const replacement = specialGifts.find(x => makeCompareReady(x.name) === setting.replaceName)?.system.usedSpecialSettings.find(x => x.settingMode == setting.settingMode);
-                        if (replacement) { // If the replacement is found, add it to the map of replacements stored with the actor
+                        if (replacement) { // If the original gift this one replaces is found, add it to the map of replacements stored with the actor
                             if (replacement.giftId === setting.giftId) { // Check for an infinite loop
                                 console.warn("Potential infinite loop detected, bonus attempted to replace something with the same id as it: " + setting.giftName);
                                 continue;
                             }
 
+                            // Grab the replacement map for the given gift, if it exists
                             let stored = (system.replacementLists.has(replacement.giftId) ? system.replacementLists.get(replacement.giftId) : new Map());
+                            // Set which of the gift's special bonuses this one replaces 
                             stored.set(replacement.settingIndex, setting);
+                            // Set the map to the replacement list
                             system.replacementLists.set(replacement.giftId, stored);
                         }
                         // Skip adding a replacing gift to the normal setting list
