@@ -264,6 +264,10 @@
   "ironclaw2e.config.vision.echolocation": "Echolocation",
 
 
+  "ironclaw2e.keyConfig.quickRollModifier": "Quick Roll Modifier Key",
+  "ironclaw2e.keyConfig.quickRollModifierHint": "If pressed, the system will attempt to skip dialog popups and instead make dice rolls or execute funtions immediately with default values, where available.",
+
+
   "ironclaw2e.dialog.roll": "Roll!",
   "ironclaw2e.dialog.resolve": "Resolve",
   "ironclaw2e.dialog.add": "Add",

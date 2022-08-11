@@ -125,8 +125,8 @@ Hooks.once('init', function () {
 
     // Register keybinds for the system
     game.keybindings.register("ironclaw2e", "quickRollModifier", {
-        name: "Quick Roll Modifier Key",
-        hint: "If pressed, the system will attempt to skip dialog popups and instead make dice rolls or execute funtions immediately with default values, where available.",
+        name: "ironclaw2e.keyConfig.quickRollModifier",
+        hint: "ironclaw2e.keyConfig.quickRollModifierHint",
         editable: [
             {
                 key: "ControlLeft"
@@ -627,7 +627,7 @@ function registerClientSettings() {
 /* -------------------------------------------- */
 
 Hooks.on("canvasInit", function () {
-    // Implement Euclidean measurement by default
+    // Insert system measurement
     canvas.grid.diagonalRule = game.settings.get("ironclaw2e", "diagonalRule");
     SquareGrid.prototype.measureDistances = measureDistances;
 });
@@ -648,7 +648,7 @@ function sleep(ms) {
  * Quick and dirty way to make condition adding and removing wait until the game is fully ready
  * @param {any} resolve
  */
-async function waitUntilReady(resolve) {
+async function waitUntilReady() {
     while (!game.ready) {
         await sleep(500);
     }
@@ -756,7 +756,7 @@ function popupSelect(prechecked = [], tnyes = false, tnnum = 3, extradice = "", 
 }
 
 /**
- * Popup the standard dice pool selection dialog with some readied data
+ * Popup the standard actor damage dialog with some readied data
  * @param {number} readydamage The damage to use for default
  * @param {number} readysoak The soak to use for default
  * @param {string} damageconditions Extra conditions to be added alongside the damage conditions
