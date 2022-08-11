@@ -258,6 +258,8 @@
   "ironclaw2e.config.leftButtonOptionHint": "The action the extra left button below a token does.",
   "ironclaw2e.config.rightButtonOption": "Right token button",
   "ironclaw2e.config.rightButtonOptionHint": "The action the extra right button below a token does.",
+  "ironclaw2e.config.defaultSendToChat": "Default item macro sends to chat",
+  "ironclaw2e.config.defaultSendToChatHint": "Controls what is considered the default macro type when dragging an item to the hotbar, versus the alternate macro type which is created by holding the Quick Roll key. Checked, the default macro is sending the item information to chat. Unchecked, the default is using the item in some way.",
 
 
   "ironclaw2e.config.vision.nightVision": "Night Vision",

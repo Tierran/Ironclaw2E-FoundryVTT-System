@@ -602,6 +602,14 @@ function registerClientSettings() {
         range: { min: 1000, max: 4000, step: 200 },
         config: true
     });
+    game.settings.register("ironclaw2e", "defaultSendToChat", {
+        name: "ironclaw2e.config.defaultSendToChat",
+        hint: "ironclaw2e.config.defaultSendToChatHint",
+        scope: "client",
+        type: Boolean,
+        default: true,
+        config: true
+    });
     game.settings.register("ironclaw2e", "leftButtonOption", {
         name: "ironclaw2e.config.leftButtonOption",
         hint: "ironclaw2e.config.leftButtonOptionHint",
@@ -677,10 +685,13 @@ Hooks.on("chatCommandsReady", chatCommandsIntegration);
  * @returns {Promise}
  */
 async function createIronclaw2EMacro(data, slot) {
-    if (data.type !== "Item") return;
-    if (!("data" in data)) return ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.macroOwnedItemsWarning"));
-    const item = data;
-    const justInfo = checkQuickModifierKey();
+    if (data?.type !== "Item") return console.error("Ironclaw item macro creation received data for something that isn't an item: " + data?.type);
+    if (!data.uuid) return console.error("Ironclaw item macro creation received data without a UUID set: " + data);
+    const item = await fromUuid(data.uuid);
+    if (!item?.actor) return ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.macroOwnedItemsWarning"));
+    // If the default macro is sending to chat, check for inverse modifier key, otherwise check for normal modifier key
+    const defaultMacro = game.settings.get("ironclaw2e", "defaultSendToChat");
+    const justInfo = defaultMacro ? !checkQuickModifierKey() : checkQuickModifierKey();
 
     // Create the macro command
     const command = `game.ironclaw2e.rollItemMacro("${item.name}", ${justInfo ? "true" : "false"});`;

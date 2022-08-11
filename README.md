@@ -17,26 +17,25 @@ Weapons and gifts can be set up to automatically select certain dice pools, as w
 
 Extra Career gift is a special case and has its own item type, instead of being a normal gift. The system can handle an arbitrary number of them, but will only show the two top ones as dice pools.  
 
-The system has support for dragging items to the hotbar to create usable macros for their quick use. The specifics vary by item type, as weapons would ask how it is used (Attack, Spark, Parry, Counter) from its set pools or just pop up a dice pool selection with the only pool set, gifts would pop up either a dice pool, refresh or exhaust dialog, simpler used items would switch whether they are worn/held/lit, and simple gear will just output their info to chat. Holding the quickroll modifier key (default *Control*) when you drag an item to the hotbar will instead create a macro to always send the item's info to chat.  
-
+The system has support for dragging items to the hotbar to create usable macros for their quick use. A client setting controls whether the default item macro will send a chat message with the item's information, or whether it will try to use the item. Holding the quickroll modifier key (default *Control*) when you drag an item to the hotbar will create the alternate macro type. The specifics vary by item type when using them, as weapons would ask how it is used (Attack, Spark, Parry, Counter) from its set pools or just pop up a dice pool selection with the only pool set, gifts would pop up either a dice pool, refresh or exhaust dialog, simpler used items would switch whether they are worn/held/lit, and simple gear will just output their info to chat.  
 
 In sheets, things with red outlines signify a clickable function, while blue signifies a double-clickable. Single-clicks are usually some function, like opening the dice pool dialog, whereas double-clickable is usually for outputting info to the chat about the thing. Double-clicking on weapons sends an info message to chat with buttons for attacking with the weapon, placing an AoE template for relevant weapons, as well as defending against the weapon as the current actor.  
-
-Rolling the defense first will allow the attacker to right click the opposing roll and select a context option to attack against the defense directly, with the attack roll automatically taking the right values from the defense roll. Weapon attack damage messages also have soak buttons for different damage levels that allow quickly rolling soak against the weapon as the current actor. Attacks that automatically hit (eg. explosions) don't allow a resistance roll immediately and instead ask for the attacker to roll the attack first, then the Soak button rolls both the resistance and the actual soak to reduce the damage.  
  
 The system has some additional context menu / right-click options for chat messages. Rolls done with the system's own 'dice rollers' have options to change the roll type, the target number or reroll a one, as well as some additional functions to resolve resisted or counter-attacks while the "Auto-calculate attack damage" option is on.  
 
-
 The order of rolls for the system only really matters in cases where there is automation, which is generally limited to combat. The general preferred order is that the *defender rolls first* and the *contender / attacker responds* to the defender's rolls. Since there are context menu commands to change a roll's type or target number, mistakes on those parts can be corrected later for the system, which also usually means that the order of rolls can be fixed when needed.  
+
+#### Combat 
 
 The recommended way of handling attacks is that the attacker sends the weapon's information to the chat, then the defender rolls their defenses first, the attacker right-clicks the defending message to open the context menu and picks the "Attack Against This Defense" option to automatically attack with the original weapon. By default, this will also send a message to chat with the weapon's damage information and buttons for the defender to quickly roll soak with. The exception to this flow are explosion attacks, as they hit automatically. In this case, the attacker places the explosion's AoE template and rolls to hit first, then the defender rolls the resist and soak rolls both to reduce the incoming damage. Counter-attacks can be resolved by a context menu option, and attack rolls have an option to deal "Slaying" damage to account for weaknesses against the weapon.  
 
+Rolling the defense first will allow the attacker to right click the opposing roll and select a context option to attack against the defense directly, with the attack roll automatically taking the right values from the defense roll. Weapon attack damage messages also have soak buttons for different damage levels that allow quickly rolling soak against the weapon as the current actor. Attacks that automatically hit (eg. explosions) don't allow a resistance roll immediately and instead ask for the attacker to roll the attack first, then the Soak button rolls both the resistance and the actual soak to reduce the damage.  
 
 Ironclaw's initiative system is supported, both the normal side-based and the alternate classic style. Configuring the specifics is done through the combat tracker settings as normal, the system supporting a few different ways to classify sides in a battle. The system also auto-rolls the initiative check for battle participants when 'rolling' initiative. Beginning the combat encounter saves the side and initiative settings to the encounter and lets the combat tracker settings be used for other encounters with different settings, unless the "Force settings" option is checked.  
 
 The Combat Tracker will show the result of the initiative check before the initiative itself for the GM, either as the number of successes, or as Tie (T), Failure (F), or Botch (B).  
 
-#### Module Support
+### Module Support
 
 The system has support for the Drag Ruler module (https://github.com/manuelVo/foundryvtt-drag-ruler). The distance colors represent Stride (blue), Stride+Dash (green), Run (yellow) and over max distance (red).  
 
@@ -49,7 +48,7 @@ The system has an importable calendar configuration for Simple Calendar (https:/
 For area-of-effect templates, the system can use Enhanced Terrain Layer's elevation setting (https://github.com/ironmonk88/enhanced-terrain-layer). This can have an effect when fliers or terrain elevation matters, as otherwise templates are assumed to be on the same level as the attacking token.  
 
 
-#### Options
+### Options
 
 All world-scope settings are in sub-menus within the System Configuration menu. By default, certain automation options are turned off, in case they conflict with the way a GM wants to run the system. These can be turned on in the system configuration at their leisure. In addition, the system contains some client-scope settings, which can be seen in the default system settings menu.  
 
