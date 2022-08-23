@@ -68,13 +68,40 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /**
-     * Function to hook on active effect deletion, for automatic checks on condition removal
+     * Function to hook on active effect creation, for automatic checks on condition adding
      * @param {ActiveEffect} effect
      * @param {object} data
+     * @param {object} options
      * @param {string} user
      */
-    static onActorDeleteActiveEffect(effect, data, user) {
+    static async onActorCreateActiveEffect(effect, options, user) {
         if (game.user.id === user) {
+            /** @type {Ironclaw2EActor} */
+            const actor = effect.parent;
+            if (actor) { // Make sure only the calling user executes the function and that the effect actually had an actor assigned
+
+                // On Fire, add light source effect
+                const onFireLight = game.settings.get("ironclaw2e", "autoAddOnFireLight");
+                if (onFireLight) {
+                    if (checkConditionIronclaw(effect, "onfire")) {
+                        const activeSource = actor.items.find(element => element.type === "illumination" && element.system.lighted === true);
+                        if (!activeSource) // If no active source is found, auto-add the On Fire light
+                            await actor.activateFireSource();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Function to hook on active effect deletion, for automatic checks on condition removal
+     * @param {ActiveEffect} effect
+     * @param {object} options
+     * @param {string} user
+     */
+    static async onActorDeleteActiveEffect(effect, options, user) {
+        if (game.user.id === user) {
+            /** @type {Ironclaw2EActor} */
             const actor = effect.parent;
             if (actor) { // Make sure only the calling user executes the function and that the effect actually had an actor assigned
 
@@ -82,7 +109,7 @@ export class Ironclaw2EActor extends Actor {
                 const onFireCheck = actor.getFlag("ironclaw2e", "fireLightSet") ?? false;
                 if (onFireCheck) {
                     if (checkConditionIronclaw(effect, "onfire")) {
-                        return actor.refreshLightSource();
+                        await actor.refreshLightSource();
                     }
                 }
             }
@@ -3035,4 +3062,5 @@ export class Ironclaw2EActor extends Actor {
 
 // Actual Hooks
 Hooks.on("preCreateItem", Ironclaw2EActor.onActorPreCreateItem);
+Hooks.on("createActiveEffect", Ironclaw2EActor.onActorCreateActiveEffect);
 Hooks.on("deleteActiveEffect", Ironclaw2EActor.onActorDeleteActiveEffect);

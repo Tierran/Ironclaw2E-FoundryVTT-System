@@ -233,6 +233,8 @@
   "ironclaw2e.config.allowRerollingOthersDiceHint": "If checked, reroll bonuses that are marked as 'Allow Use on Others' can be used to reroll checks which the player does not own. Unchecked, the system does not allow it at all. Since the player will be considered the author of the reroll, they can see the entire context menu of the reroll message; this is normal and should not matter.",
   "ironclaw2e.config.showOthersTacticsUse": "Show other user's Tactics use",
   "ironclaw2e.config.showOthersTacticsUseHint": "If checked, weapon info chat messages will show the checkbox of whether attackers are going to use the Tactics skill to everyone. Unchecked, and only the GM and the player who sent the message will see the checkbox. This does not affect the automatic gift bonus checks, those will still recognize whether Tactics is being used even if it is visually hidden.",
+  "ironclaw2e.config.autoAddOnFireLight": "Auto-add light when On Fire",
+  "ironclaw2e.config.autoAddOnFireLightHint": "If checked, actors will automatically add a flame light source on themselves when given the On Fire condition, if they have no active light source.",
 
   "ironclaw2e.config.templateSpeciesActive": "Wildcard species templates active",
   "ironclaw2e.config.templateSpeciesActiveHint": "Whether the wildcard template system is active for Species.",

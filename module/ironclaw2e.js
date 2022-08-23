@@ -331,7 +331,7 @@ function registerWorldSettings() {
         config: false
     });
 
-    // Initiative condition configs
+    // Automatic condition configs
     game.settings.register("ironclaw2e", "autoInitiativeConditions", {
         name: "ironclaw2e.config.autoInitiativeConditions",
         hint: "ironclaw2e.config.autoInitiativeConditionsHint",
@@ -354,6 +354,14 @@ function registerWorldSettings() {
         scope: "world",
         type: Boolean,
         default: false,
+        config: false
+    });
+    game.settings.register("ironclaw2e", "autoAddOnFireLight", {
+        name: "ironclaw2e.config.autoAddOnFireLight",
+        hint: "ironclaw2e.config.autoAddOnFireLightHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
         config: false
     });
 

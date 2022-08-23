@@ -92,6 +92,7 @@ export class WorldSettingsConfig extends FormApplication {
         settings.sparkDieAutoDwindle = game.settings.get("ironclaw2e", "sparkDieAutoDwindle");
         settings.allowRerollingOthersDice = game.settings.get("ironclaw2e", "allowRerollingOthersDice");
         settings.showOthersTacticsUse = game.settings.get("ironclaw2e", "showOthersTacticsUse");
+        settings.autoAddOnFireLight = game.settings.get("ironclaw2e", "autoAddOnFireLight");
         return settings;
     }
 }
