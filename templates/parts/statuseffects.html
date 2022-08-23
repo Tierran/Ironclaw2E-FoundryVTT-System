@@ -19,6 +19,11 @@
         <li class="item effect flexrow" data-effect-id="{{effect._id}}">
             <div class="item-image"><img src="{{effect.icon}}" title="{{effect.label}}" width="24" height="24" /></div>
             <h4 class="item-name double-clickable roll-double-info-cond">{{effect.label}}</h4>
+            {{#if (conditionCheck effect "onfire")}}
+            <div class="item-controls-small flexrow">
+                <a class="rollable roll-onfire" title="{{localize "ironclaw2e.sheets.actor.applyFireLight"}}"><img src="icons/svg/fire.svg" width="24" height="24" /></a>
+            </div>
+            {{/if}}
             {{#if (conditionQuotaCheck effect)}}
             <div class="item-controls-small flexrow">
                 <span class="normal-label">{{#if (conditionCheck effect "temporaryward")}}{{localize "ironclaw2e.sheets.actor.status.ward"}}{{else}}{{localize "ironclaw2e.sheets.actor.status.quota"}}{{/if}}</span>

@@ -237,6 +237,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         html.find('.roll-rally').click(this._onRallyRoll.bind(this));
         html.find('.roll-enc-effect').click(this._onEncumbranceChange.bind(this));
         html.find('.roll-damage').click(this._onDamageRoll.bind(this));
+        html.find('.roll-onfire').click(this._onFireRoll.bind(this));
         html.find('.roll-vision').click(this._onVisionRoll.bind(this));
 
         html.find('.roll-effects-reset').click(this._onEffectsReset.bind(this));
@@ -633,6 +634,16 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         this.actor.popupDamage();
     }
 
+    /**
+     * Handle the click event to pop-up
+     * @param {Event} event   The originating click event
+     * @private
+     */
+    _onFireRoll(event) {
+        event.preventDefault();
+
+        this.actor.activateFireSource();
+    }
 
     /**
      * Handle the click event to pop-up

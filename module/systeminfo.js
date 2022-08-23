@@ -164,6 +164,14 @@ export class CommonSystemInfo {
      * The rule settings used to determine whether combat rules are used in distance measuring
      */
     static rangeCombatRules = { 0: "Never", 1: "In Combat", 2: "Always" };
+    /**
+     * The default light source settings, caused by the On Fire condition
+     */
+    static fireConditionLightSource = {
+        "dim": 4, "bright": 1, "angle": 360, "color": "#fe4c10", "alpha": 0.35, "animation": {
+            "type": "flame", "speed": 5, "intensity": 7
+        }
+    };
 }
 
 /**

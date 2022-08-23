@@ -18,7 +18,7 @@ import { getDistancePenaltyConstruction } from "../helpers.js";
 import { checkQuickModifierKey } from "../helpers.js";
 import { getDistanceBetweenPositions } from "../helpers.js";
 import { formDicePoolField } from "../helpers.js";
-import { checkConditionQuota, CommonConditionInfo, getConditionSelectObject, getSingleConditionIronclaw, getTargetConditionQuota, setTargetConditionQuota } from "../conditions.js";
+import { checkConditionIronclaw, checkConditionQuota, CommonConditionInfo, getConditionSelectObject, getSingleConditionIronclaw, getTargetConditionQuota, setTargetConditionQuota } from "../conditions.js";
 import { checkStandardDefense, CommonSystemInfo, getRangeDiceFromDistance } from "../systeminfo.js";
 import { AoETemplateIronclaw } from "../aoe-template.js";
 // For condition management
@@ -1693,20 +1693,42 @@ export class Ironclaw2EActor extends Actor {
         for (let l of lightsources) { // Douse all other light sources, including the caller if it was previously lighted
             doused.push({ "_id": l.id, "system.lighted": false });
         }
+
+        if (this.getFlag("ironclaw2e", "fireLightSet") !== undefined)
+            await this.unsetFlag("ironclaw2e", "fireLightSet");
         await this.updateEmbeddedDocuments("Item", doused);
-        await this._updateTokenLighting(updatedlightdata);
+        return this._updateTokenLighting(updatedlightdata);
+    }
+
+    /**
+     * Activate the default On Fire light statistics on the actor
+     */
+    async activateFireSource() {
+        let updatedlightdata = { ...CommonSystemInfo.fireConditionLightSource };
+
+        let lightsources = this.items.filter(element => element.type === "illumination");
+
+        let doused = [];
+        for (let l of lightsources) { // Douse all the normal light sources
+            doused.push({ "_id": l.id, "system.lighted": false });
+        }
+
+        await this.setFlag("ironclaw2e", "fireLightSet", true);
+        await this.updateEmbeddedDocuments("Item", doused);
+        return this._updateTokenLighting(updatedlightdata);
     }
 
     /**
      * Refresh the token light source based on which illumination item is active, if any
      */
-    refreshLightSource() {
+    async refreshLightSource() {
         let updatedlightdata = {
             "dim": 0, "bright": 0, "angle": 360, "color": "#ffffff", "alpha": 0.25, "animation": {
                 "type": "", "speed": 5, "intensity": 5
             }
         };
 
+        // If something ever happens that a light might be active while the token's light source does not match
         let lightsources = this.items.filter(element => element.type === "illumination");
         let activesource = lightsources.find(element => element.system.lighted === true);
         if (activesource) {
@@ -1718,6 +1740,8 @@ export class Ironclaw2EActor extends Actor {
             };
         }
 
+        if (this.getFlag("ironclaw2e", "fireLightSet") !== undefined)
+            await this.unsetFlag("ironclaw2e", "fireLightSet");
         return this._updateTokenLighting(updatedlightdata);
     }
 
@@ -1757,7 +1781,7 @@ export class Ironclaw2EActor extends Actor {
         updatedvisiondata = mergeObject(updatedvisiondata, visionDefaults);
 
         await this.updateEmbeddedDocuments("Item", doused);
-        await this._updateTokenVision(updatedvisiondata, recordDefault);
+        return this._updateTokenVision(updatedvisiondata, recordDefault);
     }
 
     /**
@@ -1850,10 +1874,23 @@ export class Ironclaw2EActor extends Actor {
      */
     async deleteEffect(condition, isid = false) {
         condition = Array.isArray(condition) ? condition : [condition];
+        const onFireCheck = this.getFlag("ironclaw2e", "fireLightSet") ?? false;
+
         if (isid) {
+            if (onFireCheck) {
+                const effects = this.effects;
+                if (condition.some(x => checkConditionIronclaw(effects.get(x), "onfire"))) {
+                    await this.refreshLightSource();
+                }
+            }
             await this.deleteEmbeddedDocuments("ActiveEffect", condition);
         }
         else {
+            if (onFireCheck) {
+                if (condition.includes("onfire")) {
+                    await this.refreshLightSource();
+                }
+            }
             await removeConditionsIronclaw(condition, this);
         }
     }

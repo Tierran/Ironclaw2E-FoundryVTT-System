@@ -586,6 +586,7 @@
   "ironclaw2e.sheets.actor.readyTooltip": "Ready {name}",
   "ironclaw2e.sheets.actor.showBattleTooltip": "Show {name} in battle statistics",
   "ironclaw2e.sheets.actor.hideBattleTooltip": "Hide {name} in battle statistics",
+  "ironclaw2e.sheets.actor.applyFireLight": "Apply the fire as a light source",
 
   "ironclaw2e.sheets.actor.visual.soak": "Soak pool sources: {dice}",
   "ironclaw2e.sheets.actor.visual.dodge": "Dodge pool sources: {dice}",

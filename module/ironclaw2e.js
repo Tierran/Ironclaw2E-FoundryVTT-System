@@ -161,7 +161,7 @@ Hooks.once('init', function () {
 
 Hooks.once('setup', function () {
     // Enhanced Terrain Layer check
-    const etlActive = game.modules.get("combat-utility-belt")?.active === true;
+    const etlActive = game.modules.get("enhanced-terrain-layer")?.active === true;
     game.ironclaw2e.useETLElevation = etlActive;
 
     // Combat Utility Belt check
