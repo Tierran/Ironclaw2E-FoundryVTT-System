@@ -2,8 +2,8 @@
  - Made separate vision modes for Ironclaw 
  - Gifts can now give another vision mode to the actor's tokens, toggleable on and off 
  - Added missing core combat sounds
- - Item hotbar macros arw working again 
- - New setting to control whether the default item macro is sending an info chat message, or using it
+ - Item hotbar macros are working again 
+ - New setting to control whether the default item macro is sending an chat info message, or using it
 
 ### 0.6.0 New tens release 
  - Updated system for Foundry VTT V10
