@@ -147,6 +147,7 @@ Hooks.once('init', function () {
     // Define system vision modes and settings
     CONFIG.Canvas.visionModes = IronclawVisionModes();
     CONFIG.specialStatusEffects.BLIND = "blinded";
+    CONFIG.specialStatusEffects.MUTE = "silenced";
 
     const asciiArt = `  _____                      _                
   \\_   \\_ __ ___  _ __   ___| | __ ___      __

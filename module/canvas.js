@@ -44,6 +44,23 @@ export class EcholocationVisionMode extends VisionMode {
 
     /** @override */
     animated = true;
+
+    /**
+     * Test basic visibility and check that the subject is not invisible or the object source is blinded.
+     * @override
+     * @this {VisionSource}                 This function is called from the context of the parent vision source
+     * @param {object} [config]             Additional options which modify visibility testing.
+     * @param {CanvasVisibilityTest[]} [config.tests] An array of test cases which should be checked.
+     * @param {PIXI.DisplayObject} [config.object] An optional reference to the object whose visibility is being tested.
+     * @returns {boolean}                   Whether the provided object or any of the points are visible to this source.
+     */
+    testVisibility({ tests, object } = {}) {
+        const src = this.object.document;
+        if ((src instanceof TokenDocument) && src.hasStatusEffect(CONFIG.specialStatusEffects.MUTE)) return false;
+        const tgt = object?.document;
+        if ((tgt instanceof TokenDocument) && tgt.hasStatusEffect(CONFIG.specialStatusEffects.INVISIBLE)) return false;
+        return VisionMode.prototype.testNaturalVisibility.call(this, { tests, object });
+    }
 }
 
 /**
