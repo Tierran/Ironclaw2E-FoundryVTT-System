@@ -67,6 +67,28 @@ export class Ironclaw2EActor extends Actor {
         }
     }
 
+    /**
+     * Function to hook on active effect deletion, for automatic checks on condition removal
+     * @param {ActiveEffect} effect
+     * @param {object} data
+     * @param {string} user
+     */
+    static onActorDeleteActiveEffect(effect, data, user) {
+        if (game.user.id === user) {
+            const actor = effect.parent;
+            if (actor) { // Make sure only the calling user executes the function and that the effect actually had an actor assigned
+
+                // On Fire, remove light source effect
+                const onFireCheck = actor.getFlag("ironclaw2e", "fireLightSet") ?? false;
+                if (onFireCheck) {
+                    if (checkConditionIronclaw(effect, "onfire")) {
+                        return actor.refreshLightSource();
+                    }
+                }
+            }
+        }
+    }
+
     /* -------------------------------------------- */
     /* Static Click Functions                       */
     /* -------------------------------------------- */
@@ -1874,23 +1896,11 @@ export class Ironclaw2EActor extends Actor {
      */
     async deleteEffect(condition, isid = false) {
         condition = Array.isArray(condition) ? condition : [condition];
-        const onFireCheck = this.getFlag("ironclaw2e", "fireLightSet") ?? false;
 
         if (isid) {
-            if (onFireCheck) {
-                const effects = this.effects;
-                if (condition.some(x => checkConditionIronclaw(effects.get(x), "onfire"))) {
-                    await this.refreshLightSource();
-                }
-            }
             await this.deleteEmbeddedDocuments("ActiveEffect", condition);
         }
         else {
-            if (onFireCheck) {
-                if (condition.includes("onfire")) {
-                    await this.refreshLightSource();
-                }
-            }
             await removeConditionsIronclaw(condition, this);
         }
     }
@@ -3025,3 +3035,4 @@ export class Ironclaw2EActor extends Actor {
 
 // Actual Hooks
 Hooks.on("preCreateItem", Ironclaw2EActor.onActorPreCreateItem);
+Hooks.on("deleteActiveEffect", Ironclaw2EActor.onActorDeleteActiveEffect);
