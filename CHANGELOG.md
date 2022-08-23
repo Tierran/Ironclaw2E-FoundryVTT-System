@@ -1,3 +1,9 @@
+### 0.6.2 Fixing fire release 
+ - Added a button to add a flame light on actors that are On Fire
+ - Added an option to do the above automatically if they don't have a light source active
+ - Echolocation is affected by Silenced and not Blinded
+ - Fixed Enhanced Terrain Layer detection
+ 
 ### 0.6.1 Visible release 
  - Made separate vision modes for Ironclaw 
  - Gifts can now give another vision mode to the actor's tokens, toggleable on and off 
