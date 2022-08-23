@@ -3,14 +3,14 @@
   "id": "ironclaw2e",
   "title": "Ironclaw Second Edition",
   "description": "Ironclaw Second Edition system for FoundryVTT.",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "minimumCoreVersion": "10",
   "compatibility": {
     "minimum": 10,
     "verified": 10,
     "maximum": 10
   },
-  "templateVersion": 28,
+  "templateVersion": 29,
   "authors": [
     {
       "name": "Hertzila",

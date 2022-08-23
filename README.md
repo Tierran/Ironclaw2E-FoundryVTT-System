@@ -76,10 +76,15 @@ The "Using Tactics" checkbox in weapon item info messages controls whether the a
 #### Setting up items
 
 Setting up dice pools for items follows this format: "*(trait or skill name)*, *(another name)*;*(any bonus dice in one line format)*", eg. "Body, Melee Combat, dodge,weathersense;d12". The order of skills and traits are arbitrary and can include spaces in the name, but every name must be separated with a comma. The semicolon (;) separates the stat names from bonus dice, which are formatted the same way as one line rolls. If there is no bonus dice, the semicolon can be omitted.  
+Note that there is a difference between *dice pools* like what weapons and gifts have and the *dice fields* armors and shields have. The former can process trait and skill names as mentioned, while the latter expects only raw dice, as in "2d10".  
+
+Shields and armor that are being worn or held will automatically be added to any relevant pools by the system. Even if the dice field is empty, the system will show its use for information purposes. Note that the system will only account for a maximum of three worn armors and one held shield. Any extra ones will be ignored.  
 
 For gifts that only grant situational bonuses to certain things without any related skills, like Strength or Veteran, the gift dice pool can be set as either a one line roll "d12" or as a dice pool without stats ";d12". Both work, though if the system doesn't seem to recognize the dice, use the latter.  
 
 Gifts that grant situational bonuses can be configured from the "Advanced Settings" tab. More on that below. Items that have weight can have their weight value set up as either a fractional value "1/8" or a decimal value "0.125", the system will detect the presence of a slash and treat the value accordingly.  
+
+Gifts that give new vision modes can be toggled on and off by either a button on the sheet, or if the gift can't be used otherwise, by using it through a hotbar macro. The default vision values (mode and range) for the actor's prototype token will be saved when applying a vision mode when no other one is enabled and restored when all vision modes are disabled.  
 
 #### Weapon-specific setups
 
