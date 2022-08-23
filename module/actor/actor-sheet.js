@@ -237,6 +237,8 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         html.find('.roll-rally').click(this._onRallyRoll.bind(this));
         html.find('.roll-enc-effect').click(this._onEncumbranceChange.bind(this));
         html.find('.roll-damage').click(this._onDamageRoll.bind(this));
+        html.find('.roll-vision').click(this._onVisionRoll.bind(this));
+
         html.find('.roll-effects-reset').click(this._onEffectsReset.bind(this));
         html.find('.roll-effects-add').click(this._onEffectsAdd.bind(this));
         html.find('.roll-effects-delete').click(this._onEffectsDelete.bind(this));
@@ -631,6 +633,24 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         this.actor.popupDamage();
     }
 
+
+    /**
+     * Handle the click event to pop-up
+     * @param {Event} event   The originating click event
+     * @private
+     */
+    _onVisionRoll(event) {
+        event.preventDefault();
+        const element = event.currentTarget;
+        const dataset = element.dataset;
+        const data = this.actor.system;
+
+        if (dataset.item) {
+            const item = this.actor.items.get(dataset.item);
+            this.actor.changeVisionMode(item);
+        }
+    }
+
     /**
      * Handle the condition reset
      * @param {Event} event   The originating click event
@@ -777,7 +797,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                     item.weaponToggleReady();
             } else {
                 if (item.system.hasOwnProperty(dataset.stat)) {
-                    const propertyName = "data." + dataset.stat;
+                    const propertyName = "system." + dataset.stat;
                     foobar = { "_id": item.id };
                     foobar[propertyName] = !item.system[dataset.stat];
                 }

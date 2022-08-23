@@ -35,7 +35,7 @@
                     <input type="text" name="system.giftTags" value="{{system.giftTags}}" data-dtype="String" />
                 </div>
                 <div class="resource flexrow flex-group-center">
-                    <label class="resource-label">Refresh:</label>
+                    <label class="normal-label">Refresh:</label>
                     <input type="text" name="system.refresh" value="{{system.refresh}}" data-dtype="String" />
                     <label class="normal-label">Exhausts when used:</label>
                     <input type="checkbox" name="system.exhaustWhenUsed" {{checked system.exhaustWhenUsed}} data-dtype="Boolean" />
@@ -43,17 +43,29 @@
                     <input type="checkbox" name="system.grantsMark" {{checked system.grantsMark}} data-dtype="Boolean" />
                 </div>
                 <div class="resource flexrow flex-group-center">
-                    <label class="resource-label">Gift dice:</label>
+                    <label class="normal-label">Gift dice:</label>
                     <input type="text" name="system.useDice" value="{{system.useDice}}" data-dtype="String" />
                     <label class="normal-label">Default TN:</label>
-                    <input type="text" name="system.defaultTN" value="{{system.defaultTN}}" data-dtype="Number" />
+                    <input type="number" name="system.defaultTN" value="{{system.defaultTN}}" data-dtype="Number" />
                 </div>
                 {{#if showGiftSkill}}
                 <div class="resource flexrow flex-group-center">
-                    <label class="resource-label">Gift Skill Name:</label>
+                    <label class="normal-label">Gift Skill Name:</label>
                     <input type="text" name="system.giftSkill" value="{{system.giftSkill}}" data-dtype="String" />
                 </div>
                 {{/if}}
+                <div class="resource flexrow flex-group-center">
+                    <label class="normal-label">Has Extra Vision:</label>
+                    <input type="checkbox" name="system.extraVision" {{checked system.extraVision}} data-dtype="Boolean" />
+                    {{#if system.extraVision}}
+                    <label class="normal-label">Range:</label>
+                    <input type="number" name="system.extraVisionRange" value="{{system.extraVisionRange}}" data-dtype="Number" />
+                    <label class="normal-label">Mode:</label>
+                    <select name="system.extraVisionName">
+                        {{selectOptions selectables.visionModes selected=system.extraVisionName nameAttr="id" labelAttr="label" localize=true}}
+                    </select>
+                    {{/if}}
+                </div>
             </div>
         </div>
 

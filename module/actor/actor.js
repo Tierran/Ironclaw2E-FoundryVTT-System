@@ -1199,17 +1199,45 @@ export class Ironclaw2EActor extends Actor {
      * @private
      */
     async _updateTokenLighting(lightdata) {
-        let foundtoken = findActorToken(this);
-        if (foundtoken) {
-            await foundtoken.update({ "light": lightdata });
-        }
-
         // Update prototype token, if applicable
         if (!this.isToken) {
             await this.update({
                 "prototypeToken.light": lightdata
             });
         }
+
+        let foundtoken = findActorToken(this);
+        if (foundtoken) {
+            await foundtoken.update({ "light": lightdata });
+        }
+    }
+
+    /**
+     * Update tokens associated with this actor with vision data
+     * @param {any} visiondata Data to use for update
+     * @param {boolean} record Whether to grab the existing values and record them as defaults
+     * @private
+     */
+    async _updateTokenVision(visiondata, record) {
+        let foundtoken = findActorToken(this);
+
+        // Update prototype token, if applicable
+        if (!this.isToken) {
+            if (record) {
+                await this.setFlag("ironclaw2e", "defaultVisionSettings", { "range": this.prototypeToken.sight.range, "visionMode": this.prototypeToken.sight.visionMode });
+            }
+            await this.update({
+                "prototypeToken.sight": visiondata
+            });
+        } else if (record && foundtoken) { // Update a token's default vision from the found token
+            await this.setFlag("ironclaw2e", "defaultVisionSettings", { "range": foundtoken.sight.range, "visionMode": foundtoken.sight.visionMode });
+        }
+
+        if (foundtoken) {
+            await foundtoken.update({ "sight": visiondata });
+        }
+
+        canvas.perception.update({ refreshVision: true }, true);
     }
 
     /**
@@ -1646,7 +1674,7 @@ export class Ironclaw2EActor extends Actor {
             }
         };
 
-        let lightsources = this.items.filter(element => element.type == "illumination");
+        let lightsources = this.items.filter(element => element.type === "illumination");
 
         if (!lightsource.system.lighted) { // Light the light source
             updatedlightdata = {
@@ -1655,7 +1683,7 @@ export class Ironclaw2EActor extends Actor {
                     "type": lightsource.system.lightAnimationType, "speed": lightsource.system.lightAnimationSpeed, "intensity": lightsource.system.lightAnimationIntensity
                 }
             };
-            const index = lightsources.findIndex(element => element.id == lightsource.id);
+            const index = lightsources.findIndex(element => element.id === lightsource.id);
             if (index > -1)
                 lightsources.splice(index, 1); // Exclude from dousing
             await lightsource.update({ "_id": lightsource.id, "system.lighted": true });
@@ -1679,8 +1707,8 @@ export class Ironclaw2EActor extends Actor {
             }
         };
 
-        let lightsources = this.items.filter(element => element.type == "illumination");
-        let activesource = lightsources.find(element => element.system.lighted == true);
+        let lightsources = this.items.filter(element => element.type === "illumination");
+        let activesource = lightsources.find(element => element.system.lighted === true);
         if (activesource) {
             updatedlightdata = {
                 "dim": lightsource.system.dimLight, "bright": lightsource.system.brightLight, "angle": lightsource.system.lightAngle,
@@ -1691,6 +1719,45 @@ export class Ironclaw2EActor extends Actor {
         }
 
         return this._updateTokenLighting(updatedlightdata);
+    }
+
+    /**
+     * Change which vision item the actor is using, or turn them all off and restore the saved defaults
+     * @param {Ironclaw2EItem} visionsource
+     */
+    async changeVisionMode(visionsource) {
+        if (!visionsource) {
+            console.error("Attempted to change the vision mode without providing a vision source for actor: " + this);
+            return;
+        }
+        let updatedvisiondata = this.getFlag("ironclaw2e", "defaultVisionSettings") ?? {
+            "range": 0, "visionMode": "basic"
+        };
+
+        let visionsources = this.items.filter(element => element.type === "gift" && element.system.extraVision);
+        let recordDefault = visionsources.some(element => element.system.extraVisionEnabled) === false;
+
+        if (!visionsource.system.extraVisionEnabled) { // Enable the vision source
+            updatedvisiondata = {
+                "range": visionsource.system.extraVisionRange, "visionMode": visionsource.system.extraVisionName
+            };
+            const index = visionsources.findIndex(element => element.id === visionsource.id);
+            if (index > -1)
+                visionsources.splice(index, 1); // Exclude from disabling
+            await visionsource.update({ "_id": visionsource.id, "system.extraVisionEnabled": true });
+        }
+
+        let doused = [];
+        for (let l of visionsources) { // Disable all other vision sources, including the caller if it was previously enabled
+            doused.push({ "_id": l.id, "system.extraVisionEnabled": false });
+        }
+
+        // Merge the default vision settings to the update
+        const visionDefaults = CONFIG.Canvas.visionModes[updatedvisiondata.visionMode]?.vision?.defaults || {};
+        updatedvisiondata = mergeObject(updatedvisiondata, visionDefaults);
+
+        await this.updateEmbeddedDocuments("Item", doused);
+        await this._updateTokenVision(updatedvisiondata, recordDefault);
     }
 
     /**

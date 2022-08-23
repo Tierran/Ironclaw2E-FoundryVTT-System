@@ -85,7 +85,7 @@ export function IronclawVisionModes() {
             },
             vision: {
                 darkness: { adaptive: false },
-                defaults: { attenuation: 0, contrast: 0.15, saturation: -0.75, brightness: 0.15 }
+                defaults: { attenuation: 0.1, contrast: 0.15, saturation: -0.75, brightness: 0.15 }
             }
         }),
         echolocation: new EcholocationVisionMode({
@@ -93,7 +93,7 @@ export function IronclawVisionModes() {
             label: "ironclaw2e.config.vision.echolocation",
             canvas: {
                 shader: ColorAdjustmentsSamplerShader,
-                uniforms: { enable: true, contrast: 0.75, saturation: -1, exposure: 0.15 }
+                uniforms: { enable: true, contrast: 0.8, saturation: -1, exposure: 0.35, brightness: 0.15 }
             },
             lighting: {
                 background: { visibility: VisionMode.LIGHTING_VISIBILITY.DISABLED },

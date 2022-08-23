@@ -61,7 +61,7 @@
                 <div class="resource flexrow flex-group-center">
                     <label class="normal-label">Light type:</label>
                     <select name="system.lightAnimationType" data-dtype="String">
-                        {{selectOptions selectables.lightAnimations selected=system.lightAnimationType labelAttr="label" localize=true}}
+                        {{selectOptions selectables.lightAnimations selected=system.lightAnimationType labelAttr="label" localize=true blank="ironclaw2e.none"}}
                     </select>
                     <label class="normal-label">Light speed:</label>
                     <input type="text" name="system.lightAnimationSpeed" value="{{system.lightAnimationSpeed}}" data-dtype="Number" />

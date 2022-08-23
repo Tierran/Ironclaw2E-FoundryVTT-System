@@ -282,7 +282,7 @@ export class Ironclaw2EItem extends Item {
             system.giftArray = (firstsplit[1].length > 0 ? findTotalDice(firstsplit[1]) : null);
             system.canUse = true;
         }
-        else if (system.exhaustWhenUsed) {
+        else if (system.exhaustWhenUsed || system.extraVision) {
             system.giftStats = null;
             system.giftArray = null;
             system.canUse = true;
@@ -1375,16 +1375,20 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        if (system.canUse == false) {
+        if (system.canUse === false) {
             return;
         }
-        if (system.exhaustWhenUsed == false || system.exhausted == false) {
-            if (system.giftStats || system.giftArray)
+        if (system.exhaustWhenUsed === false || system.exhausted === false) {
+            if (system.giftStats || system.giftArray) // Roll the gift
                 this.genericItemRoll(system.giftStats, system.defaultTN, item.name, system.giftArray, 0, { directroll }, (system.exhaustWhenUsed ? (x => { this.giftToggleExhaust("true"); }) : null));
-            else if (system.exhaustWhenUsed) // Check just in case, even though there should never be a situation where canUse is set, but neither rollable stats / dice nor exhaustWhenUsed aren't
+            else if (system.exhaustWhenUsed) // Popup an exhaust request
                 this.popupExhaustGift();
+            else if (system.extraVision === true) { // Toggle vision
+                if (this.actor)
+                    this.actor.changeVisionMode(this);
+            }
         }
-        else if (system.exhaustWhenUsed == true && system.exhausted == true) {
+        else if (system.exhaustWhenUsed === true && system.exhausted === true) {
             this.popupRefreshGift();
         }
     }

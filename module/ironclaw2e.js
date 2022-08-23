@@ -144,8 +144,9 @@ Hooks.once('init', function () {
     // Dice roller init
     CardinalDiceRoller.cardinalInitialization();
 
-    // Define system vision modes
+    // Define system vision modes and settings
     CONFIG.Canvas.visionModes = IronclawVisionModes();
+    CONFIG.specialStatusEffects.BLIND = "blinded";
 
     const asciiArt = `  _____                      _                
   \\_   \\_ __ ___  _ __   ___| | __ ___      __
