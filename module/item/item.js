@@ -282,7 +282,7 @@ export class Ironclaw2EItem extends Item {
             system.giftArray = (firstsplit[1].length > 0 ? findTotalDice(firstsplit[1]) : null);
             system.canUse = true;
         }
-        else if (system.exhaustWhenUsed || system.extraVision) {
+        else if (system.exhaustWhenUsed || system.extraSense) {
             system.giftStats = null;
             system.giftArray = null;
             system.canUse = true;
@@ -1383,9 +1383,9 @@ export class Ironclaw2EItem extends Item {
                 this.genericItemRoll(system.giftStats, system.defaultTN, item.name, system.giftArray, 0, { directroll }, (system.exhaustWhenUsed ? (x => { this.giftToggleExhaust("true"); }) : null));
             else if (system.exhaustWhenUsed) // Popup an exhaust request
                 this.popupExhaustGift();
-            else if (system.extraVision === true) { // Toggle vision
+            else if (system.extraSense === true) { // Toggle vision
                 if (this.actor)
-                    this.actor.changeVisionMode(this);
+                    this.actor.changeVisionMode(this, 2);
             }
         }
         else if (system.exhaustWhenUsed === true && system.exhausted === true) {

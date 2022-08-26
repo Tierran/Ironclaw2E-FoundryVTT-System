@@ -1,3 +1,7 @@
+/* -------------------------------------------- */
+/*  Measurements                                */
+/* -------------------------------------------- */
+
 /** @override */
 export const measureDistances = function (segments, options = {}) {
     if (!options.gridSpaces) return BaseGrid.prototype.measureDistances.call(this, segments, options);
@@ -37,6 +41,10 @@ export const measureDistances = function (segments, options = {}) {
     });
 };
 
+/* -------------------------------------------- */
+/*  Vision Modes                                */
+/* -------------------------------------------- */
+
 /**
  * A subclass for echolocation based vision
  */
@@ -44,23 +52,6 @@ export class EcholocationVisionMode extends VisionMode {
 
     /** @override */
     animated = true;
-
-    /**
-     * Test basic visibility and check that the subject is not invisible or the object source is blinded.
-     * @override
-     * @this {VisionSource}                 This function is called from the context of the parent vision source
-     * @param {object} [config]             Additional options which modify visibility testing.
-     * @param {CanvasVisibilityTest[]} [config.tests] An array of test cases which should be checked.
-     * @param {PIXI.DisplayObject} [config.object] An optional reference to the object whose visibility is being tested.
-     * @returns {boolean}                   Whether the provided object or any of the points are visible to this source.
-     */
-    testVisibility({ tests, object } = {}) {
-        const src = this.object.document;
-        if ((src instanceof TokenDocument) && src.hasStatusEffect(CONFIG.specialStatusEffects.MUTE)) return false;
-        const tgt = object?.document;
-        if ((tgt instanceof TokenDocument) && tgt.hasStatusEffect(CONFIG.specialStatusEffects.INVISIBLE)) return false;
-        return VisionMode.prototype.testNaturalVisibility.call(this, { tests, object });
-    }
 }
 
 /**
@@ -77,7 +68,7 @@ export function IronclawVisionModes() {
         }),
         nightVision: new VisionMode({
             id: "nightVision",
-            label: "ironclaw2e.config.vision.nightVision",
+            label: "ironclaw2e.config.sense.nightVision",
             canvas: {
                 shader: ColorAdjustmentsSamplerShader,
                 uniforms: { enable: true, contrast: 0.15, saturation: -0.75, brightness: 0.15 }
@@ -107,7 +98,7 @@ export function IronclawVisionModes() {
         }),
         echolocation: new EcholocationVisionMode({
             id: "echolocation",
-            label: "ironclaw2e.config.vision.echolocation",
+            label: "ironclaw2e.config.sense.echolocation",
             canvas: {
                 shader: ColorAdjustmentsSamplerShader,
                 uniforms: { enable: true, contrast: 0.8, saturation: -1, exposure: 0.35, brightness: 0.15 }
@@ -240,6 +231,79 @@ class WaveOutwardBackgroundVisionShader extends BackgroundVisionShader {
 
     /** @inheritdoc */
     get isRequired() {
+        return true;
+    }
+}
+
+/* -------------------------------------------- */
+/*  Detection Modes                             */
+/* -------------------------------------------- */
+
+/**
+ * Return an object holding the default Ironclaw detection modes, to be assigned to 'CONFIG.Canvas.detectionModes'
+ */
+export function IronclawDetectionModes() {
+    return {
+        basicSight: new DetectionModeBasicSight({
+            id: "basicSight",
+            label: "DETECTION.BasicSight",
+            type: DetectionMode.DETECTION_TYPES.SIGHT
+        }),
+        emitUltrasound: new DetectionModeEmitUltrasound({
+            id: "emitUltrasound",
+            label: "ironclaw2e.config.detection.emitUltrasound",
+            type: DetectionMode.DETECTION_TYPES.SOUND
+        }),
+        hearUltrasound: new DetectionModeHearUltrasound({
+            id: "hearUltrasound",
+            label: "ironclaw2e.config.detection.hearUltrasound",
+            type: DetectionMode.DETECTION_TYPES.SOUND
+        })
+    }
+}
+
+/**
+ * Detection mode that is based on emitting rapid pulses of ultrasound
+ */
+class DetectionModeEmitUltrasound extends DetectionMode {
+    /** @override */
+    static getDetectionFilter() {
+        return this._detectionFilter ??= OutlineOverlayFilter.create({
+            outlineColor: [0.5, 0.5, 0.5, 1],
+            knockout: true,
+            wave: true
+        });
+    }
+
+    /** @override */
+    _canDetect(visionSource, target) {
+        const src = visionSource.object.document;
+        if ((src instanceof TokenDocument) && src.hasStatusEffect(CONFIG.specialStatusEffects.MUTE)) return false;
+        const tgt = target?.document;
+        const isInvisible = (tgt instanceof TokenDocument) && tgt.hasStatusEffect(CONFIG.specialStatusEffects.INVISIBLE);
+        return !isInvisible;
+    }
+}
+
+/**
+ * Detection mode that represents ears sensitive enough to hear into ultrasound
+ */
+class DetectionModeHearUltrasound extends DetectionMode {
+    /** @override */
+    static getDetectionFilter() {
+        return this._detectionFilter ??= OutlineOverlayFilter.create({
+            outlineColor: [0, 0.60, 0.33, 1],
+            wave: true
+        });
+    }
+
+    /** @override */
+    _canDetect(visionSource, target) {
+
+        // Ultrasound-hearing can only detect active use of ultrasound use (echolocation)
+        const tgt = target?.document;
+        const emitsUltrasound = (tgt instanceof TokenDocument) && tgt.detectionModes.find(x => x.id === "emitUltrasound")?.enabled && !tgt.hasStatusEffect(CONFIG.specialStatusEffects.MUTE);
+        if (!emitsUltrasound) return false;
         return true;
     }
 }

@@ -264,8 +264,12 @@
   "ironclaw2e.config.defaultSendToChatHint": "Controls what is considered the default macro type when dragging an item to the hotbar, versus the alternate macro type which is created by holding the Quick Roll key. Checked, the default macro is sending the item information to chat. Unchecked, the default is using the item in some way.",
 
 
-  "ironclaw2e.config.vision.nightVision": "Night Vision",
-  "ironclaw2e.config.vision.echolocation": "Echolocation",
+  "ironclaw2e.config.sense.nightVision": "Night Vision",
+  "ironclaw2e.config.sense.echolocation": "Echolocation",
+  "ironclaw2e.config.sense.keenEars": "Keen Ears",
+
+  "ironclaw2e.config.detection.emitUltrasound": "Emit Ultrasound",
+  "ironclaw2e.config.detection.hearUltrasound": "Hear Ultrasound",
 
 
   "ironclaw2e.keyConfig.quickRollModifier": "Quick Roll Modifier Key",

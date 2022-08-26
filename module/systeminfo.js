@@ -15,6 +15,22 @@ import { makeCompareReady } from "./helpers.js";
  * }} RangeDiceReturn
  */
 
+/**
+ * @typedef {{
+ *   label: string,
+ *   visionName: string,
+ *   detectionModes: Array<ExtraSenseDetectionData>,
+ *   detectionDefaults: Array<ExtraSenseDetectionData>
+ * }} ExtraSenseData
+ */
+
+/**
+ * @typedef {{
+ *   id: string,
+ *   range: number | null
+ * }} ExtraSenseDetectionData
+ */
+
 // Commonly in the system, die types are referred to with integers based around their index position in the system's dice arrays, whether or not they're actually in an array:
 // [0] = d12's, [1] = d10's, [2] = d8's, [3] = d6's, [4] = d4's
 // 0 = d12, 1 = d10, 2 = d8, 3 = d6, 4 = d4
@@ -171,6 +187,16 @@ export class CommonSystemInfo {
         "dim": 4, "bright": 1, "angle": 360, "color": "#fe4c10", "alpha": 0.35, "animation": {
             "type": "flame", "speed": 5, "intensity": 7
         }
+    };
+    /**
+     * The list of extra senses a gift can give, alongside system data about what they do
+     * @enum [ExtraSenseData]
+     */
+    static extraSenses = {
+        "basic": { label: "VISION.ModeBasicVision", visionName: "basic", detectionModes: [], detectionDefaults: [] },
+        "nightVision": { label: "ironclaw2e.config.sense.nightVision", visionName: "nightVision", detectionModes: [], detectionDefaults: [] },
+        "echolocation": { label: "ironclaw2e.config.sense.echolocation", visionName: "echolocation", detectionModes: [{ id: "emitUltrasound", range: null }], detectionDefaults: [{ id: "hearUltrasound", range: 100}] },
+        "keenEars": { label: "ironclaw2e.config.sense.keenEars", visionName: "", detectionModes: [], detectionDefaults: [{ id: "hearUltrasound", range: 100 }] }
     };
 }
 

@@ -227,10 +227,10 @@
       "giftSkill": "",
       "useDice": "",
       "defaultTN": 3,
-      "extraVision": false,
-      "extraVisionEnabled": false,
-      "extraVisionName": "",
-      "extraVisionRange": 4,
+      "extraSense": false,
+      "extraSenseEnabled": 0,
+      "extraSenseName": "",
+      "extraSenseRangeBand": "",
       "specialSettings": []
     },
     "extraCareer": {

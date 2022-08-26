@@ -658,7 +658,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
         if (dataset.item) {
             const item = this.actor.items.get(dataset.item);
-            this.actor.changeVisionMode(item);
+            this.actor.changeVisionMode(item, 2);
         }
     }
 

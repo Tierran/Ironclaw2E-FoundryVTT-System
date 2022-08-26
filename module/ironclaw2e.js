@@ -38,7 +38,7 @@ import { registerHandlebarsHelpers } from "./handlebars.js";
 
 import { WildcardTemplateConfig, WorldSettingsConfig } from "./config.js";
 import { CoinageSettingsConfig } from "./config.js";
-import { IronclawVisionModes, measureDistances } from "./canvas.js";
+import { IronclawDetectionModes, IronclawVisionModes, measureDistances } from "./canvas.js";
 
 /* -------------------------------------------- */
 /*  Base Hooks                                  */
@@ -146,6 +146,7 @@ Hooks.once('init', function () {
 
     // Define system vision modes and settings
     CONFIG.Canvas.visionModes = IronclawVisionModes();
+    CONFIG.Canvas.detectionModes = IronclawDetectionModes();
     CONFIG.specialStatusEffects.BLIND = "blinded";
     CONFIG.specialStatusEffects.MUTE = "silenced";
 

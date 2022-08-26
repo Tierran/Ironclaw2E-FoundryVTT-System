@@ -55,15 +55,19 @@
                 </div>
                 {{/if}}
                 <div class="resource flexrow flex-group-center">
-                    <label class="normal-label">Gives Vision:</label>
-                    <input type="checkbox" name="system.extraVision" {{checked system.extraVision}} data-dtype="Boolean" />
-                    {{#if system.extraVision}}
-                    <label class="normal-label">Range:</label>
-                    <input type="number" name="system.extraVisionRange" value="{{system.extraVisionRange}}" data-dtype="Number" />
+                    <label class="normal-label">Extra Sense:</label>
+                    <input type="checkbox" name="system.extraSense" {{checked system.extraSense}} data-dtype="Boolean" />
+                    {{#if system.extraSense}}
                     <label class="normal-label">Mode:</label>
-                    <select name="system.extraVisionName">
-                        {{selectOptions selectables.visionModes selected=system.extraVisionName nameAttr="id" labelAttr="label" localize=true}}
+                    <select name="system.extraSenseName" data-dtype="String">
+                        {{selectOptions selectables.extraSenses selected=system.extraSenseName labelAttr="label" localize=true}}
                     </select>
+                    {{#if (extraSenseHasVision system.extraSenseName)}}
+                    <label class="normal-label">Range:</label>
+                    <select name="system.extraSenseRangeBand" data-dtype="String">
+                        {{selectOptions selectables.range selected=system.extraSenseRangeBand localize=false blank="None"}}
+                    </select>
+                    {{/if}}
                     {{/if}}
                 </div>
             </div>

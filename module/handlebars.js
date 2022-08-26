@@ -1,5 +1,6 @@
 import { makeCompareReady } from "./helpers.js";
 import { checkConditionIronclaw, checkConditionQuota, hasConditionsIronclaw } from "./conditions.js";
+import { CommonSystemInfo } from "./systeminfo.js";
 
 /** Handlebars helper registration */
 export function registerHandlebarsHelpers() {
@@ -15,6 +16,10 @@ export function registerHandlebarsHelpers() {
 
     Handlebars.registerHelper('toLowerCase', function (str) {
         return str.toLowerCase();
+    });
+
+    Handlebars.registerHelper('equalTo', function (val, compare) {
+        return val === compare;
     });
 
     Handlebars.registerHelper('equalOrNothing', function (str, compare) {
@@ -50,6 +55,10 @@ export function registerHandlebarsHelpers() {
 
     Handlebars.registerHelper('conditionQuotaCheck', function (cond) {
         return checkConditionQuota(cond);
+    });
+
+    Handlebars.registerHelper('extraSenseHasVision', function (val) {
+        return CommonSystemInfo.extraSenses[val]?.visionName;
     });
 }
 

@@ -1264,11 +1264,37 @@ export class Ironclaw2EActor extends Actor {
     /**
      * Update tokens associated with this actor with vision data
      * @param {any} visiondata Data to use for update
+     * @param {Map<string,object>} detectionmap Data to use for update
      * @param {boolean} record Whether to grab the existing values and record them as defaults
      * @private
      */
-    async _updateTokenVision(visiondata, record) {
+    async _updateTokenVision(visiondata, detectionmap, record) {
         let foundtoken = findActorToken(this);
+        let updateData = visiondata ? { "sight": visiondata } : {};
+        
+        if (detectionmap.size > 0) {
+            /** @type {Array<>} */
+            const existingModes = this.isToken ? foundtoken.detectionModes : this.prototypeToken.detectionModes;
+            if (this.isToken && existingModes.some(x => x.id === DetectionMode.BASIC_MODE_ID))
+                existingModes.splice(existingModes.findIndex(x => x.id === DetectionMode.BASIC_MODE_ID), 1);
+
+            for (let [key, value] of detectionmap.entries()) {
+                const foo = existingModes.findIndex(x => x.id === key);
+                if (value.remove) {
+                    if (foo > -1) // If the mode is tagged for removal and is found, just splice it out
+                        existingModes.splice(foo, 1);
+                } else {
+                    if (foo > -1) { // If the mode is tagged for addition and is found, update the range and force-enable it
+                        existingModes[foo].range = value.range;
+                        existingModes[foo].enabled = true;
+                    } else { // If the mode is tagged for addition and is not found, add it to the array
+                        existingModes.push({ "id": key, "range": value.range, "enabled": true });
+                    }
+                }
+            }
+
+            updateData.detectionModes = existingModes;
+        }
 
         // Update prototype token, if applicable
         if (!this.isToken) {
@@ -1276,14 +1302,14 @@ export class Ironclaw2EActor extends Actor {
                 await this.setFlag("ironclaw2e", "defaultVisionSettings", { "range": this.prototypeToken.sight.range, "visionMode": this.prototypeToken.sight.visionMode });
             }
             await this.update({
-                "prototypeToken.sight": visiondata
+                "prototypeToken": updateData
             });
         } else if (record && foundtoken) { // Update a token's default vision from the found token
             await this.setFlag("ironclaw2e", "defaultVisionSettings", { "range": foundtoken.sight.range, "visionMode": foundtoken.sight.visionMode });
         }
 
         if (foundtoken) {
-            await foundtoken.update({ "sight": visiondata });
+            await foundtoken.update(updateData);
         }
 
         canvas.perception.update({ refreshVision: true }, true);
@@ -1796,41 +1822,89 @@ export class Ironclaw2EActor extends Actor {
 
     /**
      * Change which vision item the actor is using, or turn them all off and restore the saved defaults
+     * The tostate parameter is the level of vision this sense is being called for, if the visionsource's enable matches tostate, it will be disabled instead
      * @param {Ironclaw2EItem} visionsource
+     * @param {number} tostate 0: Force back to default, 1: Detection mode only, 2: Fully on
      */
-    async changeVisionMode(visionsource) {
+    async changeVisionMode(visionsource, tostate) {
         if (!visionsource) {
             console.error("Attempted to change the vision mode without providing a vision source for actor: " + this);
             return;
         }
-        let updatedvisiondata = this.getFlag("ironclaw2e", "defaultVisionSettings") ?? {
-            "range": 0, "visionMode": "basic"
-        };
-
-        let visionsources = this.items.filter(element => element.type === "gift" && element.system.extraVision);
-        let recordDefault = visionsources.some(element => element.system.extraVisionEnabled) === false;
-
-        if (!visionsource.system.extraVisionEnabled) { // Enable the vision source
-            updatedvisiondata = {
-                "range": visionsource.system.extraVisionRange, "visionMode": visionsource.system.extraVisionName
-            };
-            const index = visionsources.findIndex(element => element.id === visionsource.id);
-            if (index > -1)
-                visionsources.splice(index, 1); // Exclude from disabling
-            await visionsource.update({ "_id": visionsource.id, "system.extraVisionEnabled": true });
+        if (isNaN(tostate)) {
+            console.error("Invalid state given for actor vision change: " + tostate);
+            return;
         }
 
-        let doused = [];
-        for (let l of visionsources) { // Disable all other vision sources, including the caller if it was previously enabled
-            doused.push({ "_id": l.id, "system.extraVisionEnabled": false });
+        let updatedVisionData = this.getFlag("ironclaw2e", "defaultVisionSettings") ?? {
+            "range": 0, "visionMode": "basic"
+        };
+        let detectionModeUpdates = new Map();
+
+        // Grab the data
+        const nextSenseData = CommonSystemInfo.extraSenses[visionsource.system.extraSenseName];
+        const previousVisionSource = this.items.find(element => element.type === "gift" && element.system.extraSense && element.system.extraSenseEnabled === 2);
+        const previousSenseData = previousVisionSource ? CommonSystemInfo.extraSenses[previousVisionSource.system.extraSenseName] : null;
+        const visionSources = this.items.filter(element => element.type === "gift" && element.system.extraSense);
+        const recordDefault = visionSources.some(element => element.system.extraSenseEnabled === 2) === false;
+
+        // Set up the modifying variables
+        let setNext = -1;
+        const nextRange = CommonSystemInfo.rangePaces[visionsource.system.extraSenseRangeBand] ?? 0;
+        let resetPrev = false;
+        const prevRange = previousVisionSource ? CommonSystemInfo.rangePaces[visionsource.system.extraSenseRangeBand] ?? 0 : 0;
+
+        if (tostate > 0) {
+            if (tostate === 2) {
+                // Full-on vision
+                if (visionsource.system.extraSenseEnabled < 2) { // Enable the vision source if it wasn't previously
+                    updatedVisionData = {
+                        "range": nextRange,
+                        "visionMode": nextSenseData.visionName || "basic"
+                    };
+                    // Vision mode has "basic" as a backup setting in case a sense ever gets here despite not having an associated vision
+                    if (!nextSenseData.visionName) console.warn("Something got into a vision mode setting despite not having one associated: " + visionsource.system.extraSenseName);
+                }
+                // Disable the previous vision source, including the caller if it was previously enabled
+                if (previousVisionSource) resetPrev = true;
+            }
+            // Detection sets
+            // Add the removal updates first if needed
+            if (resetPrev && previousSenseData) {
+                for (let mode of previousSenseData.detectionModes) {
+                    detectionModeUpdates.set(mode.id, { "remove": true, "range": mode.range ?? prevRange });
+                }
+            }
+
+            // Add the potential additions next, in case they override the removals
+            for (let mode of nextSenseData.detectionModes) {
+                detectionModeUpdates.set(mode.id, { "remove": visionsource.system.extraSenseEnabled === tostate, "range": mode.range ?? nextRange });
+            }
+            // Set the activating vision source to the state if it was not previously set there, or to zero if it was and this is a call to reset
+            setNext = visionsource.system.extraSenseEnabled === tostate ? 0 : tostate;
+
+            // Set the calling vision source to the state if set as such
+            if (setNext >= 0 && visionsource)
+                await visionsource.update({ "_id": visionsource.id, "system.extraSenseEnabled": setNext });
+            // Disable the previous vision source, including the caller if it was previously enabled
+            if (resetPrev && previousVisionSource)
+                await previousVisionSource.update({ "_id": previousVisionSource.id, "system.extraSenseEnabled": 0 });
+        } else {
+            // In the case of zero, remove all the active extra senses
+            let doused = [];
+            for (let l of visionSources) { // Douse all other light sources, including the caller if it was previously lighted
+                doused.push({ "_id": l.id, "system.extraSenseEnabled": 0 });
+            }
+            await this.updateEmbeddedDocuments("Item", doused);
         }
 
         // Merge the default vision settings to the update
-        const visionDefaults = CONFIG.Canvas.visionModes[updatedvisiondata.visionMode]?.vision?.defaults || {};
-        updatedvisiondata = mergeObject(updatedvisiondata, visionDefaults);
+        if (updatedVisionData.name) {
+            const visionDefaults = CONFIG.Canvas.visionModes[updatedVisionData.name]?.vision?.defaults || {};
+            updatedVisionData = mergeObject(updatedVisionData, visionDefaults);
+        }
 
-        await this.updateEmbeddedDocuments("Item", doused);
-        return this._updateTokenVision(updatedvisiondata, recordDefault);
+        return this._updateTokenVision(updatedVisionData, detectionModeUpdates, recordDefault);
     }
 
     /**
