@@ -73,13 +73,88 @@ export class Ironclaw2EItem extends Item {
     }
 
     /** @override
-     * Perform the special setting parsing in the embedded document pass
+     * Augment the basic Item data model with additional dynamic data.
      */
-    prepareEmbeddedDocuments() {
-        super.prepareEmbeddedDocuments();
+    prepareDerivedData() {
+        // Get the Item's data
         const item = this;
+        const actor = this.actor ? this.actor : {};
+        const system = item.system;
 
-        if (item.type === 'gift') this._prepareGiftSpecialSettings(item);
+        // Check if the item has the weight attribute, then use it and quantity to calculate total weight
+        if (system.hasOwnProperty("weight")) {
+            let usedWeight = 0;
+            if (typeof (system.weight) !== "string") { // Both to ensure that the .includes doesn't fail and for legacy compatability
+                usedWeight = system.weight;
+            } else if (system.weight.includes("/")) {
+                const foobar = system.weight.split("/");
+                if (foobar.length > 1) {
+                    const foo = parseInt(foobar[0]);
+                    const bar = parseInt(foobar[1]);
+                    if (!isNaN(foo) && !isNaN(bar) && bar != 0) {
+                        usedWeight = foo / bar;
+                    } else {
+                        ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight }));
+                    }
+                } else {
+                    ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight }));
+                }
+            } else {
+                const foobar = parseFloat(system.weight);
+                if (!isNaN(foobar)) {
+                    usedWeight = foobar;
+                } else {
+                    ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight }));
+                }
+            }
+
+            system.totalWeight = usedWeight * system.quantity;
+        }
+
+        if (item.type === 'gift') {
+            this._prepareGiftData(item, actor);
+            this._prepareGiftSpecialSettings(item);
+        }
+        if (item.type === 'extraCareer') this._prepareCareerData(item, actor);
+        if (item.type === 'weapon') this._prepareWeaponData(item, actor);
+        if (item.type === 'armor') this._prepareArmorData(item, actor);
+        if (item.type === 'shield') this._prepareShieldData(item, actor);
+        if (item.type === 'illumination') this._prepareIlluminationData(item, actor);
+    }
+
+    /**
+     * Process Gift type specific data
+     */
+    _prepareGiftData(item, actor) {
+        const system = item.system;
+        // Dice
+        if (system.useDice.length > 0) {
+            let firstsplit = splitStatsAndBonus(system.useDice);
+            system.giftStats = firstsplit[0];
+            system.giftArray = (firstsplit[1].length > 0 ? findTotalDice(firstsplit[1]) : null);
+            system.canUse = true;
+        }
+        else if (system.exhaustWhenUsed || system.extraSense) {
+            system.giftStats = null;
+            system.giftArray = null;
+            system.canUse = true;
+        }
+        else {
+            system.giftStats = null;
+            system.giftArray = null;
+            system.canUse = false;
+        }
+        // Tags
+        if (system.giftTags.length > 0) {
+            system.giftTagsSplit = splitStatString(system.giftTags);
+        }
+        // Skill Mark
+        if (system.grantsMark) {
+            system.skillName = makeCompareReady(system.giftSkill);
+        }
+        // Usability
+        // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored giftUsable as true, otherwise it is false
+        system.giftUsable = (system.exhaustWhenUsed === false || !system.exhausted);
     }
 
     /**
@@ -221,88 +296,6 @@ export class Ironclaw2EItem extends Item {
         else {
             system.usedSpecialSettings = null;
         }
-    }
-
-    /** @override
-     * Augment the basic Item data model with additional dynamic data.
-     */
-    prepareDerivedData() {
-        // Get the Item's data
-        const item = this;
-        const actor = this.actor ? this.actor : {};
-        const system = item.system;
-
-        // Check if the item has the weight attribute, then use it and quantity to calculate total weight
-        if (system.hasOwnProperty("weight")) {
-            let usedWeight = 0;
-            if (typeof (system.weight) !== "string") { // Both to ensure that the .includes doesn't fail and for legacy compatability
-                usedWeight = system.weight;
-            } else if (system.weight.includes("/")) {
-                const foobar = system.weight.split("/");
-                if (foobar.length > 1) {
-                    const foo = parseInt(foobar[0]);
-                    const bar = parseInt(foobar[1]);
-                    if (!isNaN(foo) && !isNaN(bar) && bar != 0) {
-                        usedWeight = foo / bar;
-                    } else {
-                        ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight }));
-                    }
-                } else {
-                    ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight }));
-                }
-            } else {
-                const foobar = parseFloat(system.weight);
-                if (!isNaN(foobar)) {
-                    usedWeight = foobar;
-                } else {
-                    ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight }));
-                }
-            }
-
-            system.totalWeight = usedWeight * system.quantity;
-        }
-
-        if (item.type === 'gift') this._prepareGiftData(item, actor);
-        if (item.type === 'extraCareer') this._prepareCareerData(item, actor);
-        if (item.type === 'weapon') this._prepareWeaponData(item, actor);
-        if (item.type === 'armor') this._prepareArmorData(item, actor);
-        if (item.type === 'shield') this._prepareShieldData(item, actor);
-        if (item.type === 'illumination') this._prepareIlluminationData(item, actor);
-    }
-
-    /**
-     * Process Gift type specific data
-     */
-    _prepareGiftData(item, actor) {
-        const system = item.system;
-        // Dice
-        if (system.useDice.length > 0) {
-            let firstsplit = splitStatsAndBonus(system.useDice);
-            system.giftStats = firstsplit[0];
-            system.giftArray = (firstsplit[1].length > 0 ? findTotalDice(firstsplit[1]) : null);
-            system.canUse = true;
-        }
-        else if (system.exhaustWhenUsed || system.extraSense) {
-            system.giftStats = null;
-            system.giftArray = null;
-            system.canUse = true;
-        }
-        else {
-            system.giftStats = null;
-            system.giftArray = null;
-            system.canUse = false;
-        }
-        // Tags
-        if (system.giftTags.length > 0) {
-            system.giftTagsSplit = splitStatString(system.giftTags);
-        }
-        // Skill Mark
-        if (system.grantsMark) {
-            system.skillName = makeCompareReady(system.giftSkill);
-        }
-        // Usability
-        // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored giftUsable as true, otherwise it is false
-        system.giftUsable = (system.exhaustWhenUsed === false || !system.exhausted);
     }
 
     /**
@@ -1383,7 +1376,7 @@ export class Ironclaw2EItem extends Item {
                 this.genericItemRoll(system.giftStats, system.defaultTN, item.name, system.giftArray, 0, { directroll }, (system.exhaustWhenUsed ? (x => { this.giftToggleExhaust("true"); }) : null));
             else if (system.exhaustWhenUsed) // Popup an exhaust request
                 this.popupExhaustGift();
-            else if (system.extraSense === true) { // Toggle vision
+            else if (system.extraSense === true && CommonSystemInfo.extraSenses[system.extraSenseName]?.visionName) { // Toggle vision
                 if (this.actor)
                     this.actor.changeVisionMode(this, 2);
             }
