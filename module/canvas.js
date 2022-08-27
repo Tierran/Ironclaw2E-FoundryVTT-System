@@ -87,6 +87,7 @@ export function IronclawVisionModes() {
                     uniforms: { saturation: -0.75 }
                 },
                 levels: {
+                    [VisionMode.LIGHTING_LEVELS.UNLIT]: VisionMode.LIGHTING_LEVELS.DIM,
                     [VisionMode.LIGHTING_LEVELS.DIM]: VisionMode.LIGHTING_LEVELS.BRIGHT,
                     [VisionMode.LIGHTING_LEVELS.BRIGHT]: VisionMode.LIGHTING_LEVELS.BRIGHTEST
                 }
@@ -115,9 +116,8 @@ export function IronclawVisionModes() {
                 coloration: { shader: WaveOutwardColorationVisionShader }
             }
         }),
-
-      // Blindness
-      blindness: new VisionMode({
+        // Blindness effect
+        blindness: new VisionMode({
             id: "blindness",
             label: "VISION.ModeBlindness",
             tokenConfig: false,

@@ -1,3 +1,9 @@
+### 0.6.3 Better vision release 
+ - Updated vision and detection to follow V10.279 specs
+ - Added "Keen Sense" as a reroll type
+ - Fixed advanced gift bonuses potentially not acting correctly
+ - System macro creation takes precedence over Foundry's default
+ 
 ### 0.6.2 Fixing fire release 
  - Added a button to add a flame light on actors that are On Fire
  - Added an option to do the above automatically if they don't have a light source active

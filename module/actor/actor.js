@@ -1983,8 +1983,8 @@ export class Ironclaw2EActor extends Actor {
         }
 
         // Merge the default vision settings to the update
-        if (updatedVisionData.name) {
-            const visionDefaults = CONFIG.Canvas.visionModes[updatedVisionData.name]?.vision?.defaults || {};
+        if (updatedVisionData.visionMode) {
+            const visionDefaults = CONFIG.Canvas.visionModes[updatedVisionData.visionMode]?.vision?.defaults || {};
             updatedVisionData = mergeObject(updatedVisionData, visionDefaults);
         }
 
