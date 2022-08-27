@@ -695,29 +695,32 @@ Hooks.on("chatCommandsReady", chatCommandsIntegration);
  * @param {number} slot     The hotbar slot to use
  * @returns {Promise}
  */
-async function createIronclaw2EMacro(data, slot) {
+function createIronclaw2EMacro(data, slot) {
     if (data?.type !== "Item") return console.error("Ironclaw item macro creation received data for something that isn't an item: " + data?.type);
     if (!data.uuid) return console.error("Ironclaw item macro creation received data without a UUID set: " + data);
-    const item = await fromUuid(data.uuid);
-    if (!item?.actor) return ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.macroOwnedItemsWarning"));
-    // If the default macro is sending to chat, check for inverse modifier key, otherwise check for normal modifier key
-    const defaultMacro = game.settings.get("ironclaw2e", "defaultSendToChat");
-    const justInfo = defaultMacro ? !checkQuickModifierKey() : checkQuickModifierKey();
+    // Do the actual macro creation separately so the hook can return false and prevent the default handling
+    (async () => {
+        const item = await fromUuid(data.uuid);
+        if (!item?.actor) return ui.notifications.warn(game.i18n.localize("ironclaw2e.ui.macroOwnedItemsWarning"));
+        // If the default macro is sending to chat, check for inverse modifier key, otherwise check for normal modifier key
+        const defaultMacro = game.settings.get("ironclaw2e", "defaultSendToChat");
+        const justInfo = defaultMacro ? !checkQuickModifierKey() : checkQuickModifierKey();
 
-    // Create the macro command
-    const command = `game.ironclaw2e.rollItemMacro("${item.name}", ${justInfo ? "true" : "false"});`;
-    const usedName = item.name + (justInfo ? " To Chat" : "");
-    let macro = game.macros.find(m => (m?.name === usedName) && (m?.command === command));
-    if (!macro) {
-        macro = await Macro.create({
-            name: usedName,
-            type: "script",
-            img: item.img,
-            command: command,
-            flags: { "ironclaw2e.itemMacro": true }
-        });
-    }
-    game.user.assignHotbarMacro(macro, slot);
+        // Create the macro command
+        const command = `game.ironclaw2e.rollItemMacro("${item.name}", ${justInfo ? "true" : "false"});`;
+        const usedName = item.name + (justInfo ? " To Chat" : "");
+        let macro = game.macros.find(m => (m?.name === usedName) && (m?.command === command));
+        if (!macro) {
+            macro = await Macro.create({
+                name: usedName,
+                type: "script",
+                img: item.img,
+                command: command,
+                flags: { "ironclaw2e.itemMacro": true }
+            });
+        }
+        game.user.assignHotbarMacro(macro, slot);
+    })();
     return false;
 }
 
