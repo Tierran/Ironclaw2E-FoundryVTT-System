@@ -156,6 +156,7 @@ export class CommonSystemInfo {
         "FAVOR": "ironclaw2e.dialog.reroll.typeFavor",
         "LUCK": "ironclaw2e.dialog.reroll.typeLuck",
         "KNACK": "ironclaw2e.dialog.reroll.typeKnack",
+        "KEEN": "ironclaw2e.dialog.reroll.typeKeen",
         "ONE": "ironclaw2e.dialog.reroll.typeOne"
     };
     /**

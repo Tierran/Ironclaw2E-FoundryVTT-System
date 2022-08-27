@@ -429,6 +429,7 @@
   "ironclaw2e.dialog.reroll.typeFavor": "Favor Bonus",
   "ironclaw2e.dialog.reroll.typeLuck": "Luck",
   "ironclaw2e.dialog.reroll.typeKnack": "Knack",
+  "ironclaw2e.dialog.reroll.typeKeen": "Keen Sense",
   "ironclaw2e.dialog.reroll.favorRerollOneToo": "Favor Bonus: Reroll a One at the same time",
   "ironclaw2e.dialog.reroll.luckChooseDie": "Luck: Choose die",
   "ironclaw2e.dialog.reroll.luckDiceSelect": "{ordinal}.: {die}, result: {result}",
@@ -446,6 +447,7 @@
   "ironclaw2e.chatInfo.luckHighest": "Highest Luck,",
   "ironclaw2e.chatInfo.luckLowest": "Lowest Luck,",
   "ironclaw2e.chatInfo.knack": "Knack,",
+  "ironclaw2e.chatInfo.keen": "Keen Sense,",
   "ironclaw2e.chatInfo.miniRoll": "Mini-Roll",
   "ironclaw2e.chatInfo.miniRollFor": "Mini-Roll for {reason}",
 

@@ -569,6 +569,11 @@ export class CardinalDiceRoller {
                 directCopy = false;
                 rerollFlavor = identifieroverride ? identifieroverride + "," : (luckhigh ? game.i18n.localize("ironclaw2e.chatInfo.luckHighest") : game.i18n.localize("ironclaw2e.chatInfo.luckLowest"));
                 break;
+            case "KEEN":
+                rollString = CardinalDiceRoller.copyRemoveHighest(rollUsed, intermediary);
+                directCopy = false;
+                rerollFlavor = identifieroverride ? identifieroverride + "," : game.i18n.localize("ironclaw2e.chatInfo.keen");
+                break;
         }
 
         return { rollString, directCopy, rerollFlavor, rollUsed, label };
@@ -650,13 +655,13 @@ export class CardinalDiceRoller {
      * @private
      */
     static copyRerollHighestOne(roll, intermediary) {
+        // The recreated formula
         let formula = "";
         if (!roll) {
             console.warn("A non-existant roll was given to the reroll one function");
             return formula;
         }
 
-        // The recreated formula
         if (roll.terms.length === 0) {
             console.warn("A roll with zero terms given to the reroll one function");
             return formula;
@@ -748,6 +753,49 @@ export class CardinalDiceRoller {
 
         return formula;
 
+    }
+
+    /**
+     * Helper function for the dice roller copy functions to reroll one "1" and copy the rest of the dice results as numbers
+     * @param {Roll} roll The roll to be checked for ones
+     * @param {number[]} intermediary The original intermediary dice term array, used to figure out what die should get rerolled
+     * @returns {string} A new formula to use for the new copy roll, with the highest "1" as a die to be rolled
+     * @private
+     */
+    static copyRemoveHighest(roll, intermediary) {
+        // The recreated formula
+        let formula = "";
+        if (!roll) {
+            console.warn("A non-existant roll was given to the remove highest function");
+            return formula;
+        }
+
+        if (roll.terms.length === 0) {
+            console.warn("A roll with zero terms given to the remove highest function");
+            return formula;
+        }
+        // The number of the highest result found, the index of the found die
+        let highestfound = -1, highestindex = -1;
+
+        // Find the highest die
+        roll.terms[0].results.forEach((x, i) => {
+            if (highestfound < x.result) {
+                highestfound = x.result;
+                highestindex = i;
+            }
+        });
+        // Copy the roll with the exception of the ignored die
+        roll.terms[0].results.forEach((x, i) => {
+            if (i !== highestindex) {
+                formula += x.result.toString() + ",";
+            }
+        });
+        if (formula.length > 0) {
+            // Remove the trailing comma
+            formula = formula.slice(0, -1);
+        }
+
+        return formula;
     }
 
     /**
@@ -1281,11 +1329,11 @@ export async function rerollDialog(message, actor) {
             render: html => { document.getElementById("rerolltype").focus(); },
             close: async html => {
                 if (confirmed) {
-                    let REROLL = html.find('[name=rerolltype]')[0].value;
+                    let REROLL = html.find('[name=rerolltype]')[0]?.value;
                     let FAVORRE = html.find('[name=favorreroll]')[0];
                     let favorreroll = FAVORRE?.checked;
-                    let LUCKIN = html.find('[name=luckindex]')[0].value;
-                    let luckindex = -1; if (LUCKIN.length > 0) luckindex = parseInt(LUCKIN);
+                    let LUCKIN = html.find('[name=luckindex]')[0]?.value;
+                    let luckindex = -1; if (LUCKIN?.length > 0) luckindex = parseInt(LUCKIN);
                     let LUCKHI = html.find('[name=luckhigh]')[0];
                     let luckhigh = LUCKHI?.checked;
 
