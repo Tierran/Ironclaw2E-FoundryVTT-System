@@ -1355,9 +1355,7 @@ export class Ironclaw2EActor extends Actor {
         if (detectionmap?.size > 0) {
             /** Copy the array's values to a new one
              * @type {Array<>} */
-            const existingModes = [...(this.isToken ? foundtoken.detectionModes : this.prototypeToken.detectionModes)];
-            if (this.isToken && existingModes.some(x => x.id === DetectionMode.BASIC_MODE_ID))
-                existingModes.splice(existingModes.findIndex(x => x.id === DetectionMode.BASIC_MODE_ID), 1);
+            const existingModes = [...(this.isToken ? foundtoken.toObject().detectionModes : this.prototypeToken.toObject().detectionModes)];
 
             for (let [key, value] of detectionmap.entries()) {
                 const foo = existingModes.findIndex(x => x.id === key);

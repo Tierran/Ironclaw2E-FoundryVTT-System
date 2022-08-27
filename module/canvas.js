@@ -114,6 +114,26 @@ export function IronclawVisionModes() {
                 background: { shader: WaveOutwardBackgroundVisionShader },
                 coloration: { shader: WaveOutwardColorationVisionShader }
             }
+        }),
+
+      // Blindness
+      blindness: new VisionMode({
+            id: "blindness",
+            label: "VISION.ModeBlindness",
+            tokenConfig: false,
+            canvas: {
+                shader: ColorAdjustmentsSamplerShader,
+                uniforms: { enable: true, contrast: -0.75, saturation: -1, exposure: -0.3 }
+            },
+            lighting: {
+                background: { visibility: VisionMode.LIGHTING_VISIBILITY.DISABLED },
+                illumination: { visibility: VisionMode.LIGHTING_VISIBILITY.DISABLED },
+                coloration: { visibility: VisionMode.LIGHTING_VISIBILITY.DISABLED }
+            },
+            vision: {
+                darkness: { adaptive: false },
+                defaults: { attenuation: 0, contrast: -0.5, saturation: -1, brightness: -1 }
+            }
         })
     };
 }
@@ -268,10 +288,8 @@ export function IronclawDetectionModes() {
 class DetectionModeEmitUltrasound extends DetectionMode {
     /** @override */
     static getDetectionFilter() {
-        return this._detectionFilter ??= OutlineOverlayFilter.create({
-            outlineColor: [0.5, 0.5, 0.5, 0.1],
-            knockout: true,
-            wave: true
+        return this._detectionFilter ??= GlowOverlayFilter.create({
+            outlineColor: [0.5, 0.5, 0.5, 0.1]
         });
     }
 

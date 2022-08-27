@@ -199,7 +199,7 @@ export class CommonSystemInfo {
     static extraSenses = {
         //"basic": { label: "VISION.ModeBasicVision", visionName: "basic", detectionModes: [], detectionPassives: [] },
         "nightVision": { label: "ironclaw2e.config.sense.nightVision", visionName: "nightVision", detectionModes: [], detectionPassives: [] },
-        "echolocation": { label: "ironclaw2e.config.sense.echolocation", visionName: "echolocation", detectionModes: [{ id: "emitUltrasound", range: null }], detectionPassives: [{ id: "hearUltrasound", range: 100}] },
+        "echolocation": { label: "ironclaw2e.config.sense.echolocation", visionName: "echolocation", detectionModes: [{ id: "emitUltrasound", range: null }, { id: "basicSight", range: 0 }], detectionPassives: [{ id: "hearUltrasound", range: 100}] },
         "keenEars": { label: "ironclaw2e.config.sense.keenEars", visionName: "", detectionModes: [], detectionPassives: [{ id: "hearUltrasound", range: 100 }] }
     };
 }
