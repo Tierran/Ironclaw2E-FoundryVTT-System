@@ -6,8 +6,8 @@
   "version": "0.6.3",
   "minimumCoreVersion": "10",
   "compatibility": {
-    "minimum": 10.279,
-    "verified": 10,
+    "minimum": "10.279",
+    "verified": "10.279",
     "maximum": 10
   },
   "templateVersion": 30,
