@@ -6,7 +6,7 @@ import { Ironclaw2EItem } from "./item/item.js";
 import { Ironclaw2EItemSheet } from "./item/item-sheet.js";
 
 import { TokenExtenderOptions } from "./token/token-hud-extender.js"
-import { } from "./token/token-extender.js"
+import { Ironclaw2EToken } from "./token/token.js"
 
 import { requestRollPopup } from "./utilitiesmacros.js";
 import { ironclawDragRulerIntegration } from "./utilitiesmacros.js";
@@ -55,6 +55,8 @@ Hooks.once('init', function () {
         Ironclaw2ECombat,
         Ironclaw2ECombatant,
         Ironclaw2ECombatTracker,
+        // Object class
+        Ironclaw2EToken,
         // Hotbar macros
         rollItemMacro,
         popupMacro,
@@ -82,6 +84,7 @@ Hooks.once('init', function () {
     CONFIG.Item.documentClass = Ironclaw2EItem;
     CONFIG.Combat.documentClass = Ironclaw2ECombat;
     CONFIG.Combatant.documentClass = Ironclaw2ECombatant;
+    CONFIG.Token.objectClass = Ironclaw2EToken;
     CONFIG.ui.combat = Ironclaw2ECombatTracker;
     CONFIG.statusEffects = CommonConditionInfo.conditionList;
 
