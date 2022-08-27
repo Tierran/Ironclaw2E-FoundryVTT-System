@@ -618,8 +618,8 @@
   "ironclaw2e.sheets.actor.refresh": "Refresh",
   "ironclaw2e.sheets.actor.light": "Light",
   "ironclaw2e.sheets.actor.douse": "Douse",
-  "ironclaw2e.sheets.actor.enableVision": "Enable {name} mode",
-  "ironclaw2e.sheets.actor.disableVision": "Disable {name} mode",
+  "ironclaw2e.sheets.actor.enableVision": "Enable {name} sense",
+  "ironclaw2e.sheets.actor.disableVision": "Disable {name} sense",
 
   "ironclaw2e.sheets.actor.details.title": "Details",
   "ironclaw2e.sheets.actor.details.species": "Species",

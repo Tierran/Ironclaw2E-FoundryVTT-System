@@ -60,6 +60,10 @@ export function registerHandlebarsHelpers() {
     Handlebars.registerHelper('extraSenseHasVision', function (val) {
         return CommonSystemInfo.extraSenses[val]?.visionName;
     });
+
+    Handlebars.registerHelper('extraSenseHasPassives', function (val) {
+        return CommonSystemInfo.extraSenses[val]?.detectionPassives?.length > 0;
+    });
 }
 
 /** Load Handlebars templates */

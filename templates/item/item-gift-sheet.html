@@ -62,6 +62,9 @@
                     <select name="system.extraSenseName" data-dtype="String">
                         {{selectOptions selectables.extraSenses selected=system.extraSenseName labelAttr="label" localize=true blank="ironclaw2e.none"}}
                     </select>
+                    {{#if (extraSenseHasPassives system.extraSenseName)}}
+                    <i class="fas fa-volume-off" title="Sense has a passive component"></i>
+                    {{/if}}
                     {{#if (extraSenseHasVision system.extraSenseName)}}
                     <label class="normal-label">Range:</label>
                     <select name="system.extraSenseRangeBand" data-dtype="String">

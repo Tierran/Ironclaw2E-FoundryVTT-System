@@ -84,7 +84,7 @@ For gifts that only grant situational bonuses to certain things without any rela
 
 Gifts that grant situational bonuses can be configured from the "Advanced Settings" tab. More on that below. Items that have weight can have their weight value set up as either a fractional value "1/8" or a decimal value "0.125", the system will detect the presence of a slash and treat the value accordingly.  
 
-Gifts that give new vision modes can be toggled on and off by either a button on the sheet, or if the gift can't be used otherwise, by using it through a hotbar macro. The default vision values (mode and range) for the actor's prototype token will be saved when applying a vision mode when no other one is enabled and restored when all vision modes are disabled.  
+Gifts that give extra senses or improve senses can be toggled on and off by either a button on the sheet or, if the gift can't be used otherwise (no exhaustion or associated gift dice), by using it through a hotbar macro. The default vision values (mode and range) for the actor's prototype token will be saved when applying a vision mode when no other one is enabled and restored when all vision modes are disabled. Not all extra senses are active. Some extra senses are passive or have passive components that are applied automatically if the actor has the gift. In cases where there are no active components, the sheet will have an icon beside the sense name and the gift will not have the "activate sense" button.  
 
 #### Weapon-specific setups
 
