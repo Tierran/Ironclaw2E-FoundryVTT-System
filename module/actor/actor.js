@@ -128,15 +128,25 @@ export class Ironclaw2EActor extends Actor {
             const actor = item.parent;
             if (actor) { // Make sure only the calling user executes the function and that the item actually had an actor assigned
 
-                // Call to remove any passive detections the Gift offered
+                // Call to remove any extra senses the Gift offered
                 if (item.type === "gift" && item.system.extraSense && item.system.hasPassiveDetection) {
-                    let updateData = new Map();
+                    let detectionUpdate = new Map();
+                    let visionUpdate = null;
                     const passives = CommonSystemInfo.extraSenses[item.system.extraSenseName].detectionPassives;
-                    for (let mode of passives) {
-                        updateData.set(mode.id, { "remove": true, "range": mode.range ?? 0 });
+                    for (let mode of passives) { // Remove the passive detections
+                        detectionUpdate.set(mode.id, { "remove": true, "range": mode.range ?? 0 });
+                    }
+                    if (item.system.extraSenseEnabled > 0) {
+                        const actives = CommonSystemInfo.extraSenses[item.system.extraSenseName].detectionModes;
+                        for (let mode of actives) { // Remove the active detections
+                            detectionUpdate.set(mode.id, { "remove": true, "range": mode.range ?? 0 });
+                        }
+                        if (item.system.extraSenseEnabled === 2) { // Also change the visuals back to defaults if active
+                            visionUpdate = actor.getFlag("ironclaw2e", "defaultVisionSettings") ?? CommonSystemInfo.defaultVision;
+                        }
                     }
 
-                    await actor._updateTokenVision(null, updateData, false);
+                    await actor._updateTokenVision(visionUpdate, detectionUpdate, false);
                 }
             }
         }
@@ -1914,9 +1924,7 @@ export class Ironclaw2EActor extends Actor {
             return;
         }
 
-        let updatedVisionData = this.getFlag("ironclaw2e", "defaultVisionSettings") ?? {
-            "range": 0, "visionMode": "basic"
-        };
+        let updatedVisionData = this.getFlag("ironclaw2e", "defaultVisionSettings") ?? CommonSystemInfo.defaultVision;
         let detectionModeUpdates = new Map();
 
         // Grab the data

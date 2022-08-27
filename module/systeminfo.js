@@ -189,6 +189,10 @@ export class CommonSystemInfo {
         }
     };
     /**
+     * Default vision settings for a token
+     */
+    static defaultVision = { "range": 0, "visionMode": "basic" };
+    /**
      * The list of extra senses a gift can give, alongside system data about what they do
      * @enum [ExtraSenseData]
      */
