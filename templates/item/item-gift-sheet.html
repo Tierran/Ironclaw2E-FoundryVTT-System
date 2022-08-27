@@ -60,7 +60,7 @@
                     {{#if system.extraSense}}
                     <label class="normal-label">Mode:</label>
                     <select name="system.extraSenseName" data-dtype="String">
-                        {{selectOptions selectables.extraSenses selected=system.extraSenseName labelAttr="label" localize=true}}
+                        {{selectOptions selectables.extraSenses selected=system.extraSenseName labelAttr="label" localize=true blank="ironclaw2e.none"}}
                     </select>
                     {{#if (extraSenseHasVision system.extraSenseName)}}
                     <label class="normal-label">Range:</label>

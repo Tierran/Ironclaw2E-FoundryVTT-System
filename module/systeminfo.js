@@ -20,7 +20,7 @@ import { makeCompareReady } from "./helpers.js";
  *   label: string,
  *   visionName: string,
  *   detectionModes: Array<ExtraSenseDetectionData>,
- *   detectionDefaults: Array<ExtraSenseDetectionData>
+ *   detectionPassives: Array<ExtraSenseDetectionData>
  * }} ExtraSenseData
  */
 
@@ -193,10 +193,10 @@ export class CommonSystemInfo {
      * @enum [ExtraSenseData]
      */
     static extraSenses = {
-        "basic": { label: "VISION.ModeBasicVision", visionName: "basic", detectionModes: [], detectionDefaults: [] },
-        "nightVision": { label: "ironclaw2e.config.sense.nightVision", visionName: "nightVision", detectionModes: [], detectionDefaults: [] },
-        "echolocation": { label: "ironclaw2e.config.sense.echolocation", visionName: "echolocation", detectionModes: [{ id: "emitUltrasound", range: null }], detectionDefaults: [{ id: "hearUltrasound", range: 100}] },
-        "keenEars": { label: "ironclaw2e.config.sense.keenEars", visionName: "", detectionModes: [], detectionDefaults: [{ id: "hearUltrasound", range: 100 }] }
+        //"basic": { label: "VISION.ModeBasicVision", visionName: "basic", detectionModes: [], detectionPassives: [] },
+        "nightVision": { label: "ironclaw2e.config.sense.nightVision", visionName: "nightVision", detectionModes: [], detectionPassives: [] },
+        "echolocation": { label: "ironclaw2e.config.sense.echolocation", visionName: "echolocation", detectionModes: [{ id: "emitUltrasound", range: null }], detectionPassives: [{ id: "hearUltrasound", range: 100}] },
+        "keenEars": { label: "ironclaw2e.config.sense.keenEars", visionName: "", detectionModes: [], detectionPassives: [{ id: "hearUltrasound", range: 100 }] }
     };
 }
 

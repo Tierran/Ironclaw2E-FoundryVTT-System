@@ -116,6 +116,32 @@ export class Ironclaw2EActor extends Actor {
         }
     }
 
+    /**
+     * Function to hook on item deletion, for automatic checks on condition removal
+     * @param {Ironclaw2EItem} item
+     * @param {object} options
+     * @param {string} user
+     */
+    static async onActorDeleteItem(item, options, user) {
+        if (game.user.id === user) {
+            /** @type {Ironclaw2EActor} */
+            const actor = item.parent;
+            if (actor) { // Make sure only the calling user executes the function and that the item actually had an actor assigned
+
+                // Call to remove any passive detections the Gift offered
+                if (item.type === "gift" && item.system.extraSense && item.system.hasPassiveDetection) {
+                    let updateData = new Map();
+                    const passives = CommonSystemInfo.extraSenses[item.system.extraSenseName].detectionPassives;
+                    for (let mode of passives) {
+                        updateData.set(mode.id, { "remove": true, "range": mode.range ?? 0 });
+                    }
+
+                    await actor._updateTokenVision(null, updateData, false);
+                }
+            }
+        }
+    }
+
     /* -------------------------------------------- */
     /* Static Click Functions                       */
     /* -------------------------------------------- */
@@ -647,8 +673,8 @@ export class Ironclaw2EActor extends Actor {
         if (actor.type === "character" || actor.type === "mook" || actor.type === "beast") {
             // Battle Stat roll dice pool visuals
             this._battleDataRollVisuals(actor);
-            // Automatic Encumbrance Management
-            this._encumbranceAutoManagement(actor);
+            // The asynchronously updating parts
+            this._actorUpdateAsyncCalls(actor);
         }
     }
 
@@ -1184,6 +1210,7 @@ export class Ironclaw2EActor extends Actor {
 
     /**
      * Derive battle statistical roll dice pools for sheet visuals, mostly for title-texts
+     * @param {Ironclaw2EActor} actor
      */
     _battleDataRollVisuals(actor) {
         const system = actor.system;
@@ -1210,8 +1237,50 @@ export class Ironclaw2EActor extends Actor {
         system.visualData = visualData;
     }
 
+    /**
+     * Set the passive senses to tokens if needed
+     * @param {Ironclaw2EActor} actor
+     * @param {number} sleeptime Milliseconds the function waits before execution, to help against race conditions
+     */
+    async _actorUpdateAsyncCalls(actor, sleeptime = 100) {
+        // To combat race conditions
+        if (sleeptime > 0) await game.ironclaw2e.sleep(sleeptime);
+
+        // The passive detection senses
+        await this._tokenPassiveSenseDeploy(actor, 50);
+        // Automatic Encumbrance Management
+        await this._encumbranceAutoManagement(actor, 50);
+    }
+
+    /**
+     * Set the passive senses to tokens if needed
+     * @param {Ironclaw2EActor} actor
+     * @param {number} sleeptime Milliseconds the function waits before execution, to help against race conditions
+     */
+    async _tokenPassiveSenseDeploy(actor, sleeptime = 100) {
+        // To combat race conditions
+        if (sleeptime > 0) await game.ironclaw2e.sleep(sleeptime);
+
+        const system = actor.system;
+
+        const senseGifts = this.items.filter(element => element.type === 'gift' && element.system.extraSense && CommonSystemInfo.extraSenses[element.system.extraSenseName]?.detectionPassives?.length > 0);
+        if (senseGifts.length > 0) {
+            let updateData = new Map();
+            for (let sense of senseGifts) {
+                const passives = CommonSystemInfo.extraSenses[sense.system.extraSenseName].detectionPassives;
+                for (let mode of passives) {
+                    updateData.set(mode.id, { "remove": false, "range": mode.range ?? 0 });
+                }
+            }
+
+            await this._updateTokenVision(null, updateData, false);
+        }
+    }
+
     /** 
      *  Automatic encumbrance management, performed if the setting is enabled
+     * @param {Ironclaw2EActor} actor
+     * @param {number} sleeptime Milliseconds the function waits before execution, to help against race conditions
      */
     async _encumbranceAutoManagement(actor, sleeptime = 100) {
         // To combat race conditions
@@ -1271,24 +1340,31 @@ export class Ironclaw2EActor extends Actor {
     async _updateTokenVision(visiondata, detectionmap, record) {
         let foundtoken = findActorToken(this);
         let updateData = visiondata ? { "sight": visiondata } : {};
-        
-        if (detectionmap.size > 0) {
-            /** @type {Array<>} */
-            const existingModes = this.isToken ? foundtoken.detectionModes : this.prototypeToken.detectionModes;
+        let anythingChanged = ("sight" in updateData); // Variable to make sure there's no constant needless updating
+
+        if (detectionmap?.size > 0) {
+            /** Copy the array's values to a new one
+             * @type {Array<>} */
+            const existingModes = [...(this.isToken ? foundtoken.detectionModes : this.prototypeToken.detectionModes)];
             if (this.isToken && existingModes.some(x => x.id === DetectionMode.BASIC_MODE_ID))
                 existingModes.splice(existingModes.findIndex(x => x.id === DetectionMode.BASIC_MODE_ID), 1);
 
             for (let [key, value] of detectionmap.entries()) {
                 const foo = existingModes.findIndex(x => x.id === key);
                 if (value.remove) {
-                    if (foo > -1) // If the mode is tagged for removal and is found, just splice it out
+                    if (foo > -1) { // If the mode is tagged for removal and is found, just splice it out
                         existingModes.splice(foo, 1);
+                        anythingChanged = true;
+                    }
                 } else {
                     if (foo > -1) { // If the mode is tagged for addition and is found, update the range and force-enable it
+                        if (existingModes[foo].range !== value.range || existingModes[foo].enabled === false)
+                            anythingChanged = true; // Only tag it as changed if the values actually differ
                         existingModes[foo].range = value.range;
                         existingModes[foo].enabled = true;
                     } else { // If the mode is tagged for addition and is not found, add it to the array
                         existingModes.push({ "id": key, "range": value.range, "enabled": true });
+                        anythingChanged = true;
                     }
                 }
             }
@@ -1296,23 +1372,25 @@ export class Ironclaw2EActor extends Actor {
             updateData.detectionModes = existingModes;
         }
 
-        // Update prototype token, if applicable
-        if (!this.isToken) {
-            if (record) {
-                await this.setFlag("ironclaw2e", "defaultVisionSettings", { "range": this.prototypeToken.sight.range, "visionMode": this.prototypeToken.sight.visionMode });
+        if (anythingChanged) {
+            // Update prototype token, if applicable
+            if (!this.isToken) {
+                if (record) {
+                    await this.setFlag("ironclaw2e", "defaultVisionSettings", { "range": this.prototypeToken.sight.range, "visionMode": this.prototypeToken.sight.visionMode });
+                }
+                await this.update({
+                    "prototypeToken": updateData
+                });
+            } else if (record && foundtoken) { // Update a token's default vision from the found token
+                await this.setFlag("ironclaw2e", "defaultVisionSettings", { "range": foundtoken.sight.range, "visionMode": foundtoken.sight.visionMode });
             }
-            await this.update({
-                "prototypeToken": updateData
-            });
-        } else if (record && foundtoken) { // Update a token's default vision from the found token
-            await this.setFlag("ironclaw2e", "defaultVisionSettings", { "range": foundtoken.sight.range, "visionMode": foundtoken.sight.visionMode });
-        }
 
-        if (foundtoken) {
-            await foundtoken.update(updateData);
-        }
+            if (foundtoken) {
+                await foundtoken.update(updateData);
+            }
 
-        canvas.perception.update({ refreshVision: true }, true);
+            canvas.perception.update({ refreshVision: true }, true);
+        }
     }
 
     /**
@@ -3138,3 +3216,4 @@ export class Ironclaw2EActor extends Actor {
 Hooks.on("preCreateItem", Ironclaw2EActor.onActorPreCreateItem);
 Hooks.on("createActiveEffect", Ironclaw2EActor.onActorCreateActiveEffect);
 Hooks.on("deleteActiveEffect", Ironclaw2EActor.onActorDeleteActiveEffect);
+Hooks.on("deleteItem", Ironclaw2EActor.onActorDeleteItem);

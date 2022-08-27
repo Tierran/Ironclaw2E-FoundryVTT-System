@@ -155,6 +155,8 @@ export class Ironclaw2EItem extends Item {
         // Usability
         // If the gift does not exhaust when used, or it is _not_ exhausted, set the stored giftUsable as true, otherwise it is false
         system.giftUsable = (system.exhaustWhenUsed === false || !system.exhausted);
+        // Whether the gift grants an extra sense that is passive in nature
+        system.hasPassiveDetection = system.extraSense && system.extraSenseName ? CommonSystemInfo.extraSenses[system.extraSenseName].detectionPassives?.length > 0 : false;
     }
 
     /**

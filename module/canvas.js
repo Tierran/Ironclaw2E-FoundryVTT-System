@@ -269,7 +269,7 @@ class DetectionModeEmitUltrasound extends DetectionMode {
     /** @override */
     static getDetectionFilter() {
         return this._detectionFilter ??= OutlineOverlayFilter.create({
-            outlineColor: [0.5, 0.5, 0.5, 1],
+            outlineColor: [0.5, 0.5, 0.5, 0.1],
             knockout: true,
             wave: true
         });
@@ -292,7 +292,7 @@ class DetectionModeHearUltrasound extends DetectionMode {
     /** @override */
     static getDetectionFilter() {
         return this._detectionFilter ??= OutlineOverlayFilter.create({
-            outlineColor: [0, 0.60, 0.33, 1],
+            outlineColor: [0, 0.60, 0.60, 1],
             wave: true
         });
     }
@@ -300,7 +300,7 @@ class DetectionModeHearUltrasound extends DetectionMode {
     /** @override */
     _canDetect(visionSource, target) {
 
-        // Ultrasound-hearing can only detect active use of ultrasound use (echolocation)
+        // Ultrasound-hearing can only detect active use of ultrasound (echolocation)
         const tgt = target?.document;
         const emitsUltrasound = (tgt instanceof TokenDocument) && tgt.detectionModes.find(x => x.id === "emitUltrasound")?.enabled && !tgt.hasStatusEffect(CONFIG.specialStatusEffects.MUTE);
         if (!emitsUltrasound) return false;
