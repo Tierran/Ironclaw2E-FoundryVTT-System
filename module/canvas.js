@@ -26,7 +26,7 @@ export const measureDistances = function (segments, options = {}) {
 
         // Standard Euclidean measurement
         if (rule === "EUCL" || rule === "RDCL") {
-            return Math.round(Math.hypot(nx, ny) * canvas.scene.gridDistance);
+            return Math.round(Math.hypot(nx, ny) * canvas.scene.grid.distance);
         }
 
         // The one-two, or five-ten, compromise
@@ -37,7 +37,7 @@ export const measureDistances = function (segments, options = {}) {
         }
 
         // Diagonal movement same as orthogonal
-        else return (ns + nd) * canvas.scene.gridDistance;
+        else return (ns + nd) * canvas.scene.grid.distance;
     });
 };
 
@@ -238,7 +238,7 @@ class WaveOutwardBackgroundVisionShader extends BackgroundVisionShader {
     beam = smoothstep(0.3, 1.0, max(beam, 1.0 - beam));
 
     // Construct final color
-    vec3 grey = vec3(perceivedBrightnessAdvanced(baseColor.rgb));
+    vec3 grey = vec3(perceivedBrightness(baseColor.rgb));
     finalColor = mix(baseColor.rgb, grey * 0.7, sqrt(beam)) * mix(vec3(1.0), colorTint, 0.3);
     ${this.ADJUSTMENTS}
     ${this.BACKGROUND_TECHNIQUES}

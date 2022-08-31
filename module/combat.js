@@ -119,14 +119,6 @@ export class Ironclaw2ECombat extends Combat {
     }
 
     /** @override */
-    _prepareCombatant(c, scene, players, settings = {}) {
-        c = super._prepareCombatant(c, scene, players, settings);
-
-        c.resource = c.flags?.ironclaw2e?.initiativeResult; // Set the "resource" to track be the initiative result
-        return c;
-    }
-
-    /** @override */
     async nextTurn() {
         await this.combatant?.endOfTurnMaintenance();
         await super.nextTurn();
@@ -163,6 +155,7 @@ export class Ironclaw2ECombat extends Combat {
         // Structure input data
         ids = typeof ids === "string" ? [ids] : ids;
         const currentId = this.combatant?.id;
+        const rollMode = messageOptions.rollMode || game.settings.get("core", "rollMode");
 
         // Array for stuff to do after all the initiatives have been rolled
         const updates = [];
@@ -206,8 +199,7 @@ export class Ironclaw2ECombat extends Combat {
 
             updates.push({ _id: id, initiative: initiative, flags: { "ironclaw2e.initiativeResult": initResult } });
 
-            // Determine the roll mode
-            let rollMode = messageOptions.rollMode || game.settings.get("core", "rollMode");
+            // Determine the roll mode, if the token or combatant is hidden, roll in gm mode unless another mode is specifically requested
             if ((combatant.token.hidden || combatant.hidden) && (["roll", "publicroll"].includes(rollMode))) rollMode = "gmroll";
 
             // Construct chat message data
@@ -259,6 +251,7 @@ export class Ironclaw2ECombat extends Combat {
         let updateData = { round: 1, turn: 0 };
         updateData.flags = { "ironclaw2e.sideBased": settings.sideBased, "ironclaw2e.initiativeType": settings.initType, "ironclaw2e.manualTN": settings.manualTN };
         this._playCombatSound("startEncounter");
+        Hooks.callAll("combatStart", this, updateData);
         return this.update(updateData);
     }
 

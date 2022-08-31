@@ -1,3 +1,6 @@
+### 0.6.4 Fixed stable release 
+ - Fixed a couple of issues that happened with V10.282
+
 ### 0.6.3 Better vision release 
  - Updated vision and detection to follow V10.279 specs
  - Added "Keen Sense" as a reroll type
