@@ -33,7 +33,7 @@ export const measureDistances = function (segments, options = {}) {
         else if (rule === "ONTW") {
             let nd10 = Math.floor(nDiagonal / 2) - Math.floor((nDiagonal - nd) / 2);
             let spaces = (nd10 * 2) + (nd - nd10) + ns;
-            return spaces * canvas.dimensions.distance;
+            return spaces * canvas.scene.grid.distance;
         }
 
         // Diagonal movement same as orthogonal
