@@ -134,12 +134,12 @@ export class Ironclaw2EActor extends Actor {
                     let visionUpdate = null;
                     const passives = CommonSystemInfo.extraSenses[item.system.extraSenseName].detectionPassives;
                     for (let mode of passives) { // Remove the passive detections
-                        detectionUpdate.set(mode.id, { "remove": true, "range": mode.range ?? 0 });
+                        detectionUpdate.set(mode.id, { "remove": true, "range": mode.range ?? 0, "priority": false });
                     }
                     if (item.system.extraSenseEnabled > 0) {
                         const actives = CommonSystemInfo.extraSenses[item.system.extraSenseName].detectionModes;
                         for (let mode of actives) { // Remove the active detections
-                            detectionUpdate.set(mode.id, { "remove": true, "range": mode.range ?? 0 });
+                            detectionUpdate.set(mode.id, { "remove": true, "range": mode.range ?? 0, "priority": false });
                         }
                         if (item.system.extraSenseEnabled === 2) { // Also change the visuals back to defaults if active
                             visionUpdate = actor.getFlag("ironclaw2e", "defaultVisionSettings") ?? CommonSystemInfo.defaultVision;
@@ -1279,7 +1279,7 @@ export class Ironclaw2EActor extends Actor {
             for (let sense of senseGifts) {
                 const passives = CommonSystemInfo.extraSenses[sense.system.extraSenseName].detectionPassives;
                 for (let mode of passives) {
-                    updateData.set(mode.id, { "remove": false, "range": mode.range ?? 0 });
+                    updateData.set(mode.id, { "remove": false, "range": mode.range ?? 0, "priority": false });
                 }
             }
 
@@ -1357,6 +1357,9 @@ export class Ironclaw2EActor extends Actor {
              * @type {Array<>} */
             const existingModes = [...(this.isToken ? foundtoken.toObject().detectionModes : this.prototypeToken.toObject().detectionModes)];
 
+            // Priority value to add primary detection modes first, in the order they are in system info
+            // Helps to make sure that the detection modes are checked in the correct order
+            let priorityIndex = 0;
             for (let [key, value] of detectionmap.entries()) {
                 const foo = existingModes.findIndex(x => x.id === key);
                 if (value.remove) {
@@ -1371,7 +1374,13 @@ export class Ironclaw2EActor extends Actor {
                         existingModes[foo].range = value.range;
                         existingModes[foo].enabled = true;
                     } else { // If the mode is tagged for addition and is not found, add it to the array
-                        existingModes.push({ "id": key, "range": value.range, "enabled": true });
+                        if (value.priority === true) {
+                            existingModes.splice(priorityIndex, 0, { "id": key, "range": value.range, "enabled": true });
+                            priorityIndex++;
+                        }
+                        else {
+                            existingModes.push({ "id": key, "range": value.range, "enabled": true });
+                        }
                         anythingChanged = true;
                     }
                 }
@@ -1956,13 +1965,13 @@ export class Ironclaw2EActor extends Actor {
             // Add the removal updates first if needed
             if (resetPrev && previousSenseData) {
                 for (let mode of previousSenseData.detectionModes) {
-                    detectionModeUpdates.set(mode.id, { "remove": true, "range": mode.range ?? prevRange });
+                    detectionModeUpdates.set(mode.id, { "remove": true, "range": mode.range ?? prevRange, "priority": false });
                 }
             }
 
             // Add the potential additions next, in case they override the removals
             for (let mode of nextSenseData.detectionModes) {
-                detectionModeUpdates.set(mode.id, { "remove": visionsource.system.extraSenseEnabled === tostate, "range": mode.range ?? nextRange });
+                detectionModeUpdates.set(mode.id, { "remove": visionsource.system.extraSenseEnabled === tostate, "range": mode.range ?? nextRange, "priority": true });
             }
             // Set the activating vision source to the state if it was not previously set there, or to zero if it was and this is a call to reset
             setNext = visionsource.system.extraSenseEnabled === tostate ? 0 : tostate;

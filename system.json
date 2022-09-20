@@ -7,7 +7,7 @@
   "minimumCoreVersion": "10",
   "compatibility": {
     "minimum": "10.279",
-    "verified": "10.282",
+    "verified": 10,
     "maximum": 10
   },
   "templateVersion": 30,
