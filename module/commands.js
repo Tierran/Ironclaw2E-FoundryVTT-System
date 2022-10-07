@@ -195,7 +195,7 @@ function ironclawRollActorChat(inputstring, speaker, direct = false) {
         if (!isNaN(bar))
             tn = bar;
         usedstring = inputstring.slice(0, inputstring.lastIndexOf(";")); // Remove the last semicolon from the string used for determining dice pools
-    } else if (piecedinput.length == 2) { // Attempt to check whether the input has only one semicolon and see if the part after the semicolon contains actual dice or a plain number
+    } else if (piecedinput.length === 2) { // Attempt to check whether the input has only one semicolon and see if the part after the semicolon contains actual dice or a plain number
         const test = splitStatString(piecedinput[1]); // Split the potential dice string into pieces for the single dice check
         if (test.length > 0) {
             let bar = parseInt(piecedinput[1].trim());

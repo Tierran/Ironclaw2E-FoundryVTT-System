@@ -91,7 +91,7 @@ export class Ironclaw2EItem extends Item {
                 if (foobar.length > 1) {
                     const foo = parseInt(foobar[0]);
                     const bar = parseInt(foobar[1]);
-                    if (!isNaN(foo) && !isNaN(bar) && bar != 0) {
+                    if (!isNaN(foo) && !isNaN(bar) && bar !== 0) {
                         usedWeight = foo / bar;
                     } else {
                         ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight }));
@@ -636,7 +636,7 @@ export class Ironclaw2EItem extends Item {
         let oldSetting = specialSettings[index];
 
         // If the setting mode in the setting is the same as the settingmode for the function, and force is not set, return out
-        if (oldSetting.settingMode == settingmode && force === false) {
+        if (oldSetting.settingMode === settingmode && force === false) {
             return null;
         }
 
@@ -644,7 +644,7 @@ export class Ironclaw2EItem extends Item {
 
         // Go through the field names of the new setting and check whether the old setting has any same ones, for any that do, copy the data over
         for (let [key, field] of Object.entries(newSetting)) {
-            if (key == "settingMode") continue; // Special skip to not accidentally copy over the setting type, just in case
+            if (key === "settingMode") continue; // Special skip to not accidentally copy over the setting type, just in case
 
             if (oldSetting.hasOwnProperty(key)) {
                 newSetting[key] = oldSetting[key];
@@ -686,7 +686,7 @@ export class Ironclaw2EItem extends Item {
 
             // Go through the field names of the new setting and check whether the old setting has any same ones, for any that do, copy the data over
             for (let [key, field] of Object.entries(newSetting)) {
-                if (key == "settingMode") continue; // Special skip to not accidentally copy over the setting type, just in case
+                if (key === "settingMode") continue; // Special skip to not accidentally copy over the setting type, just in case
 
                 if (oldSetting.hasOwnProperty(key)) {
                     newSetting[key] = oldSetting[key];
@@ -696,7 +696,7 @@ export class Ironclaw2EItem extends Item {
             specialSettings.push(newSetting);
         }
 
-        if (specialSettings.length == 0) // Special exception to return the item in case the function was successful, but there was nothing to validate
+        if (specialSettings.length === 0) // Special exception to return the item in case the function was successful, but there was nothing to validate
             return this;
         return this.update({ "system.specialSettings": specialSettings });
     }
@@ -967,7 +967,7 @@ export class Ironclaw2EItem extends Item {
                 if (itemSys.canDefend) rolls.push(2);
                 if (itemSys.canCounter) rolls.push(3);
 
-                if (rolls.length == 1) {
+                if (rolls.length === 1) {
                     this._itemRollSelection(rolls[0], directroll);
                 } else {
                     this.popupWeaponRollType();
@@ -1124,7 +1124,7 @@ export class Ironclaw2EItem extends Item {
             console.error("A non-weapon type attempted to send Attack Data: " + item.name);
             return null;
         }
-        if (itemSys.effect.length == 0) {
+        if (itemSys.effect.length === 0) {
             return null; // If the weapon has no effects listed, return out
         }
 
@@ -1434,7 +1434,7 @@ export class Ironclaw2EItem extends Item {
         }
 
         // Make sure this weapon can actually attack
-        if (itemSys.canAttack == false) {
+        if (itemSys.canAttack === false) {
             return;
         }
 
@@ -1502,7 +1502,7 @@ export class Ironclaw2EItem extends Item {
         }
 
         // Make sure the weapon can actually defend
-        if (itemSys.canDefend == false) {
+        if (itemSys.canDefend === false) {
             return;
         }
 
@@ -1536,7 +1536,7 @@ export class Ironclaw2EItem extends Item {
         }
 
         // Make sure the weapon can actually counter
-        if (itemSys.canCounter == false) {
+        if (itemSys.canCounter === false) {
             return;
         }
 
@@ -1586,7 +1586,7 @@ export class Ironclaw2EItem extends Item {
         }
 
         // Make sure the weapon has a spark roll
-        if (system.canSpark == false) {
+        if (system.canSpark === false) {
             return;
         }
 
@@ -1694,7 +1694,7 @@ export class Ironclaw2EItem extends Item {
      * @param {boolean} mode What state to change to, true for Exhausted and false for Refreshed
      */
     async popupGiftExhaustToggle(mode) {
-        if (this.type != "gift") {
+        if (this.type !== "gift") {
             console.error("Tried to set exhaust on a non-gift item: " + this);
             return null;
         }
@@ -1733,7 +1733,7 @@ export class Ironclaw2EItem extends Item {
      * Pop up a dialog box to pick what way to use a weapon
      */
     popupWeaponRollType() {
-        if (this.type != "weapon")
+        if (this.type !== "weapon")
             return console.error("Tried to popup a weapon roll question a non-weapon item: " + this);
 
         const item = this;
@@ -1812,7 +1812,7 @@ export class Ironclaw2EItem extends Item {
                 if (confirmed) {
                     const directroll = checkQuickModifierKey();
                     let typestring = html.find('input[name=weapon]:checked')[0].value;
-                    let rolltype = 0; if (typestring.length != 0) rolltype = parseInt(typestring);
+                    let rolltype = 0; if (typestring.length !== 0) rolltype = parseInt(typestring);
                     if (Number.isInteger(rolltype)) {
                         this._itemRollSelection(rolltype, directroll);
                     }

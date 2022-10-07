@@ -34,20 +34,20 @@ export class Ironclaw2ECombat extends Combat {
                 case 0:
                 case 1:
                     side = combatant.actor.hasPlayerOwner ? 1 : 0; // If the combatant is a player, side 1, otherwise side 0
-                    if (initType === 0) return side == 1 ? 2 : 1;
-                    else return side == 0 ? 2 : 1;
+                    if (initType === 0) return side === 1 ? 2 : 1;
+                    else return side === 0 ? 2 : 1;
                     break;
                 case 2:
                 case 3:
                     side = (combatant.actor.hasPlayerOwner || combatant.token.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY ? 1 : 0); // If the combatant is a player or allied, side 1, otherwise side 0
-                    if (initType === 2) return side == 1 ? 2 : 1;
-                    else return side == 0 ? 2 : 1;
+                    if (initType === 2) return side === 1 ? 2 : 1;
+                    else return side === 0 ? 2 : 1;
                     break;
                 case 4:
                 case 5:
                     side = side = (combatant.actor.hasPlayerOwner ? 1 : (combatant.token.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY ? 2 : 0)); // If the combatant is a player, side 1, otherwise if the combatant is allied, side 2, otherwise side 0
-                    if (initType === 4) return side == 1 ? 3 : (side == 2 ? 2 : 1);
-                    else return side == side == 0 ? 3 : (side == 1 ? 2 : 1);
+                    if (initType === 4) return side === 1 ? 3 : (side === 2 ? 2 : 1);
+                    else return side === 0 ? 3 : (side === 1 ? 2 : 1);
                     break;
                 default:
                     console.warn("Group initiative defaulted on init type");
@@ -155,7 +155,7 @@ export class Ironclaw2ECombat extends Combat {
         // Structure input data
         ids = typeof ids === "string" ? [ids] : ids;
         const currentId = this.combatant?.id;
-        const rollMode = messageOptions.rollMode || game.settings.get("core", "rollMode");
+        let rollMode = messageOptions.rollMode || game.settings.get("core", "rollMode");
 
         // Array for stuff to do after all the initiatives have been rolled
         const updates = [];
@@ -302,7 +302,7 @@ export class Ironclaw2ECombatant extends Combatant {
      * @param {import("./dicerollers").DiceReturn} result
      */
     async initiativeConditions(result) {
-        if (result?.highest == 1) {
+        if (result?.highest === 1) {
             // Botch
             this.actor?.addEffect("reeling");
         } else if (result?.tnData?.successes >= 2) {

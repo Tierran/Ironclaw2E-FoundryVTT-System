@@ -74,7 +74,7 @@ export class CardinalDiceRoller {
         let hasOne = false;
         // Process the roll results to get all the necessary data out
         roll.terms[0].results.forEach(x => {
-            if (x.result == tni) ties++;
+            if (x.result === tni) ties++;
             if (x.result > highest) highest = x.result;
             if (x.result === 1) hasOne = true;
         });
@@ -117,7 +117,7 @@ export class CardinalDiceRoller {
      * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
      */
     static async copyToRollTN(tni, message, sendinchat = true, rerolltype = "", copyoptions = {}) {
-        if (!(message) || message.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
+        if (!(message) || message.type !== CONST.CHAT_MESSAGE_TYPES.ROLL) {
             console.warn("Somehow, a message that isn't a roll got into 'copyToRollTN'.");
             console.warn(message);
             return;
@@ -142,7 +142,7 @@ export class CardinalDiceRoller {
             label = foobar.label;
         }
 
-        if (rollString.length == 0) {
+        if (rollString.length === 0) {
             return;
         }
 
@@ -154,7 +154,7 @@ export class CardinalDiceRoller {
         let hasOne = false;
         // Process the roll results to get all the necessary data out
         roll.terms[0].results.forEach(x => {
-            if (x.result == tni) ties++;
+            if (x.result === tni) ties++;
             if (x.result > highest) highest = x.result;
             if (x.result === 1) hasOne = true;
         });
@@ -226,7 +226,7 @@ export class CardinalDiceRoller {
      * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
      */
     static async copyToRollHighest(message, sendinchat = true, rerolltype = "", copyoptions = {}) {
-        if (!(message) || message.type != CONST.CHAT_MESSAGE_TYPES.ROLL) {
+        if (!(message) || message.type !== CONST.CHAT_MESSAGE_TYPES.ROLL) {
             console.warn("Somehow, a message that isn't a roll got into 'copyToRollHighest'.");
             console.warn(message);
             return;
@@ -251,7 +251,7 @@ export class CardinalDiceRoller {
             label = foobar.label;
         }
 
-        if (rollString.length == 0) {
+        if (rollString.length === 0) {
             return;
         }
 
@@ -304,7 +304,7 @@ export class CardinalDiceRoller {
             // Process the roll results to get all the necessary data out
             successes = roll.total;
             roll.terms[0].results.forEach(x => {
-                if (x.result == tni) ties++;
+                if (x.result === tni) ties++;
                 if (x.result > highest) highest = x.result;
                 if (x.result === 1) hasOne = true;
             });
@@ -459,7 +459,7 @@ export class CardinalDiceRoller {
      * @private
      */
     static flavorStringTN(successes, ties, highest, typetext, label) {
-        const botched = highest == 1; // Whether the roll was botched based on whether the highest-showing die is 1
+        const botched = highest === 1; // Whether the roll was botched based on whether the highest-showing die is 1
         if (successes > 0) {
             // Check to make sure typetext and label each have stuff, then check if there's already HTML paragraph tags at the start and end
             return (typetext?.length > 0 ? (typetext.startsWith("<p>") && typetext.endsWith("</p>") ? typetext : "<p>" + typetext + "</p>") : "") +
@@ -671,7 +671,7 @@ export class CardinalDiceRoller {
 
         // Find the highest found one
         roll.terms[0].results.forEach((x, i) => {
-            if (x.result == 1) {
+            if (x.result === 1) {
                 if (intermediary) {
                     // New version with an intermediary array
                     if (foundone < 0) {

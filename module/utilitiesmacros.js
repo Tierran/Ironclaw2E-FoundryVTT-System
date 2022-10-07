@@ -85,7 +85,7 @@ Hooks.on("renderChatMessage", function (message, html, data) {
     }
 
     // Description hiding system, only go here if some descriptions should be hidden
-    if (showDescription == false && !game.user.isGM) {
+    if (showDescription === false && !game.user.isGM) {
         const actor = getActorFromSpeaker(message.speaker);
         // If the actor exists and has no player owner
         const hideDescription = (actor && actor?.hasPlayerOwner === false);

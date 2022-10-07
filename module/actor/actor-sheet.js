@@ -49,13 +49,13 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         sheetData.dtypes = baseData.dtypes;
 
         // Prepare items
-        if (this.actor.type == 'character') {
+        if (this.actor.type === 'character') {
             this._prepareCharacterItems(sheetData);
         }
-        if (this.actor.type == 'mook') {
+        if (this.actor.type === 'mook') {
             this._prepareCharacterItems(sheetData);
         }
-        if (this.actor.type == 'beast') {
+        if (this.actor.type === 'beast') {
             this._prepareBeastItems(sheetData);
         }
 

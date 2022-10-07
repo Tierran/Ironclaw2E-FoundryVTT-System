@@ -751,7 +751,7 @@ export class Ironclaw2EActor extends Actor {
                     }
                     // If the gift has the replacement field set, attempt to find what it replaces
                     if (setting.replaceName) {
-                        const replacement = specialGifts.find(x => makeCompareReady(x.name) === setting.replaceName)?.system.usedSpecialSettings.find(x => x.settingMode == setting.settingMode);
+                        const replacement = specialGifts.find(x => makeCompareReady(x.name) === setting.replaceName)?.system.usedSpecialSettings.find(x => x.settingMode === setting.settingMode);
                         if (replacement) { // If the original gift this one replaces is found, add it to the map of replacements stored with the actor
                             if (replacement.giftId === setting.giftId) { // Check for an infinite loop
                                 console.warn("Potential infinite loop detected, bonus attempted to replace something with the same id as it: " + setting.giftName);
@@ -1568,7 +1568,7 @@ export class Ironclaw2EActor extends Actor {
             const foo = system.replacementLists.get(setting.giftId);
             if (foo.has(setting.settingIndex)) { // Check for and get the actual replacement based on the index of the setting
                 const bar = foo.get(setting.settingIndex)
-                if (setting.settingMode == bar.settingMode) {
+                if (setting.settingMode === bar.settingMode) {
                     return bar; // If a to-be-replaced setting with the correct gift id, setting index and setting mode is found, return the corresponding setting
                 }
             }

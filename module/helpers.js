@@ -29,7 +29,7 @@ export function findTotalDice(dicestring) {
 
         let total = bar[0], sides = bar[1];
 
-        if (total == 0 || sides == 0)
+        if (total === 0 || sides === 0)
             continue;
         let diceindex = checkDiceIndex(sides);
         if (diceindex >= 0)
@@ -48,10 +48,10 @@ export function findTotalDice(dicestring) {
 export function parseSingleDiceString(dicestring) {
     let bar = dicestring.trim();
     let index = bar.search(/d/i); // Search for the letter d in the string
-    if (index == -1)
+    if (index === -1)
         return null; // If none found, just return null
     let total = 0, sides = 0;
-    if (index == 0) // If d is the first character, take it to mean a single die
+    if (index === 0) // If d is the first character, take it to mean a single die
         total = 1;
     else
         total = parseInt(bar.slice(0, index)); // Otherwise slice the string at d and parse the first part for the number of dice
@@ -154,12 +154,12 @@ export function checkDiceArrayEmpty(dicearray) {
         console.error("Something that was not an array inputted to dice array checker: " + dicearray);
         return false;
     }
-    if (dicearray.length != 5) {
+    if (dicearray.length !== 5) {
         console.error("Something that was not a dice array (based on length) inputted to dice array checker: " + dicearray);
         return false;
     }
 
-    return dicearray[0] != 0 || dicearray[1] != 0 || dicearray[2] != 0 || dicearray[3] != 0 || dicearray[4] != 0;
+    return dicearray[0] !== 0 || dicearray[1] !== 0 || dicearray[2] !== 0 || dicearray[3] !== 0 || dicearray[4] !== 0;
 }
 
 /**
@@ -226,7 +226,7 @@ export function flattenDicePoolArray(dicearrays, warninput = true) {
  * @returns {number[]} A new, limited dice array
  */
 export function enforceLimit(dicearray, maxdie) {
-    if (!Array.isArray(dicearray) || dicearray.length != 5)
+    if (!Array.isArray(dicearray) || dicearray.length !== 5)
         return console.error("Something other than a proper dice array inputted into limit enforcer: " + dicearray);
     if (isNaN(maxdie))
         return console.error("Something other than a number inputted into limit enforcer as the limit: " + maxdie);
@@ -282,17 +282,17 @@ export function reformDiceString(dicearray, humanreadable = false) {
         // Assume the inputted string is in fact a set of dice arrays, so flatten them into one
         usedArray = flattenDicePoolArray(dicearray);
     }
-    if (usedArray.length != 5) {
+    if (usedArray.length !== 5) {
         console.error("Something that was not a dice array (based on length) inputted to dice string reformer: " + usedArray);
         return "";
     }
 
     let reformedString = "";
     for (let i = 0; i < usedArray.length; ++i) {
-        if (usedArray[i] != 0) {
+        if (usedArray[i] !== 0) {
             let amount = usedArray[i];
             let dicetype = checkDiceSides(i);
-            reformedString += (amount == 1 ? "" : amount.toString()) + "d" + dicetype.toString() + "," + (humanreadable ? " " : "");
+            reformedString += (amount === 1 ? "" : amount.toString()) + "d" + dicetype.toString() + "," + (humanreadable ? " " : "");
         }
     }
 
@@ -313,7 +313,7 @@ export function getDiceArrayMaxValue(dicearray) {
         console.error("Something that was not an array inputted to dice pool maximizer: " + dicearray);
         return -1;
     }
-    if (dicearray.length != 5) {
+    if (dicearray.length !== 5) {
         console.error("Something that was not a dice array (based on length) inputted to dice pool maximizer: " + dicearray);
         return -1;
     }
@@ -347,11 +347,11 @@ export function compareDiceArrays(alpha, beta) {
         console.error("Something that was not an array inputted to dice pool comparer: " + beta);
         return -1;
     }
-    if (alpha.length != 5) {
+    if (alpha.length !== 5) {
         console.error("Something that was not a dice array (based on length) inputted to dice pool comparer: " + alpha);
         return 1;
     }
-    if (beta.length != 5) {
+    if (beta.length !== 5) {
         console.error("Something that was not a dice array (based on length) inputted to dice pool comparer: " + beta);
         return -1;
     }
@@ -380,7 +380,7 @@ export function reduceDiceStringSet(dicearray, steps, allowzerodie = false) {
         console.error("Something that was not an array inputted to dice set reducer: " + dicearray);
         return -1;
     }
-    if (dicearray.length != 5) {
+    if (dicearray.length !== 5) {
         console.error("Something that was not a dice array (based on length) inputted to dice set reducer: " + dicearray);
         return -1;
     }
@@ -432,7 +432,7 @@ export function convertCamelCase(camelCase) {
 export function splitStatString(stats, comparisonready = true) {
     let statarray = [];
 
-    if (typeof (stats) != "string") {
+    if (typeof (stats) !== "string") {
         console.error("Something that was not a string inputted to skill splitter: " + stats);
         return statarray;
     }
@@ -456,7 +456,7 @@ export function splitStatsAndBonus(fullset, ignorecheck = false) {
     let statarray = [];
     let dicestring = "";
 
-    if (typeof (fullset) != "string") {
+    if (typeof (fullset) !== "string") {
         console.error("Something that was not a string inputted to stat and bonus splitter: " + fullset);
         return [statarray, dicestring];
     }
@@ -1143,12 +1143,12 @@ export function getAllItemsInWorld(itemtype = "") {
     let allItems = new Set();
 
     for (let item of game.items) {
-        if (!itemtype || item.type == itemtype)
+        if (!itemtype || item.type === itemtype)
             allItems.add(item);
     }
     for (let actor of game.actors) {
         for (let item of actor.items) {
-            if (!itemtype || item.type == itemtype)
+            if (!itemtype || item.type === itemtype)
                 allItems.add(item);
         }
     }
@@ -1156,7 +1156,7 @@ export function getAllItemsInWorld(itemtype = "") {
         for (let token of scene.tokens) {
             if (token.actor) {
                 for (let item of token.actor.items) {
-                    if (!itemtype || item.type == itemtype)
+                    if (!itemtype || item.type === itemtype)
                         allItems.add(item);
                 }
             }
@@ -1177,7 +1177,7 @@ export function checkQuickModifierKey() {
         if (downkeys.has(bind.key)) {
             let allmods = 0;
             bind.modifiers.forEach(x => { if (downkeys.has(x)) allmods++; });
-            if (bind.modifiers.length == allmods) {
+            if (bind.modifiers.length === allmods) {
                 return true;
             }
         }
