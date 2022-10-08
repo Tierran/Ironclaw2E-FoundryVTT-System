@@ -47,6 +47,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         sheetData.limited = baseData.limited;
         sheetData.title = baseData.title;
         sheetData.dtypes = baseData.dtypes;
+        sheetData.sheetEngine = "prosemirror";
 
         // Prepare items
         if (this.actor.type === 'character') {

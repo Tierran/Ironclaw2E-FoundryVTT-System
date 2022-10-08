@@ -48,6 +48,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         sheetData.limited = baseData.limited;
         sheetData.title = baseData.title;
         sheetData.dtypes = baseData.dtypes;
+        sheetData.sheetEngine = "prosemirror";
 
         // Prepare the description editor
         sheetData.richDescription = await TextEditor.enrichHTML(sheetData.system.description, { async: true });

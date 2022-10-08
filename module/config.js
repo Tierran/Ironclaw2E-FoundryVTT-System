@@ -23,7 +23,7 @@ export class WorldSettingsConfig extends FormApplication {
             id: "world-settings-config",
             title: game.i18n.localize("ironclaw2e.config.worldConfig.menuLabel"),
             template: `systems/ironclaw2e/templates/popup/world-settings-config.html`,
-            width: 500
+            width: 600
         });
     }
 
@@ -113,7 +113,7 @@ export class CoinageSettingsConfig extends FormApplication {
             id: "coinage-settings-config",
             title: game.i18n.localize("ironclaw2e.config.coinageConfig.menuLabel"),
             template: `systems/ironclaw2e/templates/popup/coinage-settings-config.html`,
-            width: 500
+            width: 600
         });
     }
 
@@ -284,7 +284,7 @@ export class WildcardTemplateConfig extends FormApplication {
             id: "wildcard-template-config",
             title: game.i18n.localize("ironclaw2e.config.wildcardTemplateConfig.menuLabel"),
             template: `systems/ironclaw2e/templates/popup/wildcard-template-config.html`,
-            width: 500
+            width: 600
         });
     }
 
