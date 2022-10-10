@@ -1,3 +1,9 @@
+### 0.6.5 Touring status release 
+ - Added new Ironclaw system tours that can explain a bit more about the system
+ - Changed the included status effect quick references to be in a single journal
+ - Detection modes should be applied in the correct order now
+ - Bug fixes
+ 
 ### 0.6.4 Fixed stable release 
  - Fixed a couple of issues that happened with V10.282
 
