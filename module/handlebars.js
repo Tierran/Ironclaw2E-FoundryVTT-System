@@ -31,7 +31,7 @@ export function registerHandlebarsHelpers() {
     });
 
     Handlebars.registerHelper('usableGift', function (gift) {
-        return gift.exhaustWhenUsed || gift.useDice?.length > 0;
+        return gift.system.exhaustWhenUsed || gift.system.useDice?.length > 0;
     });
 
     Handlebars.registerHelper('propertyExists', function (thing, str) {
