@@ -7,7 +7,7 @@ import { Ironclaw2EItemSheet } from "./item/item-sheet.js";
 /* -------------------------------------------- */
 
 /**
- * Extend the base Tour entity for the Ironclaw configs
+ * Extend the base Tour for the Ironclaw configs
  * @extends {Tour}
  */
 export class IronclawConfigTour extends Tour {
@@ -71,21 +71,20 @@ export class IronclawConfigTour extends Tour {
 }
 
 /**
- * Extend the base Tour entity for the Ironclaw configs
+ * Extend the base Tour for the Ironclaw actor sheets
  * @extends {Tour}
  */
 export class IronclawActorTour extends Tour {
 
     /** @override */
     async start() {
-        this.sheet = Object.values(ui.windows).find((app) => app instanceof Ironclaw2EActorSheet && tour.config.actorType === app?.actor?.type);
+        this.sheet = this._getSheet();
         await super.start();
     }
 
     /** @override */
     get canStart() {
-        const tour = this;
-        const foo = Object.values(ui.windows).find((app) => app instanceof Ironclaw2EActorSheet && tour.config.actorType === app?.actor?.type);
+        const foo = this._getSheet();
         if (foo) return true;
         return false;
     }
@@ -98,10 +97,14 @@ export class IronclawActorTour extends Tour {
 
     /** @override */
     _getTargetElement(selector) {
+        // A normal selector can be used if the step asks
+        if ("normalSelector" in this.currentStep && this.currentStep.normalSelector)
+            return super._getTargetElement(selector);
+        // Or the tour will use the sheet directly as the root
         if (this.sheet?.element?.length > 0)
             return this.sheet.element[0].querySelector(selector);
 
-        console.warn("Actor Sheet Tour used super._getTargetElement instead of its own!");
+        console.error("Actor Sheet Tour used super._getTargetElement instead of its own!");
         return super._getTargetElement(selector);
     }
 
@@ -111,24 +114,31 @@ export class IronclawActorTour extends Tour {
             return this.sheet.activateTab(this.currentStep.tab);
         }
     }
+
+    /** Get the appropriate opened sheet for the tour
+     * @returns {Ironclaw2EActorSheet | undefined}
+     */
+    _getSheet() {
+        const tour = this;
+        return Object.values(ui.windows).find((app) => app instanceof Ironclaw2EActorSheet && tour.config.actorType === app?.actor?.type);
+    }
 }
 
 /**
- * Extend the base Tour entity for the Ironclaw configs
+ * Extend the base Tour for the Ironclaw item sheets
  * @extends {Tour}
  */
 export class IronclawItemTour extends Tour {
 
     /** @override */
     async start() {
-        this.sheet = Object.values(ui.windows).find((app) => app instanceof Ironclaw2EItemSheet && tour.config.actorType === app?.item?.type);
+        this.sheet = this._getSheet();
         await super.start();
     }
 
     /** @override */
     get canStart() {
-        const tour = this;
-        const foo = Object.values(ui.windows).find((app) => app instanceof Ironclaw2EItemSheet && tour.config.actorType === app?.item?.type);
+        const foo = this._getSheet();
         if (foo) return true;
         return false;
     }
@@ -141,10 +151,14 @@ export class IronclawItemTour extends Tour {
 
     /** @override */
     _getTargetElement(selector) {
+        // A normal selector can be used if the step asks
+        if ("normalSelector" in this.currentStep && this.currentStep.normalSelector)
+            return super._getTargetElement(selector);
+        // Or the tour will use the sheet directly as the root
         if (this.sheet?.element?.length > 0)
             return this.sheet.element[0].querySelector(selector);
 
-        console.warn("Actor Sheet Tour used super._getTargetElement instead of its own!");
+        console.error("Actor Sheet Tour used super._getTargetElement instead of its own!");
         return super._getTargetElement(selector);
     }
 
@@ -153,6 +167,76 @@ export class IronclawItemTour extends Tour {
         if (this.currentStep.tab) {
             return this.sheet.activateTab(this.currentStep.tab);
         }
+    }
+
+    /** Get the appropriate opened sheet for the tour
+     * @returns {Ironclaw2EItemSheet | undefined}
+     */
+    _getSheet() {
+        const tour = this;
+        return Object.values(ui.windows).find((app) => app instanceof Ironclaw2EItemSheet && tour.config.itemType === app?.item?.type);
+    }
+}
+
+/**
+ * Extend the item Tour for the Ironclaw gift item sheets
+ * @extends {IronclawItemTour}
+ */
+export class IronclawGiftTour extends IronclawItemTour {
+    /** @override */
+    async start() {
+        this.addedSpecials = [];
+        this.latestAdd = -1;
+        await super.start();
+    }
+
+    /** @override */
+    async _preStep() {
+        await this._insertSpecial();
+        await super._preStep();
+    }
+
+    /** @override 
+     * @param {string} selector
+     */
+    _getTargetElement(selector) {
+        if (this.sheet?.element?.length > 0) {
+            if (/(@index)/.test(selector))
+                return this.sheet.element[0].querySelector(selector.replace(/(@index)/, this.latestAdd.toFixed(0)));
+        }
+
+        return super._getTargetElement(selector);
+    }
+
+    /** @override */
+    exit() {
+        try {
+            this._cleanUp();
+        } catch (err) {
+            console.error(err);
+        }
+        super.exit();
+    }
+
+    /** @override */
+    async complete() {
+        await this._cleanUp();
+        return super.complete();
+    }
+
+    async _insertSpecial() {
+        if ("addSpecial" in this.currentStep) {
+            await this.sheet.item.giftAddSpecialSetting(this.currentStep.addSpecial);
+            this.latestAdd = this.sheet.item.system.specialSettings.length - 1;
+            this.addedSpecials.push(this.latestAdd);
+        }
+    }
+
+    async _cleanUp() {
+        for (let index of this.addedSpecials.reverse()) {
+            await this.sheet.item.giftDeleteSpecialSetting(index);
+        }
+        
     }
 }
 

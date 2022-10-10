@@ -1,0 +1,119 @@
+{
+  "title": "IRONCLAWWEAPONTOUR.Title",
+  "description": "IRONCLAWWEAPONTOUR.Description",
+  "canBeResumed": false,
+  "display": true,
+  "itemType": "weapon",
+  "steps": [
+    {
+      "id": "overview",
+      "selector": ".window-header",
+      "title": "IRONCLAWWEAPONTOUR.OverviewTitle",
+      "content": "IRONCLAWWEAPONTOUR.OverviewContent"
+    },
+    {
+      "id": "headerArea",
+      "selector": ".sheet-header",
+      "title": "IRONCLAWWEAPONTOUR.TopAreaTitle",
+      "content": "IRONCLAWWEAPONTOUR.TopAreaContent"
+    },
+    {
+      "id": "description",
+      "selector": ".tab.description",
+      "title": "IRONCLAWWEAPONTOUR.DescriptionTitle",
+      "content": "IRONCLAWWEAPONTOUR.DescriptionContent",
+      "tab": "description"
+    },
+    {
+      "id": "attributes",
+      "selector": ".tab.attributes",
+      "title": "IRONCLAWWEAPONTOUR.AttributesTitle",
+      "content": "IRONCLAWWEAPONTOUR.AttributesContent",
+      "tab": "attributes"
+    },
+    {
+      "id": "effect",
+      "selector": ".resource.effect",
+      "title": "IRONCLAWWEAPONTOUR.EffectTitle",
+      "content": "IRONCLAWWEAPONTOUR.EffectContent",
+      "tab": "attributes"
+    },
+    {
+      "id": "descriptors",
+      "selector": ".resource.descriptors",
+      "title": "IRONCLAWWEAPONTOUR.DescriptorsTitle",
+      "content": "IRONCLAWWEAPONTOUR.DescriptorsContent",
+      "tab": "attributes"
+    },
+    {
+      "id": "selectables",
+      "selector": ".resource.select-settings",
+      "title": "IRONCLAWWEAPONTOUR.SelectablesTitle",
+      "content": "IRONCLAWWEAPONTOUR.SelectablesContent",
+      "tab": "attributes"
+    },
+    {
+      "id": "checkboxes",
+      "selector": ".resource.checkbox-settings",
+      "title": "IRONCLAWWEAPONTOUR.CheckboxesTitle",
+      "content": "IRONCLAWWEAPONTOUR.CheckboxesContent",
+      "tab": "attributes"
+    },
+    {
+      "id": "exhaustGift",
+      "selector": ".resource.exhaust-gift",
+      "title": "IRONCLAWWEAPONTOUR.ExhaustTitle",
+      "content": "IRONCLAWWEAPONTOUR.ExhaustContent",
+      "tab": "attributes"
+    },
+    {
+      "id": "upgradeWeapon",
+      "selector": ".resource.upgrade-weapon",
+      "title": "IRONCLAWWEAPONTOUR.UpgradeTitle",
+      "content": "IRONCLAWWEAPONTOUR.UpgradeContent",
+      "tab": "attributes"
+    },
+    {
+      "id": "dicePools",
+      "selector": ".tab.attributes .dice-pools",
+      "title": "IRONCLAWWEAPONTOUR.DicePoolsTitle",
+      "content": "IRONCLAWWEAPONTOUR.DicePoolsContent",
+      "tab": "attributes"
+    },
+    {
+      "id": "finished",
+      "selector": "",
+      "title": "IRONCLAWWEAPONTOUR.FinishedTitle",
+      "content": "IRONCLAWWEAPONTOUR.FinishedContent"
+    }
+  ],
+  "localization": {
+    "IRONCLAWWEAPONTOUR.Title": "Ironclaw Weapon Tour",
+    "IRONCLAWWEAPONTOUR.Description": "This Tour will give you an overview of Ironclaw's weapon sheet.\nPlease open a weapon sheet first to enable this tour.",
+    "IRONCLAWWEAPONTOUR.OverviewTitle": "Weapon Sheets",
+    "IRONCLAWWEAPONTOUR.OverviewContent": "Ironclaw's weapons are one the more complicated item types. This tour will try to showcase all the various settings a weapon can have to clarify their use.\nBut first, the bare basics.",
+    "IRONCLAWWEAPONTOUR.TopAreaTitle": "Header Area",
+    "IRONCLAWWEAPONTOUR.TopAreaContent": "The basic item header is here, with some basic stats. The one weapon-specific control here is the checkbox on whether the weapon is readied or not.",
+    "IRONCLAWWEAPONTOUR.DescriptionTitle": "Description",
+    "IRONCLAWWEAPONTOUR.DescriptionContent": "The basic description area is also the same as most other items.",
+    "IRONCLAWWEAPONTOUR.AttributesTitle": "Attributes Overview",
+    "IRONCLAWWEAPONTOUR.AttributesContent": "The attributes tab is where most of the actual settings are, and there are plenty. At the top part are the fields to input basic item information, the middle contains some checkboxes to configure the exact details for the weapon, and the bottom holds the various dice pools the weapon will use.",
+    "IRONCLAWWEAPONTOUR.EffectTitle": "Effect",
+    "IRONCLAWWEAPONTOUR.EffectContent": "This is where both the weapon's damage effects, AoE effect, caused status effects and other such things go. Each effect should be separated with a comma (,).\nAlongside them is what defense the weapon uses. Normally, it's just 'Defense', but some weapons might have more exotic defenses against them. This field is also used in cases where the weapon is resisted instead of defended against.",
+    "IRONCLAWWEAPONTOUR.DescriptorsTitle": "Descriptors",
+    "IRONCLAWWEAPONTOUR.DescriptorsContent": "All the weapon descriptors go here, separated with commas.",
+    "IRONCLAWWEAPONTOUR.SelectablesTitle": "Handedness & Range",
+    "IRONCLAWWEAPONTOUR.SelectablesContent": "These two explain how the weapon is held and what range it has.",
+    "IRONCLAWWEAPONTOUR.CheckboxesTitle": "Checkboxes",
+    "IRONCLAWWEAPONTOUR.CheckboxesContent": "These control aspects of how the weapon functions. Whether the weapon has a spark die, whether the weapon is resisted, whether the weapon is automatically un-readied when attacked with, and whether the weapon needs to be readied before use, respectively.",
+    "IRONCLAWWEAPONTOUR.ExhaustTitle": "Gift Exhaustion",
+    "IRONCLAWWEAPONTOUR.ExhaustContent": "Toggling the gift exhaustion on will allow the weapon to automatically exhaust a separate gift item when it is used or readied. The gift name here should match the gift item's name accurately.",
+    "IRONCLAWWEAPONTOUR.UpgradeTitle": "Weapon Upgrading",
+    "IRONCLAWWEAPONTOUR.UpgradeContent": "Whether the weapon is an upgraded version of another weapon. If this is toggled on, the weapon needs another weapon to be readied first before it can be readied. As with gift exhaustion, the name here should match the pre-upgrade weapon accurately.\nThis also shows a field to mark what sort of action the weapon upgrade uses and what status effect the action causes, if any.\nWith both this and gift exhaustion set, using a weapon can cause multiple pop-up dialogs to appear, as the system confirms every action the character performs.",
+    "IRONCLAWWEAPONTOUR.DicePoolsTitle": "Dice Pools",
+    "IRONCLAWWEAPONTOUR.DicePoolsContent": "This is where each dice pool for the different actions go. Most weapons will feature the same dice pool in each field, eg. 'Body, Speed, Throwing'. A field for Spark Die will also be shown when applicable; it should simply be a die, eg. 'd10'.\nBut some weapons will feature different stats or include bonus dice for some pools. For example, a weapon with a bonus to parrying might have a defense pool of 'Body, Melee Combat; d12' instead.",
+    "IRONCLAWWEAPONTOUR.FinishedTitle": "Finished!",
+    "IRONCLAWWEAPONTOUR.FinishedContent": "That's the weapon sheet covered!"
+
+  }
+}

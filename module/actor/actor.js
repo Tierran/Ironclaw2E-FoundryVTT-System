@@ -297,7 +297,7 @@ export class Ironclaw2EActor extends Actor {
                     else soakActor.silentDamage(usedDamage + verybad, soaks, holderset.conditions);
                 }
             };
-            if (dataset.soaktype != "conditional") {
+            if (dataset.soaktype !== "conditional") {
                 if (autoHits && defenseStats) { // For when resistance roll is added to the soak directly
                     const resist = await soakActor.popupResistRoll({ "prechecked": defenseStats, "otherlabel": game.i18n.format("ironclaw2e.dialog.dicePool.explosionResist", { "name": otheritem.name }) },
                         { directroll, otheritem });
@@ -886,17 +886,17 @@ export class Ironclaw2EActor extends Actor {
 
             // Species and Career dice
             for (let foo of system.traits.species.skills) {
-                if (foo == comparekey)
+                if (foo === comparekey)
                     skill.diceArray = addArrays(skill.diceArray, system.traits.species.diceArray);
             }
             for (let foo of system.traits.career.skills) {
-                if (foo == comparekey)
+                if (foo === comparekey)
                     skill.diceArray = addArrays(skill.diceArray, system.traits.career.diceArray);
             }
             if (system.hasExtraCareers) {
                 extracareers.forEach(element => {
                     for (let foo of element.system.skills) {
-                        if (foo == comparekey)
+                        if (foo === comparekey)
                             skill.diceArray = addArrays(skill.diceArray, element.system.diceArray);
                     }
                 });
@@ -1303,11 +1303,11 @@ export class Ironclaw2EActor extends Actor {
             if (system.totalWeight > system.encumbranceOverBurdened || system.totalArmors > 3) {
                 await this.addEffect(["burdened", "over-burdened", "cannotmove"]);
             }
-            else if (system.totalWeight > system.encumbranceBurdened || system.totalArmors == 3) {
+            else if (system.totalWeight > system.encumbranceBurdened || system.totalArmors === 3) {
                 await this.deleteEffect(["cannotmove"], false);
                 await this.addEffect(["burdened", "over-burdened"]);
             }
-            else if (system.totalWeight > system.encumbranceNone || system.totalArmors == 2) {
+            else if (system.totalWeight > system.encumbranceNone || system.totalArmors === 2) {
                 await this.deleteEffect(["over-burdened", "cannotmove"], false);
                 await this.addEffect(["burdened"]);
             }

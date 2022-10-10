@@ -38,7 +38,7 @@
     <section class="sheet-body sheet-body-small">
 
         {{!-- Description Tab --}}
-        <div class="tab" data-group="primary" data-tab="description">
+        <div class="tab description" data-group="primary" data-tab="description">
             {{editor richDescription target="system.description" button=true editable=editable engine=sheetEngine}}
         </div>
 
@@ -46,7 +46,7 @@
         <div class="tab attributes" data-group="primary" data-tab="attributes">
             <div class="flexcol">
                 <h3 class="header-label">Attributes</h3>
-                <div class="resource flex-group-center">
+                <div class="resource effect flex-group-center">
                     <label class="resource-label">Effect:</label>
                     <div class="resource flexrow flex-center">
                         <label class="resource-label" style="max-width:160px">{{#if system.hasResist}}Resist With:{{else}}Opposing Defense:{{/if}}</label>
@@ -56,11 +56,11 @@
                     </div>
                     <input type="text" name="system.effect" value="{{system.effect}}" data-dtype="String" />
                 </div>
-                <div class="resource flex-group-center">
+                <div class="resource descriptors flex-group-center">
                     <label class="resource-label">Descriptors:</label>
                     <input type="text" name="system.descriptors" value="{{system.descriptors}}" data-dtype="String" />
                 </div>
-                <div class="resource flexrow flex-group-center">
+                <div class="resource select-settings flexrow flex-group-center">
                     <label class="resource-label">Equips to:</label>
                     <select name="system.equip">
                         {{selectOptions selectables.handedness selected=system.equip localize=false}}
@@ -70,7 +70,7 @@
                         {{selectOptions selectables.range selected=system.range localize=false}}
                     </select>
                 </div>
-                <div class="resource flexrow flex-group-center">
+                <div class="resource checkbox-settings flexrow flex-group-center">
                     <label class="resource-label">Use Spark:</label>
                     <input type="checkbox" name="system.useSpark" {{checked system.useSpark}} data-dtype="Boolean" />
                     <label class="resource-label">Defense is Resist:</label>
@@ -80,7 +80,7 @@
                     <label class="resource-label">Ready on Use:</label>
                     <input type="checkbox" name="system.readyWhenUsed" {{checked system.readyWhenUsed}} data-dtype="Boolean" />
                 </div>
-                <div class="resource flexrow flex-group-center">
+                <div class="resource exhaust-gift flexrow flex-group-center">
                     <label class="resource-label">Exhausts a Gift:</label>
                     <input type="checkbox" name="system.exhaustGift" {{checked system.exhaustGift}} data-dtype="Boolean" />
                     {{#if system.exhaustGift}}
@@ -94,7 +94,7 @@
                     <input type="text" name="system.exhaustGiftName" value="{{system.exhaustGiftName}}" data-dtype="String" />
                 </div>
                 {{/if}}
-                <div class="resource flexrow flex-group-center">
+                <div class="resource upgrade-weapon flexrow flex-group-center">
                     <label class="resource-label">Upgrades from a Weapon:</label>
                     <input type="checkbox" name="system.upgradeWeapon" {{checked system.upgradeWeapon}} data-dtype="Boolean" />
                     {{#if system.upgradeWeapon}}
@@ -113,29 +113,31 @@
                 </div>
                 {{/if}}
                 <h3 class="header-label">Dice Pools</h3>
-                <div class="resource flex-group-center">
-                    <label class="resource-label">Attack Pool:</label>
-                    <input type="text" name="system.attackDice" value="{{system.attackDice}}" data-dtype="String" />
-                </div>
-                {{#if system.useSpark}}
-                <div class="resource flexrow flex-group-center">
-                    <label class="resource-label">Spark Die:</label>
-                    <input type="text" name="system.sparkDie" value="{{system.sparkDie}}" data-dtype="String" />
-                </div>
-                {{/if}}
-                <div class="resource flex-group-center">
-                    <label class="resource-label">Defense Pool:</label>
-                    <input type="text" name="system.defenseDice" value="{{system.defenseDice}}" data-dtype="String" />
-                </div>
-                <div class="resource flex-group-center">
-                    <label class="resource-label">Counter Pool:</label>
-                    <input type="text" name="system.counterDice" value="{{system.counterDice}}" data-dtype="String" />
+                <div class="dice-pools">
+                    <div class="resource flex-group-center">
+                        <label class="resource-label">Attack Pool:</label>
+                        <input type="text" name="system.attackDice" value="{{system.attackDice}}" data-dtype="String" />
+                    </div>
+                    {{#if system.useSpark}}
+                    <div class="resource flexrow flex-group-center">
+                        <label class="resource-label">Spark Die:</label>
+                        <input type="text" name="system.sparkDie" value="{{system.sparkDie}}" data-dtype="String" />
+                    </div>
+                    {{/if}}
+                    <div class="resource flex-group-center">
+                        <label class="resource-label">Defense Pool:</label>
+                        <input type="text" name="system.defenseDice" value="{{system.defenseDice}}" data-dtype="String" />
+                    </div>
+                    <div class="resource flex-group-center">
+                        <label class="resource-label">Counter Pool:</label>
+                        <input type="text" name="system.counterDice" value="{{system.counterDice}}" data-dtype="String" />
+                    </div>
                 </div>
             </div>
         </div>
 
         {{!-- Specials Tab --}}
-        <div class="tab" data-group="primary" data-tab="special">
+        <div class="tab special" data-group="primary" data-tab="special">
             <div class="flexcol">
                 {{#if showDirectoryOptions}}
                 <div>

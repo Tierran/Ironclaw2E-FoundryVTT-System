@@ -23,18 +23,18 @@
     <section class="sheet-body">
 
         {{!-- Description Tab --}}
-        <div class="tab" data-group="primary" data-tab="description">
+        <div class="tab description" data-group="primary" data-tab="description">
             {{editor richDescription target="system.description" button=true editable=editable engine=sheetEngine}}
         </div>
 
         {{!-- Attributes Tab --}}
         <div class="tab attributes" data-group="primary" data-tab="attributes">
             <div class="flexcol">
-                <div class="resource flex-group-center">
+                <div class="resource tags flex-group-center">
                     <label class="resource-label">Tags:</label>
                     <input type="text" name="system.giftTags" value="{{system.giftTags}}" data-dtype="String" />
                 </div>
-                <div class="resource flexrow flex-group-center">
+                <div class="resource misc flexrow flex-group-center">
                     <label class="normal-label">Refresh:</label>
                     <input type="text" name="system.refresh" value="{{system.refresh}}" data-dtype="String" />
                     <label class="normal-label">Exhausts when used:</label>
@@ -42,7 +42,7 @@
                     <label class="normal-label">Grants a Skill Mark:</label>
                     <input type="checkbox" name="system.grantsMark" {{checked system.grantsMark}} data-dtype="Boolean" />
                 </div>
-                <div class="resource flexrow flex-group-center">
+                <div class="resource dice-pool flexrow flex-group-center">
                     <label class="normal-label">Gift dice:</label>
                     <input type="text" name="system.useDice" value="{{system.useDice}}" data-dtype="String" />
                     <label class="normal-label">Default TN:</label>
@@ -54,11 +54,11 @@
                     <input type="text" name="system.giftSkill" value="{{system.giftSkill}}" data-dtype="String" />
                 </div>
                 {{/if}}
-                <div class="resource flexrow flex-group-center">
+                <div class="resource extra-sense flexrow flex-group-center">
                     <label class="normal-label">Extra Sense:</label>
                     <input type="checkbox" name="system.extraSense" {{checked system.extraSense}} data-dtype="Boolean" />
                     {{#if system.extraSense}}
-                    <label class="normal-label">Mode:</label>
+                    <label class="normal-label">Type:</label>
                     <select name="system.extraSenseName" data-dtype="String">
                         {{selectOptions selectables.extraSenses selected=system.extraSenseName labelAttr="label" localize=true blank="ironclaw2e.none"}}
                     </select>
@@ -77,7 +77,7 @@
         </div>
 
         {{!-- Specials Tab --}}
-        <div class="tab" data-group="primary" data-tab="special">
+        <div class="tab special" data-group="primary" data-tab="special">
             <div class="flexcol">
                 {{#if showDirectoryOptions}}
                 <div>
@@ -105,7 +105,7 @@
                         </h4>
                         <div class="applicability-configuration flexcol">
                             <h4 class="header-label">Applicability Configuration</h4>
-                            <div class="grid-2col grid-minimal flex-group-center flex-tight">
+                            <div class="grid-2col applicability-generic grid-minimal flex-group-center flex-tight">
                                 {{#if (propertyExists special "typeField")}}<div class="flexrow flex-center"><label class="normal-label">Type Field</label><input style="min-width: 65%" class="special-change-field" type="text" name="typeField" value="{{special.typeField}}" data-dtype="String" /></div>{{/if}}
                                 {{#if (propertyExists special "nameField")}}<div class="flexrow flex-center"><label class="normal-label">Name Field</label><input style="min-width: 65%" class="special-change-field" type="text" name="nameField" value="{{special.nameField}}" data-dtype="String" /></div>{{/if}}
                                 {{#if (propertyExists special "tagField")}}<div class="flexrow flex-center"><label class="normal-label">Tag Field</label><input style="min-width: 65%" class="special-change-field" type="text" name="tagField" value="{{special.tagField}}" data-dtype="String" /></div>{{/if}}
@@ -126,7 +126,7 @@
                             </div>
                             {{#if (propertyExists special "effectOtherField")}}
                             <h4 class="header-label">Applicability From Attacker</h4>
-                            <div class="grid-2col grid-minimal flex-group-center flex-tight">
+                            <div class="grid-2col applicability-attacker grid-minimal flex-group-center flex-tight">
                                 {{#if (propertyExists special "nameOtherField")}}<div class="flexrow flex-center"><label class="normal-label">Other Name Field</label><input style="min-width: 55%" class="special-change-field" type="text" name="nameOtherField" value="{{special.nameOtherField}}" data-dtype="String" /></div>{{/if}}
                                 {{#if (propertyExists special "descriptorOtherField")}}<div class="flexrow flex-center"><label class="normal-label">Other Descriptor Field</label><input style="min-width: 55%" class="special-change-field" type="text" name="descriptorOtherField" value="{{special.descriptorOtherField}}" data-dtype="String" /></div>{{/if}}
                                 {{#if (propertyExists special "effectOtherField")}}<div class="flexrow flex-center"><label class="normal-label">Other Effect Field</label><input style="min-width: 55%" class="special-change-field" type="text" name="effectOtherField" value="{{special.effectOtherField}}" data-dtype="String" /></div>{{/if}}
@@ -142,46 +142,46 @@
                         <div class="effect-configuration flexcol">
                             <h4 class="header-label">Effect Configuration</h4>
                             <div class="flex-group-center flex-tight">
-                                {{#if (propertyExists special "bonusSourcesField")}}<div class="flexrow flex-center"><label class="normal-label">Bonus Sources</label><input style="min-width: 65%" class="special-change-field" type="text" name="bonusSourcesField" value="{{special.bonusSourcesField}}" data-dtype="String" /></div>{{/if}}
-                                {{#if (propertyExists special "bonusStatsField")}}<div class="flexrow flex-center"><label class="normal-label">Bonus Stats</label><input style="min-width: 65%" class="special-change-field" type="text" name="bonusStatsField" value="{{special.bonusStatsField}}" data-dtype="String" /></div>{{/if}}
-                                {{#if (propertyExists special "bonusDiceField")}}<div class="flexrow flex-center"><label class="normal-label">Bonus Dice</label><input style="min-width: 65%" class="special-change-field" type="text" name="bonusDiceField" value="{{special.bonusDiceField}}" data-dtype="String" /></div>{{/if}}
-                                {{#if (propertyExists special "bonusAutoUsed")}}<div class="flexrow flex-center">
+                                {{#if (propertyExists special "bonusSourcesField")}}<div class="bonusSourcesField flexrow flex-center"><label class="normal-label">Bonus Sources</label><input style="min-width: 65%" class="special-change-field" type="text" name="bonusSourcesField" value="{{special.bonusSourcesField}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "bonusStatsField")}}<div class="bonusStatsField flexrow flex-center"><label class="normal-label">Bonus Stats</label><input style="min-width: 65%" class="special-change-field" type="text" name="bonusStatsField" value="{{special.bonusStatsField}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "bonusDiceField")}}<div class="bonusDiceField flexrow flex-center"><label class="normal-label">Bonus Dice</label><input style="min-width: 65%" class="special-change-field" type="text" name="bonusDiceField" value="{{special.bonusDiceField}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "bonusAutoUsed")}}<div class="bonusAutoUsed flexrow flex-center">
                                     <label class="normal-label" style="min-width: 60%">Check Bonus Automatically</label>
                                     <select style="width: 40%" class="special-change-field" name="bonusAutoUsed" data-dtype="String">
                                         {{selectOptions ../selectables.giftBonusUses selected=special.bonusAutoUsed localize=false}}
                                     </select>
                                 </div>{{/if}}
-                                {{#if (propertyExists special "rerollType")}}<div class="flexrow flex-center">
+                                {{#if (propertyExists special "rerollType")}}<div class="rerollType flexrow flex-center">
                                     <label class="normal-label" style="min-width: 60%">Reroll Type</label>
                                     <select style="width: 40%" class="special-change-field" name="rerollType" data-dtype="String">
                                         {{selectOptions ../selectables.giftRerolls selected=special.rerollType localize=true}}
                                     </select>
                                 </div>{{/if}}
-                                {{#if (propertyExists special "bonusExhaustsOnUse")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Bonus Exhausts the Gift</label><input class="special-change-boolean" type="checkbox" name="bonusExhaustsOnUse" {{checked special.bonusExhaustsOnUse}} data-dtype="Boolean" /></div>{{/if}}
-                                {{#if (propertyExists special "replacesBaseBonus")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Replaces the Base Bonus</label><input class="special-change-boolean" type="checkbox" name="replacesBaseBonus" {{checked special.replacesBaseBonus}} data-dtype="Boolean" /></div>{{/if}}
-                                {{#if (propertyExists special "bonusStrideNumber")}}<div class="flexrow flex-center">
+                                {{#if (propertyExists special "bonusExhaustsOnUse")}}<div class="bonusExhaustsOnUse flexrow flex-center"><label class="normal-label" style="min-width: 80%">Bonus Exhausts the Gift</label><input class="special-change-boolean" type="checkbox" name="bonusExhaustsOnUse" {{checked special.bonusExhaustsOnUse}} data-dtype="Boolean" /></div>{{/if}}
+                                {{#if (propertyExists special "replacesBaseBonus")}}<div class="replacesBaseBonus flexrow flex-center"><label class="normal-label" style="min-width: 80%">Replaces the Base Bonus</label><input class="special-change-boolean" type="checkbox" name="replacesBaseBonus" {{checked special.replacesBaseBonus}} data-dtype="Boolean" /></div>{{/if}}
+                                {{#if (propertyExists special "bonusStrideNumber")}}<div class="bonusStrideNumber flexrow flex-center">
                                     <label class="normal-label" style="min-width: 25%">Bonus Stride</label><input class="special-change-number" type="number" name="bonusStrideNumber" value="{{special.bonusStrideNumber}}" data-dtype="Number" />
                                     <label class="normal-label" style="min-width: 25%">Bonus Dash</label><input class="special-change-number" type="number" name="bonusDashNumber" value="{{special.bonusDashNumber}}" data-dtype="Number" />
                                     <label class="normal-label" style="min-width: 25%">Bonus Run</label><input class="special-change-number" type="number" name="bonusRunNumber" value="{{special.bonusRunNumber}}" data-dtype="Number" />
                                 </div>{{/if}}
-                                {{#if (propertyExists special "ignoreBadFooting")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Ignore Bad Footing</label><input class="special-change-boolean" type="checkbox" name="ignoreBadFooting" {{checked special.ignoreBadFooting}} data-dtype="Boolean" /></div>{{/if}}
-                                {{#if (propertyExists special "changeFromField")}}<div class="flexrow flex-center">
+                                {{#if (propertyExists special "ignoreBadFooting")}}<div class="ignoreBadFooting flexrow flex-center"><label class="normal-label" style="min-width: 80%">Ignore Bad Footing</label><input class="special-change-boolean" type="checkbox" name="ignoreBadFooting" {{checked special.ignoreBadFooting}} data-dtype="Boolean" /></div>{{/if}}
+                                {{#if (propertyExists special "changeFromField")}}<div class="changeFromField flexrow flex-center">
                                     <label class="normal-label">Change From</label><input style="min-width: 30%" class="special-change-field" type="text" name="changeFromField" value="{{special.changeFromField}}" data-dtype="String" />
                                     <label class="normal-label">Change To</label><input style="min-width: 30%" class="special-change-field" type="text" name="changeToField" value="{{special.changeToField}}" data-dtype="String" />
                                 </div>{{/if}}
-                                {{#if (propertyExists special "penaltyReductionNumber")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Penalty Reduction</label><input class="special-change-number" type="number" name="penaltyReductionNumber" value="{{special.penaltyReductionNumber}}" data-dtype="Number" /></div>{{/if}}
-                                {{#if (propertyExists special "encumbranceBonusNumber")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Encumbrance Bonus</label><input class="special-change-number" type="number" name="encumbranceBonusNumber" value="{{special.encumbranceBonusNumber}}" data-dtype="Number" /></div>{{/if}}
-                                {{#if (propertyExists special "currencyName")}}<div class="flexrow flex-center">
+                                {{#if (propertyExists special "penaltyReductionNumber")}}<div class="penaltyReductionNumber flexrow flex-center"><label class="normal-label" style="min-width: 80%">Penalty Reduction</label><input class="special-change-number" type="number" name="penaltyReductionNumber" value="{{special.penaltyReductionNumber}}" data-dtype="Number" /></div>{{/if}}
+                                {{#if (propertyExists special "encumbranceBonusNumber")}}<div class="encumbranceBonusNumber flexrow flex-center"><label class="normal-label" style="min-width: 80%">Encumbrance Bonus</label><input class="special-change-number" type="number" name="encumbranceBonusNumber" value="{{special.encumbranceBonusNumber}}" data-dtype="Number" /></div>{{/if}}
+                                {{#if (propertyExists special "currencyName")}}<div class="currencyName flexrow flex-center">
                                     <label class="normal-label" style="min-width: 60%">Currency Name</label>
                                     <select style="width: 40%" class="special-change-field" name="currencyName" data-dtype="String">
                                         {{selectOptions ../selectables.currencyOptions selected=special.currencyName localize=false}}
                                     </select>
                                 </div>{{/if}}
-                                {{#if (propertyExists special "currencyValue")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 60%">Currency Value</label><input class="special-change-field" type="text" name="currencyValue" value="{{special.currencyValue}}" data-dtype="String" /></div>{{/if}}
-                                {{#if (propertyExists special "upgradeStepsNumber")}}<div class="flexrow flex-center"><label class="normal-label" style="min-width: 80%">Upgrade Steps</label><input class="special-change-number" type="number" name="upgradeStepsNumber" value="{{special.upgradeStepsNumber}}" data-dtype="Number" /></div>{{/if}}
-                                {{#if (propertyExists special "nameAdditionField")}}<div class="flexrow flex-center"><label class="normal-label">Name Addition</label><input style="min-width: 65%" class="special-change-field" type="text" name="nameAdditionField" value="{{special.nameAdditionField}}" data-dtype="String" /></div>{{/if}}
-                                {{#if (propertyExists special "identifierOverride")}}<div class="flexrow flex-center"><label class="normal-label">Reroll Identifier Override</label><input style="min-width: 65%" class="special-change-field" type="text" name="identifierOverride" value="{{special.identifierOverride}}" data-dtype="String" /></div>{{/if}}
-                                {{#if (propertyExists special "replaceNameField")}}<div class="flexrow flex-center"><label class="normal-label">Replacing Name</label><input style="min-width: 65%" class="special-change-field" type="text" name="replaceNameField" value="{{special.replaceNameField}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "currencyValue")}}<div class="currencyValue flexrow flex-center"><label class="normal-label" style="min-width: 60%">Currency Value</label><input class="special-change-field" type="text" name="currencyValue" value="{{special.currencyValue}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "upgradeStepsNumber")}}<div class="upgradeStepsNumber flexrow flex-center"><label class="normal-label" style="min-width: 80%">Upgrade Steps</label><input class="special-change-number" type="number" name="upgradeStepsNumber" value="{{special.upgradeStepsNumber}}" data-dtype="Number" /></div>{{/if}}
+                                {{#if (propertyExists special "nameAdditionField")}}<div class="nameAdditionField flexrow flex-center"><label class="normal-label">Name Addition</label><input style="min-width: 65%" class="special-change-field" type="text" name="nameAdditionField" value="{{special.nameAdditionField}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "identifierOverride")}}<div class="identifierOverride flexrow flex-center"><label class="normal-label">Reroll Identifier Override</label><input style="min-width: 65%" class="special-change-field" type="text" name="identifierOverride" value="{{special.identifierOverride}}" data-dtype="String" /></div>{{/if}}
+                                {{#if (propertyExists special "replaceNameField")}}<div class="replaceNameField flexrow flex-center"><label class="normal-label">Replacing Name</label><input style="min-width: 65%" class="special-change-field" type="text" name="replaceNameField" value="{{special.replaceNameField}}" data-dtype="String" /></div>{{/if}}
                             </div>
                         </div>
                     </div>

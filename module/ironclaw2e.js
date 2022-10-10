@@ -40,7 +40,7 @@ import { WildcardTemplateConfig, WorldSettingsConfig } from "./config.js";
 import { CoinageSettingsConfig } from "./config.js";
 import { IronclawDetectionModes, IronclawVisionModes, measureDistances } from "./canvas.js";
 
-import { IronclawActorTour, IronclawConfigTour } from "./tours.js";
+import { IronclawActorTour, IronclawConfigTour, IronclawGiftTour, IronclawItemTour } from "./tours.js";
 
 /* -------------------------------------------- */
 /*  Base Hooks                                  */
@@ -663,7 +663,9 @@ function registerClientSettings() {
 async function registerIronclawTours() {
     try {
         game.tours.register("ironclaw2e", "ironclawSettings", await IronclawConfigTour.fromJSON("systems/ironclaw2e/tours/ironclaw-settings.json"));
-        game.tours.register("ironclaw2e", "ironclawActorSheet", await IronclawActorTour.fromJSON("systems/ironclaw2e/tours/ironclaw-actor-sheet.json"));
+        game.tours.register("ironclaw2e", "ironclawActorSheet", await IronclawActorTour.fromJSON("systems/ironclaw2e/tours/ironclaw-character-sheet.json"));
+        game.tours.register("ironclaw2e", "ironclawWeaponSheet", await IronclawItemTour.fromJSON("systems/ironclaw2e/tours/ironclaw-weapon-sheet.json"));
+        game.tours.register("ironclaw2e", "ironclawGiftSheet", await IronclawGiftTour.fromJSON("systems/ironclaw2e/tours/ironclaw-gift-sheet.json"));
     }
     catch (err) {
         console.error(err);

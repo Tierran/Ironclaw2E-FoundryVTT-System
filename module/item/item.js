@@ -565,12 +565,18 @@ export class Ironclaw2EItem extends Item {
 
     /**
      * Add a new special setting to a gift
+     * @param {string} bonusType What kind of bonus to add
      */
-    async giftAddSpecialSetting() {
+    async giftAddSpecialSetting(bonusType = "attackBonus") {
         const item = this;
         const system = item.system;
         if (!(item.type === 'gift')) {
             console.error("Gift special setting adding attempted on a non-gift item: " + item.name);
+            return;
+        }
+
+        if (typeof bonusType !== "string") {
+            console.error("Gift special setting adding given a non-string: " + bonusType);
             return;
         }
 
@@ -581,11 +587,14 @@ export class Ironclaw2EItem extends Item {
         }
 
         let specialSettings = system.specialSettings;
-        let setting = getSpecialOptionPrototype("attackBonus");
+        let setting = getSpecialOptionPrototype(bonusType);
+        if (setting === null) {
+            console.error("Gift special setting adding had a null result with given bonus type: " + bonusType);
+            return;
+        }
         specialSettings.push(setting);
 
-        await this.update({ "system.specialSettings": specialSettings });
-        this.giftChangeSpecialSetting(specialSettings.length - 1, "attackBonus", true);
+        return await this.update({ "system.specialSettings": specialSettings });
     }
 
     /**
@@ -609,7 +618,7 @@ export class Ironclaw2EItem extends Item {
         let specialSettings = system.specialSettings;
         specialSettings.splice(index, 1);
 
-        await this.update({ "system.specialSettings": specialSettings });
+        return await this.update({ "system.specialSettings": specialSettings });
     }
 
     /**
@@ -652,7 +661,7 @@ export class Ironclaw2EItem extends Item {
         }
 
         specialSettings[index] = newSetting;
-        return this.update({ "system.specialSettings": specialSettings });
+        return await this.update({ "system.specialSettings": specialSettings });
     }
 
     /**

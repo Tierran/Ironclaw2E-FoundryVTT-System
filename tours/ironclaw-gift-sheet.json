@@ -1,0 +1,168 @@
+{
+  "title": "IRONCLAWGIFTTOUR.Title",
+  "description": "IRONCLAWGIFTTOUR.Description",
+  "canBeResumed": false,
+  "display": true,
+  "itemType": "gift",
+  "steps": [
+    {
+      "id": "overview",
+      "selector": ".window-header",
+      "title": "IRONCLAWGIFTTOUR.OverviewTitle",
+      "content": "IRONCLAWGIFTTOUR.OverviewContent"
+    },
+    {
+      "id": "headerArea",
+      "selector": ".sheet-header",
+      "title": "IRONCLAWGIFTTOUR.TopAreaTitle",
+      "content": "IRONCLAWGIFTTOUR.TopAreaContent"
+    },
+    {
+      "id": "description",
+      "selector": ".tab.description",
+      "title": "IRONCLAWGIFTTOUR.DescriptionTitle",
+      "content": "IRONCLAWGIFTTOUR.DescriptionContent",
+      "tab": "description"
+    },
+    {
+      "id": "attributes",
+      "selector": ".tab.attributes",
+      "title": "IRONCLAWGIFTTOUR.AttributesTitle",
+      "content": "IRONCLAWGIFTTOUR.AttributesContent",
+      "tab": "attributes"
+    },
+    {
+      "id": "tags",
+      "selector": ".resource.tags",
+      "title": "IRONCLAWGIFTTOUR.TagsTitle",
+      "content": "IRONCLAWGIFTTOUR.TagsContent",
+      "tab": "attributes"
+    },
+    {
+      "id": "misc",
+      "selector": ".resource.misc",
+      "title": "IRONCLAWGIFTTOUR.MiscTitle",
+      "content": "IRONCLAWGIFTTOUR.MiscContent",
+      "tab": "attributes"
+    },
+    {
+      "id": "dicePool",
+      "selector": ".resource.dice-pool",
+      "title": "IRONCLAWGIFTTOUR.DicePoolTitle",
+      "content": "IRONCLAWGIFTTOUR.DicePoolContent",
+      "tab": "attributes"
+    },
+    {
+      "id": "extraSense",
+      "selector": ".resource.extra-sense",
+      "title": "IRONCLAWGIFTTOUR.ExtraSenseTitle",
+      "content": "IRONCLAWGIFTTOUR.ExtraSenseContent",
+      "tab": "attributes"
+    },
+    {
+      "id": "advancedSettings",
+      "selector": ".tab.special",
+      "title": "IRONCLAWGIFTTOUR.AdvancedTitle",
+      "content": "IRONCLAWGIFTTOUR.AdvancedContent",
+      "tab": "special"
+    },
+    {
+      "id": "advancedBackup",
+      "selector": ".tab.special",
+      "title": "IRONCLAWGIFTTOUR.BackupTitle",
+      "content": "IRONCLAWGIFTTOUR.BackupContent",
+      "tab": "special"
+    },
+    {
+      "id": "advancedAdd",
+      "selector": ".rollable.add-new-special",
+      "title": "IRONCLAWGIFTTOUR.AddTitle",
+      "content": "IRONCLAWGIFTTOUR.AddContent",
+      "tab": "special"
+    },
+    {
+      "id": "defenseBonus",
+      "selector": ".special-option[data-special-index=\"@index\"]",
+      "title": "IRONCLAWGIFTTOUR.DefenseBonusTitle",
+      "content": "IRONCLAWGIFTTOUR.DefenseBonusContent",
+      "tab": "special",
+      "addSpecial": "defenseBonus"
+    },
+    {
+      "id": "applicability",
+      "selector": ".special-option[data-special-index=\"@index\"] .applicability-generic",
+      "title": "IRONCLAWGIFTTOUR.ApplicabilityTitle",
+      "content": "IRONCLAWGIFTTOUR.ApplicabilityContent",
+      "tooltipDirection": "DOWN",
+      "tab": "special"
+    },
+    {
+      "id": "applicabilityAttacker",
+      "selector": ".special-option[data-special-index=\"@index\"] .applicability-attacker",
+      "title": "IRONCLAWGIFTTOUR.ApplicabilityAttackerTitle",
+      "content": "IRONCLAWGIFTTOUR.ApplicabilityAttackerContent",
+      "tooltipDirection": "DOWN",
+      "tab": "special"
+    },
+    {
+      "id": "effects",
+      "selector": ".special-option[data-special-index=\"@index\"] .effect-configuration",
+      "title": "IRONCLAWGIFTTOUR.EffectsTitle",
+      "content": "IRONCLAWGIFTTOUR.EffectsContent",
+      "tooltipDirection": "DOWN",
+      "tab": "special"
+    },
+    {
+      "id": "replaceName",
+      "selector": ".special-option[data-special-index=\"@index\"] .effect-configuration .replaceNameField",
+      "title": "IRONCLAWGIFTTOUR.ReplaceTitle",
+      "content": "IRONCLAWGIFTTOUR.ReplaceContent",
+      "tab": "special"
+    },
+    {
+      "id": "finished",
+      "selector": "",
+      "title": "IRONCLAWGIFTTOUR.FinishedTitle",
+      "content": "IRONCLAWGIFTTOUR.FinishedContent"
+    }
+  ],
+  "localization": {
+    "IRONCLAWGIFTTOUR.Title": "Ironclaw Gift Tour",
+    "IRONCLAWGIFTTOUR.Description": "This Tour will give you an overview of Ironclaw's gift sheet.\nPlease open a gift sheet first to enable this tour.",
+    "IRONCLAWGIFTTOUR.OverviewTitle": "Gift Sheets",
+    "IRONCLAWGIFTTOUR.OverviewContent": "Ironclaw's gift system is not that complicated on the surface, but the varying conditional bonuses and checks means that gifts are the most complicated item type in the system. However, most of that complexity is kept in the special bonus system, which only needs to be set once per gift type per campaign.\nThis tour will hopefully help clarify some things about the gift system.\nBut first, the bare basics.",
+    "IRONCLAWGIFTTOUR.TopAreaTitle": "Header Area",
+    "IRONCLAWGIFTTOUR.TopAreaContent": "The basic item header is here, with some basic stats.",
+    "IRONCLAWGIFTTOUR.DescriptionTitle": "Description",
+    "IRONCLAWGIFTTOUR.DescriptionContent": "The basic description area is also the same as most other items.",
+    "IRONCLAWGIFTTOUR.AttributesTitle": "Attributes Overview",
+    "IRONCLAWGIFTTOUR.AttributesContent": "The attributes tab has some of the more basic settings for gifts. From the top...",
+    "IRONCLAWGIFTTOUR.TagsTitle": "Gift Tags",
+    "IRONCLAWGIFTTOUR.TagsContent": "The gift tags should go to this text field, each separated with a comma (,).",
+    "IRONCLAWGIFTTOUR.MiscTitle": "Gift Settings",
+    "IRONCLAWGIFTTOUR.MiscContent": "Here, you can set mark which kind of refresh the gift uses, as well as whether using the gift exhausts it and whether the gift grants a skill mark to its actor.",
+    "IRONCLAWGIFTTOUR.DicePoolTitle": "Gift Dice Pool",
+    "IRONCLAWGIFTTOUR.DicePoolContent": "This part controls what kind of dice pool the gift would use by default. The pool can be anything from a set of stats (Body, Will, Endurance) to a simple die (d12) to a mix (Body, Will, Endurance; d12).\nNext to it is the default target number for the gift. Setting it to -1 will make the gift default to highest mode instead of using a TN at all.",
+    "IRONCLAWGIFTTOUR.ExtraSenseTitle": "Extra Sense",
+    "IRONCLAWGIFTTOUR.ExtraSenseContent": "This will toggle whether the gift will grant an extra sense of some sort, with the configuration settings for the type and range showing when toggled on.\nSome senses will need to be actively toggled to have any effect, while others will give passive benefits for simply having it. Senses with passive effects will have a small speaker logo next to their type when selected.",
+    "IRONCLAWGIFTTOUR.AdvancedTitle": "Advanced Special Gift Bonus Settings",
+    "IRONCLAWGIFTTOUR.AdvancedContent": "Now, the big one.\nDue to how conditional the bonuses from Ironclaw's gifts can be, the gift system includes an in-depth configuration system for dynamically granting gift bonuses when appropriate.\nBy necessity, this system both looks and is quite complicated. However, hopefully this tour can illustrate how it works and help you wrap your head around it.",
+    "IRONCLAWGIFTTOUR.BackupTitle": "Note for Backups",
+    "IRONCLAWGIFTTOUR.BackupContent": "Note that we will be modifying the gift for a bit for illustration purposes. The tour should clean up after itself, but just in case, you might want to make sure the item used here is not a crucial one.\nAll set?\nAlright, here goes.",
+    "IRONCLAWGIFTTOUR.AddTitle": "Adding a Special Setting",
+    "IRONCLAWGIFTTOUR.AddContent": "This button will create a new special bonus setting for the gift. By default it will create an attack bonus, but this is easy to change to the correct one.\nNote that due to odd interaction with Foundry's systems, non-linked synthetic (token) actors, commonly mooks, do not save special settings correctly. As such, they must be set correctly in the actor directory before dragging them to a scene.",
+    "IRONCLAWGIFTTOUR.DefenseBonusTitle": "Defense Bonus",
+    "IRONCLAWGIFTTOUR.DefenseBonusContent": "For demonstration purposes, the tour has created a defense bonus to the gift, as it has most of the fields special settings can have.",
+    "IRONCLAWGIFTTOUR.ApplicabilityTitle": "Applicability Configuration",
+    "IRONCLAWGIFTTOUR.ApplicabilityContent": "The applicability configuration defines with what items or situations the bonus gets applied to. In defense bonus's case, it determines what sorts of weapons will be able to take advantage of it when parrying, or if any can and it is instead applied to dodges or special defenses.\nIn the text fields, you can input multiple values for every field by separating them with commas.\nThe system will ignore completely empty text fields, but if there is text in the field, the system will check that at least one of the values matches the bonus target. In this case, the parrying weapon or other defense.",
+    "IRONCLAWGIFTTOUR.ApplicabilityAttackerTitle": "Applicability from Attacker",
+    "IRONCLAWGIFTTOUR.ApplicabilityAttackerContent": "This field will instead try to match the opposing item. In the case of defense bonus, it will check whether the attacking weapon matches the values here.\nThe range can be configured to either match against the actual range from the attack, or the weapon's range field. When using the actual range, the system will measure the attacking distance with its internal ruler and compare it to the range inputted here.",
+    "IRONCLAWGIFTTOUR.EffectsTitle": "Effects Configuration",
+    "IRONCLAWGIFTTOUR.EffectsContent": "This is where the actual effects for the bonus are configured. What bonuses it actually gives, whether the gift will appear checked in a dice pool popup by default or not, whether the bonus can exhaust the gift, as well as other bonus-type-specific settings.\nFor a defense bonus, the fields configure where or what dice pool bonuses the special bonus gives, as well as whether this gift special bonus can replace another gift's bonus.",
+    "IRONCLAWGIFTTOUR.ReplaceTitle": "Special Replace System",
+    "IRONCLAWGIFTTOUR.ReplaceContent": "Since some gifts can replace parts of other gifts, the special bonus system includes a way to mark a specific bonus as something that replaces the special of another gift.\nInsert the accurate gift name of the other gift this special will replace here. The first bonus of the same type in that gift will be automatically replaced by this gift special bonus. However, this special will not be applied normally anymore, as it will require the replacing bonus to be applied first.\nNote that while chaining replacements is possible, the same special cannot be replaced more than once. If replaced multiple times, the system will default to the newest one.",
+    "IRONCLAWGIFTTOUR.FinishedTitle": "Finished!",
+    "IRONCLAWGIFTTOUR.FinishedContent": "That's the gift sheet covered! There's plenty more about the special system, but going through all of it like this would take way too long.\nInstead, we suggest that you check the readme for the Ironclaw system. It has a fairly thorought explanation of the various fields and settings the special bonus system has."
+
+  }
+}
