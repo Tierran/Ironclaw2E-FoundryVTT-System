@@ -84,6 +84,13 @@
   "ironclaw2e.ui.rangeScrolling": "Range Band: {range}",
 
 
+  "ironclaw2e.sidebar.readme": "Ironclaw 2E Readme",
+  "ironclaw2e.sidebar.changelog": "Ironclaw 2E Changelog",
+
+
+  "ironclaw2e.documentViewer.defaultTitle": "Ironclaw 2E Documentation",
+
+
   "ironclaw2e.actor.traits": "Traits",
   "ironclaw2e.actor.skills": "Skills",
 

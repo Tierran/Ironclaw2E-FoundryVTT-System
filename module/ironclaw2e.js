@@ -41,9 +41,10 @@ import { CoinageSettingsConfig } from "./config.js";
 import { IronclawDetectionModes, IronclawVisionModes, measureDistances } from "./canvas.js";
 
 import { IronclawActorTour, IronclawConfigTour, IronclawGiftTour, IronclawItemTour } from "./tours.js";
+import { IronclawDocumentationViewer } from "./documentation.js";
 
 /* -------------------------------------------- */
-/*  Base Hooks                                  */
+/*  Base Initialization Hooks                   */
 /* -------------------------------------------- */
 
 Hooks.once('init', function () {
@@ -680,6 +681,40 @@ Hooks.on("canvasInit", function () {
     // Insert system measurement
     canvas.grid.diagonalRule = game.settings.get("ironclaw2e", "diagonalRule");
     SquareGrid.prototype.measureDistances = measureDistances;
+});
+
+/* -------------------------------------------- */
+/*  Ironclaw 2E Links                           */
+/* -------------------------------------------- */
+
+/**
+ * Function that is called when an Ironclaw-specific button is pressed in the sidebar
+   * @param {MouseEvent} event    The originating click event
+ */
+function systemSidebarAction(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+
+    switch (button.dataset.systemAction) {
+        case "system-readme":
+            new IronclawDocumentationViewer("systems/ironclaw2e/README.md", {}).render(true);
+            break;
+        case "system-changelog":
+            new IronclawDocumentationViewer("systems/ironclaw2e/CHANGELOG.md", {}).render(true);
+            break;
+    }
+}
+
+Hooks.on("renderSettings", function (settings, html, data) {
+    const docsHolder = html.find("#settings-documentation");
+    let readme = `<button data-system-action="system-readme">
+            <i class="fas fa-book"></i> ${game.i18n.localize("ironclaw2e.sidebar.readme")}
+        </button>
+            <button data-system-action="system-changelog">
+            <i class="fas fa-clipboard-list"></i> ${game.i18n.localize("ironclaw2e.sidebar.changelog")}
+        </button>`;
+    docsHolder.prepend(readme);
+    docsHolder.find("button[data-system-action]").click(systemSidebarAction.bind(this));
 });
 
 /* -------------------------------------------- */
