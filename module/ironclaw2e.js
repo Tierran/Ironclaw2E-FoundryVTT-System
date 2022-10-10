@@ -40,6 +40,8 @@ import { WildcardTemplateConfig, WorldSettingsConfig } from "./config.js";
 import { CoinageSettingsConfig } from "./config.js";
 import { IronclawDetectionModes, IronclawVisionModes, measureDistances } from "./canvas.js";
 
+import { IronclawActorTour, IronclawConfigTour } from "./tours.js";
+
 /* -------------------------------------------- */
 /*  Base Hooks                                  */
 /* -------------------------------------------- */
@@ -55,6 +57,9 @@ Hooks.once('init', function () {
         Ironclaw2ECombat,
         Ironclaw2ECombatant,
         Ironclaw2ECombatTracker,
+        // Sheet classes
+        Ironclaw2EActorSheet,
+        Ironclaw2EItemSheet,
         // Object class
         Ironclaw2EToken,
         // Hotbar macros
@@ -164,6 +169,9 @@ Hooks.once('init', function () {
 });
 
 Hooks.once('setup', function () {
+    // Tours registeration
+    registerIronclawTours();
+
     // Enhanced Terrain Layer check
     const etlActive = game.modules.get("enhanced-terrain-layer")?.active === true;
     game.ironclaw2e.useETLElevation = etlActive;
@@ -642,6 +650,24 @@ function registerClientSettings() {
         config: true,
         choices: TokenExtenderOptions.buttonOptions
     });
+}
+
+/* -------------------------------------------- */
+/*  Tours Registers                             */
+/* -------------------------------------------- */
+
+/**
+ * Separate function to register system tours
+ * @private
+ */
+async function registerIronclawTours() {
+    try {
+        game.tours.register("ironclaw2e", "ironclawSettings", await IronclawConfigTour.fromJSON("systems/ironclaw2e/tours/ironclaw-settings.json"));
+        game.tours.register("ironclaw2e", "ironclawActorSheet", await IronclawActorTour.fromJSON("systems/ironclaw2e/tours/ironclaw-actor-sheet.json"));
+    }
+    catch (err) {
+        console.error(err);
+    }
 }
 
 /* -------------------------------------------- */

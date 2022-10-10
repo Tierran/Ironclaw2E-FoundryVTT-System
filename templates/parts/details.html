@@ -38,7 +38,7 @@
     <h2 class="header-label flexrow flex-center">{{localize "ironclaw2e.sheets.actor.details.skills"}}</h2>
     <div class="skillgrid grid grid-3col">
         {{#each system.skills as |skill key|}}
-        <div class="skill flexcol flex-group-center flex-tight">
+        <div class="skill {{key}} flexcol flex-group-center flex-tight">
             <span class="resource-label">{{skill.usedTitle}}</span>
             <div class="skill flexrow">
                 <span class="small-label under-header">{{localize "ironclaw2e.sheets.actor.details.totalDice" dice=skill.totalDiceString}}</span>

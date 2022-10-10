@@ -1,7 +1,7 @@
 <div class="flexcol">
     {{#unless templateHelp.encumbranceInItems}}
     <div class="flexcol">
-        <div class="flexrow flex-group-left flex-tight">
+        <div class="encumbrance flexrow flex-group-left flex-tight">
             <span class="resource-label">{{localize "ironclaw2e.sheets.actor.gear.encumbrance"}}</span>
             <span class="normal-label rollable roll-enc-effect" data-removals="cannotmove,over-burdened,burdened" data-additions="">{{localize "ironclaw2e.none"}}: {{system.encumbranceNone}}</span>
             <span class="normal-label rollable roll-enc-effect" data-removals="cannotmove,over-burdened" data-additions="burdened">{{localize "ironclaw2e.effect.status.burdened"}}: {{system.encumbranceBurdened}}</span>

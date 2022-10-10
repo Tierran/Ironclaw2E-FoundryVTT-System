@@ -1,0 +1,144 @@
+{
+  "title": "IRONCLAWACTORTOUR.Title",
+  "description": "IRONCLAWACTORTOUR.Description",
+  "canBeResumed": false,
+  "display": true,
+  "actorType": "character",
+  "steps": [
+    {
+      "id": "overview",
+      "selector": ".window-header",
+      "title": "IRONCLAWACTORTOUR.OverviewTitle",
+      "content": "IRONCLAWACTORTOUR.OverviewContent"
+    },
+    {
+      "id": "headerArea",
+      "selector": ".sheet-header",
+      "title": "IRONCLAWACTORTOUR.TopAreaTitle",
+      "content": "IRONCLAWACTORTOUR.TopAreaContent"
+    },
+    {
+      "id": "headerTraits",
+      "selector": ".sheet-header .traits",
+      "title": "IRONCLAWACTORTOUR.TopTraitsTitle",
+      "content": "IRONCLAWACTORTOUR.TopTraitsContent"
+    },
+    {
+      "id": "tabs",
+      "selector": ".sheet-tabs.tabs",
+      "title": "IRONCLAWACTORTOUR.TabsTitle",
+      "content": "IRONCLAWACTORTOUR.TabsContent"
+    },
+    {
+      "id": "biography",
+      "selector": ".tab.biography",
+      "title": "IRONCLAWACTORTOUR.BiographyTitle",
+      "content": "IRONCLAWACTORTOUR.BiographyContent",
+      "tab": "description"
+    },
+    {
+      "id": "details",
+      "selector": ".tab.skills",
+      "title": "IRONCLAWACTORTOUR.DetailsTitle",
+      "content": "IRONCLAWACTORTOUR.DetailsContent",
+      "tab": "skills"
+    },
+    {
+      "id": "detailsLimit",
+      "selector": ".skill.climbing > .resource-label",
+      "title": "IRONCLAWACTORTOUR.DetailsLimitTitle",
+      "content": "IRONCLAWACTORTOUR.DetailsLimitContent",
+      "tab": "skills"
+    },
+    {
+      "id": "battleStats",
+      "selector": ".tab.battlestats",
+      "title": "IRONCLAWACTORTOUR.BattleStatsTitle",
+      "content": "IRONCLAWACTORTOUR.BattleStatsContent",
+      "tab": "battlestats"
+    },
+    {
+      "id": "battleStatsItems",
+      "selector": ".tab.battlestats .battle-items",
+      "title": "IRONCLAWACTORTOUR.BattleStatsItemsTitle",
+      "content": "IRONCLAWACTORTOUR.BattleStatsItemsContent",
+      "tab": "battlestats"
+    },
+    {
+      "id": "statusEffects",
+      "selector": ".tab.statuseffects",
+      "title": "IRONCLAWACTORTOUR.StatusEffectsTitle",
+      "content": "IRONCLAWACTORTOUR.StatusEffectsContent",
+      "tab": "statuseffects"
+    },
+    {
+      "id": "gifts",
+      "selector": ".tab.gifts",
+      "title": "IRONCLAWACTORTOUR.GiftsTitle",
+      "content": "IRONCLAWACTORTOUR.GiftsContent",
+      "tab": "gifts"
+    },
+    {
+      "id": "combatGear",
+      "selector": ".tab.weapons",
+      "title": "IRONCLAWACTORTOUR.CombatGearTitle",
+      "content": "IRONCLAWACTORTOUR.CombatGearContent",
+      "tab": "weapons"
+    },
+    {
+      "id": "combatEncumbrance",
+      "selector": ".tab.weapons .encumbrance",
+      "title": "IRONCLAWACTORTOUR.CombatEncumbranceTitle",
+      "content": "IRONCLAWACTORTOUR.CombatEncumbranceContent",
+      "tab": "weapons"
+    },
+    {
+      "id": "items",
+      "selector": ".tab.items",
+      "title": "IRONCLAWACTORTOUR.ItemsTitle",
+      "content": "IRONCLAWACTORTOUR.ItemsContent",
+      "tab": "items"
+    },
+    {
+      "id": "finished",
+      "selector": "",
+      "title": "IRONCLAWACTORTOUR.FinishedTitle",
+      "content": "IRONCLAWACTORTOUR.FinishedContent"
+    }
+  ],
+  "localization": {
+    "IRONCLAWACTORTOUR.Title": "Ironclaw Actor Tour",
+    "IRONCLAWACTORTOUR.Description": "This Tour will give you an overview of Ironclaw's actor sheets, through a 'character' type sheet.\nPlease open a character sheet first to enable this tour.",
+    "IRONCLAWACTORTOUR.OverviewTitle": "Actor Sheets",
+    "IRONCLAWACTORTOUR.OverviewContent": "Each actor in Ironclaw has one of these. Though the details can change, the basic structure of every actor sheet in the system follows the same basic format: a common header area at the top and separate tabs at the bottom.\nAnything in the sheets that glows red when hovered over by the cursor can be clicked to do something, while a blue glow means double-clicking it will send something to chat.",
+    "IRONCLAWACTORTOUR.TopAreaTitle": "Header Area",
+    "IRONCLAWACTORTOUR.TopAreaContent": "The basic character information for the actor is stored and can be changed here. The image can be clicked to change it, and the buttons can open the dice rolling dialog or damage-applying popup.",
+    "IRONCLAWACTORTOUR.TopTraitsTitle": "Character Traits",
+    "IRONCLAWACTORTOUR.TopTraitsContent": "The character trait stats and the dice are here. The trait dice fields can accept multiples of the same die, but not multiple dice types. '3d10' will work, while 'd10,d8' or even 'd10,d10' will not. 'd0' also works, resulting in the trait to be explicitly ignored.",
+    "IRONCLAWACTORTOUR.TabsTitle": "Sheet Tabs",
+    "IRONCLAWACTORTOUR.TabsContent": "The character sheet is split into seven different tabs, controlled from here. The default tab is usually 'Battle Statistics' for quick access, but the tour will go through them from left to right.",
+    "IRONCLAWACTORTOUR.BiographyTitle": "The Biography",
+    "IRONCLAWACTORTOUR.BiographyContent": "The biography tab features the motto for the character, the three current goals and a freely editable description of the character at the bottom. When the mouse cursor hovers over the bottom area, a button should show up at the top-right of the area that opens the text editor.",
+    "IRONCLAWACTORTOUR.DetailsTitle": "Character Details",
+    "IRONCLAWACTORTOUR.DetailsContent": "This tab holds both the the species and career information for the character, as well as the skill marks and favored uses for each skill. The system will automatically calculate how many dice a skill has in it from marks, species and careers.",
+    "IRONCLAWACTORTOUR.DetailsLimitTitle": "Encumbrance Limit",
+    "IRONCLAWACTORTOUR.DetailsLimitContent": "Skills with those little box symbols are skills that are limited by the encumbrance of the character.",
+    "IRONCLAWACTORTOUR.BattleStatsTitle": "Battle Statistics",
+    "IRONCLAWACTORTOUR.BattleStatsContent": "The default tab for actor sheets, the battle statistics tab shows some basic combat information at the top, including initiative, the various speeds and a few common combat rolls.\nThe fields here that involve dice can be clicked to roll the dice. If the initiative shows up green, it means the actor has a combatant that has not yet rolled its initiative, which can then be done directly through the sheet.",
+    "IRONCLAWACTORTOUR.BattleStatsItemsTitle": "Item Quick Access",
+    "IRONCLAWACTORTOUR.BattleStatsItemsContent": "Most of the space for battle statistics is allocated to the item quick access area. Items set to be shown in battle statistics show up here and can be used without switching tabs. Hopefully, this will speed up combat as you don't need to switch tabs to look for weapons or gifts or such.",
+    "IRONCLAWACTORTOUR.StatusEffectsTitle": "Status Effects",
+    "IRONCLAWACTORTOUR.StatusEffectsContent": "This tab shows a list of all the status effects affecting the actor, as well as buttons to add an effect, reset / remove all effects, or remove individual effects.",
+    "IRONCLAWACTORTOUR.GiftsTitle": "Gifts",
+    "IRONCLAWACTORTOUR.GiftsContent": "The Gifts tab shows all the gifts the actor has, with buttons to use, edit or delete them. Note that Extra Careers are technically a different type of item, hence why they are separate.",
+    "IRONCLAWACTORTOUR.CombatGearTitle": "Combat Gear",
+    "IRONCLAWACTORTOUR.CombatGearContent": "This tab collects all the different primarily combat-related items together. At the top, this tab also shows the total carried weight of the actor's items and the number of worn armors.",
+    "IRONCLAWACTORTOUR.CombatEncumbranceTitle": "Encumbrance Effects",
+    "IRONCLAWACTORTOUR.CombatEncumbranceContent": "The different levels of encumbrance here can be clicked to give the actor the corresponding encumbrance status effect.",
+    "IRONCLAWACTORTOUR.ItemsTitle": "Items",
+    "IRONCLAWACTORTOUR.ItemsContent": "The remaining inventory is shown here. At the top are the different currencies the actor is carrying as well as their total value and weight. At the bottom are both the light sources and miscellaneous items the actor might be carrying.\nThe total carried weight here is a duplicate of the one shown under Combat Gear and shows the total weight of all the carried items too.",
+    "IRONCLAWACTORTOUR.FinishedTitle": "Finished!",
+    "IRONCLAWACTORTOUR.FinishedContent": "And that's it for the character sheet!\nIronclaw 2E also features other actor types besides character but their sheets follow the same basic principles as well. They should be very similar to navigate through."
+
+  }
+}

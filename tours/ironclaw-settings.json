@@ -1,0 +1,132 @@
+{
+  "title": "IRONCLAWSETTINGSTOUR.Title",
+  "description": "IRONCLAWSETTINGSTOUR.Description",
+  "canBeResumed": false,
+  "display": true,
+  "restricted": true,
+  "steps": [
+    {
+      "id": "overview",
+      "selector": "#settings-game [data-action=\"configure\"]",
+      "title": "IRONCLAWSETTINGSTOUR.OverviewTitle",
+      "content": "IRONCLAWSETTINGSTOUR.OverviewContent"
+    },
+    {
+      "id": "base",
+      "selector": "#client-settings",
+      "title": "IRONCLAWSETTINGSTOUR.BaseTitle",
+      "content": "IRONCLAWSETTINGSTOUR.BaseContent",
+      "activateSettings": true
+    },
+    {
+      "id": "underButtons",
+      "selector": "#client-settings [name=\"ironclaw2e.leftButtonOption\"], #client-settings [name=\"ironclaw2e.rightButtonOption\"]",
+      "title": "IRONCLAWSETTINGSTOUR.ButtonsTitle",
+      "content": "IRONCLAWSETTINGSTOUR.ButtonsContent"
+    },
+    {
+      "id": "worldButton",
+      "selector": "#client-settings [data-key=\"ironclaw2e.worldSettingsConfig\"]",
+      "title": "IRONCLAWSETTINGSTOUR.WorldButtonTitle",
+      "content": "IRONCLAWSETTINGSTOUR.WorldButtonContent"
+    },
+    {
+      "id": "worldDice",
+      "selector": "#world-settings-config #ironclaw-dice-settings",
+      "title": "IRONCLAWSETTINGSTOUR.DiceTitle",
+      "content": "IRONCLAWSETTINGSTOUR.DiceContent",
+      "openSettingsApp": "world"
+    },
+    {
+      "id": "worldAttack",
+      "selector": "#world-settings-config #ironclaw-auto-attack-settings",
+      "title": "IRONCLAWSETTINGSTOUR.AttackTitle",
+      "content": "IRONCLAWSETTINGSTOUR.AttackContent"
+    },
+    {
+      "id": "worldRest",
+      "selector": "#world-settings-config",
+      "title": "IRONCLAWSETTINGSTOUR.WorldRestTitle",
+      "content": "IRONCLAWSETTINGSTOUR.WorldRestContent"
+    },
+    {
+      "id": "currency",
+      "selector": "#client-settings [data-key=\"ironclaw2e.coinageSettingsConfig\"]",
+      "title": "IRONCLAWSETTINGSTOUR.CurrencyTitle",
+      "content": "IRONCLAWSETTINGSTOUR.CurrencyContent",
+      "closeSettingsApp": "world"
+    },
+    {
+      "id": "currencyBase",
+      "selector": "#coinage-settings-config #ironclaw-coinage-base",
+      "title": "IRONCLAWSETTINGSTOUR.CurrencyBaseTitle",
+      "content": "IRONCLAWSETTINGSTOUR.CurrencyBaseContent",
+      "openSettingsApp": "coinage"
+    },
+    {
+      "id": "currencyExtra",
+      "selector": "#coinage-settings-config #ironclaw-coinage-one",
+      "title": "IRONCLAWSETTINGSTOUR.CurrencyExtraTitle",
+      "content": "IRONCLAWSETTINGSTOUR.CurrencyExtraContent"
+    },
+    {
+      "id": "currencyReset",
+      "selector": "#coinage-settings-config .reset-settings",
+      "title": "IRONCLAWSETTINGSTOUR.CurrencyResetTitle",
+      "content": "IRONCLAWSETTINGSTOUR.CurrencyResetContent"
+    },
+    {
+      "id": "template",
+      "selector": "#client-settings [data-key=\"ironclaw2e.templateSettingsConfig\"]",
+      "title": "IRONCLAWSETTINGSTOUR.WildcardTitle",
+      "content": "IRONCLAWSETTINGSTOUR.WildcardContent",
+      "closeSettingsApp": "coinage"
+    },
+    {
+      "id": "templateExplanation",
+      "selector": "#wildcard-template-config #ironclaw-wildcard-explanation",
+      "title": "IRONCLAWSETTINGSTOUR.WildcardExplanationTitle",
+      "content": "IRONCLAWSETTINGSTOUR.WildcardExplanationContent",
+      "openSettingsApp": "template"
+    },
+    {
+      "id": "finished",
+      "selector": "",
+      "title": "IRONCLAWSETTINGSTOUR.FinishedTitle",
+      "content": "IRONCLAWSETTINGSTOUR.FinishedContent",
+      "closeSettingsApp": "template"
+    }
+  ],
+  "localization": {
+    "IRONCLAWSETTINGSTOUR.Title": "Ironclaw Settings",
+    "IRONCLAWSETTINGSTOUR.Description": "This Tour will give you an overview of Ironclaw's settings",
+    "IRONCLAWSETTINGSTOUR.OverviewTitle": "First, The Settings Menu",
+    "IRONCLAWSETTINGSTOUR.OverviewContent": "Just in case you've missed it, here's where you open the settings configuration. For the core Foundry settings, Ironclaw system settings and module settings.\nNow, let's open it.",
+    "IRONCLAWSETTINGSTOUR.BaseTitle": "Ironclaw Settings",
+    "IRONCLAWSETTINGSTOUR.BaseContent": "Here's all the Ironclaw system settings! The top buttons open separate configuration menus for the world-scope settings Ironclaw has. Or in other words, all the settings there are saved per world and are the same for every player.\nBy contrast, all the options below the buttons are client-scope, meaning each player can have different settings set. These are usually user-interface related.",
+    "IRONCLAWSETTINGSTOUR.ButtonsTitle": "Token Extra Buttons",
+    "IRONCLAWSETTINGSTOUR.ButtonsContent": "Of the client settings, we specifically want to mention the configurations for the two extra buttons underneath Ironclaw's tokens. Here, you can configure exactly what the two buttons do.",
+    "IRONCLAWSETTINGSTOUR.WorldButtonTitle": "World Settings",
+    "IRONCLAWSETTINGSTOUR.WorldButtonContent": "The settings in here are all various world-scope settings, organized by category. It's mostly a hodge-podge of things, but it allows you, the GM, to change how the system functions.\nFor example...",
+    "IRONCLAWSETTINGSTOUR.DiceTitle": "Dice System Settings",
+    "IRONCLAWSETTINGSTOUR.DiceContent": "These settings let you change how exactly the rolled dice pools show up and function within the system...",
+    "IRONCLAWSETTINGSTOUR.AttackTitle": "Auto-Attack Settings",
+    "IRONCLAWSETTINGSTOUR.AttackContent": "While these settings let you configure whether and how much the system automates attack calculations...",
+    "IRONCLAWSETTINGSTOUR.WorldRestTitle": "Rest of the Settings",
+    "IRONCLAWSETTINGSTOUR.WorldRestContent": "And so on and so forth. We recommend that you check the rest of the menu as well, in case there's something you want to change. All the options have notes about what exactly they do.\nBut now, back to the core menu.",
+    "IRONCLAWSETTINGSTOUR.CurrencyTitle": "Currency Settings",
+    "IRONCLAWSETTINGSTOUR.CurrencyContent": "Here, you can configure the exact names, values and symbols of the currencies used in your world.",
+    "IRONCLAWSETTINGSTOUR.CurrencyBaseTitle": "Base Currency",
+    "IRONCLAWSETTINGSTOUR.CurrencyBaseContent": "The base currency is considered the 'default' unit for currency, the currency unit other currencies are compared to. Hence, its value is hard-locked to '1' and it is always in use.",
+    "IRONCLAWSETTINGSTOUR.CurrencyExtraTitle": "Added Currencies",
+    "IRONCLAWSETTINGSTOUR.CurrencyExtraContent": "The system also supports up to three additional currencies.\nIn comparison to the base currency, added currencies are defined in relation to the base currency in value and can be toggled off in case the campaign doesn't need as many currencies.",
+    "IRONCLAWSETTINGSTOUR.CurrencyResetTitle": "Reset Currency Settings",
+    "IRONCLAWSETTINGSTOUR.CurrencyResetContent": "In case you happen to make a mistake or simply want to reset things back to their defaults, this button resets all the currency settings.\nDo note that there is no way to simply undo this! Any changes you've made will need to be re-changed manually.",
+    "IRONCLAWSETTINGSTOUR.WildcardTitle": "Wildcard Template Settings",
+    "IRONCLAWSETTINGSTOUR.WildcardContent": "This menu offers a quick explanation on the Wildcard Template system, as well as on-off toggles for each template type.",
+    "IRONCLAWSETTINGSTOUR.WildcardExplanationTitle": "Wildcard Explanation",
+    "IRONCLAWSETTINGSTOUR.WildcardExplanationContent": "This explanation puts it about as succintly as it can.",
+    "IRONCLAWSETTINGSTOUR.FinishedTitle": "Finished!",
+    "IRONCLAWSETTINGSTOUR.FinishedContent": "And that's it for the configuration tour! If you need to change how the system operates to suit your virtual table's style and preferences, hopefully you'll find all you need here!"
+  }
+}

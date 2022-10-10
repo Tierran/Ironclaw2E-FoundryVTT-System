@@ -1,6 +1,6 @@
 <div class="flexcol">
     {{#unless templateHelp.coinageDisabled}}
-    <div class="flexcol">
+    <div class="coinage flexcol">
         <h3 class="header-label">{{localize "ironclaw2e.sheets.actor.coinage.title"}}</h3>
         <span class="bold-text allow-selection">{{localize "ironclaw2e.sheets.actor.coinage.totalValue" main=system.coinage.baseCurrency.plural value=system.coinageValue sign=system.coinage.baseCurrency.parsedSign}}</span>
         <div></div>
@@ -19,7 +19,7 @@
     <h3 class="header-label">{{localize "ironclaw2e.sheets.actor.gear.items"}}</h3>
     {{#if templateHelp.encumbranceInItems}}
     <div class="flexcol">
-        <div class="flexrow flex-group-left flex-tight">
+        <div class="encumbrance flexrow flex-group-left flex-tight">
             <span class="resource-label">{{localize "ironclaw2e.sheets.actor.gear.encumbrance"}}</span>
             <span class="normal-label rollable roll-enc-effect" data-removals="cannotmove,over-burdened,burdened" data-additions="">{{localize "ironclaw2e.none"}}: {{system.encumbranceNone}}</span>
             <span class="normal-label rollable roll-enc-effect" data-removals="cannotmove,over-burdened" data-additions="burdened">{{localize "ironclaw2e.effect.status.burdened"}}: {{system.encumbranceBurdened}}</span>
@@ -36,7 +36,7 @@
             <div class="item-image"></div>
             <div class="item-name">{{localize "ironclaw2e.sheets.actor.gear.items"}}</div>
             <div class="item-controls-small">
-                <a class="item-control item-create" title="{{localize "ironclaw2e.sheets.actor.gear.createLight"}}" data-type="illumination"><i class="fas fa-plus"></i></a>
+                <a class="item-control item-create" title="{{localize "ironclaw2e.sheets.actor.gear.createLight"}}" data-type="illumination"><i class="fas fa-lightbulb"></i></a>
                 <a class="item-control item-create" title="{{localize "ironclaw2e.sheets.actor.gear.createItem"}}" data-type="item"><i class="fas fa-plus"></i></a>
             </div>
         </li>

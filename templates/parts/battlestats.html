@@ -29,7 +29,7 @@
             <span class="normal-label">{{localize "ironclaw2e.sheets.actor.rallyRoll"}}{{#if (propertyExists system "visualData")}}: {{system.visualData.rally}}{{/if}}</span>
         </div>
     </div>
-    <div>
+    <div class="battle-items">
         <ol class="items-list">
             {{#each actor.weapons as |item id|}}
             {{#if item.system.showInBattleStats}}
