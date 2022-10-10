@@ -1,7 +1,7 @@
-/* eslint-disable */
 /* -------------------------------------------- */
 /*  Measurements                                */
 /* -------------------------------------------- */
+/* eslint-disable */
 
 /** @override */
 export const measureDistances = function (segments, options = {}) {

@@ -142,7 +142,7 @@ export async function addConditionsIronclaw(conditions, target, warn = false) {
         // Get rid of duplicate conditions
         if (hasConditionsIronclaw(conditions, target, warn)) {
             const existingeffects = getConditionsIronclaw(target, warn);
-            usedconditions = usedconditions.filter(x => existingeffects.some(y => y.getFlag("core", "statusId") === x) == false);
+            usedconditions = usedconditions.filter(x => existingeffects.some(y => y.getFlag("core", "statusId") === x) === false);
         }
         const effects = prepareEffects(CommonConditionInfo.getMatchedConditions(usedconditions));
         if (effects.length > 0) {

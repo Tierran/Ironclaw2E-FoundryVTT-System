@@ -1,6 +1,7 @@
 import { makeCompareReady, getAllItemsInWorld, getAllActorsInWorld } from "./helpers.js";
 import { CommonSystemInfo, getSpecialOptionPrototype } from "./systeminfo.js";
 
+/* eslint-disable */
 
 /**
  * Split the version number of the system into its component parts and put them into an array

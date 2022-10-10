@@ -377,6 +377,7 @@ export function ironclawDragRulerIntegration(SpeedProvider) {
 /* -------------------------------------------- */
 /*  Context Menus                               */
 /* -------------------------------------------- */
+/* eslint-disable */
 
 /**
  * Small function to get the hanging actor from a message
@@ -643,6 +644,7 @@ function addIronclawChatLogContext(html, entryOptions) {
         });
 }
 Hooks.on("getChatLogEntryContext", addIronclawChatLogContext);
+/* eslint-enable */
 
 /**
  * Adds the Ironclaw context menu options to the item folder directory

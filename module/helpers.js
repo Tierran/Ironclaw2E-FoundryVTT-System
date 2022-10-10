@@ -1073,6 +1073,7 @@ export function getCombatAdvantageConstruction(otherkeys, otherdice, othernames,
 /* -------------------------------------------- */
 /*  Misc Helpers                                */
 /* -------------------------------------------- */
+/* eslint-disable */
 
 /**
  * Helper function to search through a given item list for any items matching the name given

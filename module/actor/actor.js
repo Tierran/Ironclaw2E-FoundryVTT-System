@@ -41,6 +41,7 @@ export class Ironclaw2EActor extends Actor {
     /* -------------------------------------------- */
     /* Static Functions                             */
     /* -------------------------------------------- */
+    /* eslint-disable */
 
     /* -------------------------------------------- */
     /* Static Hook Functions                        */
@@ -639,6 +640,7 @@ export class Ironclaw2EActor extends Actor {
         CONFIG.ChatMessage.documentClass.create(chatData);
     }
 
+    /* eslint-enable */
     /* -------------------------------------------- */
     /* Normal Functions                             */
     /* -------------------------------------------- */
@@ -2963,7 +2965,7 @@ export class Ironclaw2EActor extends Actor {
             for (let [key, trait] of Object.entries(system.traits)) {
                 const lowerkey = makeCompareReady(key); // Separate variable for prechecked in traits to account for using the species or career name in the pre-checked
                 const isPrechecked = prechecked.includes(lowerkey) || (trait.name && prechecked.includes(makeCompareReady(trait.name)));
-                if (firstelement == "")
+                if (firstelement === "")
                     firstelement = lowerkey;
                 formconstruction += `<div class="form-group flex-group-center flex-tight">
        <label class="normal-label">${(system.hasExtraCareers && key === "career" ? trait.name : convertCamelCase(key))}: ${reformDiceString(trait.diceArray)}</label>
@@ -2976,7 +2978,7 @@ export class Ironclaw2EActor extends Actor {
                     if (index >= 2)
                         break; // For UI reasons, only show up to two extra careers on dice pool selection, these should select themselves from the top of the list in the sheet
                     const lowerkey = makeCompareReady(extra.system.careerName);
-                    if (firstelement == "")
+                    if (firstelement === "")
                         firstelement = lowerkey;
                     formconstruction += `<div class="form-group flex-group-center flex-tight">
        <label class="normal-label">${extra.system.careerName}: ${reformDiceString(extra.system.diceArray)}</label>
@@ -2991,7 +2993,7 @@ export class Ironclaw2EActor extends Actor {
        <div class="grid grid-3col grid-minimal">` + "\n";
             for (let [key, skill] of Object.entries(system.skills)) {
                 const lowerkey = makeCompareReady(key);
-                if (firstelement == "")
+                if (firstelement === "")
                     firstelement = lowerkey;
                 let usedname = (burdenedLimitedStat(lowerkey) ? String.fromCodePoint([9949]) : "") + " " + convertCamelCase(key) + ": " + reformDiceString(skill.diceArray);
                 formconstruction += `<div class="form-group flex-group-center flex-tight">
@@ -3002,7 +3004,7 @@ export class Ironclaw2EActor extends Actor {
             formconstruction += `</div>` + "\n";
         }
 
-        if (firstelement == "") {
+        if (firstelement === "") {
             console.warn("Somehow, an empty actor sheet was received! " + this.name);
             return null;
         }
@@ -3149,12 +3151,12 @@ export class Ironclaw2EActor extends Actor {
                         // Add the statistics used for the roll into a flag
                         await rollreturn.message.setFlag("ironclaw2e", "usedActorStats", traitvalues.concat(skillvalues));
 
-                        if (successfunc && typeof (successfunc) == "function") {
+                        if (successfunc && typeof (successfunc) === "function") {
                             successfunc(rollreturn); // Then do the special callback function of the roll if it is set
                         }
 
                         // The automated condition removal callback
-                        if (conditionRemoval && autocondition && typeof (autocondition) == "function") {
+                        if (conditionRemoval && autocondition && typeof (autocondition) === "function") {
                             autocondition(); // Automatic condition removal after a successful roll
                         }
                     }
@@ -3214,12 +3216,12 @@ export class Ironclaw2EActor extends Actor {
         await rollreturn.message.setFlag("ironclaw2e", "usedActorStats", prechecked);
 
         // The success callback function
-        if (successfunc && typeof (successfunc) == "function") {
+        if (successfunc && typeof (successfunc) === "function") {
             successfunc(rollreturn);
         }
 
         // The condition callback function
-        if (conditionRemoval && autocondition && typeof (autocondition) == "function") {
+        if (conditionRemoval && autocondition && typeof (autocondition) === "function") {
             autocondition();
         }
 

@@ -180,7 +180,7 @@ export class Ironclaw2ECombat extends Combat {
                 let skipped = false;
                 let decimals = 0;
                 initRoll.roll.dice.forEach(x => { // Tie-breaker calculation
-                    if (!skipped && x.total == initRoll.highest) {
+                    if (!skipped && x.total === initRoll.highest) {
                         skipped = true; // Skip the actual initiative die, set the bool to ensure that multiple dice of the highest value aren't skipped
                         return;
                     }

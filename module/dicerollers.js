@@ -851,6 +851,7 @@ export class CardinalDiceRoller {
 /* -------------------------------------------- */
 /*  Dialog Macros                               */
 /* -------------------------------------------- */
+/* eslint-disable */
 
 /**
  * Dialog macro function for a target number roll that displays a separate input field for every dice type
