@@ -124,6 +124,14 @@
       "selector": "",
       "title": "IRONCLAWGIFTTOUR.FinishedTitle",
       "content": "IRONCLAWGIFTTOUR.FinishedContent"
+    },
+    {
+      "id": "readme",
+      "selector": "#settings-documentation [data-system-action=\"system-readme\"]",
+      "title": "IRONCLAWGIFTTOUR.ReadmeTitle",
+      "content": "IRONCLAWGIFTTOUR.ReadmeContent",
+      "tooltipDirection": "LEFT",
+      "normalSelector": true
     }
   ],
   "localization": {
@@ -162,7 +170,9 @@
     "IRONCLAWGIFTTOUR.ReplaceTitle": "Special Replace System",
     "IRONCLAWGIFTTOUR.ReplaceContent": "Since some gifts can replace parts of other gifts, the special bonus system includes a way to mark a specific bonus as something that replaces the special of another gift.\nInsert the accurate gift name of the other gift this special will replace here. The first bonus of the same type in that gift will be automatically replaced by this gift special bonus. However, this special will not be applied normally anymore, as it will require the replacing bonus to be applied first.\nNote that while chaining replacements is possible, the same special cannot be replaced more than once. If replaced multiple times, the system will default to the newest one.",
     "IRONCLAWGIFTTOUR.FinishedTitle": "Finished!",
-    "IRONCLAWGIFTTOUR.FinishedContent": "That's the gift sheet covered! There's plenty more about the special system, but going through all of it like this would take way too long.\nInstead, we suggest that you check the readme for the Ironclaw system. It has a fairly thorought explanation of the various fields and settings the special bonus system has."
+    "IRONCLAWGIFTTOUR.FinishedContent": "That's the gift sheet explained! There's plenty more about the special system, but going through all of it like this would take way too long.\nInstead, we suggest that you check the readme for the Ironclaw 2E system. It has a fairly thorought explanation of the various fields and settings the special bonus system has.\nThe system's GitHub and Foundry VTT pages both show the readme text when opened. But also...",
+    "IRONCLAWGIFTTOUR.ReadmeTitle": "Readme",
+    "IRONCLAWGIFTTOUR.ReadmeContent": "The Ironclaw 2E system's readme and changelog can be opened and read directly within Foundry itself. The buttons are in the Game Settings sidebar tab under 'Help and Documentation'. Both open files from within the system itself, rather than fetching a page through the internet."
 
   }
 }

@@ -8,7 +8,7 @@ export class IronclawDocumentationViewer extends Application {
      * @param {string} path The path to the markdown file
      * @param {any} options
      */
-    constructor(path, title, options) {
+    constructor(path, options) {
         super(options);
         this.path = path;
     }
