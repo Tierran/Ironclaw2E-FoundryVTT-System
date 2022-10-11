@@ -1,5 +1,5 @@
 
-/** Founcry VTT Application meant to view Ironclaw's markdown files within Foundry itself
+/** Application meant to view Ironclaw's markdown files within Foundry itself
  *  @extends {Application}
  */
 export class IronclawDocumentationViewer extends Application {

@@ -96,8 +96,11 @@ export class Ironclaw2ECombat extends Combat {
         if (combatant?.token) {
             othercombatants.forEach(x => {
                 if (x?.token) {
-                    const dist = getDistanceBetweenPositions(combatant.token, x.token);
-                    if (distance > dist) distance = dist;
+                    if (x.token.hidden !== true) {
+                        // If the opponent's token is hidden, assume this means that they're not a valid token to base TN off of
+                        const dist = getDistanceBetweenPositions(combatant.token, x.token);
+                        if (distance > dist) distance = dist;
+                    }
                 }
             });
         }
@@ -200,7 +203,7 @@ export class Ironclaw2ECombat extends Combat {
             updates.push({ _id: id, initiative: initiative, flags: { "ironclaw2e.initiativeResult": initResult } });
 
             // Determine the roll mode, if the token or combatant is hidden, roll in gm mode unless another mode is specifically requested
-            if ((combatant.token.hidden || combatant.hidden) && (["roll", "publicroll"].includes(rollMode))) rollMode = "gmroll";
+            if ((combatant.token?.hidden || combatant.hidden) && (["roll", "publicroll"].includes(rollMode))) rollMode = "gmroll";
 
             // Construct chat message data
             let messageData = mergeObject({
@@ -322,7 +325,7 @@ export class Ironclaw2ECombatant extends Combatant {
         }
         else {
             const roll = this.getInitiativeRoll();
-            console.warn("A combatant was missing an actor, somehow.")
+            console.warn("A combatant was missing an actor, somehow.");
             return Promise.resolve({ "roll": roll, "highest": roll.total, "tnData": null, "message": {}, "isSent": false });
         }
     }
