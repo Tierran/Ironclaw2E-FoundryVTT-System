@@ -67,6 +67,7 @@ export class CommonSystemInfo {
      * The standard stats used for sprint rolls
      */
     static sprintBaseStats = Object.freeze(["speed"]);
+
     /**
      * List of CSS colors to use for different message types
      */
@@ -83,6 +84,17 @@ export class CommonSystemInfo {
      * Font size assigned to the highest die result message for target number rolls
      */
     static resultTNMarginSize = "0.3em";
+
+    /**
+     * Contains sets for each actor type that determines what sorts of items the system will allow them to have
+     */
+    static actorAllowedTypes = {
+        "character": new Set(["gift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "item"]),
+        "mook": new Set(["gift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "item"]),
+        "beast": new Set(["gift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "item"]),
+        "marker": new Set([])
+    };
+
     /**
      * The handedness of a weapon
      */
@@ -122,6 +134,12 @@ export class CommonSystemInfo {
      */
     static combatAdvantageDice = "d8";
     /**
+     * The name to check for in weapon's "defend with" field to use the standard defense against it
+     * Anything that's _not_ this string is assumed to be a special defense, and the field to be traits and skills separated with commas
+     */
+    static defenseStandardName = "defense"
+
+    /**
      * The special option types that gift items can have
      */
     static giftSpecialOptions = {
@@ -149,6 +167,7 @@ export class CommonSystemInfo {
     static giftBonusAutoUseOptions = {
         "always": "Always", "never": "Never", "applied": "By Applicability"
     };
+
     /**
      * Reroll types that exist within the system and the associated translation strings
      */
@@ -159,11 +178,7 @@ export class CommonSystemInfo {
         "KEEN": "ironclaw2e.dialog.reroll.typeKeen",
         "ONE": "ironclaw2e.dialog.reroll.typeOne"
     };
-    /**
-     * The name to check for in weapon's "defend with" field to use the standard defense against it
-     * Anything that's _not_ this string is assumed to be a special defense, and the field to be traits and skills separated with commas
-     */
-    static defenseStandardName = "defense"
+
     /**
      * The names of the different currencies used in the code
      */
@@ -189,6 +204,7 @@ export class CommonSystemInfo {
             "type": "flame", "speed": 5, "intensity": 7
         }
     };
+
     /**
      * Default vision settings for a token
      */
@@ -475,4 +491,28 @@ export function specialSettingsRerollGMMap(hasone) {
         foo.set(bar, null);
     }
     return foo;
+}
+
+/**
+ * Function to check whether the given actor type is allowed to have the given item type
+ * @param {string} actortype
+ * @param {string} itemtype
+ * @returns {boolean}
+ */
+export function checkActorItemAllowedType(actortype, itemtype) {
+    if (!actortype || typeof actortype !== "string") {
+        console.error("Actor item type check was given a non-existent actor type: " + actortype);
+        return false;
+    }
+    if (!itemtype || typeof itemtype !== "string") {
+        console.error("Actor item type check was given a non-existent item type: " + itemtype);
+        return false;
+    }
+
+    if (!(actortype in CommonSystemInfo.actorAllowedTypes)) {
+        console.warn("Actor item type check could not find the allowed sets for the actor type: " + actortype);
+        return true;
+    }
+
+    return CommonSystemInfo.actorAllowedTypes[actortype].has(itemtype);
 }

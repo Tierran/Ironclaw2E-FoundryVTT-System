@@ -32,7 +32,8 @@ export class IronclawDocumentationViewer extends Application {
             title: game.i18n.localize("ironclaw2e.documentViewer.defaultTitle"),
             template: `systems/ironclaw2e/templates/popup/document-viewer.html`,
             width: 700,
-            height: 900
+            height: 900,
+            resizable: true
         });
         options.classes.push("markdown");
         return options;

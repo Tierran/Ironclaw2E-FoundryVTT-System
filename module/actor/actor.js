@@ -19,7 +19,7 @@ import { checkQuickModifierKey } from "../helpers.js";
 import { getDistanceBetweenPositions } from "../helpers.js";
 import { formDicePoolField } from "../helpers.js";
 import { checkConditionIronclaw, checkConditionQuota, CommonConditionInfo, getConditionSelectObject, getSingleConditionIronclaw, getTargetConditionQuota, setTargetConditionQuota } from "../conditions.js";
-import { checkStandardDefense, CommonSystemInfo, getRangeDiceFromDistance } from "../systeminfo.js";
+import { checkActorItemAllowedType, checkStandardDefense, CommonSystemInfo, getRangeDiceFromDistance } from "../systeminfo.js";
 import { AoETemplateIronclaw } from "../aoe-template.js";
 // For condition management
 import { hasConditionsIronclaw } from "../conditions.js";
@@ -55,14 +55,20 @@ export class Ironclaw2EActor extends Actor {
      * @param {string} user
      */
     static onActorPreCreateItem(item, data, options, user) {
+        const actor = item.actor;
+
+        // If the item type is not found within the list of allowed item types for the actor type, disallow the creation
+        if (!checkActorItemAllowedType(actor.type, item.type)) {
+            console.log(`Item of type "${item.type}" not allowed for actors of type "${actor.type}", cancelling creation.`);
+            return false;
+        }
+        
         // The hook is only really relevant for template items
         // If the item is a template item, grab the data from it and update the actor with it, then prevent the item's creation by returning false
         if (item.type === "speciesTemplate" || item.type === "careerTemplate") {
-            const actor = item.actor;
             // Only applies if the actor actually exists
             if (actor) {
                 actor.applyTemplate(data, { "confirm": options?.confirmCreation ?? false });
-                if (actor.parent) console.warn("Don't mind the _onCreate error underneath, it's a core bug and doesn't actually affect things AFAICT");
                 return false;
             }
         }
