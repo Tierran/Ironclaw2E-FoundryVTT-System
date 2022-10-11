@@ -1,3 +1,8 @@
+### 0.6.6 Readable docs release 
+ - Added buttons to open the markdown doc files inside Foundry as readable HTML
+ - Hidden tokens are ignored as targets when the system derives the initiative TN
+ - Minor fixes
+
 ### 0.6.5 Touring status release 
  - Added new Ironclaw system tours that can explain a bit more about the system
  - Changed the included status effect quick references to be in a single journal
