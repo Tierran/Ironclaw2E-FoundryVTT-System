@@ -48,6 +48,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         sheetData.title = baseData.title;
         sheetData.dtypes = baseData.dtypes;
         sheetData.sheetEngine = "prosemirror";
+        sheetData.isGM = game.user.isGM;
 
         // Prepare items
         if (this.actor.type === 'character') {
@@ -65,7 +66,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         sheetData.effects = baseData.effects;
 
         // Prepare the description / biography editor
-        sheetData.richDescription = await TextEditor.enrichHTML(sheetData.system.description, { async: true });
+        sheetData.richDescription = await TextEditor.enrichHTML(sheetData.system.description, { async: true, secrets: sheetData.editable });
 
         // Get whether the actor is flying for some things
         sheetData.isFlying = baseData.data.system.isFlying === true;

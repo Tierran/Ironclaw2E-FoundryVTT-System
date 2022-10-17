@@ -4,7 +4,7 @@
         <h4 class="chat-header">{{item.name}}</h4>
     </header>
     <div class="chat-content">
-        <div class="chat-item item-description">{{{itemSys.description}}}</div>
+        <div class="chat-item item-description">{{{richDescription}}}</div>
         <div class="chat-item item-statistics">
             {{#if (typeCheck item.type "gift")}}
             <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.tags"}}:</strong> {{itemSys.giftTags}}</p>
@@ -65,6 +65,7 @@
         </div>
         {{#if hasButtons}}
         <div class="chat-item button-holder" data-itemid="{{item._id}}" data-actorid="{{actorId}}" data-tokenid="{{tokenId}}" data-sceneid="{{sceneId}}">
+            {{#if (typeCheck item.type "weapon")}}
             <div class="attack-holder">
                 <div class="attack-buttons flexrow">
                     <button class="default-attack" data-skipresist="false">{{localize "ironclaw2e.chatInfo.itemInfo.attackWith" name=item.name}}</button>
@@ -99,6 +100,14 @@
                 {{/unless}}{{/if}}
                 <button class="counter-defense small-text" data-defensetype="counter">{{localize "ironclaw2e.chatInfo.itemInfo.counterDefense"}}</button>
             </div>
+            {{/if}}
+            {{#if (typeCheck item.type "gift")}}
+            <div class="gift-holder">
+                <div class="gift-buttons flexrow">
+                    <button class="default-gift-use">{{localize "ironclaw2e.chatInfo.itemInfo.useGift" name=item.name}}</button>
+                </div>
+            </div>
+            {{/if}}
         </div>
         {{/if}}
     </div>

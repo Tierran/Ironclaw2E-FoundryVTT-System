@@ -49,9 +49,10 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         sheetData.title = baseData.title;
         sheetData.dtypes = baseData.dtypes;
         sheetData.sheetEngine = "prosemirror";
+        sheetData.isGM = game.user.isGM;
 
         // Prepare the description editor
-        sheetData.richDescription = await TextEditor.enrichHTML(sheetData.system.description, { async: true });
+        sheetData.richDescription = await TextEditor.enrichHTML(sheetData.system.description, { async: true, secrets: sheetData.editable });
 
         // Add structural sheet stuff
         let currencyOptions = {};
@@ -71,7 +72,6 @@ export class Ironclaw2EItemSheet extends ItemSheet {
             "lightAnimations": CONFIG.Canvas.lightAnimations, "extraSenses": CommonSystemInfo.extraSenses
         };
         sheetData.selectables = selectables;
-        sheetData.isGM = game.user.isGM;
         sheetData.showDirectoryOptions = game.user.isGM && !this.item.parent;
         sheetData.rangeDistance = getRangeDistanceFromBand(sheetData.system.range);
         sheetData.showGiftSkill = sheetData.system.grantsMark || sheetData.system.specialSkillUse;

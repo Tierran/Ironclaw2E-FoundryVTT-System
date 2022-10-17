@@ -337,8 +337,8 @@ export class Ironclaw2EActor extends Actor {
         }
 
         const messageFlags = message?.flags?.ironclaw2e;
-        const otheritem = Ironclaw2EActor.getAttackerItemFlags(messageFlags);
-        const attackToken = Ironclaw2EActor.getAttackerToken(otheritem);
+        const usedItem = Ironclaw2EActor.getItemActorFlags(messageFlags);
+        const attackToken = Ironclaw2EActor.getItemToken(usedItem);
         if (!attackToken) {
             return;
         }
@@ -366,6 +366,32 @@ export class Ironclaw2EActor extends Actor {
             "ironclaw2e.attackUsingTactics": value
         };
         message.update({ "_id": message.id, "flags": flags });
+    }
+
+    /**
+     * Handle the chat button event for using a gift
+     * @param {any} event
+     */
+    static async onChatGiftUseClick(event) {
+        event.preventDefault();
+        const element = event.currentTarget;
+        const message = game.messages.get($(event.currentTarget).closest('.chat-message')[0]?.dataset?.messageId);
+        const messageFlags = message?.flags?.ironclaw2e;
+
+        const usedItem = Ironclaw2EActor.getItemActorFlags(messageFlags);
+        if (!usedItem) {
+            console.error("Attacker chat roll failed to get the proper information from message flags: " + message);
+            return;
+        }
+
+        const directroll = checkQuickModifierKey();
+        const itemActor = Ironclaw2EActor.getItemActor(usedItem);
+
+        if (itemActor) {
+            itemActor.items.get(usedItem.itemId).giftRoll(directroll);
+        } else {
+            ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
+        }
     }
 
     /* -------------------------------------------- */
@@ -459,7 +485,7 @@ export class Ironclaw2EActor extends Actor {
 
     /**
      * Separate function to trigger the actual attacker roll from chat
-     * @param {object} otheritem
+     * @param {object} message
      * @param {string} rolltype
      * @param {boolean} directroll
      * @param {boolean} skipresist
@@ -468,29 +494,29 @@ export class Ironclaw2EActor extends Actor {
      */
     static triggerAttackerRoll(message, rolltype, directroll = false, skipresist = false, defenders = null, presettn = 3, resists = -1) {
         const messageFlags = message?.flags?.ironclaw2e;
-        const otheritem = Ironclaw2EActor.getAttackerItemFlags(messageFlags);
-        if (!otheritem) {
+        const usedItem = Ironclaw2EActor.getItemActorFlags(messageFlags);
+        if (!usedItem) {
             console.error("Attacker chat roll failed to get the proper information from message flags: " + message);
             return;
         }
 
-        const attackActor = Ironclaw2EActor.getAttackerActor(otheritem);
-        const skipActor = (!otheritem.actorId && !otheritem.sceneId && !otheritem.tokenId);
+        const attackActor = Ironclaw2EActor.getItemActor(usedItem);
+        const skipActor = (!usedItem.actorId && !usedItem.sceneId && !usedItem.tokenId);
 
         // Trigger the actual roll if the attacker is found and the weapon id is listed
-        if (attackActor && otheritem.weaponId) {
+        if (attackActor && usedItem.itemId) {
             if (rolltype === "attack")
-                attackActor.items.get(otheritem.weaponId).attackRoll(directroll, skipresist, presettn, resists,
+                attackActor.items.get(usedItem.itemId).attackRoll(directroll, skipresist, presettn, resists,
                     { "sourcemessage": message, "defendermessage": defenders, "addtactics": messageFlags?.attackUsingTactics ?? false });
             else if (rolltype === "spark")
-                attackActor.items.get(otheritem.weaponId).sparkRoll(directroll);
+                attackActor.items.get(usedItem.itemId).sparkRoll(directroll);
         } else if (!attackActor) {
             if (skipActor && game.user.isGM) { // If the item has no flags for where it is, instead try and get it from the directory and launch a roll from there
                 if (rolltype === "attack")
-                    game.items.get(otheritem.weaponId)?.attackRoll(directroll, skipresist, presettn, resists,
+                    game.items.get(usedItem.itemId)?.attackRoll(directroll, skipresist, presettn, resists,
                         { "sourcemessage": message, "defendermessage": defenders, "addtactics": messageFlags?.attackUsingTactics ?? false });
                 else if (rolltype === "spark")
-                    game.items.get(otheritem.weaponId)?.sparkRoll(directroll);
+                    game.items.get(usedItem.itemId)?.sparkRoll(directroll);
             } else {
                 ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
             }
@@ -543,49 +569,49 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /**
-     * Get the attacker flags from a message
+     * Get the using actor flags from a message
      * @param {object} flags
      */
-    static getAttackerItemFlags(flags) {
+    static getItemActorFlags(flags) {
         if (!flags) {
             return null;
         }
-        let otheritem = {};
+        let usedItem = {};
         if (flags) {
             // Grab the message flags
-            otheritem.weaponId = flags.itemId;
-            otheritem.actorId = flags.itemActorId;
-            otheritem.tokenId = flags.itemTokenId;
-            otheritem.sceneId = flags.itemSceneId;
+            usedItem.itemId = flags.itemId;
+            usedItem.actorId = flags.itemActorId;
+            usedItem.tokenId = flags.itemTokenId;
+            usedItem.sceneId = flags.itemSceneId;
         } else {
             console.error("Attacker flag get failed to get the proper information from message flags: " + flags);
             return null;
         }
-        return otheritem;
+        return usedItem;
     }
 
     /**
-     * Get the attacker actor from the otheritem data
-     * @param {object} otheritem
+     * Get the using actor from the item data
+     * @param {object} item
      */
-    static getAttackerActor(otheritem) {
-        if (!otheritem) {
+    static getItemActor(item) {
+        if (!item) {
             return null;
         }
 
         // Get the actor, either through the sceneid if synthetic, or actorid if a full one
-        let attackActor = null;
-        if (otheritem.sceneId && otheritem.tokenId) {
-            const foo = game.scenes.get(otheritem.sceneId)?.tokens.get(otheritem.tokenId);
-            attackActor = foo?.actor;
-        } else if (otheritem.actorId) {
-            attackActor = game.actors.get(otheritem.actorId);
+        let itemActor = null;
+        if (item.sceneId && item.tokenId) {
+            const foo = game.scenes.get(item.sceneId)?.tokens.get(item.tokenId);
+            itemActor = foo?.actor;
+        } else if (item.actorId) {
+            itemActor = game.actors.get(item.actorId);
         }
 
         // Make sure the current user actually has a permission for the actor
-        if (attackActor) {
-            if (game.user.isGM || attackActor.isOwner) {
-                return attackActor;
+        if (itemActor) {
+            if (game.user.isGM || itemActor.isOwner) {
+                return itemActor;
             } else {
                 ui.notifications.warn("ironclaw2e.ui.ownershipInsufficient", { localize: true, thing: "actor" });
             }
@@ -594,27 +620,27 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /**
-     * Get the attacker token from the otheritem data
-     * @param {object} otheritem
+     * Get the using token from the item data
+     * @param {object} item
      */
-    static getAttackerToken(otheritem) {
-        if (!otheritem) {
+    static getItemToken(item) {
+        if (!item) {
             return null;
         }
 
         // Get the token, either through the sceneid if possible, or actorid if not
-        let attackToken = null;
-        if (otheritem.sceneId && otheritem.tokenId) {
-            attackToken = game.scenes.get(otheritem.sceneId)?.tokens.get(otheritem.tokenId);
-        } else if (otheritem.actorId) {
-            const foo = game.actors.get(otheritem.actorId);
-            attackToken = findActorToken(foo);
+        let itemToken = null;
+        if (item.sceneId && item.tokenId) {
+            itemToken = game.scenes.get(item.sceneId)?.tokens.get(item.tokenId);
+        } else if (item.actorId) {
+            const foo = game.actors.get(item.actorId);
+            itemToken = findActorToken(foo);
         }
 
         // Make sure the current user actually has a permission for the actor
-        if (attackToken) {
-            if (game.user.isGM || attackToken.isOwner) {
-                return attackToken;
+        if (itemToken) {
+            if (game.user.isGM || itemToken.isOwner) {
+                return itemToken;
             } else {
                 ui.notifications.warn("ironclaw2e.ui.ownershipInsufficient", { localize: true, thing: "token" });
             }

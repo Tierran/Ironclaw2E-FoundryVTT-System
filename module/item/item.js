@@ -1050,11 +1050,13 @@ export class Ironclaw2EItem extends Item {
         }
 
         let useTactics = false; // Right now, just hardcode tactics to never be checked by default
+        const richDescription = itemSys.description ? await TextEditor.enrichHTML(itemSys.description, { async: true, secrets: false }) : "";
 
         const templateData = {
             "item": item,
             "itemSys": itemSys,
-            "hasButtons": item.type === "weapon",
+            "hasButtons": item.type === "weapon" || (item.type === "gift" && itemSys.canUse),
+            "richDescription": richDescription,
             "standardDefense": checkStandardDefense(itemSys.defendWith),
             "actorId": actor?.id ?? null,
             "tokenId": actor?.token?.id ?? null,

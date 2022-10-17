@@ -518,6 +518,7 @@
   "ironclaw2e.chatInfo.itemInfo.specialDefense": "Special Defend",
   "ironclaw2e.chatInfo.itemInfo.resistAgainst": "Resist Against",
 
+  "ironclaw2e.chatInfo.itemInfo.useGift": "Use Gift of {name}",
 
   "ironclaw2e.chatInfo.damageCalcInfo.header": "Damage of {name}",
   "ironclaw2e.chatInfo.damageCalcInfo.attackSuccess": "Attack hits, with damage effect",

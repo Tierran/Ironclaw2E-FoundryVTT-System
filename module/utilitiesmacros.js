@@ -44,6 +44,8 @@ Hooks.on("renderChatMessage", function (message, html, data) {
                 attackButtons.find('.skip-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
                 attackButtons.find('.spark-attack').click(Ironclaw2EActor.onChatSparkClick.bind(this));
 
+                buttons.find('.gift-buttons').find('.default-gift-use').click(Ironclaw2EActor.onChatGiftUseClick.bind(this));
+
                 const templateButtons = buttons.find('.template-buttons');
                 templateButtons.find('.place-template').click(Ironclaw2EActor.onPlaceExplosionTemplate.bind(this));
 
@@ -52,11 +54,13 @@ Hooks.on("renderChatMessage", function (message, html, data) {
                 if (tacticsBox[0]) tacticsBox[0].disabled = false;
             } else {
                 buttons.find('.attack-holder').remove();
+                buttons.find('.gift-holder').remove();
                 if (!showTactics) {
                     // Remove the tactics checkbox from being visible
                     tacticsButtons.remove();
                 }
             }
+
             if (showOthers) {
                 const defenseButtons = buttons.find('.defense-buttons');
                 defenseButtons.find('.dodge-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
