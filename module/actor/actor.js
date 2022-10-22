@@ -1611,6 +1611,31 @@ export class Ironclaw2EActor extends Actor {
         return null; // Otherwise return null
     }
 
+    /**
+     * Get the limit for a dice pool from the input
+     * @param {string} limitinput
+     */
+    _getDicePoolLimit(limitinput) {
+        if (typeof limitinput !== "string") {
+            console.error("Dice pool limit get given a non-string: " + limitinput);
+            return 0;
+        }
+
+        // If there's something in the limit
+        if (limitinput?.length > 0) {
+            const limitskill = makeCompareReady(limitinput);
+            const limitdicepool = flattenDicePoolArray(this._getDicePools([limitskill], [limitskill], isburdened).totalDice, false); // See if the actor can get any dice pools from the limit
+            const limitparsed = parseSingleDiceString(limitinput); // Check if the limit field is a die, in which case, parse what value it's meant to limit to
+            const limitnumber = parseInt(limitinput); // Just parse the limit as a number
+            // If the dice pool has stuff, use it as the limit, else use the parsed dice side, else try and use the parsed limit
+            if (Array.isArray(limitdicepool) && checkDiceArrayEmpty(limitdicepool)) return checkDiceIndex(getDiceArrayMaxValue(limitdicepool));
+            else if (Array.isArray(limitparsed)) return checkDiceIndex(limitparsed[1]);
+            else if (!isNaN(limitnumber)) return limitnumber;
+        }
+
+        return 0;
+    }
+
     /* -------------------------------------------- */
     /* Roll Construction Functions                  */
     /* -------------------------------------------- */
@@ -2506,7 +2531,7 @@ export class Ironclaw2EActor extends Actor {
         }
     }
 
-    async popupRallyRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "" } = {}, { directroll = false, targetpos = null } = {},
+    async popupRallyRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "", limitvalue = "" } = {}, { directroll = false, targetpos = null } = {},
         successfunc = null) {
         let checkedstats = [...prechecked];
         let constructionkeys = new Map(otherkeys);
@@ -2536,11 +2561,11 @@ export class Ironclaw2EActor extends Actor {
 
         return this.basicRollSelector({
             "prechecked": checkedstats, tnyes, "tnnum": usedTn, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
-            otherlabel
+            otherlabel, limitvalue
         }, { directroll }, successfunc);
     }
 
-    popupSoakRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "" } = {}, { directroll = false, checkweak = false, checkarmor = true } = {}, successfunc = null) {
+    popupSoakRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "", limitvalue = "" } = {}, { directroll = false, checkweak = false, checkarmor = true } = {}, successfunc = null) {
         let checkedstats = [...prechecked];
         let constructionkeys = new Map(otherkeys);
         let constructionarray = new Map(otherdice);
@@ -2574,11 +2599,11 @@ export class Ironclaw2EActor extends Actor {
 
         return this.basicRollSelector({
             "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
-            "doubledice": checkweak, otherlabel
+            "doubledice": checkweak, otherlabel, limitvalue
         }, { directroll }, successfunc);
     }
 
-    popupDefenseRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "" } = {}, { directroll = false, isparry = false, isspecial = false, otheritem = null } = {},
+    popupDefenseRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "", limitvalue = "" } = {}, { directroll = false, isparry = false, isspecial = false, otheritem = null } = {},
         item = null, successfunc = null) {
         let checkedstats = [...prechecked];
         let constructionkeys = new Map(otherkeys);
@@ -2629,11 +2654,11 @@ export class Ironclaw2EActor extends Actor {
 
         return this.basicRollSelector({
             "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
-            otherlabel
+            otherlabel, limitvalue
         }, { directroll }, successfunc);
     }
 
-    popupAttackRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "" } = {}, { directroll = false, target = null } = {}, item = null, successfunc = null) {
+    popupAttackRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "", limitvalue = "" } = {}, { directroll = false, target = null } = {}, item = null, successfunc = null) {
         let checkedstats = [...prechecked];
         let constructionkeys = new Map(otherkeys);
         let constructionarray = new Map(otherdice);
@@ -2674,11 +2699,11 @@ export class Ironclaw2EActor extends Actor {
 
         return this.basicRollSelector({
             "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
-            otherlabel
+            otherlabel, limitvalue
         }, { directroll }, successfunc, autoremove);
     }
 
-    popupCounterRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "" } = {}, { directroll = false, otheritem = null } = {}, item = null, successfunc = null) {
+    popupCounterRoll({ prechecked = [], tnyes = false, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "", limitvalue = "" } = {}, { directroll = false, otheritem = null } = {}, item = null, successfunc = null) {
         let checkedstats = [...prechecked];
         let constructionkeys = new Map(otherkeys);
         let constructionarray = new Map(otherdice);
@@ -2705,11 +2730,11 @@ export class Ironclaw2EActor extends Actor {
 
         return this.basicRollSelector({
             "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
-            otherlabel
+            otherlabel, limitvalue
         }, { directroll }, successfunc);
     }
 
-    popupResistRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "" } = {}, { directroll = false, otheritem = null } = {}, item = null, successfunc = null) {
+    popupResistRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "", limitvalue = "" } = {}, { directroll = false, otheritem = null } = {}, item = null, successfunc = null) {
         let checkedstats = [...prechecked];
         let constructionkeys = new Map(otherkeys);
         let constructionarray = new Map(otherdice);
@@ -2765,7 +2790,7 @@ export class Ironclaw2EActor extends Actor {
 
         return this.basicRollSelector({
             "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
-            otherlabel
+            otherlabel, limitvalue
         }, { directroll }, successfunc);
     }
 
@@ -2948,11 +2973,12 @@ export class Ironclaw2EActor extends Actor {
      * @param {string} [otherinputs] HTML string to add to the dialog
      * @param {string} [extradice] Default extra dice to use for the bottom one-line slot
      * @param {string} [otherlabel] Text to postpend to the label
+     * @param {string} [limitvalue] The pre-given value for the limit field
      * @param successfunc Callback to execute after going through with the macro, will not execute if cancelled out
      * @param autocondition Callback to a condition auto-removal function, executed if the setting is on, will not execute if cancelled out
      * @returns {Promise<DiceReturn> | Promise<null>}
      */
-    popupSelectRolled({ tnyes = false, tnnum = 3, prechecked = [], otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherinputs = "", extradice = "", otherlabel = "" } = {}, successfunc = null, autocondition = null) {
+    popupSelectRolled({ tnyes = false, tnnum = 3, prechecked = [], otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherinputs = "", extradice = "", otherlabel = "", limitvalue = "" } = {}, successfunc = null, autocondition = null) {
         const system = this.system;
         let formconstruction = ``;
         let firstelement = "";
@@ -3066,8 +3092,8 @@ export class Ironclaw2EActor extends Actor {
       </div>
      <div class="form-group">
        <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.dicePool.limitAllLabel")}:</label>
-       <input type="checkbox" id="iflimit" name="iflimit" value="1"></input>
-	   <input id="limit" name="limit" value="" placeholder="${game.i18n.localize("ironclaw2e.dialog.dicePool.limitAllPlaceholder")}" onfocus="this.select();"></input>
+       <input type="checkbox" id="iflimit" name="iflimit"></input>
+	   <input id="limit" name="limit" value="${limitvalue}" placeholder="${game.i18n.localize("ironclaw2e.dialog.dicePool.limitAllPlaceholder")}" onfocus="this.select();"></input>
      </div>
      </form>
      `,
@@ -3111,18 +3137,7 @@ export class Ironclaw2EActor extends Actor {
                         let IFLIMIT = html.find('[name=iflimit]')[0];
                         let uselimit = IFLIMIT.checked;
                         let LIMIT = html.find('[name=limit]')[0].value?.trim();
-                        let limit = 0;
-                        // If there's something in the limit
-                        if (LIMIT?.length > 0) {
-                            const limitskill = makeCompareReady(LIMIT);
-                            const limitdicepool = flattenDicePoolArray(this._getDicePools([limitskill], [limitskill], isburdened).totalDice, false); // See if the actor can get any dice pools from the limit
-                            const limitparsed = parseSingleDiceString(LIMIT); // Check if the limit field is a die, in which case, parse what value it's meant to limit to
-                            const limitnumber = parseInt(LIMIT); // Just parse the limit as a number
-                            // If the dice pool has stuff, use it as the limit, else use the parsed dice side, else try and use the parsed limit
-                            if (Array.isArray(limitdicepool) && checkDiceArrayEmpty(limitdicepool)) limit = checkDiceIndex(getDiceArrayMaxValue(limitdicepool));
-                            else if (Array.isArray(limitparsed)) limit = checkDiceIndex(limitparsed[1]);
-                            else if (!isNaN(limitnumber)) limit = limitnumber;
-                        }
+                        let limit = this._getDicePoolLimit(LIMIT);
 
                         let IFTNSS = html.find('[name=iftn]')[0];
                         let IFTN = IFTNSS.checked;
@@ -3210,12 +3225,13 @@ export class Ironclaw2EActor extends Actor {
      * @param {Map<string,boolean>} [otherbools] An array of booleans that determine which modifiers should actually be used for quick rolls by default
      * @param {string} [extradice] Extra dice to roll
      * @param {string} [otherlabel] Text to postpend to the label
+     * @param {string} [limitvalue] The pre-given value for the limit field
      * @param {boolean} [doubledice] Whether to roll the dice pool twice
      * @param successfunc Callback to execute after going through with the macro, executed unless an error happens
      * @param autocondition Callback to a condition auto-removal function, executed if the setting is on, executed unless an error happens
      * @returns {Promise<DiceReturn> | Promise<null>}
      */
-    async silentSelectRolled({ tnyes = false, tnnum = 3, prechecked = [], otherkeys = new Map(), otherdice = new Map(), otherbools = new Map(), othernames = new Map(), extradice = "", otherlabel = "", doubledice = false } = {}, successfunc = null, autocondition = null) {
+    async silentSelectRolled({ tnyes = false, tnnum = 3, prechecked = [], otherkeys = new Map(), otherdice = new Map(), otherbools = new Map(), othernames = new Map(), extradice = "", otherlabel = "", doubledice = false, limitvalue = "" } = {}, successfunc = null, autocondition = null) {
         const burdened = hasConditionsIronclaw("burdened", this);
         const conditionRemoval = game.settings.get("ironclaw2e", "autoConditionRemoval");
         // Get the total of all the dice pools
@@ -3225,6 +3241,9 @@ export class Ironclaw2EActor extends Actor {
             await item.giftToggleExhaust("true", giftUseToChat);
         }
 
+        // Determine limit if it exists
+        let limit = this._getDicePoolLimit(limitvalue);
+
         // Set the label
         let label = "<p>" + all.label + (doubledice ? ", " + game.i18n.localize("ironclaw2e.chat.doubleDice") : "") + ".</p>";
         // If it exists, set the separate label
@@ -3233,6 +3252,9 @@ export class Ironclaw2EActor extends Actor {
 
         if (doubledice) { // See if the dicepool will be rolled twice (doubled dicepool), like in case of a Weak Soak
             totaldice = totaldice.concat(totaldice);
+        }
+        if (limit > 0) { // See if a special limit has been set to all dice
+            totaldice = enforceLimitArray(totaldice, limit);
         }
 
         // Exhaust the gifts returned from the dice pools
