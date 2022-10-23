@@ -713,7 +713,7 @@ export class Ironclaw2EActor extends Actor {
         super.prepareData();
         const actor = this;
 
-        // If the actor is one with actual stats, do post-processing
+        // If the actor is a creature of some sort, do the appropriate post-processing
         if (actor.type === "character" || actor.type === "mook" || actor.type === "beast") {
             // Battle Stat roll dice pool visuals
             this._battleDataRollVisuals(actor);
@@ -1282,7 +1282,7 @@ export class Ironclaw2EActor extends Actor {
     }
 
     /**
-     * Set the passive senses to tokens if needed
+     * Set the passive senses to tokens and auto-encumbrance to actors if needed
      * @param {Ironclaw2EActor} actor
      * @param {number} sleeptime Milliseconds the function waits before execution, to help against race conditions
      */
@@ -2171,21 +2171,21 @@ export class Ironclaw2EActor extends Actor {
 
     /** Start of turn maintenance for the actor
      */
-    startOfRound() {
+    async startOfTurn() {
         // Condition auto-removal system, performed only if the system is active and the no-turn-maintenance mode is not
         const conditionRemoval = game.settings.get("ironclaw2e", "autoConditionRemoval") && !game.settings.get("ironclaw2e", "autoConditionRemovalNoTurns");
         if (conditionRemoval) {
-            this.deleteEffect("guarding");
+            await this.deleteEffect("guarding");
         }
     }
 
     /** End of turn maintenance for the actor
      */
-    endOfRound() {
+    async endOfTurn() {
         // Condition auto-removal system, performed only if the system is active and the no-turn-maintenance mode is not
         const conditionRemoval = game.settings.get("ironclaw2e", "autoConditionRemoval") && !game.settings.get("ironclaw2e", "autoConditionRemovalNoTurns");
         if (conditionRemoval) {
-            this.deleteEffect("aiming");
+            await this.deleteEffect("aiming");
         }
     }
 

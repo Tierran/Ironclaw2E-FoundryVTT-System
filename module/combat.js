@@ -12,7 +12,7 @@ export class Ironclaw2ECombat extends Combat {
 
     /**
      * 
-     * @param {any} combatant
+     * @param {Ironclaw2ECombatant} combatant
      * @param {any} formula
      */
     _getInitiativeRoll(combatant, formula) {
@@ -21,7 +21,7 @@ export class Ironclaw2ECombat extends Combat {
 
     /**
      * Determine the relevant group initiative for a combatant according to the initiative type in the settings
-     * @param {any} combatant
+     * @param {Ironclaw2ECombatant} combatant
      * @param {any} settings
      * @returns {number}
      * @private
@@ -59,8 +59,8 @@ export class Ironclaw2ECombat extends Combat {
 
     /**
      * Determine the TN of the initiative check based on the distance to the nearest combatant
-     * @param {Combatant} combatant
-     * @param {Combatant[]} allcombatants
+     * @param {Ironclaw2ECombatant} combatant
+     * @param {Ironclaw2ECombatant[]} allcombatants
      * @param {Object} settings
      * @returns {number}
      * @private
@@ -69,16 +69,9 @@ export class Ironclaw2ECombat extends Combat {
         if (settings?.manualTN && settings.manualTN > 0) {
             return settings.manualTN;
         }
-        else if (combatant?.actor && combatant?.token && settings?.initType && allcombatants) {
-            let otherSide;
-            if (settings.initType === 0 || settings.initType === 1) {
-                let playerOwnerComparison = combatant.actor.hasPlayerOwner;
-                otherSide = allcombatants.filter(x => x?.actor?.hasPlayerOwner !== playerOwnerComparison);
-            }
-            else {
-                let playerOwnerComparison = combatant.actor.hasPlayerOwner || combatant.token.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY;
-                otherSide = allcombatants.filter(x => (x?.actor?.hasPlayerOwner || x?.token?.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY) !== playerOwnerComparison);
-            }
+        else if (combatant && settings?.initType && allcombatants) {
+            let playerOwnerComparison = combatant.getSide(settings);
+            let otherSide = allcombatants.filter(x => x?.getSide(settings) !== playerOwnerComparison);
             return Ironclaw2ECombat.getDistanceTN(Ironclaw2ECombat.getDistanceToClosestOther(combatant, otherSide));
         }
         else return 6;
@@ -86,8 +79,8 @@ export class Ironclaw2ECombat extends Combat {
 
     /**
      * Get distance between the combatant and closest of the other combatants
-     * @param {Combatant} combatant
-     * @param {Combatant[]} othercombatants
+     * @param {Ironclaw2ECombatant} combatant
+     * @param {Ironclaw2ECombatant[]} othercombatants
      * @returns {number}
      * @private
      */
@@ -146,14 +139,7 @@ export class Ironclaw2ECombat extends Combat {
     async rollInitiative(ids, { updateTurn = true, messageOptions = {} } = {}) {
 
         // Get settings to know what type of initiative we are using
-        const settings = game.settings.get("core", Combat.CONFIG_SETTING);
-
-        // Grab potential settings from the combat instance flags, if the combat has already started
-        if (this.round > 0 && settings?.forceSettings === false) {
-            settings.sideBased = this.getFlag("ironclaw2e", "sideBased");
-            settings.initType = this.getFlag("ironclaw2e", "initiativeType");
-            settings.manualTN = this.getFlag("ironclaw2e", "manualTN");
-        }
+        const settings = this.getCombatSettings;
 
         // Structure input data
         ids = typeof ids === "string" ? [ids] : ids;
@@ -274,6 +260,24 @@ export class Ironclaw2ECombat extends Combat {
         if (cn !== 0) return cn;
         return a.tokenId - b.tokenId;
     }
+
+    /**
+     * Get the combat settings for the combat
+     * @returns {object} Combat config settings, with stored combat settings potentially replacing some config ones
+     */
+    get getCombatSettings() {
+        // Get settings to know what type of initiative we are using
+        const settings = game.settings.get("core", Combat.CONFIG_SETTING);
+
+        // Grab potential settings from the combat instance flags, if the combat has already started
+        if (this.round > 0 && settings?.forceSettings === false) {
+            settings.sideBased = this.getFlag("ironclaw2e", "sideBased");
+            settings.initType = this.getFlag("ironclaw2e", "initiativeType");
+            settings.manualTN = this.getFlag("ironclaw2e", "manualTN");
+        }
+
+        return settings;
+    }
 }
 
 export class Ironclaw2ECombatant extends Combatant {
@@ -286,18 +290,36 @@ export class Ironclaw2ECombatant extends Combatant {
         return this.defeated || checkIfDefeatedIronclaw(this.actor);
     }
 
+    /** 
+     * Get the side of the combatant based on the config settings
+     * @param {object} settings The settings to use
+     * @returns {boolean} Returns true if on the player side, false if not
+     */
+    getSide(settings = null) {
+        // Check if the given settings exist and have the initType set, if not check the combat for settings, if that doesn't work just put out an error value
+        let initType = settings?.initType ?? this.combat?.getCombatSettings?.initType ?? -1;
+        if (initType === 0 || initType === 1) {
+            return this.actor?.hasPlayerOwner;
+        } else if (initType >= 0) {
+            return this.actor?.hasPlayerOwner || this.token?.disposition === CONST.TOKEN_DISPOSITIONS.FRIENDLY;
+        }
+
+        console.warn("Combatant side get defaulted!");
+        return false;
+    }
+
     /**
      * Do things that happen automatically at the start of the combatant's next turn
      */
     async startOfTurnMaintenance() {
-        this.actor?.startOfRound(); // Actor SOT function
+        await this.actor?.startOfTurn(); // Actor SOT function
     }
 
     /**
      * Do things that happen automatically at the end of the combatant's turn
      */
     async endOfTurnMaintenance() {
-        this.actor?.endOfRound(); // Actor EOT function
+        await this.actor?.endOfTurn(); // Actor EOT function
     }
 
     /**
