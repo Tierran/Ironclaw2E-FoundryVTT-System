@@ -69,7 +69,7 @@ export function IronclawVisionModes() {
         }),
         nightVision: new VisionMode({
             id: "nightVision",
-            label: "ironclaw2e.config.sense.nightVision",
+            label: "ironclaw2e.info.sense.nightVision",
             canvas: {
                 shader: ColorAdjustmentsSamplerShader,
                 uniforms: { enable: true, contrast: 0.15, saturation: -0.75, brightness: 0.15 }
@@ -100,7 +100,7 @@ export function IronclawVisionModes() {
         }),
         echolocation: new EcholocationVisionMode({
             id: "echolocation",
-            label: "ironclaw2e.config.sense.echolocation",
+            label: "ironclaw2e.info.sense.echolocation",
             canvas: {
                 shader: ColorAdjustmentsSamplerShader,
                 uniforms: { enable: true, contrast: 0.8, saturation: -1, exposure: 0.35, brightness: 0.15 }
@@ -272,12 +272,12 @@ export function IronclawDetectionModes() {
         }),
         emitUltrasound: new DetectionModeEmitUltrasound({
             id: "emitUltrasound",
-            label: "ironclaw2e.config.detection.emitUltrasound",
+            label: "ironclaw2e.info.detection.emitUltrasound",
             type: DetectionMode.DETECTION_TYPES.SOUND
         }),
         hearUltrasound: new DetectionModeHearUltrasound({
             id: "hearUltrasound",
-            label: "ironclaw2e.config.detection.hearUltrasound",
+            label: "ironclaw2e.info.detection.hearUltrasound",
             type: DetectionMode.DETECTION_TYPES.SOUND
         })
     }

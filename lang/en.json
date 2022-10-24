@@ -2,6 +2,7 @@
   "ACTOR.TypeCharacter": "Character",
   "ACTOR.TypeMook": "Mook",
   "ACTOR.TypeBeast": "Beast",
+  "ACTOR.TypeVehicle": "Vehicle",
   "ACTOR.TypeMarker": "Marker",
   "ITEM.TypeGift": "Gift",
   "ITEM.TypeWeapon": "Weapon",
@@ -11,11 +12,13 @@
   "ITEM.TypeExtracareer": "Extra Career",
   "ITEM.TypeSpeciestemplate": "Species Template",
   "ITEM.TypeCareertemplate": "Career Template",
+  "ITEM.TypeVehiclestation": "Vehicle Station",
+  "ITEM.TypeVehiclemodification": "Vehicle Modification",
   "ITEM.TypeItem": "Item",
 
 
   "ironclaw2e.speeds.stride": "Stride",
-  "ironclaw2e.speeds.dash": "Dash + Stride",
+  "ironclaw2e.speeds.dash": "Stride + Dash",
   "ironclaw2e.speeds.run": "Run",
 
   "ironclaw2e.yes": "Yes",
@@ -271,12 +274,24 @@
   "ironclaw2e.config.defaultSendToChatHint": "Controls what is considered the default macro type when dragging an item to the hotbar, versus the alternate macro type which is created by holding the Quick Roll key. Checked, the default macro is sending the item information to chat. Unchecked, the default is using the item in some way.",
 
 
-  "ironclaw2e.config.sense.nightVision": "Night Vision",
-  "ironclaw2e.config.sense.echolocation": "Echolocation",
-  "ironclaw2e.config.sense.keenEars": "Keen Ears",
+  "ironclaw2e.info.sense.nightVision": "Night Vision",
+  "ironclaw2e.info.sense.echolocation": "Echolocation",
+  "ironclaw2e.info.sense.keenEars": "Keen Ears",
 
-  "ironclaw2e.config.detection.emitUltrasound": "Emit Ultrasound",
-  "ironclaw2e.config.detection.hearUltrasound": "Hear Ultrasound",
+  "ironclaw2e.info.detection.emitUltrasound": "Emit Ultrasound",
+  "ironclaw2e.info.detection.hearUltrasound": "Hear Ultrasound",
+
+  "ironclaw2e.info.vehicleClass.dispatch": "Dispatch",
+  "ironclaw2e.info.vehicleClass.tender": "Tender",
+  "ironclaw2e.info.vehicleClass.cargo": "Cargo",
+  "ironclaw2e.info.vehicleClass.middling": "Middling",
+  "ironclaw2e.info.vehicleClass.great": "Great",
+  "ironclaw2e.info.vehicleClass.other": "Other",
+
+  "ironclaw2e.info.vehicleDraft.none": "None",
+  "ironclaw2e.info.vehicleDraft.shallow": "Shallow",
+  "ironclaw2e.info.vehicleDraft.deep": "Deep",
+  "ironclaw2e.info.vehicleDraft.veryDeep": "Very Deep",
 
 
   "ironclaw2e.keyConfig.quickRollModifier": "Quick Roll Modifier Key",
@@ -579,6 +594,12 @@
   "ironclaw2e.sheets.actor.applyWildcardTemplate": "Apply Wildcard Templates:",
   "ironclaw2e.sheets.actor.applyWildcardTemplateTooltip": "If checked, the system will attempt to give this actor the correct missing Species or Career template when dragged to the field, based on the token's wildcard image name.",
 
+  "ironclaw2e.sheets.actor.input.numberTip": "Number field; please only input numbers",
+  "ironclaw2e.sheets.actor.input.valueTip": "Value field; numbers and fractionals (1/4) only",
+  "ironclaw2e.sheets.actor.input.diceTip": "Dice field; dice values (3d8) only",
+  "ironclaw2e.sheets.actor.input.dicePoolTip": "Dice pool field; dice pool inputs please",
+  "ironclaw2e.sheets.actor.input.textTip": "Text field",
+
   "ironclaw2e.sheets.actor.battleStatistics": "Battle Statistics",
   "ironclaw2e.sheets.actor.initiative": "Initiative",
   "ironclaw2e.sheets.actor.stride": "Stride",
@@ -644,6 +665,7 @@
 
   "ironclaw2e.sheets.actor.gear.encumbrance": "Encumbrance",
   "ironclaw2e.sheets.actor.gear.totalCarried": "Total carried weight: {weight} stones",
+  "ironclaw2e.sheets.actor.gear.totalCarriedTons": "Total carried in tons: {weight} tons",
   "ironclaw2e.sheets.actor.gear.armorNumber": "Number of armors worn: {number}",
   "ironclaw2e.sheets.actor.gear.weapons": "Weapons",
   "ironclaw2e.sheets.actor.gear.armors": "Armors",
@@ -673,6 +695,28 @@
   "ironclaw2e.sheets.actor.status.effects": "Effects",
   "ironclaw2e.sheets.actor.status.ward": "Ward:",
   "ironclaw2e.sheets.actor.status.quota": "Quota:",
+
+  "ironclaw2e.sheets.actor.vehicle.class": "Class",
+  "ironclaw2e.sheets.actor.vehicle.draft": "Draft",
+  "ironclaw2e.sheets.actor.vehicle.maneuver": "Maneuver Dice",
+  "ironclaw2e.sheets.actor.vehicle.soak": "Soak Dice",
+  "ironclaw2e.sheets.actor.vehicle.appointments": "Appointments",
+  "ironclaw2e.sheets.actor.vehicle.maxCrew": "Max Crew",
+  "ironclaw2e.sheets.actor.vehicle.maxCargo": "Max Cargo",
+  "ironclaw2e.sheets.actor.vehicle.costsBuy": "Buy Cost",
+  "ironclaw2e.sheets.actor.vehicle.costsMaterials": "Materials Cost",
+  "ironclaw2e.sheets.actor.vehicle.costsLabor": "Labor Cost",
+  "ironclaw2e.sheets.actor.vehicle.cargo": "Cargo",
+
+  "ironclaw2e.sheets.actor.stations.title": "Stations",
+  "ironclaw2e.sheets.actor.stations.name": "Vehicle Stations",
+  "ironclaw2e.sheets.actor.stations.addStation": "Add Station",
+
+  "ironclaw2e.sheets.actor.vehicleDetails.title": "Details",
+  "ironclaw2e.sheets.actor.vehicleDetails.defaultCrewMember": "Default Crew Member",
+  "ironclaw2e.sheets.actor.vehicleDetails.cargoSpaceUsed": "Cargo Space Used: {weight}",
+  "ironclaw2e.sheets.actor.vehicleDetails.vehicleModifications": "Vehicle Modifications",
+  "ironclaw2e.sheets.actor.vehicleDetails.addModification": "Add Modification",
 
 
   "ironclaw2e.effect.status.focused": "Focused",

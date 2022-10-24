@@ -245,11 +245,11 @@ The "Condition auto-removal" system will remove conditions from actors based on 
 
 </details>
 
-With Combat Utility Belt's Enhanced Conditions set up, the system has somewhat better support for multiple defeat conditions and built-in chat linking for the Compendium information entries. The CUB is not necessary, but can make some things smoother.  
+With Combat Utility Belt's Enhanced Conditions set up, the system has somewhat better support for multiple defeat conditions and built-in chat linking for the Compendium information entries. However, the Enhanced Conditions option will also disable all possible status effects in the token HUD menu, instead of filtering only applicable ones.  
 <details>
 <summary>Step by step explanation of setup</summary>
 
-Step by step explanation to setting Combat Utility Belt's Enhanced Conditions up: There's a button in the right side menu under Game Settings (right-most tab) for "CUBPuter". It opens an 80's command line looking window. Click the  ":gear: Settings" and disable the "Use oldschool CRT styling" to get rid of that. Then click "Select gadget", choose Enhanced Conditions, enable it, and also enable "Remove Default Status Effects".  
+Step by step explanation to setting Combat Utility Belt's Enhanced Conditions up: There's a button in the right side menu under Game Settings (right-most tab) for "CUBPuter". It opens an 80's command line looking window. Click the  ":gear: Settings" and disable the "Use oldschool CRT styling" to get rid of that. Then click "Select gadget", choose Enhanced Conditions and enable it. You should not need to enable "Remove Default Status Effects".  
 
 Then next, under CUPButer should be "Condition Lab". If you open it, it should have all the appropriate conditions already, as CUB should recognize the Ironclaw2E system and use its appropriate condition map. But in case there are any issues, here's how you use the condition map provided with the system: Open the Condition Lab and select "Import" from top right. It should open a file picker, navigate inside FoundryVTT's data folder, and get the *ironclaw2e.json* condition map from Ironclaw2E's *systems/ironclaw2e/condition-maps* directory. (Default in Windows: %localappdata%/FoundryVTT/Data/systems/ironclaw2e/condition-maps )
 </details>

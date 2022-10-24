@@ -39,6 +39,11 @@ import { makeCompareReady } from "./helpers.js";
 
 /** Common class for common system info that might be used */
 export class CommonSystemInfo {
+
+    /* -------------------------------------------- */
+    /*  Common System Variables                     */
+    /* -------------------------------------------- */
+
     /**
      * List of stats that are limited by the Burdened condition
      */
@@ -92,7 +97,8 @@ export class CommonSystemInfo {
         "character": new Set(["gift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "item"]),
         "mook": new Set(["gift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "item"]),
         "beast": new Set(["gift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "item"]),
-        "marker": new Set([])
+        "marker": new Set([]),
+        "vehicle": new Set(["weapon", "armor", "shield", "illumination", "item", "vehicleStation", "vehicleModification"])
     };
 
     /**
@@ -215,11 +221,37 @@ export class CommonSystemInfo {
      */
     static extraSenses = {
         //"basic": { label: "VISION.ModeBasicVision", visionName: "basic", detectionModes: [], detectionPassives: [] },
-        "nightVision": { label: "ironclaw2e.config.sense.nightVision", visionName: "nightVision", detectionModes: [], detectionPassives: [] },
-        "echolocation": { label: "ironclaw2e.config.sense.echolocation", visionName: "echolocation", detectionModes: [{ id: "emitUltrasound", range: null }, { id: "basicSight", range: 0 }], detectionPassives: [{ id: "hearUltrasound", range: 100}] },
-        "keenEars": { label: "ironclaw2e.config.sense.keenEars", visionName: "", detectionModes: [], detectionPassives: [{ id: "hearUltrasound", range: 100 }] }
+        "nightVision": { label: "ironclaw2e.info.sense.nightVision", visionName: "nightVision", detectionModes: [], detectionPassives: [] },
+        "echolocation": { label: "ironclaw2e.info.sense.echolocation", visionName: "echolocation", detectionModes: [{ id: "emitUltrasound", range: null }, { id: "basicSight", range: 0 }], detectionPassives: [{ id: "hearUltrasound", range: 100}] },
+        "keenEars": { label: "ironclaw2e.info.sense.keenEars", visionName: "", detectionModes: [], detectionPassives: [{ id: "hearUltrasound", range: 100 }] }
+    };
+
+    /**
+     * Vehicle classes
+     */
+    static vehicleClasses = {
+        "dispatch": "ironclaw2e.info.vehicleClass.dispatch",
+        "tender": "ironclaw2e.info.vehicleClass.tender",
+        "cargo": "ironclaw2e.info.vehicleClass.cargo",
+        "middling": "ironclaw2e.info.vehicleClass.middling",
+        "great": "ironclaw2e.info.vehicleClass.great",
+        "other": "ironclaw2e.info.vehicleClass.other"
+    };
+    /**
+     * Vehicle needed draft levels
+     */
+    static vehicleDraftLevels = {
+        "none": "ironclaw2e.info.vehicleDraft.none",
+        "shallow": "ironclaw2e.info.vehicleDraft.shallow",
+        "deep": "ironclaw2e.info.vehicleDraft.deep",
+        "veryDeep": "ironclaw2e.info.vehicleDraft.veryDeep"
     };
 }
+
+
+/* -------------------------------------------- */
+/*  Special Options                             */
+/* -------------------------------------------- */
 
 /**
  * Get an empty base prototype for a given type of special option object
@@ -359,6 +391,10 @@ export function getSpecialOptionPrototype(option) {
             break;
     }
 }
+
+/* -------------------------------------------- */
+/*  System Info Helpers                         */
+/* -------------------------------------------- */
 
 /**
  * Get the distance in paces from a range band

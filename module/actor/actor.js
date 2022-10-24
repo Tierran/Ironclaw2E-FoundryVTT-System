@@ -66,15 +66,13 @@ export class Ironclaw2EActor extends Actor {
             console.log(`Item of type "${item.type}" not allowed for actors of type "${actor.type}", cancelling creation.`);
             return false;
         }
-        
+
         // The hook is only really relevant for template items
         // If the item is a template item, grab the data from it and update the actor with it, then prevent the item's creation by returning false
         if (item.type === "speciesTemplate" || item.type === "careerTemplate") {
             // Only applies if the actor actually exists
-            if (actor) {
                 actor.applyTemplate(data, { "confirm": options?.confirmCreation ?? false });
                 return false;
-            }
         }
     }
 
@@ -724,6 +722,10 @@ export class Ironclaw2EActor extends Actor {
             // The asynchronously updating parts
             this._actorUpdateAsyncCalls(actor);
         }
+        // Whereas if the actor is a vehicle, do the necessary async processing here
+        else if (actor.type === "vehicle") {
+            // TODO
+        }
     }
 
     /* -------------------------------------------- */
@@ -737,8 +739,11 @@ export class Ironclaw2EActor extends Actor {
         super.prepareEmbeddedDocuments();
         const actor = this;
 
-        this._prepareExtraCareerData(actor);
-        this._prepareGiftData(actor);
+        // Only do special embedded processing for actor types it matters
+        if (actor.type === 'character' || actor.type === 'mook' || actor.type === 'beast') {
+            this._prepareExtraCareerData(actor);
+            this._prepareGiftData(actor);
+        }
     }
 
     /**
@@ -824,11 +829,11 @@ export class Ironclaw2EActor extends Actor {
     prepareDerivedData() {
         const actor = this;
 
-        // Make separate methods for each Actor type (character, npc, etc.) to keep
-        // things organized.
+        // Separate function bunches for each actor type
         if (actor.type === 'character') this._prepareCharacterData(actor);
         if (actor.type === 'mook') this._prepareMookData(actor);
         if (actor.type === 'beast') this._prepareBeastData(actor);
+        if (actor.type === 'vehicle') this._prepareVehicleData(actor);
     }
 
     /**
@@ -868,6 +873,16 @@ export class Ironclaw2EActor extends Actor {
 
         this._processBattleData(actor);
     }
+
+    /**
+     * Prepare Vehicle type specific data
+     */
+    _prepareVehicleData(actor) {
+        this._processCoinageData(actor);
+        this._processItemDataVehicle(actor);
+    }
+
+
 
     /**
      * Process baseTraits template data
@@ -1249,8 +1264,33 @@ export class Ironclaw2EActor extends Actor {
             totalweight += system.coinageWeight;
         }
         system.totalWeight = totalweight;
+        system.totalWeightTons = totalweight / 160;
         system.totalArmors = totalarmors;
     }
+
+    /**
+     * Process derived data from items for vehicles
+     */
+    _processItemDataVehicle(actor) {
+        const system = actor.system;
+        const gear = this.items;
+
+        let totalweight = 0;
+        for (let item of gear) {
+
+            if (item.system.totalWeight && !isNaN(item.system.totalWeight)) {
+                totalweight += item.system.totalWeight; // Check that the value exists and is not a NaN, then add it to totaled weight
+            }
+        }
+
+        const coinshaveweight = game.settings.get("ironclaw2e", "coinsHaveWeight");
+        if (coinshaveweight === true && system.coinageWeight) {
+            totalweight += system.coinageWeight;
+        }
+        system.totalWeight = totalweight;
+        system.totalWeightTons = totalweight / 160;
+    }
+
 
     /* -------------------------------------------- */
     /* Process Finals                               */

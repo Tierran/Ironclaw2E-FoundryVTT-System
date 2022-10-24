@@ -31,6 +31,9 @@
     {{else}}
     <span class="bold-text allow-selection">{{localize "ironclaw2e.sheets.actor.gear.totalCarried" weight=(valueRoundTo system.totalWeight 2)}}</span>
     {{/if}}
+    {{#unless templateHelp.tonnageDisabled}}
+    <span class="bold-text allow-selection">{{localize "ironclaw2e.sheets.actor.gear.totalCarriedTons" weight=(valueRoundTo system.totalWeightTons 2)}}</span>
+    {{/unless}}
     <ol class="items-list">
         <li class="item flexrow item-header">
             <div class="item-image"></div>

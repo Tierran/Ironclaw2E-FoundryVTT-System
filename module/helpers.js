@@ -487,6 +487,48 @@ export function burdenedLimitedStat(name) {
     return CommonSystemInfo.burdenedList.includes(makeCompareReady(name));
 }
 
+/**
+ * Helper function to parse fractional numbers, usually from stats
+ * @param {string} fractional The fractional number
+ * @param {string} warnmessage
+ * @returns {number}
+ */
+export function parseFractionalNumber(fractional, warnmessage = "Fractional number parse failed!") {
+    if (typeof (fractional) !== "string") { // Both to ensure that the .includes doesn't fail and for legacy compatability
+        {
+            if (typeof (fractional) === "number") {
+                return fractional;
+            }
+            else {
+                ui.notifications.warn(warnmessage);
+            }
+        }
+    } else if (fractional.includes("/")) {
+        const foobar = fractional.split("/");
+        if (foobar.length > 1) {
+            const foo = parseInt(foobar[0]);
+            const bar = parseInt(foobar[1]);
+            if (!isNaN(foo) && !isNaN(bar) && bar !== 0) {
+                return foo / bar;
+            } else {
+                ui.notifications.warn(warnmessage); //game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight })
+            }
+        } else {
+            ui.notifications.warn(warnmessage);
+        }
+    } else {
+        const foobar = parseFloat(fractional);
+        if (!isNaN(foobar)) {
+            return foobar;
+        } else {
+            ui.notifications.warn(warnmessage);
+        }
+    }
+
+    console.warn("Fractional number parsing failed: " + fractional);
+    return 0;
+}
+
 /* -------------------------------------------- */
 /*  Actor & Token Helpers                       */
 /* -------------------------------------------- */

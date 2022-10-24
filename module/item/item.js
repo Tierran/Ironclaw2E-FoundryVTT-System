@@ -1,4 +1,4 @@
-import { findActorToken, findInItems, findTotalDice, formDicePoolField, getTokenFromSpeaker, popupConfirmationBox, reduceDiceStringSet } from "../helpers.js";
+import { findActorToken, findInItems, findTotalDice, formDicePoolField, getTokenFromSpeaker, parseFractionalNumber, popupConfirmationBox, reduceDiceStringSet } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -83,30 +83,7 @@ export class Ironclaw2EItem extends Item {
 
         // Check if the item has the weight attribute, then use it and quantity to calculate total weight
         if (system.hasOwnProperty("weight")) {
-            let usedWeight = 0;
-            if (typeof (system.weight) !== "string") { // Both to ensure that the .includes doesn't fail and for legacy compatability
-                usedWeight = system.weight;
-            } else if (system.weight.includes("/")) {
-                const foobar = system.weight.split("/");
-                if (foobar.length > 1) {
-                    const foo = parseInt(foobar[0]);
-                    const bar = parseInt(foobar[1]);
-                    if (!isNaN(foo) && !isNaN(bar) && bar !== 0) {
-                        usedWeight = foo / bar;
-                    } else {
-                        ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight }));
-                    }
-                } else {
-                    ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight }));
-                }
-            } else {
-                const foobar = parseFloat(system.weight);
-                if (!isNaN(foobar)) {
-                    usedWeight = foobar;
-                } else {
-                    ui.notifications.warn(game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight }));
-                }
-            }
+            let usedWeight = parseFractionalNumber(system.weight, game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight }));
 
             system.totalWeight = usedWeight * system.quantity;
         }

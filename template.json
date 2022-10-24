@@ -1,6 +1,6 @@
 {
   "Actor": {
-    "types": [ "character", "mook", "beast", "marker" ],
+    "types": [ "character", "mook", "beast", "vehicle", "marker" ],
     "templates": {
       "baseCommon": {
         "description": ""
@@ -170,6 +170,29 @@
             "amount": 0
           }
         }
+      },
+      "baseVehicle": {
+        "defaultCrewMember": "",
+        "vehicleTraits": {
+          "class": "other",
+          "draft": "none",
+          "maneuver": {
+            "dice": "d4"
+          },
+          "soak": {
+            "dice": "d6"
+          },
+          "appointments": 0,
+          "maxCrew": 0,
+          "maxCargo": "0"
+        },
+        "costs": {
+          "buy": 0,
+          "crafting": {
+            "materials": 0,
+            "labor": 0
+          }
+        }
       }
     },
     "character": {
@@ -192,10 +215,13 @@
     },
     "marker": {
       "templates": [ "baseCommon" ]
+    },
+    "vehicle": {
+      "templates": [ "baseCommon", "baseMoney", "baseVehicle" ]
     }
   },
   "Item": {
-    "types": [ "gift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "item" ],
+    "types": [ "gift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "vehicleStation", "vehicleModification", "item" ],
     "templates": {
       "base": {
         "description": "",
@@ -214,6 +240,16 @@
           "gift1": "",
           "gift2": "",
           "gift3": ""
+        }
+      },
+      "vehicleItem": {
+        "costs": {
+          "appointmentCost": 0,
+          "buy": "0",
+          "crafting": {
+            "materials": "0",
+            "labor": "0"
+          }
         }
       }
     },
@@ -313,6 +349,16 @@
     },
     "careerTemplate": {
       "templates": [ "traitTemplate" ]
+    },
+    "vehicleStation": {
+      "templates": [ "base", "vehicleItem" ],
+      "hasCosts": true,
+      "stationDicePool": "",
+      "stationDiceGifts": ""
+    },
+    "vehicleModification": {
+      "templates": [ "base", "vehicleItem" ],
+      "effect": ""
     }
   }
 }

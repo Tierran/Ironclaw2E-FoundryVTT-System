@@ -583,6 +583,8 @@ export class CommonConditionInfo {
         label: "ironclaw2e.effect.status.temporaryward",
         icon: "icons/svg/aura.svg"
     },
+
+    // Miscs
     {
         id: "misc-a",
         label: "ironclaw2e.effect.status.misc-a",

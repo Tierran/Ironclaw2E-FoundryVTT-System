@@ -1,0 +1,70 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <header class="sheet-header">
+        <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
+        <div class="header-fields">
+            <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
+            <div class="flexcol flex-group-center flex-tight">
+                <div class="resource flexrow">
+                    <label class="header-label">Station Dice Pool:</label>
+                    <input type="text" name="system.stationDicePool" value="{{system.stationDicePool}}" data-dtype="String" />
+                </div>
+                <div class="resource flexrow">
+                    <label class="header-label">Station Gifts:</label>
+                    <input type="text" name="system.stationDiceGifts" value="{{system.stationDiceGifts}}" data-dtype="String" />
+                </div>
+            </div>
+        </div>
+    </header>
+
+    {{!-- Sheet Tab Navigation --}}
+    <nav class="sheet-tabs tabs" data-group="primary">
+        <a class="item" data-tab="description">Description</a>
+        <a class="item" data-tab="attributes">Attributes</a>
+        {{#if showDirectoryOptions}}<a class="item" data-tab="special">Advanced Settings</a>{{/if}}
+    </nav>
+
+    {{!-- Sheet Body --}}
+    <section class="sheet-body sheet-body-small">
+
+        {{!-- Description Tab --}}
+        <div class="tab description" data-group="primary" data-tab="description">
+            {{editor richDescription target="system.description" button=true editable=editable engine=sheetEngine}}
+        </div>
+
+        {{!-- Attributes Tab --}}
+        <div class="tab attributes" data-group="primary" data-tab="attributes">
+            <div class="flexcol">
+                <h2 class="normal-label flex-center">Costs <input type="checkbox" name="system.hasCosts" {{checked system.hasCosts}} data-dtype="Boolean" /></h2>
+                {{#if system.hasCosts}}
+                <div class="resource flexrow flex-group-center">
+                    <label class="resource-label">Appointment Cost</label>
+                    <input type="number" name="system.costs.appointmentCost" value="{{system.costs.appointmentCost}}" data-dtype="Number" />
+                    <label class="resource-label">Monetary Cost</label>
+                    <input type="text" name="system.costs.buy" value="{{system.costs.buy}}" data-dtype="String" />
+                </div>
+                <div class="resource flexrow flex-group-center">
+                    <label class="resource-label">Material Costs</label>
+                    <input type="text" name="system.costs.crafting.materials" value="{{system.costs.crafting.materials}}" data-dtype="String" />
+                    <label class="resource-label">Labor Costs</label>
+                    <input type="text" name="system.costs.crafting.labor" value="{{system.costs.crafting.labor}}" data-dtype="String" />
+                </div>
+                {{/if}}
+            </div>
+        </div>
+
+        {{!-- Specials Tab --}}
+        <div class="tab special" data-group="primary" data-tab="special">
+            <div class="flexcol">
+                {{#if showDirectoryOptions}}
+                <div>
+                    <h3 class="normal-label flex-center">GM Directory Settings</h3>
+                    <div class="rollable copy-all-aspects flex-group-center">
+                        <span class="normal-label">Copy Station to every Station with same name</span>
+                    </div>
+                </div>
+                <div style="min-height: 1em"></div>
+                {{/if}}
+            </div>
+        </div>
+    </section>
+</form>

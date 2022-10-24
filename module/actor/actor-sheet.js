@@ -60,6 +60,9 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         if (this.actor.type === 'beast') {
             this._prepareBeastItems(sheetData);
         }
+        if (this.actor.type === 'vehicle') {
+            this._prepareVehicleItems(sheetData);
+        }
 
         // Grab the actual template data and effects
         sheetData.system = baseData.data.system;
@@ -68,9 +71,13 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         // Prepare the description / biography editor
         sheetData.richDescription = await TextEditor.enrichHTML(sheetData.system.description, { async: true, secrets: sheetData.editable });
 
-        // Get whether the actor is flying for some things
+        // Add structural sheet stuff
         sheetData.isFlying = baseData.data.system.isFlying === true;
         sheetData.templateHelp = this._prepateTemplateHelp(sheetData);
+        let selectables = {
+            "vehicleClasses": CommonSystemInfo.vehicleClasses, "draftLevels": CommonSystemInfo.vehicleDraftLevels
+        };
+        sheetData.selectables = selectables;
 
         //console.log(sheetData);
         return sheetData;
@@ -186,14 +193,56 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         actorData.lightItems = lightItems;
     }
 
+    _prepareVehicleItems(sheetData) {
+        const actorData = sheetData.actor;
+
+        // Initialize containers.
+        const gear = [];
+        const stations = [];
+        const modifications = [];
+        const lightItems = [];
+
+        // Iterate through items, allocating to containers
+        for (let i of sheetData.items) {
+            let item = i;
+            i.img = i.img || DEFAULT_TOKEN;
+
+            // Switch-case to append the item to the proper list, but also remove the default warning since vehicles might end up having misc stuff as cargo
+            switch (i.type) {
+                case 'vehicleStation':
+                    stations.push(i);
+                    break;
+                case 'vehicleModification':
+                    modifications.push(i);
+                    break;
+                case 'illumination':
+                    lightItems.push(i);
+                    break;
+                case 'item':
+                    gear.push(i);
+                    break;
+                default:
+                    gear.push(i);
+                    break;
+            }
+        }
+
+        // Assign and return
+        actorData.gear = gear;
+        actorData.stations = stations;
+        actorData.modifications = modifications;
+        actorData.lightItems = lightItems;
+    }
+
     _prepateTemplateHelp(sheetData) {
         let help = {
-            "skillSystem": this.actor.type !== 'beast',
+            "skillSystem": this.actor.type !== 'beast' && this.actor.type !== 'vehicle',
             "favoredUse": this.actor.type === 'character',
             "encumbranceInItems": this.actor.type === 'beast',
             "armorsDisabled": this.actor.type === 'beast',
             "shieldsDisabled": this.actor.type === 'beast',
-            "coinageDisabled": this.actor.type === 'beast',
+            "coinageDisabled": false,
+            "tonnageDisabled": this.actor.type !== 'vehicle',
             "showDirectoryOptions": (game.user.isGM && !this.actor.parent)
         };
         return help;
@@ -261,6 +310,14 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                 li.addEventListener("dragstart", handler, false);
             });
         }
+    }
+
+    /** @override */
+    async _onDropActor(event, data) {
+        if (!this.actor.isOwner) return false;
+        if (this.actor.type !== "vehicle") return false;
+
+        // TODO: Mooks from the directory can be dragged onto a vehicle as the default crew member
     }
 
     /**

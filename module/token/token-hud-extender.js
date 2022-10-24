@@ -1,3 +1,9 @@
+/**
+ * Hooks function to replace the bottom resource bar for TokenHUD with additional Ironclaw buttons
+ * @param {TokenHUD} hud The actual HUD object
+ * @param {any} html The HTML object
+ * @param {any} data Hook data
+ */
 function addIronclawTokenButtons(hud, html, data) {
     if (!game.settings.get("ironclaw2e", "showTokenExtraButtons")) {
         return; // If the buttons are turned off, return out
@@ -87,5 +93,53 @@ export class TokenExtenderOptions {
      */
     static buttonIcons = {
         "pool": "fa-dice", "damage": "fa-tint", "condition": "fa-thermometer-quarter"
+    };
+}
+
+/** 
+ * Monkey-patch the status effects to take into consideration what tyoe if actor they're for
+ */
+export function TokenHUDStatusMonkeyPatch() {
+    TokenHUD.prototype._getStatusEffectChoices = function () {
+        const token = this.object;
+        const doc = token.document;
+
+        // Get statuses which are active for the token actor
+        const actor = token.actor || null;
+        const statuses = actor ? actor.effects.reduce((obj, e) => {
+            const id = e.getFlag("core", "statusId");
+            if (id) {
+                obj[id] = {
+                    id: id,
+                    overlay: !!e.getFlag("core", "overlay")
+                };
+            }
+            return obj;
+        }, {}) : {};
+
+        // TODO: Add filtering to what status effects are allowed for actor types
+
+        // Prepare the list of effects from the configured defaults and any additional effects present on the Token
+        const tokenEffects = foundry.utils.deepClone(doc.effects) || [];
+        if (doc.overlayEffect) tokenEffects.push(doc.overlayEffect);
+        return CONFIG.statusEffects.concat(tokenEffects).reduce((obj, e) => {
+            const src = e.icon ?? e;
+            if (src in obj) return obj;
+            const status = statuses[e.id] || {};
+            const isActive = !!status.id || doc.effects.includes(src);
+            const isOverlay = !!status.overlay || doc.overlayEffect === src;
+            obj[src] = {
+                id: e.id ?? "",
+                title: e.label ? game.i18n.localize(e.label) : null,
+                src,
+                isActive,
+                isOverlay,
+                cssClass: [
+                    isActive ? "active" : null,
+                    isOverlay ? "overlay" : null
+                ].filterJoin(" ")
+            };
+            return obj;
+        }, {});
     };
 }

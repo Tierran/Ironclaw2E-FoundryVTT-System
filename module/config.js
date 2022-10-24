@@ -119,7 +119,7 @@ export class CoinageSettingsConfig extends FormApplication {
 
     /** @override */
     async getData(options) {
-        const settings = CoinageSettingsConfig.getCoinageSettingsObject(true);
+        const settings = CoinageSettingsConfig.getCoinageSettingsObject();
         return {
             settings
         };
@@ -134,7 +134,7 @@ export class CoinageSettingsConfig extends FormApplication {
 
     /** @override */
     async _updateObject(event, formData) {
-        const oldSettings = CoinageSettingsConfig.getCoinageSettingsObject();
+        const oldSettings = CoinageSettingsConfig.getCoinageSettingsObject(false);
         let newSettings = {};
         let parsedSettings = {};
         let inputFailed = false;
@@ -158,9 +158,10 @@ export class CoinageSettingsConfig extends FormApplication {
             if (!parsedSettings.hasOwnProperty(splitKey[0])) {
                 parsedSettings[splitKey[0]] = {};
             }
-            parsedSettings[splitKey[0]][splitKey[1]] = value;
             if (splitKey[1] === "parsedSign") {
                 parsedSettings[splitKey[0]]["sign"] = value.codePointAt(0);
+            } else {
+                parsedSettings[splitKey[0]][splitKey[1]] = value;
             }
         }
         // Actual setting input
@@ -205,7 +206,7 @@ export class CoinageSettingsConfig extends FormApplication {
     async resetSettings(event) {
         event.preventDefault();
 
-        const defaultSettings = CoinageSettingsConfig.getCoinageDefaultSettings(true);
+        const defaultSettings = CoinageSettingsConfig.getCoinageDefaultSettings();
 
         return this._onSubmit(event, { "updateData": defaultSettings });
     }
@@ -213,7 +214,7 @@ export class CoinageSettingsConfig extends FormApplication {
     /**
      * Get a settings object that is filled with all the world settings
      */
-    static getCoinageSettingsObject(parsesigns = false) {
+    static getCoinageSettingsObject(parsesigns = true) {
         let settings = {};
         settings = game.settings.get("ironclaw2e", "currencySettings");
         if (parsesigns) {

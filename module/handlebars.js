@@ -76,7 +76,9 @@ async function loadHandleBarTemplates() {
         "systems/ironclaw2e/templates/parts/statuseffects.html",
         "systems/ironclaw2e/templates/parts/gifts.html",
         "systems/ironclaw2e/templates/parts/combatgear.html",
-        "systems/ironclaw2e/templates/parts/items.html"
+        "systems/ironclaw2e/templates/parts/items.html",
+        "systems/ironclaw2e/templates/parts/vehicledetails.html",
+        "systems/ironclaw2e/templates/parts/vehiclestations.html"
     ];
     return loadTemplates(templatePaths);
 }

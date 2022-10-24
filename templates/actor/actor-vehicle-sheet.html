@@ -1,0 +1,114 @@
+<form class="{{cssClass}} flexcol" autocomplete="off">
+
+    {{!-- Sheet Header --}}
+    <header class="sheet-header">
+        <div class="flexcol">
+            <div class="flexrow">
+                <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100" />
+                <div class="header-fields">
+                    <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
+                    <div class="traits grid grid-3col grid-minimal">
+                        <div class="trait flexrow flex-group-center flex-tight">
+                            <label for="system.vehicleTraits.class" class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicle.class"}}</label>
+                            <select name="system.vehicleTraits.class" data-dtype="String">
+                                {{selectOptions selectables.vehicleClasses selected=system.vehicleTraits.class localize=true}}
+                            </select>
+                        </div>
+                        <div class="trait flexrow flex-group-center flex-tight">
+                            <label for="system.vehicleTraits.draft" class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicle.draft"}}</label>
+                            <select name="system.vehicleTraits.draft" data-dtype="String">
+                                {{selectOptions selectables.draftLevels selected=system.vehicleTraits.draft localize=true}}
+                            </select>
+                        </div>
+                        <div class="trait flexrow flex-group-center flex-tight" title="{{localize "ironclaw2e.sheets.actor.input.numberTip"}}">
+                            <label for="system.vehicleTraits.maxCrew" class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicle.maxCrew"}}</label>
+                            <input type="number" name="system.vehicleTraits.maxCrew" value="{{system.vehicleTraits.maxCrew}}" data-dtype="Number" onfocus="this.select();" />
+                        </div>
+                        <div class="trait flexrow flex-group-center flex-tight" title="{{localize "ironclaw2e.sheets.actor.input.diceTip"}}">
+                            <label for="system.vehicleTraits.maneuver.dice" class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicle.maneuver"}}</label>
+                            <input type="text" name="system.vehicleTraits.maneuver.dice" value="{{system.vehicleTraits.maneuver.dice}}" data-dtype="String" onfocus="this.select();" />
+                        </div>
+                        <div class="trait flexrow flex-group-center flex-tight" title="{{localize "ironclaw2e.sheets.actor.input.diceTip"}}">
+                            <label for="system.vehicleTraits.soak.dice" class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicle.soak"}}</label>
+                            <input type="text" name="system.vehicleTraits.soak.dice" value="{{system.vehicleTraits.soak.dice}}" data-dtype="String" onfocus="this.select();" />
+                        </div>
+                        <div class="trait flexrow flex-group-center flex-tight" title="{{localize "ironclaw2e.sheets.actor.input.numberTip"}}">
+                            <label for="system.vehicleTraits.appointments" class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicle.appointments"}}</label>
+                            <input type="number" name="system.vehicleTraits.appointments" value="{{system.vehicleTraits.appointments}}" data-dtype="Number" onfocus="this.select();" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flexrow flex-center">
+                <div class="rollable roll-order flex-group-center">
+                    <span class="normal-label">{{localize "ironclaw2e.sheets.actor.openDicePool"}}</span>
+                </div>
+                <div class="rollable roll-damage flex-group-center">
+                    <span class="normal-label">{{localize "ironclaw2e.sheets.actor.applyDamage"}}</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    {{!-- Sheet Tab Navigation --}}
+    <nav class="sheet-tabs tabs" data-group="primary">
+        <a class="item" data-tab="description">{{localize "ironclaw2e.sheets.actor.description"}}</a>
+        <a class="item" data-tab="details">{{localize "ironclaw2e.sheets.actor.vehicleDetails.title"}}</a>
+        <a class="item" data-tab="stations">{{localize "ironclaw2e.sheets.actor.stations.title"}}</a>
+        <a class="item" data-tab="battlestats">{{localize "ironclaw2e.sheets.actor.battleStatistics"}}</a>
+        <a class="item" data-tab="statuseffects">{{localize "ironclaw2e.sheets.actor.status.title"}}</a>
+        <a class="item" data-tab="items">{{localize "ironclaw2e.sheets.actor.vehicle.cargo"}}</a>
+    </nav>
+
+    {{!-- Sheet Body --}}
+    <section class="sheet-body">
+
+        {{!-- Description Tab --}}
+        <div class="tab description" data-group="primary" data-tab="description">
+            <div class="flex-group flex-tight flexcol">
+                <div class="grid grid-3col grid-minimal">
+                    <div class="trait flexrow flex-group-center flex-tight" title="{{localize "ironclaw2e.sheets.actor.input.numberTip"}}">
+                        <label for="system.costs.buy" class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicle.costsBuy"}}</label>
+                        <input type="number" name="system.costs.buy" value="{{system.costs.buy}}" data-dtype="Number" onfocus="this.select();" />
+                    </div>
+                    <div class="trait flexrow flex-group-center flex-tight" title="{{localize "ironclaw2e.sheets.actor.input.numberTip"}}">
+                        <label for="system.costs.crafting.materials" class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicle.costsMaterials"}}</label>
+                        <input type="number" name="system.costs.crafting.materials" value="{{system.costs.crafting.materials}}" data-dtype="Number" onfocus="this.select();" />
+                    </div>
+                    <div class="trait flexrow flex-group-center flex-tight" title="{{localize "ironclaw2e.sheets.actor.input.numberTip"}}">
+                        <label for="system.costs.crafting.labor" class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicle.costsLabor"}}</label>
+                        <input type="number" name="system.costs.crafting.labor" value="{{system.costs.crafting.labor}}" data-dtype="Number" onfocus="this.select();" />
+                    </div>
+                </div>
+            </div>
+            <div style="height:calc(100% - 60px)">{{editor richDescription target="system.description" button=true editable=editable engine=sheetEngine}}</div>
+        </div>
+
+        {{!-- Details Tab --}}
+        <div class="tab details" data-group="primary" data-tab="details">
+            {{> 'systems/ironclaw2e/templates/parts/vehicledetails.html'}}
+        </div>
+
+        {{!-- Battle Stats Tab --}}
+        <div class="tab battlestats" data-group="primary" data-tab="battlestats">
+
+        </div>
+
+        {{!-- Status Effects Tab --}}
+        <div class="tab statuseffects" data-group="primary" data-tab="statuseffects">
+            {{> 'systems/ironclaw2e/templates/parts/statuseffects.html'}}
+        </div>
+
+        {{!-- Stations Tab --}}
+        <div class="tab stations" data-group="primary" data-tab="stations">
+            {{> 'systems/ironclaw2e/templates/parts/vehiclestations.html'}}
+        </div>
+
+        {{!-- Owned Items Tab --}}
+        <div class="tab items" data-group="primary" data-tab="items">
+            {{> 'systems/ironclaw2e/templates/parts/items.html'}}
+        </div>
+
+    </section>
+</form>
+

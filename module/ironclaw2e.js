@@ -5,7 +5,7 @@ import { Ironclaw2EActorSheet } from "./actor/actor-sheet.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { Ironclaw2EItemSheet } from "./item/item-sheet.js";
 
-import { TokenExtenderOptions } from "./token/token-hud-extender.js"
+import { TokenExtenderOptions, TokenHUDStatusMonkeyPatch } from "./token/token-hud-extender.js"
 import { Ironclaw2EToken } from "./token/token.js"
 
 import { requestRollPopup } from "./utilitiesmacros.js";
@@ -93,6 +93,9 @@ Hooks.once('init', function () {
     CONFIG.Token.objectClass = Ironclaw2EToken;
     CONFIG.ui.combat = Ironclaw2ECombatTracker;
     CONFIG.statusEffects = CommonConditionInfo.conditionList;
+
+    // Foundry VTT core monkey-patches
+    TokenHUDStatusMonkeyPatch();
 
     /**
      * Set an initiative formula for the system
@@ -271,7 +274,7 @@ function registerWorldSettings() {
         hint: "ironclaw2e.config.dicePoolsSourceOrderedHint",
         scope: "world",
         type: Boolean,
-        default: false,
+        default: true,
         config: false,
         onChange: ordered => game.ironclaw2e.CardinalDiceRoller.sourceOrderedDice = ordered
     });
@@ -538,7 +541,7 @@ function registerWorldSettings() {
     game.settings.register("ironclaw2e", "currencySettings", {
         scope: "world",
         type: Object,
-        default: CoinageSettingsConfig.getCoinageDefaultSettings(false),
+        default: CoinageSettingsConfig.getCoinageDefaultSettings(),
         config: false
     });
 
