@@ -56,6 +56,10 @@ export class Ironclaw2EActor extends Actor {
      */
     static onActorPreCreateItem(item, data, options, user) {
         const actor = item.actor;
+        if (!actor) {
+            // If the item has no actor assigned, meaning it's not created as part of an actor, just return out with "true"
+            return true;
+        }
 
         // If the item type is not found within the list of allowed item types for the actor type, disallow the creation
         if (!checkActorItemAllowedType(actor.type, item.type)) {
