@@ -1,4 +1,7 @@
-### 0.6.7 Chat gifts release 
+### 0.6.8 Bug fixing release 
+ - Bug fixes
+ 
+ ### 0.6.7 Chat gifts release 
  - Gifts now have a button to use them directly from chat messages
  - Item descriptions should now show up properly enriched in chat
  - Tours should now actually work
