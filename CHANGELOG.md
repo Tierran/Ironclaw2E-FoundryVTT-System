@@ -1,3 +1,8 @@
+### 0.6.7 Chat gifts release 
+ - Gifts now have a button to use them directly from chat messages
+ - Item descriptions should now show up properly enriched in chat
+ - Internal refactoring and cleanup
+ 
 ### 0.6.6 Readable docs release 
  - Added buttons to open the markdown doc files inside Foundry as readable HTML
  - Hidden tokens are ignored as targets when the system derives the initiative TN
