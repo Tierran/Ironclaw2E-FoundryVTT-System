@@ -500,7 +500,7 @@ export function parseFractionalNumber(fractional, warnmessage = "Fractional numb
                 return fractional;
             }
             else {
-                ui.notifications.warn(warnmessage);
+                ui.notifications?.warn?.(warnmessage);
             }
         }
     } else if (fractional.includes("/")) {
@@ -511,17 +511,17 @@ export function parseFractionalNumber(fractional, warnmessage = "Fractional numb
             if (!isNaN(foo) && !isNaN(bar) && bar !== 0) {
                 return foo / bar;
             } else {
-                ui.notifications.warn(warnmessage); //game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight })
+                ui.notifications?.warn?.(warnmessage); //game.i18n.format("ironclaw2e.ui.itemWeightParseError", { "item": item.name, "weight": system.weight })
             }
         } else {
-            ui.notifications.warn(warnmessage);
+            ui.notifications?.warn?.(warnmessage);
         }
     } else {
         const foobar = parseFloat(fractional);
         if (!isNaN(foobar)) {
             return foobar;
         } else {
-            ui.notifications.warn(warnmessage);
+            ui.notifications?.warn?.(warnmessage);
         }
     }
 

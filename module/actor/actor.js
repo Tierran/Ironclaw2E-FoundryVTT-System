@@ -1,4 +1,4 @@
-import { checkDiceArrayEmpty, diceFieldUpgrade, enforceLimitArray, findInItems, findTotalDiceArrays, flattenDicePoolArray, getCombatAdvantageConstruction, getTemplatePosition, popupConfirmationBox } from "../helpers.js";
+import { checkDiceArrayEmpty, diceFieldUpgrade, enforceLimitArray, findInItems, findTotalDiceArrays, flattenDicePoolArray, getCombatAdvantageConstruction, getTemplatePosition, parseFractionalNumber, popupConfirmationBox } from "../helpers.js";
 import { addArrays } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -1282,6 +1282,8 @@ export class Ironclaw2EActor extends Actor {
                 totalweight += item.system.totalWeight; // Check that the value exists and is not a NaN, then add it to totaled weight
             }
         }
+
+        system.maxWeightTons = parseFractionalNumber(system.vehicleTraits.maxCargo, game.i18n.format("ironclaw2e.ui.maxCargoParseError", { "actor": actor.name, "weight": system.vehicleTraits.maxCargo }));
 
         const coinshaveweight = game.settings.get("ironclaw2e", "coinsHaveWeight");
         if (coinshaveweight === true && system.coinageWeight) {

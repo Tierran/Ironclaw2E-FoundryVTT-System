@@ -77,6 +77,7 @@
   "ironclaw2e.ui.weaponUpgradeFindFailure": "{name} failed to find a weapon named {weapon} on: {actor}",
   "ironclaw2e.ui.weaponUpgradeFindAbort": "{name} use aborted, due to missing weapon to upgrade from",
   "ironclaw2e.ui.itemWeightParseError": "Item weight parsing error for {item}: {weight}",
+  "ironclaw2e.ui.maxCargoParseError": "Vehicle max cargo parsing error for {actor}: {weight}",
   "ironclaw2e.ui.itemNotFound": "Item not found",
   "ironclaw2e.ui.standardDefenseResist": "Weapon '{name}' defense stat pool defined as standard defense, yet the weapon's attack is resisted",
   "ironclaw2e.ui.alreadyReplacedSetting": "Special bonus system found a competing replacement bonus in the Gift '{replacement}' that the Gift '{name}' requested for '{actor}'. This should be avoided.",
@@ -714,7 +715,7 @@
 
   "ironclaw2e.sheets.actor.vehicleDetails.title": "Details",
   "ironclaw2e.sheets.actor.vehicleDetails.defaultCrewMember": "Default Crew Member",
-  "ironclaw2e.sheets.actor.vehicleDetails.cargoSpaceUsed": "Cargo Space Used: {weight}",
+  "ironclaw2e.sheets.actor.vehicleDetails.cargoSpaceUsed": "Cargo Space Used: {weight}/{max} tons",
   "ironclaw2e.sheets.actor.vehicleDetails.vehicleModifications": "Vehicle Modifications",
   "ironclaw2e.sheets.actor.vehicleDetails.addModification": "Add Modification",
 

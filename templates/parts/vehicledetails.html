@@ -7,7 +7,7 @@
     <div class="trait flexrow flex-group-center" title="{{localize "ironclaw2e.sheets.actor.input.valueTip"}}">
         <label for="system.vehicleTraits.maxCargo" class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicle.maxCargo"}}</label>
         <input type="text" name="system.vehicleTraits.maxCargo" value="{{system.vehicleTraits.maxCargo}}" data-dtype="String" onfocus="this.select();" />
-        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicleDetails.cargoSpaceUsed" weight=(valueRoundTo system.totalWeightTons 2)}}</span>
+        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicleDetails.cargoSpaceUsed" weight=(valueRoundTo system.totalWeightTons 2) max=(valueRoundTo system.maxWeightTons 2)}}</span>
     </div>
 
     <ol class="items-list">
