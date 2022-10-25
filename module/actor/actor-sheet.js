@@ -318,10 +318,16 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         if (this.actor.type !== "vehicle") return false;
 
         // Mooks from the directory can be dragged onto a vehicle as the default crew member
-        const dropped = await fromUuid(data.uuid);
-        if (dropped.type !== "mook") return false;
-        await this.actor.update({ "_id": this.actor.id, "system.defaultCrewMember": data.uuid });
-        return true;
+        try {
+            const dropped = fromUuidSync(data.uuid);
+            if (dropped.type !== "mook") return false;
+            await this.actor.update({ "_id": this.actor.id, "system.defaultCrewMember": data.uuid });
+            return true;
+        }
+        catch (err) {
+            ui.notifications.warn(err);
+        }
+        return false;
     }
 
     /**

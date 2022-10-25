@@ -465,6 +465,37 @@ export class Ironclaw2EItem extends Item {
 
     }
 
+    /**
+     * Process Vehicle Station type specific data
+     */
+    _prepareVehicleStationData(item, actor) {
+        const system = item.system;
+
+        let resolvedCaptain = null;
+        if (system.stationCaptain) {
+            try {
+                resolvedCaptain = fromUuidSync(system.stationCaptain);
+            } catch (err) {
+                console.warn(err);
+            }
+        }
+        system.resolvedCaptain = resolvedCaptain;
+
+        system.canUse = false;
+
+        if (system.stationDicePool.length > 0) {
+            let firstsplit = splitStatsAndBonus(system.stationDicePool);
+            system.poolStats = firstsplit[0];
+            system.poolArray = (firstsplit[1].length > 0 ? findTotalDice(firstsplit[1]) : null);
+            system.canUse = true;
+        }
+        if (system.stationDiceGifts.length > 0) {
+            let giftsplit = splitStatString(system.stationDiceGifts);
+            system.stationGifts = giftsplit;
+            system.canUse = true;
+        }
+    }
+
     /* -------------------------------------------- */
     /* Item Data Modification Functions             */
     /* -------------------------------------------- */
@@ -1679,10 +1710,11 @@ export class Ironclaw2EItem extends Item {
      * @param {boolean} directroll
      * @param {string} extradice
      */
-    async vehicleStationRoll(directroll = false) {
+    vehicleStationRoll(directroll = false, extradice = "") {
         const item = this;
         const actor = this.actor ? this.actor : {};
         const itemSys = item.system;
+        const preferCaptain = game.settings.get("ironclaw2e", "vehicleStationCaptainOverride");
 
         if (!(item.type === 'vehicleStation')) {
             console.error("Station roll attempted on a non-station item: " + item.name);
@@ -1694,26 +1726,40 @@ export class Ironclaw2EItem extends Item {
             return;
         }
 
-        // Check if the current selected actor exists and is able to roll the station's pool
+        let requestActor = null;
+        if (preferCaptain) {
+            // Check if the station has a captain explicitly set and successfully resolved
+            // Then check if the current selected actor exists and is able to roll the station's pool
+            requestActor = itemSys.resolvedCaptain ?? null;
+            if (!requestActor || !(requestActor?.type === 'character' || requestActor?.type === 'mook' || requestActor?.type === 'beast')) {
+                requestActor = getSpeakerActor();
+            }
+        } else {
+            // Check if the current selected actor exists and is able to roll the station's pool
+            // Then check if the station has a captain explicitly set and successfully resolved
+            requestActor = getSpeakerActor();
+            if (!requestActor || !(requestActor?.type === 'character' || requestActor?.type === 'mook' || requestActor?.type === 'beast')) {
+                requestActor = itemSys.resolvedCaptain ?? null;
+            }
+        }
         // If not, check if the vehicle has a default crew selected and successfully resolved
-        // Otherwise, cancel and pop a warning message
-        let requestActor = getSpeakerActor();
         if (!requestActor || !(requestActor?.type === 'character' || requestActor?.type === 'mook' || requestActor?.type === 'beast')) {
             requestActor = actor.system.resolvedDefaultCrew ?? null;
         }
-        if (!requestActor) {
+        // If the actor still doesn't exist, cancel and pop a warning message
+        if (!requestActor || !(requestActor?.type === 'character' || requestActor?.type === 'mook' || requestActor?.type === 'beast')) {
             ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
             return null;
         }
 
-        // TODO: Proper field for the extra dice from the station, instead of the actual extra dice field
-        const splitStats = splitStatsAndBonus(itemSys.stationDicePool);
-        const splitGifts = splitStatString(itemSys.stationDiceGifts ?? "");
-        const giftSetup = requestActor.requestedGiftDialogConstruction(splitGifts);
+        const giftSetup = requestActor.requestedGiftDialogConstruction(itemSys.stationGifts);
+        const finalSetup = Array.isArray(itemSys.poolArray) ?
+            formDicePoolField(itemSys.poolArray, item.name, `${item.name}: ${reformDiceString(itemSys.poolArray, true)}`, true, { "itemid": this.id }, giftSetup) :
+            giftSetup;
         requestActor.basicRollSelector({
-            "tnyes": true, "tnnum": 3, "prechecked": splitStats[0], "otherkeys": giftSetup.otherkeys,
-            "otherdice": giftSetup.otherdice, "othernames": giftSetup.othernames, "otherbools": giftSetup.otherbools, "otherinputs": giftSetup.otherinputs,
-            "extradice": splitStats[1], "otherlabel": game.i18n.format("ironclaw2e.chatInfo.vehicleStation.rollLabel", { "station": item.name, "user": getMacroSpeaker(requestActor).alias })
+            "tnyes": true, "tnnum": 3, "prechecked": itemSys.poolStats, "otherkeys": finalSetup.otherkeys,
+            "otherdice": finalSetup.otherdice, "othernames": finalSetup.othernames, "otherbools": finalSetup.otherbools, "otherinputs": finalSetup.otherinputs,
+            "extradice": extradice, "otherlabel": game.i18n.format("ironclaw2e.chatInfo.vehicleStation.rollLabel", { "station": item.name, "user": getMacroSpeaker(requestActor).alias })
         }, { "directroll": directroll });
     }
 

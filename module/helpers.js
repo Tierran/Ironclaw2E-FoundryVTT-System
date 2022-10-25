@@ -1023,8 +1023,7 @@ export function diceFieldUpgrade(dicearray, upgrade) {
  * @param {string} fieldname The name to use for the field in the actual messages
  * @param {string} fieldlabel The label for this field in the dice pool popup
  * @param {boolean} autocheck Whether the field is checked or not by default
- * @param {string} itemid The item id related to this field, if any
- * @param {boolean} exhaustonuse Whether tapping the field will make the related gift exhausted
+ * @param {any} param5 What item id to use and whether the item is a gift that can be exhausted on use
  * @param {any} param6 The mostly mandatory data which holds the previous values which are being added to
  * @returns {DicePoolFormReturn} Returns a holder object which returns the inputs with the added bonuses
  */

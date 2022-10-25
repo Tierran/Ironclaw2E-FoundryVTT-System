@@ -353,6 +353,7 @@
     "vehicleStation": {
       "templates": [ "base", "vehicleItem" ],
       "hasCosts": false,
+      "stationCaptain": "",
       "stationDicePool": "",
       "stationDiceGifts": ""
     },

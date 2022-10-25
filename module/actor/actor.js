@@ -724,8 +724,41 @@ export class Ironclaw2EActor extends Actor {
         }
         // Whereas if the actor is a vehicle, do the necessary async processing here
         else if (actor.type === "vehicle") {
-            // TODO
+            // TODO             const dropped = fromUuidSync(data.uuid);
         }
+    }
+
+    /* -------------------------------------------- */
+    /* Process Basic                                */
+    /* -------------------------------------------- */
+
+    /** @override
+     * Process the base data before anything else is
+     */
+    prepareBaseData() {
+        super.prepareBaseData();
+        const actor = this;
+
+        if (actor.type === 'vehicle') {
+            this._prepareVehicleActor(actor);
+        }
+    }
+
+    /**
+     * Prepare the default actor for vehicles
+     */
+    _prepareVehicleActor(actor) {
+        const system = actor.system;
+
+        let resolvedDefaultCrew = null;
+        if (system.defaultCrewMember) {
+            try {
+                resolvedDefaultCrew = fromUuidSync(system.defaultCrewMember);
+            } catch (err) {
+                console.warn(err);
+            }
+        }
+        system.resolvedDefaultCrew = resolvedDefaultCrew;
     }
 
     /* -------------------------------------------- */
@@ -878,6 +911,7 @@ export class Ironclaw2EActor extends Actor {
      * Prepare Vehicle type specific data
      */
     _prepareVehicleData(actor) {
+        this._processVehicleStats(actor);
         this._processCoinageData(actor);
         this._processItemDataVehicle(actor);
     }
@@ -903,6 +937,29 @@ export class Ironclaw2EActor extends Actor {
         if (!system.skills) {
             system.traits.species.skillNames = [system.traits.species.speciesSkill1, system.traits.species.speciesSkill2, system.traits.species.speciesSkill3];
             system.traits.career.skillNames = [system.traits.career.careerSkill1, system.traits.career.careerSkill2, system.traits.career.careerSkill3];
+        }
+    }
+
+    /**
+     * Process baseTraits template data
+     */
+    _processVehicleStats(actor) {
+        const system = actor.system;
+
+        system.traits = {};
+
+        system.traits.maneuver = {
+            dice: system.vehicleTraits.maneuver.dice
+        }
+        system.traits.soak = {
+            dice: system.vehicleTraits.soak.dice
+        }
+
+        for (let [key, trait] of Object.entries(system.traits)) {
+            trait.diceArray = findTotalDice(trait.dice);
+
+            // Make the name used for a trait more human-readable
+            trait.usedTitle = convertCamelCase(key);
         }
     }
 
@@ -1038,6 +1095,8 @@ export class Ironclaw2EActor extends Actor {
             }
         }
     }
+
+
 
     /**
      * Process derived data for battle calculations

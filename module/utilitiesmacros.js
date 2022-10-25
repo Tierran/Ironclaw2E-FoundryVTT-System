@@ -289,7 +289,7 @@ async function onRequestRollTrigger(event) {
     // Check to make sure the flags actually exist
     if (messageFlags) {
         const splitStats = splitStatsAndBonus(messageFlags.requestDicePool);
-        const splitGifts = splitStatString(messageFlags.requestedGifts ?? "");
+        const splitGifts = splitStatString(messageFlags.requestedGifts ?? []);
         const giftSetup = requestActor.requestedGiftDialogConstruction(splitGifts);
         requestActor.basicRollSelector({
             "tnyes": messageFlags.requestTNYes, "tnnum": messageFlags.requestTNNum, "prechecked": splitStats[0], "otherkeys": giftSetup.otherkeys,

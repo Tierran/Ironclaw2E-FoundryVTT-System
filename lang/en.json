@@ -246,6 +246,8 @@
   "ironclaw2e.config.showOthersTacticsUseHint": "If checked, weapon info chat messages will show the checkbox of whether attackers are going to use the Tactics skill to everyone. Unchecked, and only the GM and the player who sent the message will see the checkbox. This does not affect the automatic gift bonus checks, those will still recognize whether Tactics is being used even if it is visually hidden.",
   "ironclaw2e.config.autoAddOnFireLight": "Auto-add light when On Fire",
   "ironclaw2e.config.autoAddOnFireLightHint": "If checked, actors will automatically add a flame light source on themselves when given the On Fire condition, if they have no active light source.",
+  "ironclaw2e.config.vehicleStationCaptainOverride": "Prefer set captain to selected token",
+  "ironclaw2e.config.vehicleStationCaptainOverrideHint": "If checked, vehicle stations with explicitly set captains will use the set captain instead of the selected token for using the station.",
 
   "ironclaw2e.config.templateSpeciesActive": "Wildcard species templates active",
   "ironclaw2e.config.templateSpeciesActiveHint": "Whether the wildcard template system is active for Species.",

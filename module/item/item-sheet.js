@@ -111,6 +111,24 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         html.find('.special-change-boolean').change(this._onChangeSpecialBoolean.bind(this));
     }
 
+    /** @override */
+    async _onDropActor(event, data) {
+        if (!this.item.isOwner) return false;
+        if (this.item.type !== "vehicleStation") return false;
+
+        // Actors with actual stats from the directory can be dragged onto a vehicle station as the captain
+        try {
+            const dropped = fromUuidSync(data.uuid);
+            if (dropped.type !== "character" && dropped.type !== "mook" && dropped.type !== "beast") return false;
+            await this.item.update({ "_id": this.item.id, "system.stationCaptain": data.uuid });
+            return true;
+        }
+        catch (err) {
+            ui.notifications.warn(err);
+        }
+        return false;
+    }
+
     /**
      * Handle the addition of a new special option
      * @param {Event} event Originationg event

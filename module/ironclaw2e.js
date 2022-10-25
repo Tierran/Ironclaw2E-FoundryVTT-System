@@ -427,6 +427,14 @@ function registerWorldSettings() {
     });
 
     // Item configs
+    game.settings.register("ironclaw2e", "vehicleStationCaptainOverride", {
+        name: "ironclaw2e.config.vehicleStationCaptainOverride",
+        hint: "ironclaw2e.config.vehicleStationCaptainOverrideHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: false
+    });
     game.settings.register("ironclaw2e", "sendWeaponExhaustMessage", {
         name: "ironclaw2e.config.sendWeaponExhaustMessage",
         hint: "ironclaw2e.config.sendWeaponExhaustMessageHint",
