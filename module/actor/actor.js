@@ -3334,7 +3334,8 @@ export class Ironclaw2EActor extends Actor {
                             rollreturn = await CardinalDiceRoller.rollHighestArray(totaldice, label, this);
 
                         // Add the statistics used for the roll into a flag
-                        await rollreturn.message.setFlag("ironclaw2e", "usedActorStats", traitvalues.concat(skillvalues));
+                        if (rollreturn?.message)
+                            await rollreturn.message?.setFlag("ironclaw2e", "usedActorStats", traitvalues.concat(skillvalues));
 
                         if (successfunc && typeof (successfunc) === "function") {
                             successfunc(rollreturn); // Then do the special callback function of the roll if it is set
@@ -3406,7 +3407,8 @@ export class Ironclaw2EActor extends Actor {
             rollreturn = await CardinalDiceRoller.rollHighestArray(all.totalDice, label, this);
 
         // Add the statistics used for the roll into a flag
-        await rollreturn.message.setFlag("ironclaw2e", "usedActorStats", prechecked);
+        if (rollreturn?.message)
+            await rollreturn.message.setFlag("ironclaw2e", "usedActorStats", prechecked);
 
         // The success callback function
         if (successfunc && typeof (successfunc) === "function") {
