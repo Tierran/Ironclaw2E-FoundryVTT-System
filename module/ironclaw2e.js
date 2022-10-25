@@ -819,7 +819,7 @@ function popupMacro(popup) {
     // Trigger the popup
     switch (popup) {
         case 0:
-            return actor.popupSelectRolled();
+            return actor.basicRollSelector();
             break;
         case 1:
             return actor.popupDamage();
@@ -829,7 +829,7 @@ function popupMacro(popup) {
             break;
         default:
             ui.notifications.warn(game.i18n.format("ironclaw2e.ui.popupNotFoundForMacro", { "popup": popup }));
-            return actor.popupSelectRolled();
+            return actor.basicRollSelector();
             break;
     }
 }

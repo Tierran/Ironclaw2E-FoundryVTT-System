@@ -4,9 +4,9 @@
         <label class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicleDetails.defaultCrewMember"}}</label>
         <input type="text" name="system.defaultCrewMember" value="{{system.defaultCrewMember}}" data-dtype="String" />
     </div>
-    <div class="trait flexrow flex-group-center" title="{{localize "ironclaw2e.sheets.actor.input.valueTip"}}">
+    <div class="trait flexrow flex-group-center">
         <label for="system.vehicleTraits.maxCargo" class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicle.maxCargo"}}</label>
-        <input type="text" name="system.vehicleTraits.maxCargo" value="{{system.vehicleTraits.maxCargo}}" data-dtype="String" onfocus="this.select();" />
+        <input type="text" name="system.vehicleTraits.maxCargo" title="{{localize "ironclaw2e.sheets.actor.input.valueTip"}}" value="{{system.vehicleTraits.maxCargo}}" data-dtype="String" onfocus="this.select();" />
         <span class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicleDetails.cargoSpaceUsed" weight=(valueRoundTo system.totalWeightTons 2) max=(valueRoundTo system.maxWeightTons 2)}}</span>
     </div>
 

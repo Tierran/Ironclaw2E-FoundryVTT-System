@@ -62,6 +62,37 @@
                 <strong>{{localize "ironclaw2e.chatInfo.itemInfo.held"}}:</strong> {{#if itemSys.held}}{{localize "ironclaw2e.yes"}}{{else}}{{localize "ironclaw2e.no"}}{{/if}}
             </p>
             {{/if}}
+            {{#if (typeCheck item.type "vehicleStation")}}
+            <p>
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.stationPool"}}:</strong> {{itemSys.stationDicePool}}
+            </p>
+            <p>
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.stationGifts"}}:</strong> {{itemSys.stationDiceGifts}}
+            </p>
+            <p>
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.hasVehicleCosts"}}:</strong> {{#if itemSys.hasCosts}}{{localize "ironclaw2e.yes"}}{{else}}{{localize "ironclaw2e.no"}}{{/if}}
+            </p>
+            {{#unless hasActor}}{{#if itemSys.hasCosts}}
+            <p>
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.appointmentCost"}}:</strong> {{itemSys.costs.appointmentCost}},
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.monetaryCost"}}:</strong> {{itemSys.costs.buy}},
+            </p>
+            <p>
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.materialCosts"}}:</strong> {{itemSys.costs.crafting.materials}},
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.laborCosts"}}:</strong> {{itemSys.costs.crafting.labor}},
+            </p>
+            {{/if}}{{/unless}}
+            {{/if}}
+            {{#if (typeCheck item.type "vehicleModification")}}
+            <p>
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.appointmentCost"}}:</strong> {{itemSys.costs.appointmentCost}},
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.monetaryCost"}}:</strong> {{itemSys.costs.buy}},
+            </p>
+            <p>
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.materialCosts"}}:</strong> {{itemSys.costs.crafting.materials}},
+                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.laborCosts"}}:</strong> {{itemSys.costs.crafting.labor}},
+            </p>
+            {{/if}}
         </div>
         {{#if hasButtons}}
         <div class="chat-item button-holder" data-itemid="{{item._id}}" data-actorid="{{actorId}}" data-tokenid="{{tokenId}}" data-sceneid="{{sceneId}}">

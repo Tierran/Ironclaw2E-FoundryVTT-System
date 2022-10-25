@@ -2568,8 +2568,30 @@ export class Ironclaw2EActor extends Actor {
     /*  Special Popup Macro Puukko Functions        */
     /* -------------------------------------------- */
 
-    /** A simple selector to pick the correct roll function based whether directroll is set to true */
-    basicRollSelector(holder, { directroll = false } = {}, successfunc = null, autocondition = null) {
+    /** 
+     * A selector to pick the correct roll function based whether directroll is set to true and to check ownership for the function.
+     * Use this as the endpoint for any actor rolls, instead of the popupSelectRolled and silentSelectRolled functions.
+     * @param {boolean} [holder.tnyes] Whether to use a TN, true for yes
+     * @param {number} [holder.tnnum] TN to use
+     * @param {string[]} [holder.prechecked] Traits and skills to roll
+     * @param {Map<string,object>} [holder.otherkeys] An array of keys, used to identify what gift each 'other dice' field came from, and whether the gift should be exhausted
+     * @param {Map<string,number[]>} [holder.otherdice] An array of dice arrays, with matching id's with the otherkeys iteration
+     * @param {Map<string,string>} [holder.othernames] An array of names for the fields, to be used for UI information
+     * @param {Map<string,boolean>} [holder.otherbools] An array of booleans that determine which modifiers should actually be used for quick rolls by default
+     * @param {string} [holder.otherinputs] HTML string to add to the dialog
+     * @param {string} [holder.extradice] Extra dice to roll
+     * @param {string} [holder.otherlabel] Text to postpend to the label
+     * @param {string} [holder.limitvalue] The pre-given value for the limit field
+     * @param {boolean} [holder.doubledice] Whether to roll the dice pool twice
+     * @returns {Promise<DiceReturn> | Promise<null>}
+     */
+    basicRollSelector(holder = {}, { directroll = false } = {}, successfunc = null, autocondition = null) {
+        // Make sure the current user is actually allowed to roll as the actor
+        if (!(game.user.isGM || this.isOwner)) {
+            ui.notifications.warn("ironclaw2e.ui.ownershipInsufficient", { localize: true, thing: "actor" });
+            return null;
+        }
+
         if (directroll) {
             return this.silentSelectRolled(holder, successfunc, autocondition);
         } else {
@@ -3023,6 +3045,7 @@ export class Ironclaw2EActor extends Actor {
      * @param successfunc Callback to execute after going through with the macro, will not execute if cancelled out
      * @param autocondition Callback to a condition auto-removal function, executed if the setting is on, will not execute if cancelled out
      * @returns {Promise<DiceReturn> | Promise<null>}
+     * @protected
      */
     popupSelectRolled({ tnyes = false, tnnum = 3, prechecked = [], otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherinputs = "", extradice = "", otherlabel = "", limitvalue = "" } = {}, successfunc = null, autocondition = null) {
         const system = this.system;
@@ -3276,6 +3299,7 @@ export class Ironclaw2EActor extends Actor {
      * @param successfunc Callback to execute after going through with the macro, executed unless an error happens
      * @param autocondition Callback to a condition auto-removal function, executed if the setting is on, executed unless an error happens
      * @returns {Promise<DiceReturn> | Promise<null>}
+     * @protected
      */
     async silentSelectRolled({ tnyes = false, tnnum = 3, prechecked = [], otherkeys = new Map(), otherdice = new Map(), otherbools = new Map(), othernames = new Map(), extradice = "", otherlabel = "", doubledice = false, limitvalue = "" } = {}, successfunc = null, autocondition = null) {
         const burdened = hasConditionsIronclaw("burdened", this);

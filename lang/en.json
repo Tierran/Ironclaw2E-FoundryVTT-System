@@ -521,6 +521,15 @@
   "ironclaw2e.chatInfo.itemInfo.heldWith": "Held with",
   "ironclaw2e.chatInfo.itemInfo.held": "Held",
 
+  "ironclaw2e.chatInfo.itemInfo.stationPool": "Station Dice Pool",
+  "ironclaw2e.chatInfo.itemInfo.stationGifts": "Station Gifts",
+  "ironclaw2e.chatInfo.itemInfo.hasVehicleCosts": "Has Vehicle Costs",
+
+  "ironclaw2e.chatInfo.itemInfo.appointmentCost": "Appointment Cost",
+  "ironclaw2e.chatInfo.itemInfo.monetaryCost": "Monetary Cost",
+  "ironclaw2e.chatInfo.itemInfo.materialCosts": "Material Costs",
+  "ironclaw2e.chatInfo.itemInfo.laborCosts": "Labor Costs",
+
   "ironclaw2e.chatInfo.itemInfo.attackWith": "Attack with {name}",
   "ironclaw2e.chatInfo.itemInfo.attackBasic": "Basic",
   "ironclaw2e.chatInfo.itemInfo.attackBasicHint": "Attack with {name} while skipping the Resistance step",
@@ -581,6 +590,8 @@
   "ironclaw2e.chatInfo.requestRoll.requestRollGifts": "Requested Gifts",
   "ironclaw2e.chatInfo.requestRoll.rollPool": "Roll the Dice Pool",
   "ironclaw2e.chatInfo.requestRoll.rollLabel": "Roll requested by {user}.",
+
+  "ironclaw2e.chatInfo.vehicleStation.rollLabel": "{station} rolled by {user}.",
 
 
   "ironclaw2e.sheets.actor.biography": "Biography",

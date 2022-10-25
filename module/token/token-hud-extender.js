@@ -52,7 +52,7 @@ function onIronclawTokenButtonPress(event) {
         if (actor) {
             switch (dataset.action) {
                 case "pool":
-                    return actor.popupSelectRolled();
+                    return actor.basicRollSelector();
                 case "damage":
                     return actor.popupDamage();
                 case "condition":

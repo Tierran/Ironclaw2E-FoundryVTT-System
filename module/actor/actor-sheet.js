@@ -512,7 +512,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
     _onOrderRoll(event) {
         event.preventDefault();
 
-        this.actor.popupSelectRolled();
+        this.actor.basicRollSelector();
     }
 
     /**

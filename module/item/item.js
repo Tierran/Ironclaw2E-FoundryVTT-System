@@ -1035,6 +1035,7 @@ export class Ironclaw2EItem extends Item {
             "hasButtons": item.type === "weapon" || (item.type === "gift" && itemSys.canUse),
             "richDescription": richDescription,
             "standardDefense": checkStandardDefense(itemSys.defendWith),
+            "hasActor": !!(actor),
             "actorId": actor?.id ?? null,
             "tokenId": actor?.token?.id ?? null,
             "sceneId": actor?.token?.parent?.id ?? null,
@@ -1671,6 +1672,49 @@ export class Ironclaw2EItem extends Item {
                 if (foo && callback) callback(foo);
             })();
         }
+    }
+
+    /**
+     * Roll a vehicle's station roll with either the selected actor or the default actor of the vehicle
+     * @param {boolean} directroll
+     * @param {string} extradice
+     */
+    async vehicleStationRoll(directroll = false) {
+        const item = this;
+        const actor = this.actor ? this.actor : {};
+        const itemSys = item.system;
+
+        if (!(item.type === 'vehicleStation')) {
+            console.error("Station roll attempted on a non-station item: " + item.name);
+            return;
+        }
+
+        // Make sure the station can actually be used
+        if (itemSys.canUse === false) {
+            return;
+        }
+
+        // Check if the current selected actor exists and is able to roll the station's pool
+        // If not, check if the vehicle has a default crew selected and successfully resolved
+        // Otherwise, cancel and pop a warning message
+        let requestActor = getSpeakerActor();
+        if (!requestActor || !(requestActor?.type === 'character' || requestActor?.type === 'mook' || requestActor?.type === 'beast')) {
+            requestActor = actor.system.resolvedDefaultCrew ?? null;
+        }
+        if (!requestActor) {
+            ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
+            return null;
+        }
+
+        // TODO: Proper field for the extra dice from the station, instead of the actual extra dice field
+        const splitStats = splitStatsAndBonus(itemSys.stationDicePool);
+        const splitGifts = splitStatString(itemSys.stationDiceGifts ?? "");
+        const giftSetup = requestActor.requestedGiftDialogConstruction(splitGifts);
+        requestActor.basicRollSelector({
+            "tnyes": true, "tnnum": 3, "prechecked": splitStats[0], "otherkeys": giftSetup.otherkeys,
+            "otherdice": giftSetup.otherdice, "othernames": giftSetup.othernames, "otherbools": giftSetup.otherbools, "otherinputs": giftSetup.otherinputs,
+            "extradice": splitStats[1], "otherlabel": game.i18n.format("ironclaw2e.chatInfo.vehicleStation.rollLabel", { "station": item.name, "user": getMacroSpeaker(requestActor).alias })
+        }, { "directroll": directroll });
     }
 
     /* -------------------------------------------- */

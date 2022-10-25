@@ -32,21 +32,26 @@
         {{!-- Attributes Tab --}}
         <div class="tab attributes" data-group="primary" data-tab="attributes">
             <div class="flexcol">
-                <h2 class="normal-label flex-center">Costs <input type="checkbox" name="system.hasCosts" {{checked system.hasCosts}} data-dtype="Boolean" /></h2>
                 {{#if system.hasCosts}}
+                <h2 class="normal-label flex-center">Costs <input type="checkbox" name="system.hasCosts" {{checked system.hasCosts}} data-dtype="Boolean" /></h2>
                 <div class="resource flexrow flex-group-center">
                     <label class="normal-label">Appointment Cost</label>
                     <input type="number" name="system.costs.appointmentCost" value="{{system.costs.appointmentCost}}" data-dtype="Number" />
                     <label class="normal-label">Monetary Cost</label>
-                    <input type="text" name="system.costs.buy" value="{{system.costs.buy}}" data-dtype="String" />
+                    <input type="number" name="system.costs.buy" value="{{system.costs.buy}}" data-dtype="Number" />
                 </div>
                 <div class="resource flexrow flex-group-center">
                     <label class="normal-label">Material Costs</label>
-                    <input type="text" name="system.costs.crafting.materials" value="{{system.costs.crafting.materials}}" data-dtype="String" />
+                    <input type="number" name="system.costs.crafting.materials" value="{{system.costs.crafting.materials}}" data-dtype="Number" />
                     <label class="normal-label">Labor Costs</label>
-                    <input type="text" name="system.costs.crafting.labor" value="{{system.costs.crafting.labor}}" data-dtype="String" />
+                    <input type="number" name="system.costs.crafting.labor" value="{{system.costs.crafting.labor}}" data-dtype="Number" />
                 </div>
+                {{else}}
+                <span class="normal-label flexrow flex-group-center">Has Modification Costs <input type="checkbox" name="system.hasCosts" {{checked system.hasCosts}} data-dtype="Boolean" /></span>
                 {{/if}}
+            </div>
+            <div class="flexcol">
+
             </div>
         </div>
 

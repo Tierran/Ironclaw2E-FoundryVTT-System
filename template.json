@@ -245,10 +245,10 @@
       "vehicleItem": {
         "costs": {
           "appointmentCost": 0,
-          "buy": "0",
+          "buy": 0,
           "crafting": {
-            "materials": "0",
-            "labor": "0"
+            "materials": 0,
+            "labor": 0
           }
         }
       }
@@ -352,7 +352,7 @@
     },
     "vehicleStation": {
       "templates": [ "base", "vehicleItem" ],
-      "hasCosts": true,
+      "hasCosts": false,
       "stationDicePool": "",
       "stationDiceGifts": ""
     },
