@@ -1,7 +1,7 @@
 # Ironclaw Second Edition system for Foundry VTT
 
 This is a system for running the second edition version of Ironclaw (the corebook named Ironclaw Omnibus: Squaring the Circle) in Foundry VTT.  
-The system has full sheets for characters and simpler sheets for 'mooks', ie. relatively unimportant / minor NPC's to be mass-copied onto the field, and beasts which lack separate skills. The system also has multiple item types to represent gifts and the different gear characters can acquire, plus a general one with no mechanical systems to it.  
+The system has full sheets for characters and simpler sheets for 'mooks', ie. relatively unimportant / minor NPC's to be mass-copied onto the field, still more simplified sheets for beasts which lack separate skills, and (currently work-in-progress) sheets for vehicles. The system also has multiple item types to represent gifts and the different gear characters can acquire, plus a general one with no mechanical systems to it.  
 
 For arbitrary rolls and for people that prefer external sheets, there are two sets of ready-made macros included that can be used to roll arbitrary dice pools without creating an actor for them. In addition, there are some other utility macros available.  
 
@@ -104,7 +104,15 @@ The Species and Career Template items are a way to group up the statistics, gift
 
 The template data will overwrite the actor's own fields whether the template has data in them or not. By contrast, the system will ignore empty template item fields and will avoid creating duplicate gifts and weapons, basing the duplicate check on the exact name.  
 
-#### Chat Commands module support
+#### Vehicle rolls
+
+Vehicle rolls work slightly differently, as vehicles don't roll much by themselves. Instead, vehicle stations call up other actors to roll for them. By default, a vehicle station will first see if the currently selected actor or the user's default actor can roll for the vehicle. If not, the station will check if it has a captain assigned to it and attempts to roll with that. If still not, the station will attempt to roll through the vehicle's default crew actor. If all that fails, the vehicle will abort the roll and pop up a notification.  
+
+Vehicles and their stations can be assigned actors by dragging an actor from the directory over to the vehicle actor sheet or vehicle station item sheet. Only mooks can be the default crew for a vehicle and only actors with their own traits and skills (characters, mooks, beasts) can be set as station captains. If successful, the sheet will show what / who the ID resolves as.  
+
+Vehicle station rolls use both a dice pool field - given in the same format as for weapons and gifts - and a separate field for gifts. Multiple gifts can be given by separating each name with a comma.  
+
+### Chat Commands module support
 
 The /iroll command can be used to quickly roll dice with the internal dice roller. It takes a one line format input after the command to roll dice as a highest roll type, with a semicolon followed by a number at the end changing it to a TN roll. Eg. "/iroll 3d6,d8" or "/iroll 3d6,d8;5"  
 
@@ -118,7 +126,7 @@ The /actordamage command pops up a damage dialog, either with the normal default
 
 The /requestroll and its alias /askroll commands are for requesting a specific roll from other players, and send a chat message which contains a button to roll the specified stats, dice and TN. It takes a dice pool format input, again with an additional semicolon and number changing the default roll type from highest to TN. In addition, after the last semicolon, a list of Gift names can be inputted, separated by commas, that are included in the roll. Eg. "/requestroll Dodge, Speed;d12" or "/askroll will,presence;4". The /whisperask does the same thing, but this time, the first part should be player names that the request will be whispered to. Eg. "/whisperask Alice; Will, Gossip; d8; 3; Fast-Talk" or "/whisperask Bob, Charlie; Mind, weathersense; 3"  
 
-#### Advanced Gift Bonus Settings
+### Advanced Gift Bonus Settings
 
 For gifts that should interact with the system by giving situational bonuses, the advanced settings can be used to add special bonuses to gifts. When added, the system will automatically see if a given bonus will be applicable given its configuration and add it in the relevant place.  
 
@@ -245,7 +253,7 @@ The "Condition auto-removal" system will remove conditions from actors based on 
 
 </details>
 
-With Combat Utility Belt's Enhanced Conditions set up, the system has somewhat better support for multiple defeat conditions and built-in chat linking for the Compendium information entries. However, the Enhanced Conditions option will also disable all possible status effects in the token HUD menu, instead of filtering only applicable ones.  
+With Combat Utility Belt's Enhanced Conditions set up, the system has somewhat better support for multiple defeat conditions and built-in chat linking for the Compendium information entries. However, the Enhanced Conditions option will also show all possible status effects in the token HUD menu, instead of filtering only applicable ones for the actor type.  
 <details>
 <summary>Step by step explanation of setup</summary>
 
@@ -261,4 +269,4 @@ This is a fan project, we are not associated with Sanguine Productions.
 
 Foundry VTT integration is licensed under the Foundry Virtual Tabletop EULA's *Limited License Agreement For Module Development*, found here: https://foundryvtt.com/article/license/  
 
-This system and its contents are licensed under the MIT License located in the root directory, as "LICENSE.txt". Some content is excluded from the MIT License and is governed by their own licenses; these will be noted with an "EXCLUDED.txt" file located in the same directory.
+This system and its contents are licensed under the MIT License located in the root directory, as "LICENSE". Some content is excluded from the MIT License and is governed by their own licenses; these will be noted with an "EXCLUDED.txt" file located in the same directory.
