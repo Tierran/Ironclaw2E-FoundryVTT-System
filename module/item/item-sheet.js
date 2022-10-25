@@ -14,6 +14,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
             classes: ["ironclaw2e", "sheet", "item"],
             width: 720,
             height: 600,
+            dragDrop: [{dropSelector: null }],
             tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }]
         });
     }
@@ -111,7 +112,18 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         html.find('.special-change-boolean').change(this._onChangeSpecialBoolean.bind(this));
     }
 
-    /** @override */
+    /** @inheritdoc */
+    _onDrop(event) {
+        const data = TextEditor.getDragEventData(event);
+
+        if (data.type === "Actor") {
+            return this._onDropActor(event, data);
+        }
+    }
+
+    /**
+     * In case of vehicle stations, insert the dragged actor as the captain
+     */
     async _onDropActor(event, data) {
         if (!this.item.isOwner) return false;
         if (this.item.type !== "vehicleStation") return false;
@@ -119,7 +131,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         // Actors with actual stats from the directory can be dragged onto a vehicle station as the captain
         try {
             const dropped = fromUuidSync(data.uuid);
-            if (dropped.type !== "character" && dropped.type !== "mook" && dropped.type !== "beast") return false;
+            if ((dropped.type !== "character" && dropped.type !== "mook" && dropped.type !== "beast") && !dropped.parent) return false;
             await this.item.update({ "_id": this.item.id, "system.stationCaptain": data.uuid });
             return true;
         }

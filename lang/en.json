@@ -247,7 +247,7 @@
   "ironclaw2e.config.autoAddOnFireLight": "Auto-add light when On Fire",
   "ironclaw2e.config.autoAddOnFireLightHint": "If checked, actors will automatically add a flame light source on themselves when given the On Fire condition, if they have no active light source.",
   "ironclaw2e.config.vehicleStationCaptainOverride": "Prefer set captain to selected token",
-  "ironclaw2e.config.vehicleStationCaptainOverrideHint": "If checked, vehicle stations with explicitly set captains will use the set captain instead of the selected token for using the station.",
+  "ironclaw2e.config.vehicleStationCaptainOverrideHint": "If checked, vehicle stations with explicitly set captains will use the set captain instead of the selected token for commanding the station.",
 
   "ironclaw2e.config.templateSpeciesActive": "Wildcard species templates active",
   "ironclaw2e.config.templateSpeciesActiveHint": "Whether the wildcard template system is active for Species.",
@@ -593,7 +593,7 @@
   "ironclaw2e.chatInfo.requestRoll.rollPool": "Roll the Dice Pool",
   "ironclaw2e.chatInfo.requestRoll.rollLabel": "Roll requested by {user}.",
 
-  "ironclaw2e.chatInfo.vehicleStation.rollLabel": "{station} rolled by {user}.",
+  "ironclaw2e.chatInfo.vehicleStation.rollLabel": "{station} commanded by {user}.",
 
 
   "ironclaw2e.sheets.actor.biography": "Biography",
@@ -633,6 +633,7 @@
   "ironclaw2e.sheets.actor.parryTooltip": "Parry with {name}",
   "ironclaw2e.sheets.actor.counterTooltip": "Counter with {name}",
   "ironclaw2e.sheets.actor.giftTooltip": "Use Gift of {name}",
+  "ironclaw2e.sheets.actor.stationTooltip": "Command the {name}",
   "ironclaw2e.sheets.actor.putAwayTooltip": "Put away {name}",
   "ironclaw2e.sheets.actor.readyTooltip": "Ready {name}",
   "ironclaw2e.sheets.actor.showBattleTooltip": "Show {name} in battle statistics",
@@ -728,6 +729,7 @@
 
   "ironclaw2e.sheets.actor.vehicleDetails.title": "Details",
   "ironclaw2e.sheets.actor.vehicleDetails.defaultCrewMember": "Default Crew Member",
+  "ironclaw2e.sheets.actor.vehicleDetails.crewResolved": "Resolved as: {actor}",
   "ironclaw2e.sheets.actor.vehicleDetails.cargoSpaceUsed": "Cargo Space Used: {weight}/{max} tons",
   "ironclaw2e.sheets.actor.vehicleDetails.vehicleModifications": "Vehicle Modifications",
   "ironclaw2e.sheets.actor.vehicleDetails.addModification": "Add Modification",

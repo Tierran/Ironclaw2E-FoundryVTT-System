@@ -4,13 +4,14 @@
         <div class="header-fields">
             <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
             <div class="flexrow flex-group-center flex-tight">
-                <label class="header-label">Station Dice Pool:</label>
-                <input type="text" name="system.stationDicePool" value="{{system.stationDicePool}}" data-dtype="String" />
+                <label class="header-label">Station Captain:</label>
+                <input type="text" name="system.stationCaptain" value="{{system.stationCaptain}}" data-dtype="String" />
             </div>
+            {{#if system.resolvedCaptain}}
             <div class="flexrow flex-group-center flex-tight">
-                <label class="header-label">Station Gifts:</label>
-                <input type="text" name="system.stationDiceGifts" value="{{system.stationDiceGifts}}" data-dtype="String" />
+                <span class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicleDetails.crewResolved" actor=system.resolvedCaptain.name}}</span>
             </div>
+            {{/if}}
         </div>
     </header>
 
@@ -32,6 +33,15 @@
         {{!-- Attributes Tab --}}
         <div class="tab attributes" data-group="primary" data-tab="attributes">
             <div class="flexcol">
+                <h2 class="normal-label flex-center">Station Roll</h2>
+                <div class="flexrow flex-group-center flex-tight">
+                    <label class="header-label">Station Dice Pool:</label>
+                    <input type="text" name="system.stationDicePool" value="{{system.stationDicePool}}" data-dtype="String" />
+                </div>
+                <div class="flexrow flex-group-center flex-tight">
+                    <label class="header-label">Station Gifts:</label>
+                    <input type="text" name="system.stationDiceGifts" value="{{system.stationDiceGifts}}" data-dtype="String" />
+                </div>
                 {{#if system.hasCosts}}
                 <h2 class="normal-label flex-center">Costs <input type="checkbox" name="system.hasCosts" {{checked system.hasCosts}} data-dtype="Boolean" /></h2>
                 <div class="resource flexrow flex-group-center">

@@ -320,7 +320,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         // Mooks from the directory can be dragged onto a vehicle as the default crew member
         try {
             const dropped = fromUuidSync(data.uuid);
-            if (dropped.type !== "mook") return false;
+            if (dropped.type !== "mook" && !dropped.parent) return false;
             await this.actor.update({ "_id": this.actor.id, "system.defaultCrewMember": data.uuid });
             return true;
         }
@@ -848,6 +848,9 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                     const attackToken = findActorToken(this.actor);
                     const template = AoETemplateIronclaw.fromRange(item.system.multiAttackRange, { "elevation": attackToken.elevation, "originSheet": this });
                     if (template) template.drawPreview();
+                    break;
+                case "station":
+                    item.vehicleStationRoll(directroll);
                     break;
                 default:
                     console.warn("_onItemRoll got an unknown value: " + dataset.roll);

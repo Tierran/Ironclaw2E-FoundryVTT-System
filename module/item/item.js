@@ -1,4 +1,4 @@
-import { findActorToken, findInItems, findTotalDice, formDicePoolField, getTokenFromSpeaker, parseFractionalNumber, popupConfirmationBox, reduceDiceStringSet } from "../helpers.js";
+import { findActorToken, findInItems, findTotalDice, formDicePoolField, getSpeakerActor, getTokenFromSpeaker, parseFractionalNumber, popupConfirmationBox, reduceDiceStringSet } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -97,6 +97,7 @@ export class Ironclaw2EItem extends Item {
         if (item.type === 'armor') this._prepareArmorData(item, actor);
         if (item.type === 'shield') this._prepareShieldData(item, actor);
         if (item.type === 'illumination') this._prepareIlluminationData(item, actor);
+        if (item.type === 'vehicleStation') this._prepareVehicleStationData(item, actor);
     }
 
     /**
@@ -488,11 +489,16 @@ export class Ironclaw2EItem extends Item {
             system.poolStats = firstsplit[0];
             system.poolArray = (firstsplit[1].length > 0 ? findTotalDice(firstsplit[1]) : null);
             system.canUse = true;
+        } else {
+            system.poolStats = [];
+            system.poolArray = null;
         }
         if (system.stationDiceGifts.length > 0) {
             let giftsplit = splitStatString(system.stationDiceGifts);
             system.stationGifts = giftsplit;
             system.canUse = true;
+        } else {
+            system.stationGifts = [];
         }
     }
 

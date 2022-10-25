@@ -3,6 +3,7 @@
     <div class="resource flexrow flex-group-center">
         <label class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicleDetails.defaultCrewMember"}}</label>
         <input type="text" name="system.defaultCrewMember" value="{{system.defaultCrewMember}}" data-dtype="String" />
+        {{#if system.resolvedDefaultCrew}}<span class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicleDetails.crewResolved" actor=system.resolvedDefaultCrew.name}}</span>{{/if}}
     </div>
     <div class="trait flexrow flex-group-center">
         <label for="system.vehicleTraits.maxCargo" class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicle.maxCargo"}}</label>
@@ -26,7 +27,7 @@
 
             </div>
             <div class="item-controls">
-
+                <a class="rollable roll-item-change" title="{{#if item.system.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.hideBattleTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.showBattleTooltip" name=item.name}}{{/if}}" data-stat="showInBattleStats" data-item="{{item._id}}"><span>{{#if item.system.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.shown"}}{{else}}{{localize "ironclaw2e.sheets.actor.hidden"}}{{/if}}</span></a>
             </div>
             <div class="item-controls-small">
                 <a class="item-control item-edit" title="{{localize "ironclaw2e.sheets.actor.gear.editItem"}}"><i class="fas fa-edit"></i></a>
