@@ -716,7 +716,7 @@
   "ironclaw2e.sheets.actor.vehicle.maneuver": "Maneuver Dice",
   "ironclaw2e.sheets.actor.vehicle.soak": "Soak Dice",
   "ironclaw2e.sheets.actor.vehicle.appointments": "Appointments",
-  "ironclaw2e.sheets.actor.vehicle.maxCrew": "Max Crew",
+  "ironclaw2e.sheets.actor.vehicle.crew": "Crew",
   "ironclaw2e.sheets.actor.vehicle.maxCargo": "Max Cargo",
   "ironclaw2e.sheets.actor.vehicle.costsBuy": "Buy Cost",
   "ironclaw2e.sheets.actor.vehicle.costsMaterials": "Materials Cost",
@@ -728,9 +728,12 @@
   "ironclaw2e.sheets.actor.stations.addStation": "Add Station",
 
   "ironclaw2e.sheets.actor.vehicleDetails.title": "Details",
+  "ironclaw2e.sheets.actor.vehicleDetails.header": "Vehicle Details",
   "ironclaw2e.sheets.actor.vehicleDetails.defaultCrewMember": "Default Crew Member",
   "ironclaw2e.sheets.actor.vehicleDetails.crewResolved": "Resolved as: {actor}",
   "ironclaw2e.sheets.actor.vehicleDetails.cargoSpaceUsed": "Cargo Space Used: {weight}/{max} tons",
+  "ironclaw2e.sheets.actor.vehicleDetails.appointmentsUsed": "Total Appointments Used: {points}/{max} points",
+  "ironclaw2e.sheets.actor.vehicleDetails.maxCrewUsed": "Fully using all stations will need {max} crew, {avail} available",
   "ironclaw2e.sheets.actor.vehicleDetails.vehicleModifications": "Vehicle Modifications",
   "ironclaw2e.sheets.actor.vehicleDetails.addModification": "Add Modification",
 

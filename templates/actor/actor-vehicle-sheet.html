@@ -21,8 +21,10 @@
                             </select>
                         </div>
                         <div class="trait flexrow flex-group-center flex-tight" title="{{localize "ironclaw2e.sheets.actor.input.numberTip"}}">
-                            <label for="system.vehicleTraits.maxCrew" class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicle.maxCrew"}}</label>
-                            <input type="number" name="system.vehicleTraits.maxCrew" value="{{system.vehicleTraits.maxCrew}}" data-dtype="Number" onfocus="this.select();" />
+                            <label for="system.vehicleTraits.crew.value" class="normal-label" style="min-width:40%;">{{localize "ironclaw2e.sheets.actor.vehicle.crew"}}</label>
+                            <input type="number" name="system.vehicleTraits.crew.value" value="{{system.vehicleTraits.crew.value}}" data-dtype="Number" onfocus="this.select();" />
+                            <span class="normal-label" style="max-width:10%;"> / </span>
+                            <input type="number" name="system.vehicleTraits.crew.max" value="{{system.vehicleTraits.crew.max}}" data-dtype="Number" onfocus="this.select();" />
                         </div>
                         <div class="trait flexrow flex-group-center flex-tight" title="{{localize "ironclaw2e.sheets.actor.input.diceTip"}}">
                             <label for="system.vehicleTraits.maneuver.dice" class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicle.maneuver"}}</label>

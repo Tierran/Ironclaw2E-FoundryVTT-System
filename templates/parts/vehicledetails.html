@@ -1,5 +1,5 @@
 <div class="flexcol">
-    <h2 class="normal-label flex-center"></h2>
+    <h2 class="normal-label flex-center">{{localize "ironclaw2e.sheets.actor.vehicleDetails.header"}}</h2>
     <div class="resource flexrow flex-group-center">
         <label class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicleDetails.defaultCrewMember"}}</label>
         <input type="text" name="system.defaultCrewMember" value="{{system.defaultCrewMember}}" data-dtype="String" />
@@ -9,6 +9,12 @@
         <label for="system.vehicleTraits.maxCargo" class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicle.maxCargo"}}</label>
         <input type="text" name="system.vehicleTraits.maxCargo" title="{{localize "ironclaw2e.sheets.actor.input.valueTip"}}" value="{{system.vehicleTraits.maxCargo}}" data-dtype="String" onfocus="this.select();" />
         <span class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicleDetails.cargoSpaceUsed" weight=(valueRoundTo system.totalWeightTons 2) max=(valueRoundTo system.maxWeightTons 2)}}</span>
+    </div>
+    <div class="trait flexrow flex-group-center">
+        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicleDetails.maxCrewUsed" max=system.maxCrewUsed avail=system.vehicleTraits.crew.value}}</span>
+    </div>
+    <div class="trait flexrow flex-group-center">
+        <span class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicleDetails.appointmentsUsed" points=system.totalAppointments max=system.vehicleTraits.appointments}}</span>
     </div>
 
     <ol class="items-list">

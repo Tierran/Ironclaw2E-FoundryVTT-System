@@ -183,7 +183,10 @@
             "dice": "d6"
           },
           "appointments": 0,
-          "maxCrew": 0,
+          "crew": {
+            "value": 0,
+            "max": 0
+          },
           "maxCargo": "0"
         },
         "costs": {
@@ -353,6 +356,7 @@
     "vehicleStation": {
       "templates": [ "base", "vehicleItem" ],
       "hasCosts": false,
+      "minCrew": 1,
       "stationCaptain": "",
       "stationDicePool": "",
       "stationDiceGifts": ""

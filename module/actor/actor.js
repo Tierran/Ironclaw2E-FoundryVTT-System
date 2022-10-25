@@ -71,8 +71,8 @@ export class Ironclaw2EActor extends Actor {
         // If the item is a template item, grab the data from it and update the actor with it, then prevent the item's creation by returning false
         if (item.type === "speciesTemplate" || item.type === "careerTemplate") {
             // Only applies if the actor actually exists
-                actor.applyTemplate(data, { "confirm": options?.confirmCreation ?? false });
-                return false;
+            actor.applyTemplate(data, { "confirm": options?.confirmCreation ?? false });
+            return false;
         }
     }
 
@@ -1335,10 +1335,17 @@ export class Ironclaw2EActor extends Actor {
         const gear = this.items;
 
         let totalweight = 0;
+        let totalappointments = 0;
+        let totalcrewneeded = 0;
         for (let item of gear) {
-
             if (item.system.totalWeight && !isNaN(item.system.totalWeight)) {
                 totalweight += item.system.totalWeight; // Check that the value exists and is not a NaN, then add it to totaled weight
+            }
+            if (item.system.minCrew && !isNaN(item.system.minCrew)) {
+                totalcrewneeded += item.system.minCrew; // Check that the value exists and is not a NaN, then add it to needed crew
+            }
+            if (item.system.hasCosts !== false && item.system.costs.appointmentCost && !isNaN(item.system.costs.appointmentCost)) {
+                totalappointments += item.system.costs.appointmentCost; // Check that the value exists and is not a NaN, then add it to used appointments
             }
         }
 
@@ -1350,6 +1357,8 @@ export class Ironclaw2EActor extends Actor {
         }
         system.totalWeight = totalweight;
         system.totalWeightTons = totalweight / 160;
+        system.maxCrewUsed = totalcrewneeded;
+        system.totalAppointments = totalappointments;
     }
 
 
@@ -1720,7 +1729,7 @@ export class Ironclaw2EActor extends Actor {
      * Get the limit for a dice pool from the input
      * @param {string} limitinput
      */
-    _getDicePoolLimit(limitinput) {
+    _getDicePoolLimit(limitinput, isburdened) {
         if (typeof limitinput !== "string") {
             console.error("Dice pool limit get given a non-string: " + limitinput);
             return 0;
@@ -1734,6 +1743,7 @@ export class Ironclaw2EActor extends Actor {
             const limitnumber = parseInt(limitinput); // Just parse the limit as a number
             // If the dice pool has stuff, use it as the limit, else use the parsed dice side, else try and use the parsed limit
             if (Array.isArray(limitdicepool) && checkDiceArrayEmpty(limitdicepool)) return checkDiceIndex(getDiceArrayMaxValue(limitdicepool));
+            else if (Array.isArray(limitdicepool) && !checkDiceArrayEmpty(limitdicepool)) return checkDiceIndex(4); // Special case for empty skill arrays limiting things to a d4
             else if (Array.isArray(limitparsed)) return checkDiceIndex(limitparsed[1]);
             else if (!isNaN(limitnumber)) return limitnumber;
         }
@@ -3220,7 +3230,7 @@ export class Ironclaw2EActor extends Actor {
       </div>
      <div class="form-group">
        <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.dicePool.limitAllLabel")}:</label>
-       <input type="checkbox" id="iflimit" name="iflimit"></input>
+       <input type="checkbox" id="iflimit" name="iflimit" ${limitvalue ? "checked" : ""}></input>
 	   <input id="limit" name="limit" value="${limitvalue}" placeholder="${game.i18n.localize("ironclaw2e.dialog.dicePool.limitAllPlaceholder")}" onfocus="this.select();"></input>
      </div>
      </form>
@@ -3265,7 +3275,7 @@ export class Ironclaw2EActor extends Actor {
                         let IFLIMIT = html.find('[name=iflimit]')[0];
                         let uselimit = IFLIMIT.checked;
                         let LIMIT = html.find('[name=limit]')[0].value?.trim();
-                        let limit = this._getDicePoolLimit(LIMIT);
+                        let limit = this._getDicePoolLimit(LIMIT, isburdened);
 
                         let IFTNSS = html.find('[name=iftn]')[0];
                         let IFTN = IFTNSS.checked;
@@ -3371,7 +3381,7 @@ export class Ironclaw2EActor extends Actor {
         }
 
         // Determine limit if it exists
-        let limit = this._getDicePoolLimit(limitvalue);
+        let limit = this._getDicePoolLimit(limitvalue, burdened);
 
         // Set the label
         let label = "<p>" + all.label + (doubledice ? ", " + game.i18n.localize("ironclaw2e.chat.doubleDice") : "") + ".</p>";
@@ -3380,10 +3390,10 @@ export class Ironclaw2EActor extends Actor {
             label += `<p style="color:black">${otherlabel}</p>`;
 
         if (doubledice) { // See if the dicepool will be rolled twice (doubled dicepool), like in case of a Weak Soak
-            totaldice = totaldice.concat(totaldice);
+            all.totalDice = all.totalDice.concat(all.totalDice);
         }
         if (limit > 0) { // See if a special limit has been set to all dice
-            totaldice = enforceLimitArray(totaldice, limit);
+            all.totalDice = enforceLimitArray(all.totalDice, limit);
         }
 
         // Exhaust the gifts returned from the dice pools

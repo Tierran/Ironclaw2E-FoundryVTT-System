@@ -42,6 +42,10 @@
                     <label class="header-label">Station Gifts:</label>
                     <input type="text" name="system.stationDiceGifts" value="{{system.stationDiceGifts}}" data-dtype="String" />
                 </div>
+                <div class="flexrow flex-group-center flex-tight">
+                    <label class="header-label">Minimum Crew:</label>
+                    <input type="number" name="system.minCrew" value="{{system.minCrew}}" data-dtype="Number" />
+                </div>
                 {{#if system.hasCosts}}
                 <h2 class="normal-label flex-center">Costs <input type="checkbox" name="system.hasCosts" {{checked system.hasCosts}} data-dtype="Boolean" /></h2>
                 <div class="resource flexrow flex-group-center">

@@ -1758,13 +1758,16 @@ export class Ironclaw2EItem extends Item {
             return null;
         }
 
+        // Currently just hardcode the vehicle skill limit
+        let usedLimit = "Vehicles";
+
         const giftSetup = requestActor.requestedGiftDialogConstruction(itemSys.stationGifts);
         const finalSetup = Array.isArray(itemSys.poolArray) ?
             formDicePoolField(itemSys.poolArray, item.name, `${item.name}: ${reformDiceString(itemSys.poolArray, true)}`, true, { "itemid": this.id }, giftSetup) :
             giftSetup;
         requestActor.basicRollSelector({
             "tnyes": true, "tnnum": 3, "prechecked": itemSys.poolStats, "otherkeys": finalSetup.otherkeys,
-            "otherdice": finalSetup.otherdice, "othernames": finalSetup.othernames, "otherbools": finalSetup.otherbools, "otherinputs": finalSetup.otherinputs,
+            "otherdice": finalSetup.otherdice, "othernames": finalSetup.othernames, "otherbools": finalSetup.otherbools, "otherinputs": finalSetup.otherinputs, "limitvalue": usedLimit,
             "extradice": extradice, "otherlabel": game.i18n.format("ironclaw2e.chatInfo.vehicleStation.rollLabel", { "station": item.name, "user": getMacroSpeaker(requestActor).alias })
         }, { "directroll": directroll });
     }
