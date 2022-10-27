@@ -103,6 +103,7 @@ function wildcardTemplateApplying(token, options, user) {
         return;
     }
     const actor = token.actor;
+    let noteStatus = false;
     // Check if the entire folder path should be included in the test
     const includeFolder = game.settings.get("ironclaw2e", "templateIncludeFolderPath");
     const imageSplit = includeFolder ? token.texture.src.split() : token.texture.src.split("/");
@@ -116,6 +117,7 @@ function wildcardTemplateApplying(token, options, user) {
         // If the setting is on, has a folder and there is no species name
         const folder = game.folders.get(speciesFolder);
         const templates = folder.contents;
+        noteStatus = true;
         // Loop through the items
         for (let foo of templates) {
             if (foo.type !== "speciesTemplate") {
@@ -137,6 +139,7 @@ function wildcardTemplateApplying(token, options, user) {
         // If the setting is on, has a folder and there is no career name
         const folder = game.folders.get(careerFolder);
         const templates = folder.contents;
+        noteStatus = true;
         // Loop through the items
         for (let foo of templates) {
             if (foo.type !== "careerTemplate") {
@@ -153,11 +156,14 @@ function wildcardTemplateApplying(token, options, user) {
 
     // If either check succeeded, apply them in a separate async function
     if (speciesSuccessful || careerSuccessful) {
+        console.log(game.ironclaw2e.ironclawLogHeader + "Wildcard template system added the following templates: " + (speciesSuccessful?.name ?? " ") + ", " + (careerSuccessful?.name ?? " "));
         (async function () {
             // Waits are present to clear up an apparent race condition
             if (speciesSuccessful) await actor.applyTemplate(speciesSuccessful, { "wait": 500 });
             if (careerSuccessful) await actor.applyTemplate(careerSuccessful, { "wait": 500 });
         })();
+    } else if (noteStatus) {
+        console.log(game.ironclaw2e.ironclawLogHeader + "Wildcard template system could not find a matching template for: " + image);
     }
 }
 

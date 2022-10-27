@@ -86,6 +86,8 @@
   "ironclaw2e.ui.requestRollNotAllowed": "Not allowed to request rolls",
   "ironclaw2e.ui.requestRollEmpty": "No stats or dice were requested.",
   "ironclaw2e.ui.rangeScrolling": "Range Band: {range}",
+  "ironclaw2e.ui.actorTypeMismatch": "Actor type '{mismatch}' is not supported for this.",
+  "ironclaw2e.ui.actorFromDirectoryWarning": "Actor needs to be dragged from the directory.",
 
 
   "ironclaw2e.sidebar.readme": "Ironclaw 2E Readme",

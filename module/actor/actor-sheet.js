@@ -320,7 +320,14 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         // Mooks from the directory can be dragged onto a vehicle as the default crew member
         try {
             const dropped = fromUuidSync(data.uuid);
-            if (dropped.type !== "mook" && !dropped.parent) return false;
+            if (dropped.type !== "mook") {
+                ui.notifications.info(game.i18n.format("ironclaw2e.ui.actorTypeMismatch", { mismatch: dropped.type }));
+                return false;
+            }
+            if (dropped.parent) {
+                ui.notifications.info("ironclaw2e.ui.actorFromDirectoryWarning", { localize: true });
+                return false;
+            }
             await this.actor.update({ "_id": this.actor.id, "system.defaultCrewMember": data.uuid });
             return true;
         }
@@ -365,6 +372,8 @@ export class Ironclaw2EActorSheet extends ActorSheet {
     async _onDropItemCreate(itemData) {
         itemData = itemData instanceof Array ? itemData : [itemData];
 
+        let statTriggered = false;
+        let diceTriggered = false;
         for (let item of itemData) {
 
             if (this.actor.system.processingLists?.statChange) { // Check if the processing list and stat change list even exist
@@ -382,6 +391,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                                         item.name += " " + special.nameAdditionField; // Append the name
                                         nameAdded = true; // Set the bool to mark that the item's name has been changed already
                                     }
+                                    statTriggered = true;
                                 }
 
                                 if (item.system.attackDice) {
@@ -390,6 +400,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                                         item.name += " " + special.nameAdditionField;
                                         nameAdded = true;
                                     }
+                                    statTriggered = true;
                                 }
                                 if (item.system.defenseDice) {
                                     item.system.defenseDice = item.system.defenseDice.replace(reg, special.changeTo[i]);
@@ -397,6 +408,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                                         item.name += " " + special.nameAdditionField;
                                         nameAdded = true;
                                     }
+                                    statTriggered = true;
                                 }
                                 if (item.system.counterDice) {
                                     item.system.counterDice = item.system.counterDice.replace(reg, special.changeTo[i]);
@@ -404,6 +416,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                                         item.name += " " + special.nameAdditionField;
                                         nameAdded = true;
                                     }
+                                    statTriggered = true;
                                 }
                             }
                         }
@@ -426,6 +439,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                                         item.name += " " + special.nameAdditionField; // Append the name
                                         nameAdded = true; // Set the bool to mark that the item's name has been changed already
                                     }
+                                    diceTriggered = true;
                                 }
                             }
                         }
@@ -440,6 +454,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                                         item.name += " " + special.nameAdditionField;
                                         nameAdded = true;
                                     }
+                                    diceTriggered = true;
                                 }
                             }
                         }
@@ -453,6 +468,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                                         item.name += " " + special.nameAdditionField;
                                         nameAdded = true;
                                     }
+                                    diceTriggered = true;
                                 }
                             }
                         }
@@ -466,6 +482,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                                         item.name += " " + special.nameAdditionField;
                                         nameAdded = true;
                                     }
+                                    diceTriggered = true;
                                 }
                             }
                         }
@@ -477,6 +494,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                                     item.name += " " + special.nameAdditionField;
                                     nameAdded = true;
                                 }
+                                diceTriggered = true;
                             }
                         }
 
@@ -488,6 +506,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                                     item.name += " " + special.nameAdditionField;
                                     nameAdded = true;
                                 }
+                                diceTriggered = true;
                             }
                         }
 
@@ -499,6 +518,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                                     item.name += " " + special.nameAdditionField;
                                     nameAdded = true;
                                 }
+                                diceTriggered = true;
                             }
                         }
                     }
@@ -506,6 +526,9 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             }
         }
 
+        if (statTriggered || diceTriggered) {
+            console.log(game.ironclaw2e.ironclawLogHeader + "The gift special bonus system changed the item: " + (statTriggered ? "Stat change triggered" : "") + " " + (diceTriggered ? "Dice change triggered" : ""));
+        }
         return this.actor.createEmbeddedDocuments("Item", itemData, { confirmCreation: true });
     }
 

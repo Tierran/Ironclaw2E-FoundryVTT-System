@@ -131,7 +131,14 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         // Actors with actual stats from the directory can be dragged onto a vehicle station as the captain
         try {
             const dropped = fromUuidSync(data.uuid);
-            if ((dropped.type !== "character" && dropped.type !== "mook" && dropped.type !== "beast") && !dropped.parent) return false;
+            if (dropped.type !== "character" && dropped.type !== "mook" && dropped.type !== "beast") {
+                ui.notifications.info(game.i18n.format("ironclaw2e.ui.actorTypeMismatch", { mismatch: dropped.type }));
+                return false;
+            }
+            if (dropped.parent) {
+                ui.notifications.info("ironclaw2e.ui.actorFromDirectoryWarning", { localize: true });
+                return false;
+            }
             await this.item.update({ "_id": this.item.id, "system.stationCaptain": data.uuid });
             return true;
         }

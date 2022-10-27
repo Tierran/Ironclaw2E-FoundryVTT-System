@@ -63,7 +63,7 @@ export class Ironclaw2EActor extends Actor {
 
         // If the item type is not found within the list of allowed item types for the actor type, disallow the creation
         if (!checkActorItemAllowedType(actor.type, item.type)) {
-            console.log(`Item of type "${item.type}" not allowed for actors of type "${actor.type}", cancelling creation.`);
+            console.log(`${game.ironclaw2e.ironclawLogHeader}Item of type "${item.type}" not allowed for actors of type "${actor.type}", cancelling creation.`);
             return false;
         }
 

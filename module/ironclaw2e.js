@@ -82,7 +82,8 @@ Hooks.once('init', function () {
         "useCUBConditions": false,
         "useETLElevation": false,
         waitUntilReady,
-        sleep
+        sleep,
+        ironclawLogHeader: "Ironclaw 2E | "
     };
 
     // Define custom Document classes
@@ -169,7 +170,7 @@ Hooks.once('init', function () {
 \\____/ |_|  \\___/|_| |_|\\___|_|\\__,_| \\_/\\_/  
 ==============================================`;
     console.log(asciiArt);
-    console.log("Ironclaw2E System init complete");
+    console.log(game.ironclaw2e.ironclawLogHeader + "Ironclaw2E System init complete");
 });
 
 Hooks.once('setup', function () {
@@ -185,13 +186,13 @@ Hooks.once('setup', function () {
     const conditionsActive = cubActive ? game.settings.get("combat-utility-belt", "enableEnhancedConditions") : false; // Since get throws an error if the key does not exist, first check if CUB is even active
     if (cubActive && conditionsActive) {
         game.ironclaw2e.useCUBConditions = true;
-        console.log("CUB detected and Enhanced Conditions active! Using CUB Conditions.");
+        console.log(game.ironclaw2e.ironclawLogHeader + "CUB detected and Enhanced Conditions active! Using CUB Conditions.");
 
         // Prepare condition lists for CUB
         CommonConditionInfo.prepareCUBLists();
     }
 
-    console.log("Ironclaw2E System setup complete");
+    console.log(game.ironclaw2e.ironclawLogHeader + "Ironclaw2E System setup complete");
 });
 
 Hooks.once("ready", function () {
@@ -213,7 +214,7 @@ Hooks.once("ready", function () {
     // World Version checks 
     if (game.user.isGM) {
         const lastVersion = game.settings.get("ironclaw2e", "lastSystemVersionWorld");
-        console.log("Last system version played: " + lastVersion);
+        console.log(game.ironclaw2e.ironclawLogHeader + "Last system version played: " + lastVersion);
         if (checkIfNewerVersion(game.system.version, lastVersion)) {
             upgradeVersion(lastVersion);
         }
@@ -228,7 +229,7 @@ Hooks.once("ready", function () {
     game.settings.set("ironclaw2e", "lastSystemVersionClient", game.system.version);
 
 
-    console.log("Ironclaw2E System ready");
+    console.log(game.ironclaw2e.ironclawLogHeader + "Ironclaw2E System ready");
 });
 
 /* -------------------------------------------- */

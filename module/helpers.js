@@ -35,7 +35,7 @@ export function findTotalDice(dicestring) {
         if (diceindex >= 0)
             totaldice[diceindex] += total;
         else if (diceindex < -1) // Special exception to allow a d0 in dice inputs without logging it as unusual
-            console.log("Non-standard dice found while totaling up dice: " + dicestring);
+            console.log(game.ironclaw2e.ironclawLogHeader + "Non-standard dice found while totaling up dice: " + dicestring);
     }
     return totaldice;
 }
