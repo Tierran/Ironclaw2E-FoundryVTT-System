@@ -1,7 +1,8 @@
 ### 0.7.2 Fix-logging release
  - Added some console logs and UI notifications to places
  - Fixed an error from vehicles having non-vehicle items
- - *Note that vehicles cannot have items like gifts or templates, the system will prevent their creation*
+ - *Note: Vehicles cannot have items like gifts or templates, the system will prevent their creation*
+ - *Note: For that matter, neither can characters or mooks have vehicle items like stations*
 
 ### 0.7.1 Wildcard fix release
  - Fixed broken wildcard template system
