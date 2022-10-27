@@ -1344,7 +1344,7 @@ export class Ironclaw2EActor extends Actor {
             if (item.system.minCrew && !isNaN(item.system.minCrew)) {
                 totalcrewneeded += item.system.minCrew; // Check that the value exists and is not a NaN, then add it to needed crew
             }
-            if (item.system.hasCosts !== false && item.system.costs.appointmentCost && !isNaN(item.system.costs.appointmentCost)) {
+            if (item.system.hasCosts !== false && item.system.costs?.appointmentCost && !isNaN(item.system.costs.appointmentCost)) {
                 totalappointments += item.system.costs.appointmentCost; // Check that the value exists and is not a NaN, then add it to used appointments
             }
         }
