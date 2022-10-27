@@ -1,3 +1,7 @@
+### 0.7.1 Wildcard fix release
+ - Fixed broken wildcard template system
+ - Added an option to search the full image path in case modules can randomize the folder as well
+
 ### 0.7.0 Vehicular progress release
  - Added a new actor type for vehicles
  - Added two new item types for vehicle stations and modifications

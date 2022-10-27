@@ -250,8 +250,8 @@
   "ironclaw2e.config.vehicleStationCaptainOverride": "Prefer set captain to selected token",
   "ironclaw2e.config.vehicleStationCaptainOverrideHint": "If checked, vehicle stations with explicitly set captains will use the set captain instead of the selected token for commanding the station.",
 
-  "ironclaw2e.config.templateIncludeFolderPath": "Search the full folder path",
-  "ironclaw2e.config.templateIncludeFolderPathHint": "If checked, the full folder path will be included in the template name search, meaning the entire path (eg. 'worlds/exampleworld/tokens/field/soldiers/Mook-Bandit-Wolf-1.png') is checked for template names, instead of just the image name. This increases the chance of false positives occuring, as there's way more likely to be accidental overlap from things like world names, but allows for modules that expand Foundry's core wildcard system to work with the template system.",
+  "ironclaw2e.config.templateIncludeFolderPath": "Search the full image path",
+  "ironclaw2e.config.templateIncludeFolderPathHint": "If checked, the full image path will be included in the template name search, meaning the entire path (eg. 'worlds/exampleworld/tokens/field/soldiers/Mook-Bandit-Wolf-1.png') folders and all is checked for template names, instead of just the image name. This increases the chance of false positives occuring, as there's way more likely to be accidental overlap from things like world names, but allows for modules that expand Foundry's core wildcard system with folder randomization to take advantage of this template system.",
   "ironclaw2e.config.templateSpeciesActive": "Wildcard species templates active",
   "ironclaw2e.config.templateSpeciesActiveHint": "Whether the wildcard template system is active for Species.",
   "ironclaw2e.config.templateCareerActive": "Wildcard career templates active",
