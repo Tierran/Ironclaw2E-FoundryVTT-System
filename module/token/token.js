@@ -98,18 +98,16 @@ function wildcardTemplateApplying(token, options, user) {
     if (token?.actor?.system.applyTemplateOnSpawn !== true) {
         return;
     }
-    const actor = token.actor;
     if (!(token.texture?.src && typeof token.texture.src === "string")) {
         // Only execute if the token has a texture set with a path
         return;
     }
+    const actor = token.actor;
     // Check if the entire folder path should be included in the test
     const includeFolder = game.settings.get("ironclaw2e", "templateIncludeFolderPath");
     const imageSplit = includeFolder ? token.texture.src.split() : token.texture.src.split("/");
     const image = includeFolder ? token.texture.src : imageSplit[imageSplit.length - 1];
-    console.log(token.texture.src);
-    console.log(imageSplit);
-    console.log(image);
+
     // Species templates
     const speciesActive = game.settings.get("ironclaw2e", "templateSpeciesActive");
     const speciesFolder = game.settings.get("ironclaw2e", "templateSpeciesFolder");
