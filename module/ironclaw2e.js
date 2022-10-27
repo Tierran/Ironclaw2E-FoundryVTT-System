@@ -555,6 +555,14 @@ function registerWorldSettings() {
 
     // Template settings
     // 
+    game.settings.register("ironclaw2e", "templateIncludeFolderPath", {
+        name: "ironclaw2e.config.templateIncludeFolderPath",
+        hint: "ironclaw2e.config.templateIncludeFolderPathHint",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: false
+    });
     game.settings.register("ironclaw2e", "templateSpeciesActive", {
         name: "ironclaw2e.config.templateSpeciesActive",
         hint: "ironclaw2e.config.templateSpeciesActiveHint",

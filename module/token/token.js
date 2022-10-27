@@ -99,11 +99,22 @@ function wildcardTemplateApplying(token, options, user) {
         return;
     }
     const actor = token.actor;
+    if (!(token.texture?.src && typeof token.texture.src === "string")) {
+        // Only execute if the token has a texture set with a path
+        return;
+    }
+    // Check if the entire folder path should be included in the test
+    const includeFolder = game.settings.get("ironclaw2e", "templateIncludeFolderPath");
+    const imageSplit = includeFolder ? token.texture.src.split() : token.texture.src.split("/");
+    const image = includeFolder ? token.texture.src : imageSplit[imageSplit.length - 1];
+    console.log(token.texture.src);
+    console.log(imageSplit);
+    console.log(image);
     // Species templates
     const speciesActive = game.settings.get("ironclaw2e", "templateSpeciesActive");
     const speciesFolder = game.settings.get("ironclaw2e", "templateSpeciesFolder");
     let speciesSuccessful = null;
-    if (speciesActive && speciesFolder && !actor.system.traits.species.name) {
+    if (speciesActive && speciesFolder && actor.system.traits?.species && !actor.system.traits.species.name) {
         // If the setting is on, has a folder and there is no species name
         const folder = game.folders.get(speciesFolder);
         const templates = folder.contents;
@@ -114,7 +125,7 @@ function wildcardTemplateApplying(token, options, user) {
             }
             // Check if the current template's name shows up anywhere in the token image's name
             const reg = new RegExp("(" + foo.name + ")", "gi"); // Prepare the regex
-            if (reg.test(token.img)) {
+            if (reg.test(image)) {
                 speciesSuccessful = foo;
                 break;
             }
@@ -124,7 +135,7 @@ function wildcardTemplateApplying(token, options, user) {
     const careerActive = game.settings.get("ironclaw2e", "templateCareerActive");
     const careerFolder = game.settings.get("ironclaw2e", "templateCareerFolder");
     let careerSuccessful = null;
-    if (careerActive && careerFolder && !actor.system.traits.career.name) {
+    if (careerActive && careerFolder && actor.system.traits?.career && !actor.system.traits.career.name) {
         // If the setting is on, has a folder and there is no career name
         const folder = game.folders.get(careerFolder);
         const templates = folder.contents;
@@ -135,7 +146,7 @@ function wildcardTemplateApplying(token, options, user) {
             }
             // Check if the current template's name shows up anywhere in the token image's name
             const reg = new RegExp("(" + foo.name + ")", "gi"); // Prepare the regex
-            if (reg.test(token.img)) {
+            if (reg.test(image)) {
                 careerSuccessful = foo;
                 break;
             }
@@ -144,10 +155,9 @@ function wildcardTemplateApplying(token, options, user) {
 
     // If either check succeeded, apply them in a separate async function
     if (speciesSuccessful || careerSuccessful) {
-        const actor = token.actor;
         (async function () {
             // Waits are present to clear up an apparent race condition
-            if (speciesSuccessful) await actor.applyTemplate(speciesSuccessful, {"wait": 500});
+            if (speciesSuccessful) await actor.applyTemplate(speciesSuccessful, { "wait": 500 });
             if (careerSuccessful) await actor.applyTemplate(careerSuccessful, { "wait": 500 });
         })();
     }

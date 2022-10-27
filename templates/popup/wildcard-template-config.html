@@ -10,6 +10,12 @@
     <div id="ironclaw-wildcard-settings">
         <h2 class="header-label">{{localize 'ironclaw2e.config.wildcardTemplateConfig.actualSettings'}}</h2>
         <div class="form-group">
+            <label>{{localize 'ironclaw2e.config.templateIncludeFolderPath'}}</label>
+            <input type="checkbox" name="templateIncludeFolderPath" {{checked settings.templateIncludeFolderPath}} data-dtype="Boolean" />
+            <p class="notes">{{localize 'ironclaw2e.config.templateIncludeFolderPathHint'}}</p>
+            <p class="notes">{{localize 'ironclaw2e.config.wildcardTemplateConfig.offWarning'}}</p>
+        </div>
+        <div class="form-group">
             <label>{{localize 'ironclaw2e.config.templateSpeciesActive'}}</label>
             <input type="checkbox" name="templateSpeciesActive" {{checked settings.templateSpeciesActive}} data-dtype="Boolean" />
             <p class="notes">{{localize 'ironclaw2e.config.templateSpeciesActiveHint'}}</p>

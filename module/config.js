@@ -321,6 +321,7 @@ export class WildcardTemplateConfig extends FormApplication {
      */
     static get getTemplateSettingsObject() {
         let settings = {};
+        settings.templateIncludeFolderPath = game.settings.get("ironclaw2e", "templateIncludeFolderPath");
         settings.templateSpeciesActive = game.settings.get("ironclaw2e", "templateSpeciesActive");
         settings.templateSpeciesFolder = game.settings.get("ironclaw2e", "templateSpeciesFolder");
         settings.templateCareerActive = game.settings.get("ironclaw2e", "templateCareerActive");
