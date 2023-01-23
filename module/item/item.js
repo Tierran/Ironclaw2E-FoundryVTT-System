@@ -9,7 +9,7 @@ import { checkDiceArrayEmpty } from "../helpers.js";
 import { checkQuickModifierKey } from "../helpers.js";
 
 import { checkStandardDefense, CommonSystemInfo, getRangeDistanceFromBand } from "../systeminfo.js";
-import { getSpecialOptionPrototype } from "../systeminfo.js";
+import { getGiftSpecialOptionPrototype } from "../systeminfo.js";
 
 import { CommonConditionInfo } from "../conditions.js"
 
@@ -429,6 +429,17 @@ export class Ironclaw2EItem extends Item {
         } else {
             system.descriptorsSplit = null;
         }
+        // Range
+        system.rangeDistance = system.range in CommonSystemInfo.rangeBands ? CommonSystemInfo.rangePaces[system.range] : -1;
+        if (system.threatens) {
+            if (system.threatRangeField === "same") {
+                system.threatRangeBand = system.range;
+                system.threatDistance = system.rangeDistance;
+            } else {
+                system.threatRangeBand = system.threatRangeField;
+                system.threatDistance = system.threatRangeBand in CommonSystemInfo.rangeBands ? CommonSystemInfo.rangePaces[system.threatRangeBand] : -1;
+            }
+        }
     }
 
     /**
@@ -601,7 +612,7 @@ export class Ironclaw2EItem extends Item {
         }
 
         let specialSettings = system.specialSettings;
-        let setting = getSpecialOptionPrototype(bonusType);
+        let setting = getGiftSpecialOptionPrototype(bonusType);
         if (setting === null) {
             console.error("Gift special setting adding had a null result with given bonus type: " + bonusType);
             return;
@@ -663,7 +674,7 @@ export class Ironclaw2EItem extends Item {
             return null;
         }
 
-        let newSetting = getSpecialOptionPrototype(settingmode);
+        let newSetting = getGiftSpecialOptionPrototype(settingmode);
 
         // Go through the field names of the new setting and check whether the old setting has any same ones, for any that do, copy the data over
         for (let [key, field] of Object.entries(newSetting)) {
@@ -705,7 +716,7 @@ export class Ironclaw2EItem extends Item {
                 return null;
             }
 
-            let newSetting = getSpecialOptionPrototype(oldSetting.settingMode);
+            let newSetting = getGiftSpecialOptionPrototype(oldSetting.settingMode);
 
             // Go through the field names of the new setting and check whether the old setting has any same ones, for any that do, copy the data over
             for (let [key, field] of Object.entries(newSetting)) {

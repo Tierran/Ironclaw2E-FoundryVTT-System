@@ -289,17 +289,24 @@
       "descriptors": "",
       "equip": "goodhand",
       "range": "close",
+
+      "threatens": false,
+      "threatRangeField": "same",
+
       "attackDice": "",
       "defenseDice": "",
       "counterDice": "",
       "useSpark": false,
       "sparkDie": "",
+
       "readied": false,
       "readyWhenUsed": true,
       "autoStow": false,
+
       "exhaustGift": false,
       "exhaustGiftWhenReadied": false,
       "exhaustGiftName": "",
+
       "upgradeWeapon": false,
       "upgradeWeaponName": "",
       "upgradeWeaponAction": "",
@@ -359,7 +366,8 @@
       "minCrew": 1,
       "stationCaptain": "",
       "stationDicePool": "",
-      "stationDiceGifts": ""
+      "stationDiceGifts": "",
+      "stationRollResults": []
     },
     "vehicleModification": {
       "templates": [ "base", "vehicleItem" ],

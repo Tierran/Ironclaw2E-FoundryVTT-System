@@ -65,16 +65,24 @@
                     <select name="system.equip">
                         {{selectOptions selectables.handedness selected=system.equip localize=false}}
                     </select>
-                    <label class="resource-label" title="Range in paces:  {{rangeDistance}}pc">Range:</label>
-                    <select name="system.range" title="Range in paces:  {{rangeDistance}}pc">
+                    <label class="resource-label" title="Range in paces:  {{system.rangeDistance}}pc">Range:</label>
+                    <select name="system.range" title="Range in paces:  {{system.rangeDistance}}pc">
                         {{selectOptions selectables.range selected=system.range localize=false}}
+                    </select>
+                </div>
+                <div class="resource checkbox-settings flexrow flex-group-center">
+                    <label class="resource-label">Defense is Resist:</label>
+                    <input type="checkbox" name="system.hasResist" {{checked system.hasResist}} data-dtype="Boolean" />
+                    <label class="resource-label">Threatens:</label>
+                    <input type="checkbox" name="system.threatens" {{checked system.threatens}} data-dtype="Boolean" />
+                    <label class="resource-label" {{#unless system.threatens}}style="visibility: hidden;"{{/unless}}>Threat Range:</label>
+                    <select name="system.threatRangeField" data-dtype="String" {{#unless system.threatens}}style="visibility: hidden;"{{/unless}}>
+                        {{selectOptions selectables.threatRanges selected=system.threatRangeField localize=false}}
                     </select>
                 </div>
                 <div class="resource checkbox-settings flexrow flex-group-center">
                     <label class="resource-label">Use Spark:</label>
                     <input type="checkbox" name="system.useSpark" {{checked system.useSpark}} data-dtype="Boolean" />
-                    <label class="resource-label">Defense is Resist:</label>
-                    <input type="checkbox" name="system.hasResist" {{checked system.hasResist}} data-dtype="Boolean" />
                     <label class="resource-label">Auto-Stow:</label>
                     <input type="checkbox" name="system.autoStow" {{checked system.autoStow}} data-dtype="Boolean" />
                     <label class="resource-label">Ready on Use:</label>

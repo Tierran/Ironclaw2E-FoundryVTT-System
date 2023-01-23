@@ -97,7 +97,7 @@ export class TokenExtenderOptions {
 }
 
 /** 
- * Monkey-patch the status effects to take into consideration what tyoe if actor they're for
+ * Monkey-patch the status effects to take into consideration what type of actor they're for
  */
 export function TokenHUDStatusMonkeyPatch() {
     TokenHUD.prototype._getStatusEffectChoices = function () {

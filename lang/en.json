@@ -743,6 +743,9 @@
   "ironclaw2e.sheets.actor.vehicleDetails.addModification": "Add Modification",
 
 
+  "ironclaw2e.sheets.item.weaponStats.threatSameWeapon": "Same as weapon",
+
+
   "ironclaw2e.effect.status.focused": "Focused",
   "ironclaw2e.effect.status.aiming": "Aiming",
   "ironclaw2e.effect.status.guarding": "Guarding",

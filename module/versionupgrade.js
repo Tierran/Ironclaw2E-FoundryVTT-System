@@ -1,5 +1,5 @@
 import { makeCompareReady, getAllItemsInWorld, getAllActorsInWorld } from "./helpers.js";
-import { CommonSystemInfo, getSpecialOptionPrototype } from "./systeminfo.js";
+import { CommonSystemInfo, getGiftSpecialOptionPrototype } from "./systeminfo.js";
 
 /* eslint-disable */
 
@@ -370,120 +370,120 @@ function giftNameLookup(gift) {
     switch (makeCompareReady(gift.name)) {
         // Veteran
         case ("veteran"):
-            settings.push(getSpecialOptionPrototype("guardBonus"));
-            settings.push(getSpecialOptionPrototype("aimBonus"));
+            settings.push(getGiftSpecialOptionPrototype("guardBonus"));
+            settings.push(getGiftSpecialOptionPrototype("aimBonus"));
             break;
         // Giant
         case ("giant"):
-            settings.push(getSpecialOptionPrototype("encumbranceBonus"));
+            settings.push(getGiftSpecialOptionPrototype("encumbranceBonus"));
             settings[0].encumbranceBonusNumber = 1;
             break;
         // Move bonuses
         case ("fastmover"):
-            settings.push(getSpecialOptionPrototype("moveBonus"));
+            settings.push(getGiftSpecialOptionPrototype("moveBonus"));
             settings[0].bonusStrideNumber = 1;
             settings[0].bonusDashNumber = 2;
             settings[0].bonusRunNumber = 6;
             break;
         case ("allfours"):
-            settings.push(getSpecialOptionPrototype("moveBonus"));
+            settings.push(getGiftSpecialOptionPrototype("moveBonus"));
             settings[0].bonusStrideNumber = 1;
             settings[0].bonusDashNumber = 2;
             settings[0].bonusRunNumber = 6;
             settings[0].conditionField = "All Fours";
             break;
         case ("coward"):
-            settings.push(getSpecialOptionPrototype("moveBonus"));
+            settings.push(getGiftSpecialOptionPrototype("moveBonus"));
             settings[0].bonusStrideNumber = 1;
             settings[0].bonusDashNumber = 3;
             settings[0].bonusRunNumber = 9;
             settings[0].conditionField = "Afraid, Terrified";
-            settings.push(getSpecialOptionPrototype("defenseBonus"));
+            settings.push(getGiftSpecialOptionPrototype("defenseBonus"));
             settings[1].conditionField = "Afraid, Terrified";
             settings[1].appliesToParries = false;
             break;
         case ("flightoftheprey"):
-            settings.push(getSpecialOptionPrototype("moveBonus"));
+            settings.push(getGiftSpecialOptionPrototype("moveBonus"));
             settings[0].bonusStrideNumber = 1;
             settings[0].bonusDashNumber = 4;
             settings[0].bonusRunNumber = 16;
             settings[0].conditionField = "Afraid";
             settings[0].replaceNameField = "Coward";
-            settings.push(getSpecialOptionPrototype("defenseBonus"));
+            settings.push(getGiftSpecialOptionPrototype("defenseBonus"));
             settings[1].conditionField = "Afraid"; // Separate bonuses for dodge and parry to ensure the replacement system works
             settings[1].appliesToParries = false;
             settings[1].replaceNameField = "Coward";
-            settings.push(getSpecialOptionPrototype("defenseBonus"));
+            settings.push(getGiftSpecialOptionPrototype("defenseBonus"));
             settings[2].conditionField = "Afraid";
             settings[2].appliesToDodges = false;
             break;
         case ("ophidian"):
-            settings.push(getSpecialOptionPrototype("moveBonus"));
+            settings.push(getGiftSpecialOptionPrototype("moveBonus"));
             settings[0].bonusStrideNumber = 2;
             settings[0].bonusDashNumber = -2;
             break;
         // Flight bonuses
         case ("flying"):
-            settings.push(getSpecialOptionPrototype("flyingBonus"));
+            settings.push(getGiftSpecialOptionPrototype("flyingBonus"));
             settings[0].bonusStrideNumber = 3;
             settings[0].bonusRunNumber = 12;
-            settings.push(getSpecialOptionPrototype("sprintBonus"));
+            settings.push(getGiftSpecialOptionPrototype("sprintBonus"));
             settings[1].conditionField = "Flying";
             settings[1].bonusStatsField = "Weather Sense";
             break;
         case ("wings"):
-            settings.push(getSpecialOptionPrototype("flyingBonus"));
+            settings.push(getGiftSpecialOptionPrototype("flyingBonus"));
             settings[0].bonusStrideNumber = 1;
             break;
         // Attack bonuses
         case ("strength"):
-            settings.push(getSpecialOptionPrototype("attackBonus"));
+            settings.push(getGiftSpecialOptionPrototype("attackBonus"));
             settings[0].statField = "Brawling, Melee Combat, Throwing";
-            settings.push(getSpecialOptionPrototype("encumbranceBonus"));
+            settings.push(getGiftSpecialOptionPrototype("encumbranceBonus"));
             settings[1].encumbranceBonusNumber = 1;
             break;
         case ("improvedstrength"):
-            settings.push(getSpecialOptionPrototype("attackBonus"));
+            settings.push(getGiftSpecialOptionPrototype("attackBonus"));
             settings[0].statField = "Brawling, Melee Combat, Throwing";
             settings[0].replaceNameField = "Strength";
-            settings.push(getSpecialOptionPrototype("encumbranceBonus"));
+            settings.push(getGiftSpecialOptionPrototype("encumbranceBonus"));
             settings[1].encumbranceBonusNumber = 2;
             settings[1].replaceNameField = "Strength";
             break;
         // Counter bonuses
         case ("focusedfighter"):
-            settings.push(getSpecialOptionPrototype("counterBonus"));
+            settings.push(getGiftSpecialOptionPrototype("counterBonus"));
             settings[0].conditionField = "Focused";
-            settings.push(getSpecialOptionPrototype("defenseBonus"));
+            settings.push(getGiftSpecialOptionPrototype("defenseBonus"));
             settings[1].conditionField = "Focused";
             break;
         // Defense bonuses
         case ("fencing"):
-            settings.push(getSpecialOptionPrototype("defenseBonus"));
+            settings.push(getGiftSpecialOptionPrototype("defenseBonus"));
             settings[0].descriptorField = "Fencing";
             settings[0].bonusStatsField = "Dodge";
             settings[0].appliesToDodges = false;
             break;
         // Soak bonuses
         case ("resolve"):
-            settings.push(getSpecialOptionPrototype("soakBonus"));
+            settings.push(getGiftSpecialOptionPrototype("soakBonus"));
             settings[0].bonusStatsField = "Will";
             break;
         case ("shieldsoak"):
-            settings.push(getSpecialOptionPrototype("soakBonus"));
+            settings.push(getGiftSpecialOptionPrototype("soakBonus"));
             settings[0].bonusSourcesField = "Shield";
             break;
         case ("guardsoak"):
-            settings.push(getSpecialOptionPrototype("soakBonus"));
+            settings.push(getGiftSpecialOptionPrototype("soakBonus"));
             settings[0].bonusSourcesField = "Guard";
             break;
         case ("naturalarmor"):
-            settings.push(getSpecialOptionPrototype("soakBonus"));
+            settings.push(getGiftSpecialOptionPrototype("soakBonus"));
             settings[0].bonusStatsField = "Species";
             break;
         // Initiative bonuses
         case ("dangersense"):
-            settings.push(getSpecialOptionPrototype("initiativeBonus"));
+            settings.push(getGiftSpecialOptionPrototype("initiativeBonus"));
             break;
     }
 

@@ -175,6 +175,13 @@ export class CommonSystemInfo {
     };
 
     /**
+     * The roll result possibilities for vehicle stations
+     */
+    static vehicleRollResults = {
+
+    };
+
+    /**
      * Reroll types that exist within the system and the associated translation strings
      */
     static rerollTypes = {
@@ -248,17 +255,16 @@ export class CommonSystemInfo {
     };
 }
 
-
 /* -------------------------------------------- */
-/*  Special Options                             */
+/*  Gift Special Options                        */
 /* -------------------------------------------- */
 
 /**
- * Get an empty base prototype for a given type of special option object
+ * Get an empty base prototype for a given type of gift special option object
  * @param {string} option The special option type to get
  * @returns {object} The default empty special option
  */
-export function getSpecialOptionPrototype(option) {
+export function getGiftSpecialOptionPrototype(option) {
     let special = { "settingMode": option };
 
     switch (option) {
@@ -392,6 +398,13 @@ export function getSpecialOptionPrototype(option) {
     }
 }
 
+
+/* -------------------------------------------- */
+/*  Vehicle Station Roll Results                */
+/* -------------------------------------------- */
+
+
+
 /* -------------------------------------------- */
 /*  System Info Helpers                         */
 /* -------------------------------------------- */
@@ -494,10 +507,17 @@ export function checkStandardDefense(defense) {
     return (makeCompareReady(defense) === CommonSystemInfo.defenseStandardName);
 }
 
-/** Simple function to get a property list  */
+/** Simple function to get a property list for reroll types */
 export function getSpecialSettingsRerolls() {
     const cloned = { ...CommonSystemInfo.rerollTypes };
     delete cloned["ONE"];
+    return cloned;
+}
+
+/** Simple function to get a property list for a threat range selection */
+export function getThreatRanges() {
+    const same = { "same": game.i18n.localize("ironclaw2e.sheets.item.weaponStats.threatSameWeapon") };
+    const cloned = { ...same, ...CommonSystemInfo.rangeBands };
     return cloned;
 }
 

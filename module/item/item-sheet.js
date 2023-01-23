@@ -1,4 +1,4 @@
-import { CommonSystemInfo, getRangeDistanceFromBand, getSpecialSettingsRerolls } from "../systeminfo.js";
+import { CommonSystemInfo, getRangeDistanceFromBand, getSpecialSettingsRerolls, getThreatRanges } from "../systeminfo.js";
 import { getAllItemsInWorld } from "../helpers.js";
 import { getConditionSelectObject } from "../conditions.js";
 
@@ -70,11 +70,10 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         let selectables = {
             "handedness": CommonSystemInfo.equipHandedness, "range": CommonSystemInfo.rangeBands, "giftOptions": CommonSystemInfo.giftSpecialOptions, "giftStates": CommonSystemInfo.giftWorksStates,
             "currencyOptions": currencyOptions, "giftBonusUses": CommonSystemInfo.giftBonusAutoUseOptions, "giftRerolls": getSpecialSettingsRerolls(), "systemConditions": getConditionSelectObject(),
-            "lightAnimations": CONFIG.Canvas.lightAnimations, "extraSenses": CommonSystemInfo.extraSenses
+            "lightAnimations": CONFIG.Canvas.lightAnimations, "extraSenses": CommonSystemInfo.extraSenses, "threatRanges": getThreatRanges()
         };
         sheetData.selectables = selectables;
         sheetData.showDirectoryOptions = game.user.isGM && !this.item.parent;
-        sheetData.rangeDistance = getRangeDistanceFromBand(sheetData.system.range);
         sheetData.showGiftSkill = sheetData.system.grantsMark || sheetData.system.specialSkillUse;
 
         return sheetData;
