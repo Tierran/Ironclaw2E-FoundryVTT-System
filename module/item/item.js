@@ -1074,7 +1074,9 @@ export class Ironclaw2EItem extends Item {
             hasTactics = false; // If the weapon has manually set Tactics in the attack stats, remove the checkbox
         }
 
-        let useTactics = false; // Right now, just hardcode tactics to never be checked by default
+        const foundCombatant = findActorToken(actor)?.combatant;
+        // If a combatant for the current actor is found, check whether the current user's target is threatened through the combatant, and use the result for Tactics auto-check
+        let useTactics = (foundCombatant ? foundCombatant.checkTacticsForTarget?.() : false) ?? false;
         const richDescription = itemSys.description ? await TextEditor.enrichHTML(itemSys.description, { async: true, secrets: false }) : "";
 
         const templateData = {

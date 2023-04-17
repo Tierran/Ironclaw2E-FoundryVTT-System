@@ -70,8 +70,7 @@ export class Ironclaw2ECombat extends Combat {
             return settings.manualTN;
         }
         else if (combatant && settings?.initType && allcombatants) {
-            let playerOwnerComparison = combatant.getSide(settings);
-            let otherSide = allcombatants.filter(x => x?.getSide(settings) !== playerOwnerComparison);
+            let otherSide = combatant.getSideCombatants(false, allcombatants);
             return Ironclaw2ECombat.getDistanceTN(Ironclaw2ECombat.getDistanceToClosestOther(combatant, otherSide));
         }
         else return 6;
@@ -305,6 +304,51 @@ export class Ironclaw2ECombatant extends Combatant {
         }
 
         console.warn("Combatant side get defaulted!");
+        return false;
+    }
+
+    /**
+     * Gets all the opposing or same side combatants for this combatant
+     * @param {boolean} getfriendlies Whether to get the opponents or allies
+     * @returns {Ironclaw2ECombatant[]}
+     */
+    getSideCombatants(getallies, { allcombatants = [], excludeself = true } = {}) {
+        const foo = this;
+        // Check if the function is given a set of specific combatants to filter
+        if (allcombatants == null || (Array.isArray(allcombatants) && allcombatants.length === 0)) {
+            allcombatants = foo.combat?.combatants; // Get the combatant's combat's combatants
+            if (allcombatants == null || (Array.isArray(allcombatants) && allcombatants.length === 0))
+                return []; // If still nothing to filter, return out with an empty array
+        }
+
+        let sideComparison = (getallies ? foo.getSide(settings) : !foo.getSide(settings));
+        return allcombatants.filter(x => x?.getSide(settings) === sideComparison && (excludeself ? x !== foo : true));
+    }
+
+    /**
+     * Check if any of this combatant's allies can threaten the target, to get Tactics auto-selected
+     * @returns {boolean} Whether any ally does threaten the target
+     */
+    checkTacticsForTarget() {
+        let target = null;
+        if (game.user.targets?.size > 0) {
+            [target] = game.user.targets;
+        }
+        if (!target) return false;
+
+        // Get all the allies
+        const allies = this.getSideCombatants(true);
+        for (let foo of allies) {
+            if (foo.actor.system.actorThreatens) {
+                // Loop through the allies, if they threaten, get the distance between the ally and the target
+                const distance = getDistanceBetweenPositions(foo.token, target.document, { usecombatrules: true });
+                if (distance <= foo.actor.system.threatDistance) {
+                    return true // If the distance is under the threatening distance, return true
+                }
+            }
+        }
+
+        // If no ally is found to threaten the target, return false
         return false;
     }
 

@@ -776,6 +776,7 @@ export class Ironclaw2EActor extends Actor {
         if (actor.type === 'character' || actor.type === 'mook' || actor.type === 'beast') {
             this._prepareExtraCareerData(actor);
             this._prepareGiftData(actor);
+            this._prepareWeaponData(actor);
         }
     }
 
@@ -849,6 +850,31 @@ export class Ironclaw2EActor extends Actor {
                     system.processingLists[setting.settingMode].push(setting);
                 }
             }
+        }
+    }
+
+    /**
+     * Prepare Weapon item data
+     */
+    _prepareWeaponData(actor) {
+        const system = actor.system;
+
+        const readiedWeapons = this.items.filter(element => element.type === 'weapon' && element.system.readied && element.system.threatens);
+        let threatRangeBand; let threatDistance = -1; let threatens = false;
+        for (let item of readiedWeapons) {
+            if (item.system.threatDistance > threatDistance) {
+                threatDistance = item.system.threatDistance;
+                threatRangeBand = item.system.threatRangeBand;
+                threatens = true;
+            }
+        }
+
+        if (threatens) {
+            system.actorThreatens = true;
+            system.threatDistance = threatDistance;
+            system.threatRangeBand = threatRangeBand;
+        } else {
+            system.actorThreatens = false;
         }
     }
 
