@@ -1,3 +1,6 @@
+### 0.7.3 Threatening release
+ - The system can now track whether and how weapons and actors are threatening others in combat
+
 ### 0.7.2 Fix-logging release
  - Added some console logs and UI notifications to places
  - Fixed an error from vehicles having non-vehicle items
