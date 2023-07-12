@@ -1,5 +1,7 @@
 ### 0.7.3 Threatening release
  - The system can now track whether and how weapons and actors are threatening others in combat
+ - Vehicles now have their own damage tracking for vehicle-level damage
+ - Likely final Foundry VTT V10 release
 
 ### 0.7.2 Fix-logging release
  - Added some console logs and UI notifications to places
