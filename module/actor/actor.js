@@ -664,9 +664,9 @@ export class Ironclaw2EActor extends Actor {
         const chatTemplateData = {
             "speaker": speaker.alias,
             "hideCondition": returnedstatus.hideCondition,
-            "vehicleDamage": returnedstatus.vehicleDamage !== "",
+            "hasVehicleDamage": returnedstatus.vehicleDamage != undefined,
             "reportedCondition": reportedStatus
-                ? game.i18n.localize(CommonConditionInfo.getConditionLabel(reportedStatus)) + (checkConditionQuota(reportedStatus) ? ` ${getTargetConditionQuota(reportedStatus, returnedstatus.actor) || 0}` : "")
+                ? game.i18n.localize(CommonConditionInfo.getConditionLabel(reportedStatus))
                 : game.i18n.localize("ironclaw2e.chatInfo.damageEffect.chatNothing"),
             "vehicleText": `ironclaw2e.chatInfo.damageEffectVehicle.${returnedstatus.vehicleDamage}`,
             "wardChanged": returnedstatus.wardDamage > 0,

@@ -1,4 +1,4 @@
-import { checkIfDefeatedIronclaw } from "./conditions.js";
+import { checkIfDefeatedIronclaw, checkIfDisadvantagedIronclaw } from "./conditions.js";
 import { getDistanceBetweenPositions } from "./helpers.js";
 
 /**
@@ -339,7 +339,8 @@ export class Ironclaw2ECombatant extends Combatant {
         // Get all the allies
         const allies = this.getSideCombatants(true);
         for (let foo of allies) {
-            if (foo.actor.system.actorThreatens) {
+            if (foo.actor.system.actorThreatens && !foo.isDefeated && !checkIfDisadvantagedIronclaw(foo.actor)) {
+                // Make sure the allies actually threaten, aren't defeated, and aren't disadvantaged somehow
                 // Loop through the allies, if they threaten, get the distance between the ally and the target
                 const distance = getDistanceBetweenPositions(foo.token, target.document, { usecombatrules: true });
                 if (distance <= foo.actor.system.threatDistance) {
