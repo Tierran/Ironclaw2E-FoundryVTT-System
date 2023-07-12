@@ -591,6 +591,18 @@
   "ironclaw2e.chatInfo.damageEffect.wardDamage": "Ward took {damage} damage!",
   "ironclaw2e.chatInfo.damageEffect.wardDestroyed": "Ward was destroyed!",
 
+  "ironclaw2e.chatInfo.damageEffectVehicle.nothing": "Nothing!",
+  "ironclaw2e.chatInfo.damageEffectVehicle.standardFear": "Standard Fear!",
+  "ironclaw2e.chatInfo.damageEffectVehicle.standardDamage": "Standard Damage!",
+  "ironclaw2e.chatInfo.damageEffectVehicle.standardFire": "Standard Fire!",
+  "ironclaw2e.chatInfo.damageEffectVehicle.superiorFear": "Superior Fear!",
+  "ironclaw2e.chatInfo.damageEffectVehicle.superiorDamage": "Superior Damage!",
+  "ironclaw2e.chatInfo.damageEffectVehicle.superiorFire": "Superior Fire!",
+  "ironclaw2e.chatInfo.damageEffectVehicle.holed": "Holed!",
+  "ironclaw2e.chatInfo.damageEffectVehicle.incredibleDamage": "Incredible Damage!",
+  "ironclaw2e.chatInfo.damageEffectVehicle.holedDamage": "Standard Damage and Holed!",
+  "ironclaw2e.chatInfo.damageEffectVehicle.smithereens": "Blown to Smithereens!",
+
   "ironclaw2e.chatInfo.requestRoll.requestRollHeader": "{user} Requested a Roll",
   "ironclaw2e.chatInfo.requestRoll.requestRollType": "Roll Type",
   "ironclaw2e.chatInfo.requestRoll.requestRollDicePool": "Requested Dice Pool",

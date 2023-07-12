@@ -18,6 +18,7 @@
         <label>{{localize "ironclaw2e.dialog.damageCalc.attack"}}</label>
         <input type="checkbox" id="attack" name="attack" value="1" checked />
     </div>
+    {{#if (equalTo actorScaleType "personal")}}
     <div class="form-group">
         <label>{{localize "ironclaw2e.dialog.damageCalc.knockoutStrike"}}</label>
         <input type="checkbox" id="knockout" name="knockout" value="1" />
@@ -26,6 +27,7 @@
         <label>{{localize "ironclaw2e.dialog.damageCalc.nonLethal"}}</label>
         <input type="checkbox" id="nonlethal" name="nonlethal" value="1" />
     </div>
+    {{/if}}
     {{#if hasWard}}
     <div class="form-group">
         <label>{{localize "ironclaw2e.dialog.damageCalc.reduceWard" value=temporaryWard}}</label>

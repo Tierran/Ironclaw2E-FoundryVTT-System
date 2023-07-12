@@ -298,12 +298,16 @@ export class Ironclaw2EActor extends Actor {
         // If the soak actor is found and the data necessary for it exists, roll the soak
         if (soakActor && dataset.soaktype) {
             let wait = function (x) {
-                if (x.tnData) {
+                if (x?.tnData) {
                     const verybad = (x.highest === 1 ? 1 : 0); // In case of botch, increase damage by one
                     const soaks = x.tnData.successes + resistSoak;
                     if (!directroll)
                         soakActor.popupDamage(usedDamage + verybad, soaks, holderset.conditions);
                     else soakActor.silentDamage(usedDamage + verybad, soaks, holderset.conditions);
+                } else {
+                    if (!directroll)
+                        soakActor.popupDamage(usedDamage, resistSoak, holderset.conditions);
+                    else soakActor.silentDamage(usedDamage, resistSoak, holderset.conditions);
                 }
             };
             if (dataset.soaktype !== "conditional") {
@@ -659,7 +663,12 @@ export class Ironclaw2EActor extends Actor {
         const reportedStatus = returnedstatus.conditionArray.length > 0 ? returnedstatus.conditionArray[returnedstatus.conditionArray.length - 1] : null;
         const chatTemplateData = {
             "speaker": speaker.alias,
-            "reportedCondition": game.i18n.localize(reportedStatus ? CommonConditionInfo.getConditionLabel(reportedStatus) : "ironclaw2e.chatInfo.damageEffect.chatNothing"),
+            "hideCondition": returnedstatus.hideCondition,
+            "vehicleDamage": returnedstatus.vehicleDamage !== "",
+            "reportedCondition": reportedStatus
+                ? game.i18n.localize(CommonConditionInfo.getConditionLabel(reportedStatus)) + (checkConditionQuota(reportedStatus) ? ` ${getTargetConditionQuota(reportedStatus, returnedstatus.actor) || 0}` : "")
+                : game.i18n.localize("ironclaw2e.chatInfo.damageEffect.chatNothing"),
+            "vehicleText": `ironclaw2e.chatInfo.damageEffectVehicle.${returnedstatus.vehicleDamage}`,
             "wardChanged": returnedstatus.wardDamage > 0,
             "wardDamage": returnedstatus.wardDamage,
             "wardDestroyed": returnedstatus.wardDestroyed
@@ -2245,24 +2254,93 @@ export class Ironclaw2EActor extends Actor {
             }
         }
 
-        // Only an attack gives Reeling
-        let adding = (attack ? ["reeling"] : []);
-        // Actual damage and knockout effects
-        if (damage >= 1) {
-            adding.push("hurt");
-            if (knockout) adding.push("asleep");
+        const actorScale = this.getActorScaleType();
+
+        if (actorScale === "personal") {
+            // Only an attack gives Reeling
+            let adding = (attack ? ["reeling"] : []);
+            // Actual damage and knockout effects
+            if (damage >= 1) {
+                adding.push("hurt");
+                if (knockout) adding.push("asleep");
+            }
+            if (damage >= 2) {
+                adding.push("afraid");
+                if (knockout) adding.push("unconscious");
+            }
+            if (damage >= 3) adding.push("injured");
+            if (damage >= 4) adding.push("dying");
+            // If the attack is marked as non-lethal, prevent outright immediate death
+            if (damage >= 5 && !nonlethal) adding.push("dead");
+            if (damage >= 6 && !nonlethal) adding.push("overkilled");
+            await this.addEffect(adding);
+            return { actor: this, "conditionArray": adding, wardDamage, wardDestroyed };
         }
-        if (damage >= 2) {
-            adding.push("afraid");
-            if (knockout) adding.push("unconscious");
+        else if (actorScale === "vehicle") {
+            // Vehicles have a very different damage progression
+            let adding = [];
+            let hideCondition = true;
+            let vehicleDamage = "";
+            let burnCount = 0;
+
+            if (damage >= 10) {
+                adding.push("dead");
+                hideCondition = false;
+                vehicleDamage = "smithereens";
+            } else if (damage <= 0) {
+                vehicleDamage = "nothing";
+
+            } else {
+                const existingBurn = getTargetConditionQuota("burning", this);
+                switch (damage) {
+                    case 1:
+                        vehicleDamage = "standardFear";
+                        break;
+                    case 2:
+                        vehicleDamage = "standardDamage";
+                        break;
+                    case 3:
+                        adding.push("burning"); burnCount = 3;
+                        hideCondition = false;
+                        vehicleDamage = "standardFire";
+                        break;
+                    case 4:
+                        vehicleDamage = "superiorFear";
+                        break;
+                    case 5:
+                        vehicleDamage = "superiorDamage";
+                        break;
+                    case 6:
+                        adding.push("burning"); burnCount = 6;
+                        hideCondition = false;
+                        vehicleDamage = "superiorFire";
+                        break;
+                    case 7:
+                        adding.push("holed");
+                        hideCondition = false;
+                        vehicleDamage = "holed";
+                        break;
+                    case 8:
+                        vehicleDamage = "incredibleDamage";
+                        break;
+                    case 9:
+                        adding.push("holed");
+                        hideCondition = false;
+                        vehicleDamage = "holedDamage";
+                        break;
+                }
+
+                await this.addEffect(adding);
+                if (!attack && burnCount > 0 && existingBurn > 0) {
+                    await this.updateEffectQuota("burning", existingBurn + burnCount);
+                } else if (burnCount > 0 && adding.includes("burning") && existingBurn < burnCount) {
+                    await this.updateEffectQuota("burning", burnCount);
+                }
+            }
+
+            return { actor: this, "conditionArray": adding, hideCondition, vehicleDamage };
         }
-        if (damage >= 3) adding.push("injured");
-        if (damage >= 4) adding.push("dying");
-        // If the attack is marked as non-lethal, prevent outright immediate death
-        if (damage >= 5 && !nonlethal) adding.push("dead");
-        if (damage >= 6 && !nonlethal) adding.push("overkilled");
-        await this.addEffect(adding);
-        return { "conditionArray": adding, wardDamage, wardDestroyed };
+        return { actor: this, "conditionArray": [] };
     }
 
     /**
@@ -2442,6 +2520,26 @@ export class Ironclaw2EActor extends Actor {
     /* -------------------------------------------- */
     /*  Actor Information Getters                   */
     /* -------------------------------------------- */
+
+    /**
+     * Get whether this actor counts as a personal-scale type (characters, mooks, beasts) or vehicle-scale type (vehicles), or neither (marker)
+     * @returns {string} Actor scale type
+     */
+    getActorScaleType() {
+        switch (this.type) {
+            case "character":
+            case "mook":
+            case "beast":
+                return "personal";
+            case "vehicle":
+                return "vehicle";
+            case "marker":
+                return "marker";
+            default:
+                console.warn("Actor scale type getter defaulted somehow: " + actor.name);
+                return "none";
+        }
+    }
 
     /**
      * Get the degree of range penalty reduction this actor has for the given item
@@ -2993,7 +3091,8 @@ export class Ironclaw2EActor extends Actor {
             "readysoak": readysoak,
             "damageconditions": damageconditions,
             "temporaryWard": ward,
-            "hasWard": ward >= 0
+            "hasWard": ward >= 0,
+            "actorScaleType": this.getActorScaleType()
         };
 
         const contents = await renderTemplate("systems/ironclaw2e/templates/popup/damage-popup.html", templateData);
@@ -3026,9 +3125,9 @@ export class Ironclaw2EActor extends Actor {
                     let ATTACK = html.find('[name=attack]')[0];
                     let attack = ATTACK.checked;
                     let KNOCKOUT = html.find('[name=knockout]')[0];
-                    let knockout = KNOCKOUT.checked;
+                    let knockout = KNOCKOUT?.checked;
                     let ALLOW = html.find('[name=nonlethal]')[0];
-                    let allow = ALLOW.checked;
+                    let allow = ALLOW?.checked;
                     let WARD = html.find('[name=reduceward]')[0];
                     let ward = WARD?.checked ?? false;
                     let COND = html.find('[name=cond]')[0].value;

@@ -118,9 +118,9 @@ export function TokenHUDStatusMonkeyPatch() {
         }, {}) : {};
 
         // Filter what status effects are allowed for actor types
-        const actorType = actor?.type === "vehicle" ? "vehicle" : "personal";
+        const actorScale = actor?.getActorScaleType();
         const validStatusEffects = CONFIG.statusEffects.reduce((arr, e) => {
-            if (!("actorType" in e) || e.actorType === actorType) arr.push(e);
+            if (!("actorType" in e) || e.actorType === actorScale) arr.push(e);
             return arr;
         }, []);
 

@@ -643,6 +643,12 @@ export class CommonConditionInfo {
             actorType: "vehicle"
         },
         {
+            id: "listing",
+            label: "ironclaw2e.effect.status.listing",
+            icon: "systems/ironclaw2e/icons/status/listing.svg",
+            actorType: "vehicle"
+        },
+        {
             id: "capsized",
             label: "ironclaw2e.effect.status.capsized",
             icon: "systems/ironclaw2e/icons/status/capsized.svg",
@@ -652,12 +658,6 @@ export class CommonConditionInfo {
             id: "burning",
             label: "ironclaw2e.effect.status.burning",
             icon: "systems/ironclaw2e/icons/status/burning.svg",
-            actorType: "vehicle"
-        },
-        {
-            id: "listing",
-            label: "ironclaw2e.effect.status.listing",
-            icon: "systems/ironclaw2e/icons/status/listing.svg",
             actorType: "vehicle"
         },
         {
@@ -721,7 +721,7 @@ export class CommonConditionInfo {
     ["half-buried", "Half-Buried"], ["onfire", "On Fire"], ["mesmerized", "Mesmerized"], ["marionette", "Marionette"], ["controlled", "Controlled"],
     ["allfours", "All Fours"], ["flying", "Flying"], ["grappled", "Grappled"], ["hiding", "Hiding"], ["temporaryward", "Temporary Ward"],
 
-    ["holed", "Holed"], ["swamped", "Swamped"], ["sinking", "Sinking"], ["capsized", "Capsized  "], ["burning", "Burning"], ["listing", "Listing"],
+    ["holed", "Holed"], ["swamped", "Swamped"], ["sinking", "Sinking"], ["listing", "Listing"], ["capsized", "Capsized  "], ["burning", "Burning"],
     ["run-aground", "Run-Aground"], ["haunted", "Haunted"],
 
     ["misc-a", "Misc-A"], ["misc-b", "Misc-B"], ["misc-c", "Misc-C"],

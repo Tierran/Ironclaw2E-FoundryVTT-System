@@ -55,7 +55,7 @@ export class CommonSystemInfo {
     /**
      * The standard stats used for soak rolls
      */
-    static soakBaseStats = Object.freeze(["body"]);
+    static soakBaseStats = Object.freeze(["body", "soak"]);
     /**
      * The standard stats used for dodge defense rolls
      */

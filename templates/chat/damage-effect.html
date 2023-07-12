@@ -1,7 +1,12 @@
 <div class="ironclaw2e">
     <div class="chat-content">
         <div class="chat-item">
+            {{#if vehicleDamage}}
+            <p><strong>{{{localize vehicleText}}}</strong></p>
+            {{/if}}
+            {{#unless hideCondition}}
             <p>{{{localize "ironclaw2e.chatInfo.damageEffect.chatMessage" name=speaker condition=reportedCondition}}}</p>
+            {{/unless}}
             {{#if wardChanged}}
             <p>{{localize "ironclaw2e.chatInfo.damageEffect.wardDamage" damage=wardDamage}}</p>
             {{#if wardDestroyed}}<p><strong>{{localize "ironclaw2e.chatInfo.damageEffect.wardDestroyed"}}</strong></p>{{/if}}
