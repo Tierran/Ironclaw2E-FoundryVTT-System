@@ -309,7 +309,7 @@ export class Ironclaw2ECombatant extends Combatant {
 
     /**
      * Gets all the opposing or same side combatants for this combatant
-     * @param {boolean} getfriendlies Whether to get the opponents or allies
+     * @param {boolean} getallies Whether to get the opponents or allies
      * @returns {Ironclaw2ECombatant[]}
      */
     getSideCombatants(getallies, { allcombatants = [], excludeself = true } = {}) {
