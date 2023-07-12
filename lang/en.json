@@ -783,6 +783,17 @@
   "ironclaw2e.effect.status.grappled": "Grappled",
   "ironclaw2e.effect.status.temporaryward": "Temporary Ward",
   "ironclaw2e.effect.status.hiding": "Hiding",
+
+  "ironclaw2e.effect.status.holed": "Holed",
+  "ironclaw2e.effect.status.swamped": "Swamped",
+  "ironclaw2e.effect.status.sinking": "Sinking",
+  "ironclaw2e.effect.status.capsized": "Capsized",
+  "ironclaw2e.effect.status.wrecked": "Wrecked",
+  "ironclaw2e.effect.status.burning": "Burning",
+  "ironclaw2e.effect.status.listing": "Listing",
+  "ironclaw2e.effect.status.run-aground": "Run-Aground",
+  "ironclaw2e.effect.status.haunted": "Haunted",
+
   "ironclaw2e.effect.status.misc-a": "Misc-A",
   "ironclaw2e.effect.status.misc-b": "Misc-B",
   "ironclaw2e.effect.status.misc-c": "Misc-C",

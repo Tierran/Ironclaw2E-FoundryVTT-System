@@ -117,12 +117,17 @@ export function TokenHUDStatusMonkeyPatch() {
             return obj;
         }, {}) : {};
 
-        // TODO: Add filtering to what status effects are allowed for actor types
+        // Filter what status effects are allowed for actor types
+        const actorType = actor?.type === "vehicle" ? "vehicle" : "personal";
+        const validStatusEffects = CONFIG.statusEffects.reduce((arr, e) => {
+            if (!("actorType" in e) || e.actorType === actorType) arr.push(e);
+            return arr;
+        }, []);
 
         // Prepare the list of effects from the configured defaults and any additional effects present on the Token
         const tokenEffects = foundry.utils.deepClone(doc.effects) || [];
         if (doc.overlayEffect) tokenEffects.push(doc.overlayEffect);
-        return CONFIG.statusEffects.concat(tokenEffects).reduce((obj, e) => {
+        return validStatusEffects.concat(tokenEffects).reduce((obj, e) => {
             const src = e.icon ?? e;
             if (src in obj) return obj;
             const status = statuses[e.id] || {};

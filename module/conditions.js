@@ -398,228 +398,317 @@ export class CommonConditionInfo {
      * List of conditions used to replace Foundry defaults for Ironclaw2E system
      * Condition id's are all in comparison-ready format, all lowercase and spaces removed
      */
-    static conditionList = [{
-        id: "focused",
-        label: "ironclaw2e.effect.status.focused",
-        icon: "icons/svg/upgrade.svg"
-    },
-    {
-        id: "aiming",
-        label: "ironclaw2e.effect.status.aiming",
-        icon: "icons/svg/target.svg"
-    },
-    {
-        id: "guarding",
-        label: "ironclaw2e.effect.status.guarding",
-        icon: "icons/svg/shield.svg"
-    },
-    {
-        id: "reeling",
-        label: "ironclaw2e.effect.status.reeling",
-        icon: "icons/svg/daze.svg"
-    },
-    {
-        id: "hurt",
-        label: "ironclaw2e.effect.status.hurt",
-        icon: "icons/svg/acid.svg"
-    },
-    {
-        id: "afraid",
-        label: "ironclaw2e.effect.status.afraid",
-        icon: "systems/ironclaw2e/icons/status/afraid.svg"
-    },
-    {
-        id: "injured",
-        label: "ironclaw2e.effect.status.injured",
-        icon: "icons/svg/blood.svg"
-    },
-    {
-        id: "dying",
-        label: "ironclaw2e.effect.status.dying",
-        icon: "systems/ironclaw2e/icons/status/dying.svg"
-    },
-    {
-        id: "dead",
-        label: "ironclaw2e.effect.status.dead",
-        icon: "icons/svg/skull.svg"
-    },
-    {
-        id: "overkilled",
-        label: "ironclaw2e.effect.status.overkilled",
-        icon: "systems/ironclaw2e/icons/status/overkilled.svg"
-    },
-    {
-        id: "asleep",
-        label: "ironclaw2e.effect.status.asleep",
-        icon: "icons/svg/sleep.svg"
-    },
-    {
-        id: "unconscious",
-        label: "ironclaw2e.effect.status.unconscious",
-        icon: "icons/svg/unconscious.svg"
-    },
-    {
-        id: "burdened",
-        label: "ironclaw2e.effect.status.burdened",
-        icon: "systems/ironclaw2e/icons/status/burdened.svg"
-    },
-    {
-        id: "over-burdened",
-        label: "ironclaw2e.effect.status.over-burdened",
-        icon: "systems/ironclaw2e/icons/status/overburdened.svg"
-    },
-    {
-        id: "cannotmove",
-        label: "ironclaw2e.effect.status.cannotmove",
-        icon: "systems/ironclaw2e/icons/status/cantmove.svg"
-    },
-    {
-        id: "fatigued",
-        label: "ironclaw2e.effect.status.fatigued",
-        icon: "icons/svg/degen.svg"
-    },
-    {
-        id: "sick",
-        label: "ironclaw2e.effect.status.sick",
-        icon: "icons/svg/poison.svg"
-    },
-    {
-        id: "confused",
-        label: "ironclaw2e.effect.status.confused",
-        icon: "icons/svg/stoned.svg"
-    },
-    {
-        id: "terrified",
-        label: "ironclaw2e.effect.status.terrified",
-        icon: "systems/ironclaw2e/icons/status/terrified.svg"
-    },
-    {
-        id: "enraged",
-        label: "ironclaw2e.effect.status.enraged",
-        icon: "icons/svg/explosion.svg"
-    },
-    {
-        id: "knockdown",
-        label: "ironclaw2e.effect.status.knockdown",
-        icon: "icons/svg/falling.svg"
-    },
-    {
-        id: "berserk",
-        label: "ironclaw2e.effect.status.berserk",
-        icon: "icons/svg/hazard.svg"
-    },
-    {
-        id: "blinded",
-        label: "ironclaw2e.effect.status.blinded",
-        icon: "icons/svg/blind.svg"
-    },
-    {
-        id: "silenced",
-        label: "ironclaw2e.effect.status.silenced",
-        icon: "icons/svg/silenced.svg"
-    },
-    {
-        id: "fulltilt",
-        label: "ironclaw2e.effect.status.fulltilt",
-        icon: "icons/svg/up.svg"
-    },
-    {
-        id: "slowed",
-        label: "ironclaw2e.effect.status.slowed",
-        icon: "icons/svg/down.svg"
-    },
-    {
-        id: "immobilized",
-        label: "ironclaw2e.effect.status.immobilized",
-        icon: "icons/svg/mountain.svg"
-    },
-    {
-        id: "half-buried",
-        label: "ironclaw2e.effect.status.half-buried",
-        icon: "icons/svg/ruins.svg"
-    },
-    {
-        id: "onfire",
-        label: "ironclaw2e.effect.status.onfire",
-        icon: "icons/svg/fire.svg"
-    },
-    {
-        id: "mesmerized",
-        label: "ironclaw2e.effect.status.mesmerized",
-        icon: "icons/svg/sun.svg"
-    },
-    {
-        id: "marionette",
-        label: "ironclaw2e.effect.status.marionette",
-        icon: "icons/svg/paralysis.svg"
-    },
-    {
-        id: "controlled",
-        label: "ironclaw2e.effect.status.controlled",
-        icon: "icons/svg/statue.svg"
-    },
-    {
-        id: "allfours",
-        label: "ironclaw2e.effect.status.allfours",
-        icon: "icons/svg/pawprint.svg"
-    },
-    {
-        id: "flying",
-        label: "ironclaw2e.effect.status.flying",
-        icon: "icons/svg/wing.svg"
-    },
-    {
-        id: "grappled",
-        label: "ironclaw2e.effect.status.grappled",
-        icon: "icons/svg/net.svg"
-    },
-    {
-        id: "hiding",
-        label: "ironclaw2e.effect.status.hiding",
-        icon: "icons/svg/mystery-man.svg"
-    },
-    {
-        id: "temporaryward",
-        label: "ironclaw2e.effect.status.temporaryward",
-        icon: "icons/svg/aura.svg"
-    },
+    static conditionList = [
+        // Personal-scale
+        {
+            id: "focused",
+            label: "ironclaw2e.effect.status.focused",
+            icon: "icons/svg/upgrade.svg",
+            actorType: "personal"
+        },
+        {
+            id: "aiming",
+            label: "ironclaw2e.effect.status.aiming",
+            icon: "icons/svg/target.svg",
+            actorType: "personal"
+        },
+        {
+            id: "guarding",
+            label: "ironclaw2e.effect.status.guarding",
+            icon: "icons/svg/shield.svg",
+            actorType: "personal"
+        },
+        {
+            id: "reeling",
+            label: "ironclaw2e.effect.status.reeling",
+            icon: "icons/svg/daze.svg",
+            actorType: "personal"
+        },
+        {
+            id: "hurt",
+            label: "ironclaw2e.effect.status.hurt",
+            icon: "icons/svg/acid.svg",
+            actorType: "personal"
+        },
+        {
+            id: "afraid",
+            label: "ironclaw2e.effect.status.afraid",
+            icon: "systems/ironclaw2e/icons/status/afraid.svg",
+            actorType: "personal"
+        },
+        {
+            id: "injured",
+            label: "ironclaw2e.effect.status.injured",
+            icon: "icons/svg/blood.svg",
+            actorType: "personal"
+        },
+        {
+            id: "dying",
+            label: "ironclaw2e.effect.status.dying",
+            icon: "systems/ironclaw2e/icons/status/dying.svg",
+            actorType: "personal"
+        },
+        {
+            id: "dead",
+            label: "ironclaw2e.effect.status.dead",
+            icon: "icons/svg/skull.svg"
+            // Intentionally missing actorType
+        },
+        {
+            id: "overkilled",
+            label: "ironclaw2e.effect.status.overkilled",
+            icon: "systems/ironclaw2e/icons/status/overkilled.svg",
+            actorType: "personal"
+        },
+        {
+            id: "asleep",
+            label: "ironclaw2e.effect.status.asleep",
+            icon: "icons/svg/sleep.svg",
+            actorType: "personal"
+        },
+        {
+            id: "unconscious",
+            label: "ironclaw2e.effect.status.unconscious",
+            icon: "icons/svg/unconscious.svg",
+            actorType: "personal"
+        },
+        {
+            id: "burdened",
+            label: "ironclaw2e.effect.status.burdened",
+            icon: "systems/ironclaw2e/icons/status/burdened.svg",
+            actorType: "personal"
+        },
+        {
+            id: "over-burdened",
+            label: "ironclaw2e.effect.status.over-burdened",
+            icon: "systems/ironclaw2e/icons/status/overburdened.svg",
+            actorType: "personal"
+        },
+        {
+            id: "cannotmove",
+            label: "ironclaw2e.effect.status.cannotmove",
+            icon: "systems/ironclaw2e/icons/status/cantmove.svg",
+            actorType: "personal"
+        },
+        {
+            id: "fatigued",
+            label: "ironclaw2e.effect.status.fatigued",
+            icon: "icons/svg/degen.svg",
+            actorType: "personal"
+        },
+        {
+            id: "sick",
+            label: "ironclaw2e.effect.status.sick",
+            icon: "icons/svg/poison.svg",
+            actorType: "personal"
+        },
+        {
+            id: "confused",
+            label: "ironclaw2e.effect.status.confused",
+            icon: "icons/svg/stoned.svg",
+            actorType: "personal"
+        },
+        {
+            id: "terrified",
+            label: "ironclaw2e.effect.status.terrified",
+            icon: "systems/ironclaw2e/icons/status/terrified.svg",
+            actorType: "personal"
+        },
+        {
+            id: "enraged",
+            label: "ironclaw2e.effect.status.enraged",
+            icon: "icons/svg/explosion.svg",
+            actorType: "personal"
+        },
+        {
+            id: "knockdown",
+            label: "ironclaw2e.effect.status.knockdown",
+            icon: "icons/svg/falling.svg",
+            actorType: "personal"
+        },
+        {
+            id: "berserk",
+            label: "ironclaw2e.effect.status.berserk",
+            icon: "icons/svg/hazard.svg",
+            actorType: "personal"
+        },
+        {
+            id: "blinded",
+            label: "ironclaw2e.effect.status.blinded",
+            icon: "icons/svg/blind.svg",
+            actorType: "personal"
+        },
+        {
+            id: "silenced",
+            label: "ironclaw2e.effect.status.silenced",
+            icon: "icons/svg/silenced.svg",
+            actorType: "personal"
+        },
+        {
+            id: "fulltilt",
+            label: "ironclaw2e.effect.status.fulltilt",
+            icon: "icons/svg/up.svg",
+            actorType: "personal"
+        },
+        {
+            id: "slowed",
+            label: "ironclaw2e.effect.status.slowed",
+            icon: "icons/svg/down.svg",
+            actorType: "personal"
+        },
+        {
+            id: "immobilized",
+            label: "ironclaw2e.effect.status.immobilized",
+            icon: "icons/svg/mountain.svg",
+            actorType: "personal"
+        },
+        {
+            id: "half-buried",
+            label: "ironclaw2e.effect.status.half-buried",
+            icon: "icons/svg/ruins.svg",
+            actorType: "personal"
+        },
+        {
+            id: "onfire",
+            label: "ironclaw2e.effect.status.onfire",
+            icon: "icons/svg/fire.svg",
+            actorType: "personal"
+        },
+        {
+            id: "mesmerized",
+            label: "ironclaw2e.effect.status.mesmerized",
+            icon: "icons/svg/sun.svg",
+            actorType: "personal"
+        },
+        {
+            id: "marionette",
+            label: "ironclaw2e.effect.status.marionette",
+            icon: "icons/svg/paralysis.svg",
+            actorType: "personal"
+        },
+        {
+            id: "controlled",
+            label: "ironclaw2e.effect.status.controlled",
+            icon: "icons/svg/statue.svg",
+            actorType: "personal"
+        },
+        {
+            id: "allfours",
+            label: "ironclaw2e.effect.status.allfours",
+            icon: "icons/svg/pawprint.svg",
+            actorType: "personal"
+        },
+        {
+            id: "flying",
+            label: "ironclaw2e.effect.status.flying",
+            icon: "icons/svg/wing.svg",
+            actorType: "personal"
+        },
+        {
+            id: "grappled",
+            label: "ironclaw2e.effect.status.grappled",
+            icon: "icons/svg/net.svg",
+            actorType: "personal"
+        },
+        {
+            id: "hiding",
+            label: "ironclaw2e.effect.status.hiding",
+            icon: "icons/svg/mystery-man.svg",
+            actorType: "personal"
+        },
+        {
+            id: "temporaryward",
+            label: "ironclaw2e.effect.status.temporaryward",
+            icon: "icons/svg/aura.svg",
+            actorType: "personal"
+        },
 
-    // Miscs
-    {
-        id: "misc-a",
-        label: "ironclaw2e.effect.status.misc-a",
-        icon: "icons/svg/eye.svg"
-    },
-    {
-        id: "misc-b",
-        label: "ironclaw2e.effect.status.misc-b",
-        icon: "icons/svg/clockwork.svg"
-    },
-    {
-        id: "misc-c",
-        label: "ironclaw2e.effect.status.misc-c",
-        icon: "icons/svg/castle.svg"
-    },
-    {
-        id: "misc-d",
-        label: "ironclaw2e.effect.status.misc-d",
-        icon: "icons/svg/book.svg"
-    },
-    {
-        id: "misc-e",
-        label: "ironclaw2e.effect.status.misc-e",
-        icon: "icons/svg/coins.svg"
-    },
-    {
-        id: "misc-f",
-        label: "ironclaw2e.effect.status.misc-f",
-        icon: "icons/svg/sound.svg"
-    },
-    {
-        id: "misc-g",
-        label: "ironclaw2e.effect.status.misc-g",
-        icon: "icons/svg/tower-flag.svg"
-    }];
+        // Vehicle-scale
+        {
+            id: "holed",
+            label: "ironclaw2e.effect.status.holed",
+            icon: "systems/ironclaw2e/icons/status/holed.svg",
+            actorType: "vehicle"
+        },
+        {
+            id: "swamped",
+            label: "ironclaw2e.effect.status.swamped",
+            icon: "systems/ironclaw2e/icons/status/swamped.svg",
+            actorType: "vehicle"
+        },
+        {
+            id: "sinking",
+            label: "ironclaw2e.effect.status.sinking",
+            icon: "systems/ironclaw2e/icons/status/sinking.svg",
+            actorType: "vehicle"
+        },
+        {
+            id: "capsized",
+            label: "ironclaw2e.effect.status.capsized",
+            icon: "systems/ironclaw2e/icons/status/capsized.svg",
+            actorType: "vehicle"
+        },
+        {
+            id: "burning",
+            label: "ironclaw2e.effect.status.burning",
+            icon: "systems/ironclaw2e/icons/status/burning.svg",
+            actorType: "vehicle"
+        },
+        {
+            id: "listing",
+            label: "ironclaw2e.effect.status.listing",
+            icon: "systems/ironclaw2e/icons/status/listing.svg",
+            actorType: "vehicle"
+        },
+        {
+            id: "run-aground",
+            label: "ironclaw2e.effect.status.run-aground",
+            icon: "systems/ironclaw2e/icons/status/run-aground.svg",
+            actorType: "vehicle"
+        },
+        {
+            id: "haunted",
+            label: "ironclaw2e.effect.status.haunted",
+            icon: "systems/ironclaw2e/icons/status/haunted.svg",
+            actorType: "vehicle"
+        },
+
+        // Miscs
+        {
+            id: "misc-a",
+            label: "ironclaw2e.effect.status.misc-a",
+            icon: "icons/svg/eye.svg"
+        },
+        {
+            id: "misc-b",
+            label: "ironclaw2e.effect.status.misc-b",
+            icon: "icons/svg/clockwork.svg"
+        },
+        {
+            id: "misc-c",
+            label: "ironclaw2e.effect.status.misc-c",
+            icon: "icons/svg/castle.svg"
+        },
+        {
+            id: "misc-d",
+            label: "ironclaw2e.effect.status.misc-d",
+            icon: "icons/svg/book.svg"
+        },
+        {
+            id: "misc-e",
+            label: "ironclaw2e.effect.status.misc-e",
+            icon: "icons/svg/coins.svg"
+        },
+        {
+            id: "misc-f",
+            label: "ironclaw2e.effect.status.misc-f",
+            icon: "icons/svg/sound.svg"
+        },
+        {
+            id: "misc-g",
+            label: "ironclaw2e.effect.status.misc-g",
+            icon: "icons/svg/tower-flag.svg"
+        }];
 
     /**
      * Map of standard names and their proper names in the CUB-provided condition-map
@@ -630,13 +719,18 @@ export class CommonConditionInfo {
     ["confused", "Confused"], ["terrified", "Terrified"], ["enraged", "Enraged"], ["knockdown", "Knockdown"], ["berserk", "Berserk"],
     ["blinded", "Blinded"], ["silenced", "Silenced"], ["fulltilt", "Full Tilt"], ["slowed", "Slowed"], ["immobilized", "Immobilized"],
     ["half-buried", "Half-Buried"], ["onfire", "On Fire"], ["mesmerized", "Mesmerized"], ["marionette", "Marionette"], ["controlled", "Controlled"],
-    ["allfours", "All Fours"], ["flying", "Flying"], ["grappled", "Grappled"], ["hiding", "Hiding"], ["temporaryward", "Temporary Ward"], ["misc-a", "Misc-A"], ["misc-b", "Misc-B"], ["misc-c", "Misc-C"],
+    ["allfours", "All Fours"], ["flying", "Flying"], ["grappled", "Grappled"], ["hiding", "Hiding"], ["temporaryward", "Temporary Ward"],
+
+    ["holed", "Holed"], ["swamped", "Swamped"], ["sinking", "Sinking"], ["capsized", "Capsized  "], ["burning", "Burning"], ["listing", "Listing"],
+    ["run-aground", "Run-Aground"], ["haunted", "Haunted"],
+
+    ["misc-a", "Misc-A"], ["misc-b", "Misc-B"], ["misc-c", "Misc-C"],
     ["misc-d", "Misc-D"], ["misc-e", "Misc-E"], ["misc-f", "Misc-F"], ["misc-g", "Misc-G"]]);
 
     /**
      * Set of conditions that should have a quota field
      */
-    static quotaList = new Set(["injured", "sick", "temporaryward"]);
+    static quotaList = new Set(["injured", "sick", "temporaryward", "burning"]);
 
     /**
      * Set of CUB condition names that should have a quota field
@@ -646,7 +740,7 @@ export class CommonConditionInfo {
     /**
      * Set of conditions that mark the combatant as defeated
      */
-    static defeatedList = new Set(["dying", "dead", "overkilled", "asleep", "unconscious"]);
+    static defeatedList = new Set(["dying", "dead", "overkilled", "asleep", "unconscious", "wrecked"]);
 
     /**
      * Set of CUB conditions that mark the combatant as defeated
