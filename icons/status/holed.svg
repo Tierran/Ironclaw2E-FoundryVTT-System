@@ -7,27 +7,18 @@
    id="svg6"
    sodipodi:docname="holed.svg"
    inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xml:space="preserve"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <metadata
-     id="metadata12">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <defs
-     id="defs10" />
-  <sodipodi:namedview
+   xmlns:dc="http://purl.org/dc/elements/1.1/"><metadata
+     id="metadata12"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+     id="defs10" /><sodipodi:namedview
      pagecolor="#afafaf"
      bordercolor="#666666"
      borderopacity="1"
@@ -40,9 +31,9 @@
      inkscape:window-height="996"
      id="namedview8"
      showgrid="true"
-     inkscape:zoom="0.69605825"
-     inkscape:cx="510.01479"
-     inkscape:cy="203.28758"
+     inkscape:zoom="0.98437502"
+     inkscape:cx="310.3492"
+     inkscape:cy="275.80952"
      inkscape:current-layer="svg6"
      inkscape:document-rotation="0"
      inkscape:snap-to-guides="true"
@@ -55,31 +46,27 @@
      inkscape:deskcolor="#afafaf"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
-     inkscape:window-maximized="1">
-    <inkscape:grid
+     inkscape:window-maximized="1"><inkscape:grid
        type="xygrid"
        id="grid831"
        empspacing="8"
        spacingy="4"
-       spacingx="4" />
-  </sodipodi:namedview>
-  <path
+       spacingx="4" /></sodipodi:namedview><path
      id="path333"
      style="fill:#ffffff"
-     d="M 32 288 L 44 320 L 72 384 L 168 448 L 264 480 L 360 448 L 456 384 L 480 320 L 480 288 L 32 288 z M 212 292 A 32 32 0 0 1 244 324 A 32 32 0 0 1 212 356 A 32 32 0 0 1 180 324 A 32 32 0 0 1 212 292 z M 428 296 A 32 32 0 0 1 460 328 A 32 32 0 0 1 428 360 A 32 32 0 0 1 396 328 A 32 32 0 0 1 428 296 z M 316 304 A 32 32 0 0 1 348 336 A 32 32 0 0 1 316 368 A 32 32 0 0 1 284 336 A 32 32 0 0 1 316 304 z M 104 308 A 32 32 0 0 1 136 340 A 32 32 0 0 1 104 372 A 32 32 0 0 1 72 340 A 32 32 0 0 1 104 308 z M 236 384 A 32 32 0 0 1 268 416 A 32 32 0 0 1 236 448 A 32 32 0 0 1 204 416 A 32 32 0 0 1 236 384 z M 336 384 A 32 32 0 0 1 368 416 A 32 32 0 0 1 336 448 A 32 32 0 0 1 304 416 A 32 32 0 0 1 336 384 z " />
-  <path
+     d="M 32 288 L 44 320 L 72 384 L 168 448 L 264 480 L 360 448 L 456 384 L 480 320 L 480 288 L 32 288 z M 212 292 A 32 32 0 0 1 244 324 A 32 32 0 0 1 212 356 A 32 32 0 0 1 180 324 A 32 32 0 0 1 212 292 z M 428 296 A 32 32 0 0 1 460 328 A 32 32 0 0 1 428 360 A 32 32 0 0 1 396 328 A 32 32 0 0 1 428 296 z M 316 304 A 32 32 0 0 1 348 336 A 32 32 0 0 1 316 368 A 32 32 0 0 1 284 336 A 32 32 0 0 1 316 304 z M 104 308 A 32 32 0 0 1 136 340 A 32 32 0 0 1 104 372 A 32 32 0 0 1 72 340 A 32 32 0 0 1 104 308 z M 236 384 A 32 32 0 0 1 268 416 A 32 32 0 0 1 236 448 A 32 32 0 0 1 204 416 A 32 32 0 0 1 236 384 z M 336 384 A 32 32 0 0 1 368 416 A 32 32 0 0 1 336 448 A 32 32 0 0 1 304 416 A 32 32 0 0 1 336 384 z " /><path
      style="fill:#ffffff"
      d="m 252,284 h -16 v -36 h 16 z"
      id="path389"
-     sodipodi:nodetypes="ccccc" />
-  <path
+     sodipodi:nodetypes="ccccc" /><path
      style="fill:#ffffff"
      d="M 384,52 H 96 C 47.19411,122.78268 59.876547,185.02017 96,244 H 384 C 344.79754,182.80804 337.98315,119.29614 384,52 Z"
      id="path555"
-     sodipodi:nodetypes="ccccc" />
-  <path
+     sodipodi:nodetypes="ccccc" /><path
      style="fill:#ffffff"
      d="M 252,48 H 236 V 24 h 16 z"
      id="path389-9"
-     sodipodi:nodetypes="ccccc" />
-</svg>
+     sodipodi:nodetypes="ccccc" /><path
+     style="fill:#0000ff;stroke-width:0.475986"
+     d="m 4e-5,396 32,14.5 32,-14.5 32,14.5 32,-14.5 32,14.5 32,-14.5 32,14.5 32,-14.5 32,14.5 32,-14.5 32,14.5 L 384,396 416,410.5 448,396 480,410.5 512,396 V 512 H 4e-5 Z"
+     id="path232" /></svg>
