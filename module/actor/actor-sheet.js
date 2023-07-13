@@ -616,7 +616,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         if (dataset.roll) {
             selected = splitStatString(dataset.roll);
         } else {
-            selected = CommonSystemInfo.soakBaseStats;
+            selected = this.actor.getActorScaleType() === "vehicle" ? CommonSystemInfo.soakVehicleStats : CommonSystemInfo.soakBaseStats;
         }
 
         this.actor.popupSoakRoll({ "prechecked": selected, "tnyes": true, "tnnum": 3 }, { directroll });
@@ -952,7 +952,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         if (basecondition?.referenceId) {
             chatdata = { speaker: speak, content: `${basecondition.referenceId}` };
         } else {
-            let localname = game.i18n.localize(basecondition.label);
+            let localname = basecondition.name;
             chatdata = {
                 speaker: speak,
                 content: `<div class="ironclaw2e"><div class="flexrow flex-left"><img class="item-image" style="max-width:20px" src="${basecondition.icon}" title="${localname}" width="20" height="20"/>

@@ -177,7 +177,7 @@ function ironclawRollActorChat(inputstring, speaker, direct = false) {
     const piecedinput = inputstring.split(";"); // Split the input to pieces
     const specialcheck = makeCompareReady(piecedinput[0]); // Special checks to allow certain special quick rolls
     if (specialcheck === "soak") {
-        actor.popupSoakRoll({ "prechecked": CommonSystemInfo.soakBaseStats, "tnyes": true, "tnnum": 3, "extradice": (piecedinput.length > 1 ? piecedinput[1] : "") }, { "directroll": direct });
+        actor.popupSoakRoll({ "prechecked": actor.getActorScaleType() === "vehicle" ? CommonSystemInfo.soakVehicleStats : CommonSystemInfo.soakBaseStats, "tnyes": true, "tnnum": 3, "extradice": (piecedinput.length > 1 ? piecedinput[1] : "") }, { "directroll": direct });
         return;
     }
     if (specialcheck === "dodging" || specialcheck === "defense" || specialcheck === "defence") {

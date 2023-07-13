@@ -316,7 +316,10 @@ export class Ironclaw2EActor extends Actor {
                         { directroll, otheritem });
                     resistSoak = resist?.tnData?.successes; // Only successes count
                 }
-                soakActor.popupSoakRoll({ "prechecked": CommonSystemInfo.soakBaseStats, "otherlabel": game.i18n.format("ironclaw2e.dialog.dicePool.soakAgainst", { "name": otheritem.name }) },
+                soakActor.popupSoakRoll({
+                    "prechecked": soakActor.getActorScaleType() === "vehicle" ? CommonSystemInfo.soakVehicleStats : CommonSystemInfo.soakBaseStats,
+                    "otherlabel": game.i18n.format("ironclaw2e.dialog.dicePool.soakAgainst", { "name": otheritem.name })
+                },
                     { directroll, "checkweak": (holderset.weak == "true"), "checkarmor": (holderset.penetrating == "false") }, wait);
             } else {
                 if (!directroll)
