@@ -106,13 +106,9 @@ export function TokenHUDStatusMonkeyPatch() {
 
         // Get statuses which are active for the token actor
         const actor = token.actor || null;
-        const statuses = actor ? actor.effects.reduce((obj, e) => {
-            const id = e.getFlag("core", "statusId");
-            if (id) {
-                obj[id] = {
-                    id: id,
-                    overlay: !!e.getFlag("core", "overlay")
-                };
+        const statuses = actor ? actor.effects.reduce((obj, effect) => {
+            for (const id of effect.statuses) {
+                obj[id] = { id, overlay: !!effect.getFlag("core", "overlay") };
             }
             return obj;
         }, {}) : {};
@@ -133,9 +129,11 @@ export function TokenHUDStatusMonkeyPatch() {
             const status = statuses[e.id] || {};
             const isActive = !!status.id || doc.effects.includes(src);
             const isOverlay = !!status.overlay || doc.overlayEffect === src;
+            /** @deprecated since v11 */
+            const label = e.name ?? e.label;
             obj[src] = {
                 id: e.id ?? "",
-                title: e.label ? game.i18n.localize(e.label) : null,
+                title: label ? game.i18n.localize(label) : null,
                 src,
                 isActive,
                 isOverlay,

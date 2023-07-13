@@ -16,18 +16,17 @@ export class Ironclaw2EToken extends Token {
     _onApplyStatusEffect(statusId, active) {
         switch (statusId) {
             case CONFIG.specialStatusEffects.INVISIBLE:
-                canvas.perception.update({ refreshVision: true, refreshLighting: true }, true);
-                this.mesh.refresh();
+                canvas.perception.update({ refreshVision: true });
+                this.renderFlags.set({ refreshMesh: true, refreshShader: true });
                 break;
             case CONFIG.specialStatusEffects.BLIND:
-                this.updateVisionSource();
-                canvas.perception.update({ initializeVision: true }, true);
+                canvas.perception.update({ initializeVision: true });
                 break;
             case CONFIG.specialStatusEffects.MUTE:
-                this.updateVisionSource();
-                canvas.perception.update({ initializeVision: true }, true);
+                canvas.perception.update({ initializeVision: true });
                 break;
         }
+        Hooks.callAll("applyTokenStatusEffect", this, statusId, active);
     }
 
     /**
@@ -44,16 +43,19 @@ export class Ironclaw2EToken extends Token {
         const sourceId = this.sourceId;
         const d = canvas.dimensions;
         const isVisionSource = this._isVisionSource();
+        let initializeVision = false;
         const blindEffect = this.document.sight.visionMode === "echolocation" ?
             this.document.hasStatusEffect(CONFIG.specialStatusEffects.MUTE) : this.document.hasStatusEffect(CONFIG.specialStatusEffects.BLIND);
 
         // Initialize vision source
         if (isVisionSource && !deleted) {
+            const previousVisionMode = this.vision.visionMode;
             this.vision.initialize({
                 x: origin.x,
                 y: origin.y,
+                elevation: this.document.elevation,
                 radius: Math.clamped(this.sightRange, 0, d.maxR),
-                externalRadius: Math.max(this.w, this.h) / 2,
+                externalRadius: this.externalRadius,
                 angle: this.document.sight.angle,
                 contrast: this.document.sight.contrast,
                 saturation: this.document.sight.saturation,
@@ -62,18 +64,29 @@ export class Ironclaw2EToken extends Token {
                 rotation: this.document.rotation,
                 visionMode: this.document.sight.visionMode,
                 color: Color.from(this.document.sight.color),
-                isPreview: !!this._original,
-                blinded: blindEffect
+                blinded: blindEffect,
+                preview: this.isPreview
             });
+            if (!canvas.effects.visionSources.has(sourceId) || (this.vision.visionMode !== previousVisionMode)) {
+                initializeVision = true;
+            }
             canvas.effects.visionSources.set(sourceId, this.vision);
         }
 
-        // Remove vision source
-        else canvas.effects.visionSources.delete(sourceId);
+        // Remove vision source and deactivate current vision mode
+        else deleted = canvas.effects.visionSources.delete(sourceId);
+        if (deleted) {
+            initializeVision = true;
+            this.vision.visionMode?.deactivate(this.vision);
+        }
 
         // Schedule a perception update
         if (!defer && (isVisionSource || deleted)) {
-            canvas.perception.update({ refreshVision: true }, true);
+            canvas.perception.update({
+                refreshLighting: true,
+                refreshVision: true,
+                initializeVision
+            });
         }
     }
 }
