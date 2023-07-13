@@ -3,12 +3,12 @@
   "id": "ironclaw2e",
   "title": "Ironclaw Second Edition",
   "description": "Ironclaw Second Edition system for FoundryVTT.",
-  "version": "0.7.3",
-  "minimumCoreVersion": "10",
+  "version": "0.8.0",
+  "minimumCoreVersion": "11",
   "compatibility": {
-    "minimum": "10.279",
-    "verified": 10,
-    "maximum": 10
+    "minimum": "11.305",
+    "verified": 11,
+    "maximum": 11
   },
   "templateVersion": 31,
   "authors": [
@@ -26,7 +26,7 @@
       "system": "ironclaw2e",
       "label": "Pre-Packaged Macros",
       "module": "ironclaw2e",
-      "path": "packs/customizable-rolls.db",
+      "path": "packs/customizable-rolls",
       "type": "Macro"
     },
     {
@@ -34,7 +34,7 @@
       "system": "ironclaw2e",
       "label": "System Info",
       "module": "ironclaw2e",
-      "path": "packs/system-info.db",
+      "path": "packs/system-info",
       "type": "JournalEntry"
     },
     {
@@ -42,7 +42,7 @@
       "system": "ironclaw2e",
       "label": "Status Effects",
       "module": "ironclaw2e",
-      "path": "packs/status-effects.db",
+      "path": "packs/status-effects",
       "type": "JournalEntry"
     }
   ],
