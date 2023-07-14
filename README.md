@@ -43,8 +43,6 @@ The system has support for the Drag Ruler module ( https://github.com/manuelVo/f
 
 The system has support for the Chat Commands module ( https://github.com/League-of-Foundry-Developers/Chat-Commands-Lib ). If present and active, the system will register different commands that can be called directly from chat. The commands listed and explained below.  
 
-The system has support for the Combat Utility Belt module ( https://github.com/death-save/combat-utility-belt ), specifically for its Enhanced Conditions system. If present and active, the system will try to use the EC for conditions. Proper setup explained below.  
-
 The system has an importable calendar configuration for Simple Calendar ( https://github.com/vigoren/foundryvtt-simple-calendar ). Found under "systems/ironclaw2e/calendars", the configuration sets the names correctly and the start date to the spring of the corebook current year. Moon phases are based on actual historical data of year 881 and not in-universe lore.  
 
 For area-of-effect templates, the system can use Enhanced Terrain Layer's elevation setting ( https://github.com/ironmonk88/enhanced-terrain-layer ). This can have an effect when fliers or terrain elevation matters, as otherwise templates are assumed to be on the same level as the attacking token.  
@@ -253,15 +251,6 @@ The "Condition auto-removal" system will remove conditions from actors based on 
 *Guarding* will be removed at the start of the actor's next turn.  
 *Temporary Ward* will be removed when it takes enough damage to be reduced to zero.  
 
-</details>
-
-With Combat Utility Belt's Enhanced Conditions set up, the system has somewhat better support for multiple defeat conditions and built-in chat linking for the Compendium information entries. However, the Enhanced Conditions option will also show all possible status effects in the token HUD menu, instead of filtering only applicable ones for the actor type.  
-<details>
-<summary>Step by step explanation of setup</summary>
-
-Step by step explanation to setting Combat Utility Belt's Enhanced Conditions up: There's a button in the right side menu under Game Settings (right-most tab) for "CUBPuter". It opens an 80's command line looking window. Click the  ":gear: Settings" and disable the "Use oldschool CRT styling" to get rid of that. Then click "Select gadget", choose Enhanced Conditions and enable it. You should not need to enable "Remove Default Status Effects".  
-
-Then next, under CUPButer should be "Condition Lab". If you open it, it should have all the appropriate conditions already, as CUB should recognize the Ironclaw2E system and use its appropriate condition map. But in case there are any issues, here's how you use the condition map provided with the system: Open the Condition Lab and select "Import" from top right. It should open a file picker, navigate inside FoundryVTT's data folder, and get the *ironclaw2e.json* condition map from Ironclaw2E's *systems/ironclaw2e/condition-maps* directory. (Default in Windows: %localappdata%/FoundryVTT/Data/systems/ironclaw2e/condition-maps )
 </details>
 
 ## License
