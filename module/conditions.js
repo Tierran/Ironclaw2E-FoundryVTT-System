@@ -808,8 +808,8 @@ export class CommonConditionInfo {
      * @param {string} condition
      * @returns {string}
      */
-    static getConditionLabel(condition) {
-        return this.conditionList.find(cond => cond.id == condition)?.label;
+    static getConditionTransId(condition) {
+        return this.conditionList.find(cond => cond.id == condition)?.name;
     }
 
     /**

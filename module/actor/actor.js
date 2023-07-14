@@ -669,7 +669,7 @@ export class Ironclaw2EActor extends Actor {
             "hideCondition": returnedstatus.hideCondition,
             "hasVehicleDamage": returnedstatus.vehicleDamage != undefined,
             "reportedCondition": reportedStatus
-                ? game.i18n.localize(CommonConditionInfo.getConditionLabel(reportedStatus))
+                ? game.i18n.localize(CommonConditionInfo.getConditionTransId(reportedStatus))
                 : game.i18n.localize("ironclaw2e.chatInfo.damageEffect.chatNothing"),
             "vehicleText": `ironclaw2e.chatInfo.damageEffectVehicle.${returnedstatus.vehicleDamage}`,
             "wardChanged": returnedstatus.wardDamage > 0,
@@ -3076,11 +3076,11 @@ export class Ironclaw2EActor extends Actor {
 
         if (hasConditionsIronclaw("hurt", this)) {
             addeddamage++;
-            addedconditions = game.i18n.localize(CommonConditionInfo.getConditionLabel("hurt"));
+            addedconditions = game.i18n.localize(CommonConditionInfo.getConditionTransId("hurt"));
         }
         if (hasConditionsIronclaw("injured", this)) {
             addeddamage++;
-            addedconditions += (addedconditions ? ", " : "") + game.i18n.localize(CommonConditionInfo.getConditionLabel("injured"));
+            addedconditions += (addedconditions ? ", " : "") + game.i18n.localize(CommonConditionInfo.getConditionTransId("injured"));
         }
         const confirmSend = game.settings.get("ironclaw2e", "defaultSendDamage");
         const ward = getTargetConditionQuota("temporaryward", this);
