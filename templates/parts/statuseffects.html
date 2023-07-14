@@ -17,8 +17,8 @@
         </li>
         {{#each actor.effects as |effect id|}}
         <li class="item effect flexrow" data-effect-id="{{effect._id}}">
-            <div class="item-image"><img src="{{effect.icon}}" title="{{effect.label}}" width="24" height="24" /></div>
-            <h4 class="item-name double-clickable roll-double-info-cond">{{effect.label}}</h4>
+            <div class="item-image"><img src="{{effect.icon}}" title="{{effect.name}}" width="24" height="24" /></div>
+            <h4 class="item-name double-clickable roll-double-info-cond">{{effect.name}}</h4>
             {{#if (conditionCheck effect "onfire")}}
             <div class="item-controls-small flexrow">
                 <a class="rollable roll-onfire" title="{{localize "ironclaw2e.sheets.actor.applyFireLight"}}"><img src="icons/svg/fire.svg" width="24" height="24" /></a>

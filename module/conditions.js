@@ -350,7 +350,7 @@ export async function setTargetConditionQuota(condition, value) {
 export function getConditionSelectObject() {
     let condMap = new Map();
     for (let fig of CommonConditionInfo.conditionList) {
-        condMap[fig.id] = fig.label;
+        condMap[fig.id] = fig.name;
     }
     return condMap;
 }
@@ -379,7 +379,7 @@ function prepareEffects(effects) {
 
     for (let effect of effects) {
         const createData = duplicate(effect);
-        createData.name = game.i18n.localize(effect.label);
+        createData.name = game.i18n.localize(effect.name);
         createData.statuses = [effect.id];
         delete createData.id;
         effectDatas.push(createData);
@@ -402,223 +402,223 @@ export class CommonConditionInfo {
         // Personal-scale
         {
             id: "focused",
-            label: "ironclaw2e.effect.status.focused",
+            name: "ironclaw2e.effect.status.focused",
             icon: "icons/svg/upgrade.svg",
             actorType: "personal"
         },
         {
             id: "aiming",
-            label: "ironclaw2e.effect.status.aiming",
+            name: "ironclaw2e.effect.status.aiming",
             icon: "icons/svg/target.svg",
             actorType: "personal"
         },
         {
             id: "guarding",
-            label: "ironclaw2e.effect.status.guarding",
+            name: "ironclaw2e.effect.status.guarding",
             icon: "icons/svg/shield.svg",
             actorType: "personal"
         },
         {
             id: "reeling",
-            label: "ironclaw2e.effect.status.reeling",
+            name: "ironclaw2e.effect.status.reeling",
             icon: "icons/svg/daze.svg",
             actorType: "personal"
         },
         {
             id: "hurt",
-            label: "ironclaw2e.effect.status.hurt",
+            name: "ironclaw2e.effect.status.hurt",
             icon: "icons/svg/acid.svg",
             actorType: "personal"
         },
         {
             id: "afraid",
-            label: "ironclaw2e.effect.status.afraid",
+            name: "ironclaw2e.effect.status.afraid",
             icon: "systems/ironclaw2e/icons/status/afraid.svg",
             actorType: "personal"
         },
         {
             id: "injured",
-            label: "ironclaw2e.effect.status.injured",
+            name: "ironclaw2e.effect.status.injured",
             icon: "icons/svg/blood.svg",
             actorType: "personal"
         },
         {
             id: "dying",
-            label: "ironclaw2e.effect.status.dying",
+            name: "ironclaw2e.effect.status.dying",
             icon: "systems/ironclaw2e/icons/status/dying.svg",
             actorType: "personal"
         },
         {
             id: "dead",
-            label: "ironclaw2e.effect.status.dead",
+            name: "ironclaw2e.effect.status.dead",
             icon: "icons/svg/skull.svg"
             // Intentionally missing actorType
         },
         {
             id: "overkilled",
-            label: "ironclaw2e.effect.status.overkilled",
+            name: "ironclaw2e.effect.status.overkilled",
             icon: "systems/ironclaw2e/icons/status/overkilled.svg",
             actorType: "personal"
         },
         {
             id: "asleep",
-            label: "ironclaw2e.effect.status.asleep",
+            name: "ironclaw2e.effect.status.asleep",
             icon: "icons/svg/sleep.svg",
             actorType: "personal"
         },
         {
             id: "unconscious",
-            label: "ironclaw2e.effect.status.unconscious",
+            name: "ironclaw2e.effect.status.unconscious",
             icon: "icons/svg/unconscious.svg",
             actorType: "personal"
         },
         {
             id: "burdened",
-            label: "ironclaw2e.effect.status.burdened",
+            name: "ironclaw2e.effect.status.burdened",
             icon: "systems/ironclaw2e/icons/status/burdened.svg",
             actorType: "personal"
         },
         {
             id: "over-burdened",
-            label: "ironclaw2e.effect.status.over-burdened",
+            name: "ironclaw2e.effect.status.over-burdened",
             icon: "systems/ironclaw2e/icons/status/overburdened.svg",
             actorType: "personal"
         },
         {
             id: "cannotmove",
-            label: "ironclaw2e.effect.status.cannotmove",
+            name: "ironclaw2e.effect.status.cannotmove",
             icon: "systems/ironclaw2e/icons/status/cantmove.svg",
             actorType: "personal"
         },
         {
             id: "fatigued",
-            label: "ironclaw2e.effect.status.fatigued",
+            name: "ironclaw2e.effect.status.fatigued",
             icon: "icons/svg/degen.svg",
             actorType: "personal"
         },
         {
             id: "sick",
-            label: "ironclaw2e.effect.status.sick",
+            name: "ironclaw2e.effect.status.sick",
             icon: "icons/svg/poison.svg",
             actorType: "personal"
         },
         {
             id: "confused",
-            label: "ironclaw2e.effect.status.confused",
+            name: "ironclaw2e.effect.status.confused",
             icon: "icons/svg/stoned.svg",
             actorType: "personal"
         },
         {
             id: "terrified",
-            label: "ironclaw2e.effect.status.terrified",
+            name: "ironclaw2e.effect.status.terrified",
             icon: "systems/ironclaw2e/icons/status/terrified.svg",
             actorType: "personal"
         },
         {
             id: "enraged",
-            label: "ironclaw2e.effect.status.enraged",
+            name: "ironclaw2e.effect.status.enraged",
             icon: "icons/svg/explosion.svg",
             actorType: "personal"
         },
         {
             id: "knockdown",
-            label: "ironclaw2e.effect.status.knockdown",
+            name: "ironclaw2e.effect.status.knockdown",
             icon: "icons/svg/falling.svg",
             actorType: "personal"
         },
         {
             id: "berserk",
-            label: "ironclaw2e.effect.status.berserk",
+            name: "ironclaw2e.effect.status.berserk",
             icon: "icons/svg/hazard.svg",
             actorType: "personal"
         },
         {
             id: "blinded",
-            label: "ironclaw2e.effect.status.blinded",
+            name: "ironclaw2e.effect.status.blinded",
             icon: "icons/svg/blind.svg",
             actorType: "personal"
         },
         {
             id: "silenced",
-            label: "ironclaw2e.effect.status.silenced",
+            name: "ironclaw2e.effect.status.silenced",
             icon: "icons/svg/silenced.svg",
             actorType: "personal"
         },
         {
             id: "fulltilt",
-            label: "ironclaw2e.effect.status.fulltilt",
+            name: "ironclaw2e.effect.status.fulltilt",
             icon: "icons/svg/up.svg",
             actorType: "personal"
         },
         {
             id: "slowed",
-            label: "ironclaw2e.effect.status.slowed",
+            name: "ironclaw2e.effect.status.slowed",
             icon: "icons/svg/down.svg",
             actorType: "personal"
         },
         {
             id: "immobilized",
-            label: "ironclaw2e.effect.status.immobilized",
+            name: "ironclaw2e.effect.status.immobilized",
             icon: "icons/svg/mountain.svg",
             actorType: "personal"
         },
         {
             id: "half-buried",
-            label: "ironclaw2e.effect.status.half-buried",
+            name: "ironclaw2e.effect.status.half-buried",
             icon: "icons/svg/ruins.svg",
             actorType: "personal"
         },
         {
             id: "onfire",
-            label: "ironclaw2e.effect.status.onfire",
+            name: "ironclaw2e.effect.status.onfire",
             icon: "icons/svg/fire.svg",
             actorType: "personal"
         },
         {
             id: "mesmerized",
-            label: "ironclaw2e.effect.status.mesmerized",
+            name: "ironclaw2e.effect.status.mesmerized",
             icon: "icons/svg/sun.svg",
             actorType: "personal"
         },
         {
             id: "marionette",
-            label: "ironclaw2e.effect.status.marionette",
+            name: "ironclaw2e.effect.status.marionette",
             icon: "icons/svg/paralysis.svg",
             actorType: "personal"
         },
         {
             id: "controlled",
-            label: "ironclaw2e.effect.status.controlled",
+            name: "ironclaw2e.effect.status.controlled",
             icon: "icons/svg/statue.svg",
             actorType: "personal"
         },
         {
             id: "allfours",
-            label: "ironclaw2e.effect.status.allfours",
+            name: "ironclaw2e.effect.status.allfours",
             icon: "icons/svg/pawprint.svg",
             actorType: "personal"
         },
         {
             id: "flying",
-            label: "ironclaw2e.effect.status.flying",
+            name: "ironclaw2e.effect.status.flying",
             icon: "icons/svg/wing.svg",
             actorType: "personal"
         },
         {
             id: "grappled",
-            label: "ironclaw2e.effect.status.grappled",
+            name: "ironclaw2e.effect.status.grappled",
             icon: "icons/svg/net.svg",
             actorType: "personal"
         },
         {
             id: "hiding",
-            label: "ironclaw2e.effect.status.hiding",
+            name: "ironclaw2e.effect.status.hiding",
             icon: "icons/svg/mystery-man.svg",
             actorType: "personal"
         },
         {
             id: "temporaryward",
-            label: "ironclaw2e.effect.status.temporaryward",
+            name: "ironclaw2e.effect.status.temporaryward",
             icon: "icons/svg/aura.svg",
             actorType: "personal"
         },
@@ -626,49 +626,49 @@ export class CommonConditionInfo {
         // Vehicle-scale
         {
             id: "holed",
-            label: "ironclaw2e.effect.status.holed",
+            name: "ironclaw2e.effect.status.holed",
             icon: "systems/ironclaw2e/icons/status/holed.svg",
             actorType: "vehicle"
         },
         {
             id: "swamped",
-            label: "ironclaw2e.effect.status.swamped",
+            name: "ironclaw2e.effect.status.swamped",
             icon: "systems/ironclaw2e/icons/status/swamped.svg",
             actorType: "vehicle"
         },
         {
             id: "sinking",
-            label: "ironclaw2e.effect.status.sinking",
+            name: "ironclaw2e.effect.status.sinking",
             icon: "systems/ironclaw2e/icons/status/sinking.svg",
             actorType: "vehicle"
         },
         {
             id: "listing",
-            label: "ironclaw2e.effect.status.listing",
+            name: "ironclaw2e.effect.status.listing",
             icon: "systems/ironclaw2e/icons/status/listing.svg",
             actorType: "vehicle"
         },
         {
             id: "capsized",
-            label: "ironclaw2e.effect.status.capsized",
+            name: "ironclaw2e.effect.status.capsized",
             icon: "systems/ironclaw2e/icons/status/capsized.svg",
             actorType: "vehicle"
         },
         {
             id: "burning",
-            label: "ironclaw2e.effect.status.burning",
+            name: "ironclaw2e.effect.status.burning",
             icon: "systems/ironclaw2e/icons/status/burning.svg",
             actorType: "vehicle"
         },
         {
             id: "run-aground",
-            label: "ironclaw2e.effect.status.run-aground",
+            name: "ironclaw2e.effect.status.run-aground",
             icon: "systems/ironclaw2e/icons/status/run-aground.svg",
             actorType: "vehicle"
         },
         {
             id: "haunted",
-            label: "ironclaw2e.effect.status.haunted",
+            name: "ironclaw2e.effect.status.haunted",
             icon: "systems/ironclaw2e/icons/status/haunted.svg",
             actorType: "vehicle"
         },
@@ -676,37 +676,37 @@ export class CommonConditionInfo {
         // Miscs
         {
             id: "misc-a",
-            label: "ironclaw2e.effect.status.misc-a",
+            name: "ironclaw2e.effect.status.misc-a",
             icon: "icons/svg/eye.svg"
         },
         {
             id: "misc-b",
-            label: "ironclaw2e.effect.status.misc-b",
+            name: "ironclaw2e.effect.status.misc-b",
             icon: "icons/svg/clockwork.svg"
         },
         {
             id: "misc-c",
-            label: "ironclaw2e.effect.status.misc-c",
+            name: "ironclaw2e.effect.status.misc-c",
             icon: "icons/svg/castle.svg"
         },
         {
             id: "misc-d",
-            label: "ironclaw2e.effect.status.misc-d",
+            name: "ironclaw2e.effect.status.misc-d",
             icon: "icons/svg/book.svg"
         },
         {
             id: "misc-e",
-            label: "ironclaw2e.effect.status.misc-e",
+            name: "ironclaw2e.effect.status.misc-e",
             icon: "icons/svg/coins.svg"
         },
         {
             id: "misc-f",
-            label: "ironclaw2e.effect.status.misc-f",
+            name: "ironclaw2e.effect.status.misc-f",
             icon: "icons/svg/sound.svg"
         },
         {
             id: "misc-g",
-            label: "ironclaw2e.effect.status.misc-g",
+            name: "ironclaw2e.effect.status.misc-g",
             icon: "icons/svg/tower-flag.svg"
         }];
 
@@ -818,6 +818,6 @@ export class CommonConditionInfo {
      * @returns {string}
      */
     static getConditionTranslated(condition) {
-        return game.i18n.localize(this.conditionList.find(cond => cond.id == condition)?.label);
+        return game.i18n.localize(this.conditionList.find(cond => cond.id == condition)?.name);
     }
 }
