@@ -1,3 +1,7 @@
+### 0.8.0 Brand-new condition release
+ - Updated to Foundry V11
+ - Made conditions use the new handling system, and removed CUB from the system
+
 ### 0.7.3 Threatening release
  - The system can now track whether and how weapons and actors are threatening others in combat
  - Vehicles now have their own damage tracking for vehicle-level damage
