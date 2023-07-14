@@ -111,7 +111,7 @@ Hooks.on("targetToken", function (user, token, targeted) {
     // Only show the text when the token is targeted, not un-targeted
     if (targeted) {
         const foundToken = findActorToken(getSpeakerActor());
-        showScrollingDistanceText(foundToken, token);
+        showScrollingDistanceText(foundToken, token.document ? token.document : token);
     }
 });
 
@@ -129,10 +129,11 @@ Hooks.on("updateToken", function (token, data, options, userid) {
     const foundToken = findActorToken(getSpeakerActor());
     if (isTargeted || token.id === foundToken.id) {
         if (isTargeted) {
-            showScrollingDistanceText(foundToken, token);
+            showScrollingDistanceText(foundToken, token.document ? token.document : token);
         } else {
-            for (let target of game.user.targets)
-                showScrollingDistanceText(foundToken, target);
+            for (let target of game.user.targets) {
+                showScrollingDistanceText(foundToken, target.document ? target.document : target);
+            }
         }
     }
 });
@@ -305,8 +306,8 @@ async function onRequestRollTrigger(event) {
 
 /**
  * Function that pops up a text showing the distance band to the targettoken from the origintoken
- * @param {Token | TokenDocument} origintoken
- * @param {Token | TokenDocument} targettoken
+ * @param {TokenDocument} origintoken
+ * @param {TokenDocument} targettoken
  */
 export function showScrollingDistanceText(origintoken, targettoken) {
     // Only show the text if the origin and target exist, and are not the same token
@@ -319,11 +320,12 @@ export function showScrollingDistanceText(origintoken, targettoken) {
                 usecombatrules = true;
         }
         // Double-check that everything that should exist does
-        if (targettoken.hud && targettoken && origintoken) {
+        if (targettoken && origintoken) {
+            const center = targettoken.object.center;
             const distance = getDistanceBetweenPositions(origintoken, targettoken, { usecombatrules });
             const range = getRangeBandFromDistance(distance, true);
             const text = game.i18n.format("ironclaw2e.ui.rangeScrolling", { "range": range });
-            targettoken.hud.createScrollingText(text, { anchor: CONST.TEXT_ANCHOR_POINTS.BOTTOM, direction: CONST.TEXT_ANCHOR_POINTS.TOP, duration, jitter: 0.1, fontSize: 28, stroke: 0x000000, strokeThickness: 4 });
+            canvas.interface.createScrollingText(center, text, { anchor: CONST.TEXT_ANCHOR_POINTS.BOTTOM, direction: CONST.TEXT_ANCHOR_POINTS.TOP, duration, jitter: 0.1, fontSize: 28, stroke: 0x000000, strokeThickness: 4 });
         }
     }
 }
