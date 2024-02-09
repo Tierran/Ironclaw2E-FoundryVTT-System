@@ -2227,7 +2227,7 @@ export class Ironclaw2EActor extends Actor {
      * @param {boolean} nonlethal
      * @returns {Promise<DamageReturn>}
      */
-    async applyDamage(damage, attack = true, knockout = false, nonlethal = false, applyWard = true) {
+    async applyDamage(damage, { attack = true, knockout = false, nonlethal = false, applyWard = true, extraBurning = 0 } = {}) {
         const conditionRemoval = game.settings.get("ironclaw2e", "autoConditionRemoval");
         let wardDamage = -1;
         let wardDestroyed = false;
@@ -2276,6 +2276,7 @@ export class Ironclaw2EActor extends Actor {
             // If the attack is marked as non-lethal, prevent outright immediate death
             if (damage >= 5 && !nonlethal) adding.push("dead");
             if (damage >= 6 && !nonlethal) adding.push("overkilled");
+            
             await this.addEffect(adding);
             return { actor: this, "conditionArray": adding, wardDamage, wardDestroyed };
         }
@@ -2284,7 +2285,7 @@ export class Ironclaw2EActor extends Actor {
             let adding = [];
             let hideCondition = true;
             let vehicleDamage = "";
-            let burnCount = 0;
+            let burnCount = extraBurning;
 
             if (damage >= 10) {
                 adding.push("dead");
@@ -2303,7 +2304,7 @@ export class Ironclaw2EActor extends Actor {
                         vehicleDamage = "standardDamage";
                         break;
                     case 3:
-                        adding.push("burning"); burnCount = 3;
+                        burnCount += 3;
                         hideCondition = false;
                         vehicleDamage = "standardFire";
                         break;
@@ -2314,7 +2315,7 @@ export class Ironclaw2EActor extends Actor {
                         vehicleDamage = "superiorDamage";
                         break;
                     case 6:
-                        adding.push("burning"); burnCount = 6;
+                        burnCount += 6;
                         hideCondition = false;
                         vehicleDamage = "superiorFire";
                         break;
@@ -2332,6 +2333,8 @@ export class Ironclaw2EActor extends Actor {
                         vehicleDamage = "holedDamage";
                         break;
                 }
+
+                if (burnCount > 0) adding.push("burning");
 
                 await this.addEffect(adding);
                 if (!attack && burnCount > 0 && existingBurn > 0) {
@@ -3138,7 +3141,7 @@ export class Ironclaw2EActor extends Actor {
                     let SEND = html.find('[name=send]')[0];
                     let send = SEND.checked;
 
-                    let statuses = await this.applyDamage(damage + (hurt ? addeddamage : 0) - soak, attack, knockout, allow, ward);
+                    let statuses = await this.applyDamage(damage + (hurt ? addeddamage : 0) - soak, { attack, knockout, "nonlethal": allow, "applyWard": ward });
                     let conditions = splitStatString(conds);
                     if (conditions.length > 0) await this.addEffect(conditions);
 

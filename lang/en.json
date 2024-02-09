@@ -301,6 +301,15 @@
   "ironclaw2e.info.vehicleDraft.deep": "Deep",
   "ironclaw2e.info.vehicleDraft.veryDeep": "Very Deep",
 
+  "ironclaw2e.info.vehicleStationCondition.fullyStaffed": "Fully Staffed",
+  "ironclaw2e.info.vehicleStationCondition.understaffed": "Understaffed",
+  "ironclaw2e.info.vehicleStationCondition.abandoned": "Abandoned",
+  "ironclaw2e.info.vehicleStationCondition.intact": "Intact",
+  "ironclaw2e.info.vehicleStationCondition.damaged": "Damaged",
+  "ironclaw2e.info.vehicleStationCondition.destroyed": "Destroyed",
+  "ironclaw2e.info.vehicleStationCondition.fine": "Fine",
+  "ironclaw2e.info.vehicleStationCondition.afraid": "Afraid",
+
 
   "ironclaw2e.keyConfig.quickRollModifier": "Quick Roll Modifier Key",
   "ironclaw2e.keyConfig.quickRollModifierHint": "If pressed, the system will attempt to skip dialog popups and instead make dice rolls or execute funtions immediately with default values, where available.",

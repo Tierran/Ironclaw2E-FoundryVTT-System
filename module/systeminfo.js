@@ -182,7 +182,7 @@ export class CommonSystemInfo {
      * The roll result possibilities for vehicle stations
      */
     static vehicleRollResults = {
-
+        "genericResult": "Generic Result", "attackResult": "Attack Result",
     };
 
     /**
@@ -256,6 +256,29 @@ export class CommonSystemInfo {
         "shallow": "ironclaw2e.info.vehicleDraft.shallow",
         "deep": "ironclaw2e.info.vehicleDraft.deep",
         "veryDeep": "ironclaw2e.info.vehicleDraft.veryDeep"
+    };
+    /**
+     * Vehicle station staffing levels
+     */
+    static vehicleStationStaffing = {
+        "fullyStaffed": "ironclaw2e.info.vehicleStationCondition.fullyStaffed",
+        "understaffed": "ironclaw2e.info.vehicleStationCondition.understaffed",
+        "abandoned": "ironclaw2e.info.vehicleStationCondition.abandoned"
+    };
+    /**
+     * Vehicle station physical conditions
+     */
+    static vehicleStationStaffing = {
+        "intact": "ironclaw2e.info.vehicleStationCondition.intact",
+        "damaged": "ironclaw2e.info.vehicleStationCondition.damaged",
+        "destroyed": "ironclaw2e.info.vehicleStationCondition.destroyed"
+    };
+    /**
+     * Vehicle station mental conditions
+     */
+    static vehicleStationStaffing = {
+        "fine": "ironclaw2e.info.vehicleStationCondition.fine",
+        "afraid": "ironclaw2e.info.vehicleStationCondition.afraid"
     };
 }
 
@@ -404,9 +427,48 @@ export function getGiftSpecialOptionPrototype(option) {
 
 
 /* -------------------------------------------- */
-/*  Vehicle Station Roll Results                */
+/*  Vehicle Station Objects                     */
 /* -------------------------------------------- */
 
+/**
+ * Get an empty base prototype for a given type of vehicle station result object
+ * @param {string} option The station result type to get
+ * @returns {object} The default empty station result
+ */
+export function getVehicleStationResultPrototype(option) {
+    let special = { "resultMode": option };
+
+    switch (option) {
+        case ("genericResult"):
+            return mergeObject(special, {
+                "successNumber": "", "nameField": "", "effectField": "", "specialCaseField": "", "needsToBeFine": false
+            });
+            break;
+
+        case ("attackResult"):
+            return mergeObject(special, {
+                "successNumber": "", "nameField": "", "effectField": "", "specialCaseField": "", "needsToBeFine": false,
+                "permitsDefense": true, "rangeField": "long", "damageNumber": 0, "burningNumber": 0
+            });
+            break;
+
+        default:
+            console.error("Attempted to get a non-existing station result prototype! " + option);
+            return null;
+            break;
+    }
+}
+
+/**
+ * Get an empty base prototype for a vehicle station special load for attacks
+ * @returns {object} The default empty special load
+ */
+export function getVehicleSpecialLoadPrototype() {
+    return {
+        "nameField": "", "effectField": "",
+        "damageNumber": 0, "burningNumber": 0, "weakDamage": false
+    };
+}
 
 
 /* -------------------------------------------- */

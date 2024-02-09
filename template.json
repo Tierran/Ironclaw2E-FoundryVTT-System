@@ -367,10 +367,19 @@
       "stationCaptain": "",
       "stationDicePool": "",
       "stationDiceGifts": "",
-      "stationRollResults": []
+      "stationStatuses": {
+        "staffing": "fullyStaffed",
+        "physical": "intact",
+        "mental": "fine"
+      },
+      "stationRollResults": [],
+      "strictResults": false,
+      "hasSpecialLoads": false,
+      "stationSpecialLoads": []
     },
     "vehicleModification": {
       "templates": [ "base", "vehicleItem" ],
+      "destroyed": false,
       "effect": ""
     }
   }
