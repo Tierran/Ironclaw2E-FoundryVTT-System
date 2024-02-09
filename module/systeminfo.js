@@ -268,7 +268,7 @@ export class CommonSystemInfo {
     /**
      * Vehicle station physical conditions
      */
-    static vehicleStationStaffing = {
+    static vehicleStationPhysical = {
         "intact": "ironclaw2e.info.vehicleStationCondition.intact",
         "damaged": "ironclaw2e.info.vehicleStationCondition.damaged",
         "destroyed": "ironclaw2e.info.vehicleStationCondition.destroyed"
@@ -276,7 +276,7 @@ export class CommonSystemInfo {
     /**
      * Vehicle station mental conditions
      */
-    static vehicleStationStaffing = {
+    static vehicleStationMental = {
         "fine": "ironclaw2e.info.vehicleStationCondition.fine",
         "afraid": "ironclaw2e.info.vehicleStationCondition.afraid"
     };

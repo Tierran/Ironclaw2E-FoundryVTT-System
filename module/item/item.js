@@ -1783,6 +1783,8 @@ export class Ironclaw2EItem extends Item {
             "otherdice": finalSetup.otherdice, "othernames": finalSetup.othernames, "otherbools": finalSetup.otherbools, "otherinputs": finalSetup.otherinputs, "limitvalue": usedLimit,
             "extradice": extradice, "otherlabel": game.i18n.format("ironclaw2e.chatInfo.vehicleStation.rollLabel", { "station": item.name, "user": getMacroSpeaker(requestActor).alias })
         }, { "directroll": directroll });
+
+        // TODO: Add the post-roll function to process successes and post a chat message where the player can select which station roll result to use
     }
 
     /* -------------------------------------------- */

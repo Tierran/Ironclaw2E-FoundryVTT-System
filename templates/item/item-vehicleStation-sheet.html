@@ -6,6 +6,7 @@
             <div class="flexrow flex-group-center flex-tight">
                 <label class="header-label">Station Captain:</label>
                 <input type="text" name="system.stationCaptain" value="{{system.stationCaptain}}" data-dtype="String" />
+                {{#if system.stationCaptain}}<div class="flex-group-center flex-tight rollable reset-captain" style="max-width:5%;" title="Reset Captain"><i class="fas fa-eraser fa-xl"></i></div>{{/if}}
             </div>
             {{#if system.resolvedCaptain}}
             <div class="flexrow flex-group-center flex-tight">
@@ -32,6 +33,29 @@
 
         {{!-- Attributes Tab --}}
         <div class="tab attributes" data-group="primary" data-tab="attributes">
+            <div class="flexcol">
+                <h2 class="normal-label flex-center">Station Status</h2>
+                <div class="flexrow flex-group-center flex-tight">
+                    <label class="normal-label">Staffing:</label>
+                    <div></div>
+                    <label class="normal-label">Physical:</label>
+                    <div></div>
+                    <label class="normal-label">Mental:</label>
+                </div>
+                <div class="flexrow flex-group-center flex-tight">
+                    <select name="system.stationStatuses.staffing" data-dtype="String">
+                        {{selectOptions selectables.staffingConditions selected=system.stationStatuses.staffing localize=true}}
+                    </select>
+                    <div></div>
+                    <select name="system.stationStatuses.physical" data-dtype="String">
+                        {{selectOptions selectables.physicalConditions selected=system.stationStatuses.physical localize=true}}
+                    </select>
+                    <div></div>
+                    <select name="system.stationStatuses.mental" data-dtype="String">
+                        {{selectOptions selectables.mentalConditions selected=system.stationStatuses.mental localize=true}}
+                    </select>
+                </div>
+            </div>
             <div class="flexcol">
                 <h2 class="normal-label flex-center">Station Roll</h2>
                 <div class="flexrow flex-group-center flex-tight">
@@ -63,9 +87,6 @@
                 {{else}}
                 <span class="normal-label flexrow flex-group-center">Has Modification Costs <input type="checkbox" name="system.hasCosts" {{checked system.hasCosts}} data-dtype="Boolean" /></span>
                 {{/if}}
-            </div>
-            <div class="flexcol">
-
             </div>
         </div>
 

@@ -8,6 +8,7 @@ import { Ironclaw2EItemSheet } from "./item/item-sheet.js";
 import { TokenExtenderOptions, TokenHUDStatusMonkeyPatch } from "./token/token-hud-extender.js"
 import { Ironclaw2EToken } from "./token/token.js"
 
+import { Ironclaw2EChatMessage } from "./chatmessage.js";
 import { requestRollPopup } from "./utilitiesmacros.js";
 import { ironclawDragRulerIntegration } from "./utilitiesmacros.js";
 
@@ -58,6 +59,7 @@ Hooks.once('init', function () {
         Ironclaw2ECombat,
         Ironclaw2ECombatant,
         Ironclaw2ECombatTracker,
+        Ironclaw2EChatMessage,
         // Sheet classes
         Ironclaw2EActorSheet,
         Ironclaw2EItemSheet,
@@ -94,6 +96,8 @@ Hooks.once('init', function () {
     CONFIG.Token.objectClass = Ironclaw2EToken;
     CONFIG.ui.combat = Ironclaw2ECombatTracker;
     CONFIG.statusEffects = CommonConditionInfo.conditionList;
+    CONFIG.ChatMessage.documentClass = Ironclaw2EChatMessage;
+    CONFIG.ChatMessage.template = "systems/ironclaw2e/templates/chat/chat-message.html";
 
     // Foundry VTT core monkey-patches
     TokenHUDStatusMonkeyPatch();

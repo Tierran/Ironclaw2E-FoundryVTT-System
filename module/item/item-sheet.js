@@ -70,7 +70,8 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         let selectables = {
             "handedness": CommonSystemInfo.equipHandedness, "range": CommonSystemInfo.rangeBands, "giftOptions": CommonSystemInfo.giftSpecialOptions, "giftStates": CommonSystemInfo.giftWorksStates,
             "currencyOptions": currencyOptions, "giftBonusUses": CommonSystemInfo.giftBonusAutoUseOptions, "giftRerolls": getSpecialSettingsRerolls(), "systemConditions": getConditionSelectObject(),
-            "lightAnimations": CONFIG.Canvas.lightAnimations, "extraSenses": CommonSystemInfo.extraSenses, "threatRanges": getThreatRanges()
+            "lightAnimations": CONFIG.Canvas.lightAnimations, "extraSenses": CommonSystemInfo.extraSenses, "threatRanges": getThreatRanges(), "staffingConditions": CommonSystemInfo.vehicleStationStaffing,
+            "physicalConditions": CommonSystemInfo.vehicleStationPhysical, "mentalConditions": CommonSystemInfo.vehicleStationMental
         };
         sheetData.selectables = selectables;
         sheetData.showDirectoryOptions = game.user.isGM && !this.item.parent;
