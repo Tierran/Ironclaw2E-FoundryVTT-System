@@ -736,7 +736,7 @@ export class Ironclaw2EActor extends Actor {
         }
         // Whereas if the actor is a vehicle, do the necessary async processing here
         else if (actor.type === "vehicle") {
-            // TODO             const dropped = fromUuidSync(data.uuid);
+
         }
     }
 
@@ -1375,6 +1375,7 @@ export class Ironclaw2EActor extends Actor {
         let totalweight = 0;
         let totalappointments = 0;
         let totalcrewneeded = 0;
+        let stationsWithAppointmentCosts = false;
         for (let item of gear) {
             if (item.system.totalWeight && !isNaN(item.system.totalWeight)) {
                 totalweight += item.system.totalWeight; // Check that the value exists and is not a NaN, then add it to totaled weight
@@ -1384,6 +1385,7 @@ export class Ironclaw2EActor extends Actor {
             }
             if (item.system.hasCosts !== false && item.system.costs?.appointmentCost && !isNaN(item.system.costs.appointmentCost)) {
                 totalappointments += item.system.costs.appointmentCost; // Check that the value exists and is not a NaN, then add it to used appointments
+                if (item.type === 'vehicleStation' && item.system.costs.appointmentCost > 0) stationsWithAppointmentCosts = true;
             }
         }
 
@@ -1397,6 +1399,7 @@ export class Ironclaw2EActor extends Actor {
         system.totalWeightTons = totalweight / 160;
         system.maxCrewUsed = totalcrewneeded;
         system.totalAppointments = totalappointments;
+        system.stationsWithAppointmentCosts = stationsWithAppointmentCosts;
     }
 
 

@@ -23,6 +23,14 @@ export function registerHandlebarsHelpers() {
         return val === compare;
     });
 
+    Handlebars.registerHelper('greaterInclusive', function (val, compare) {
+        return val >= compare;
+    });
+
+    Handlebars.registerHelper('lessExclusive', function (val, compare) {
+        return val < compare;
+    });
+
     Handlebars.registerHelper('equalOrNothing', function (str, compare) {
         return str.length == 0 || makeCompareReady(str) == compare;
     });
@@ -78,7 +86,8 @@ async function loadHandleBarTemplates() {
         "systems/ironclaw2e/templates/parts/combatgear.html",
         "systems/ironclaw2e/templates/parts/items.html",
         "systems/ironclaw2e/templates/parts/vehicledetails.html",
-        "systems/ironclaw2e/templates/parts/vehiclestations.html"
+        "systems/ironclaw2e/templates/parts/vehiclestations.html",
+        "systems/ironclaw2e/templates/parts/vehiclestats.html"
     ];
     return loadTemplates(templatePaths);
 }

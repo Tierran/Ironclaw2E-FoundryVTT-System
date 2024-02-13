@@ -2,7 +2,10 @@
     <h2 class="normal-label flex-center">{{localize "ironclaw2e.sheets.actor.vehicleDetails.header"}}</h2>
     <div class="resource flexrow flex-group-center">
         <label class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicleDetails.defaultCrewMember"}}</label>
-        <input type="text" name="system.defaultCrewMember" value="{{system.defaultCrewMember}}" data-dtype="String" />
+        <div class="flexrow">
+            <input type="text" name="system.defaultCrewMember" value="{{system.defaultCrewMember}}" data-dtype="String" />
+            {{#if system.defaultCrewMember}}<div class="flex-group-center flex-tight rollable vehicle-crew-reset" style="max-width:10%;" title="{{localize "ironclaw2e.sheets.actor.vehicleDetails.resetCrew"}}"><i class="fas fa-eraser fa-lg"></i></div>{{/if}}
+        </div>
         {{#if system.resolvedDefaultCrew}}<span class="normal-label">{{localize "ironclaw2e.sheets.actor.vehicleDetails.crewResolved" actor=system.resolvedDefaultCrew.name}}</span>{{/if}}
     </div>
     <div class="trait flexrow flex-group-center">
@@ -21,6 +24,8 @@
         <li class="item flexrow item-header">
             <div class="item-image"></div>
             <div class="item-name">{{localize "ironclaw2e.sheets.actor.vehicleDetails.vehicleModifications"}}</div>
+            <div class="item-name">{{localize "ironclaw2e.sheets.actor.vehicle.appointments"}}</div>
+            <div class="item-controls-small"></div>
             <div class="item-controls">
                 <a class="item-control item-create" title="{{localize "ironclaw2e.sheets.actor.gear.createItem"}}" data-type="vehicleModification"><i class="fas fa-plus"></i> {{localize "ironclaw2e.sheets.actor.vehicleDetails.addModification"}}</a>
             </div>
@@ -29,8 +34,10 @@
         <li class="item flexrow" data-item-id="{{item._id}}">
             <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
             <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
-            <div class="item-controls-small">
-
+            <div class="item-name">
+                {{#if (greaterInclusive item.system.costs.appointmentCost 1)}}<i class="fas fa-circle"></i>{{/if}}
+                {{#if (greaterInclusive item.system.costs.appointmentCost 2)}}<i class="fas fa-circle"></i>{{/if}}
+                {{#if (greaterInclusive item.system.costs.appointmentCost 3)}}<i class="fas fa-circle"></i>{{/if}}
             </div>
             <div class="item-controls">
                 <a class="rollable roll-item-change" title="{{#if item.system.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.hideBattleTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.showBattleTooltip" name=item.name}}{{/if}}" data-stat="showInBattleStats" data-item="{{item._id}}"><span>{{#if item.system.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.shown"}}{{else}}{{localize "ironclaw2e.sheets.actor.hidden"}}{{/if}}</span></a>
@@ -42,4 +49,31 @@
         </li>
         {{/each}}
     </ol>
+
+    {{#if system.stationsWithAppointmentCosts}}
+    <ol class="items-list">
+        <li class="item flexrow item-header">
+            <div class="item-image"></div>
+            <div class="item-name">{{localize "ironclaw2e.sheets.actor.vehicleDetails.vehicleStationsWithCosts"}}</div>
+            <div class="item-name">{{localize "ironclaw2e.sheets.actor.vehicle.appointments"}}</div>
+            <div class="item-controls"></div>
+            <div class="item-controls-small"></div>
+        </li>
+        {{#each actor.stations as |item id|}}
+        {{#if item.system.hasCosts}}
+        <li class="item flexrow" data-item-id="{{item._id}}">
+            <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+            <h4 class="item-name">{{item.name}}</h4>
+            <div class="item-name">
+                {{#if (greaterInclusive item.system.costs.appointmentCost 1)}}<i class="fas fa-circle"></i>{{/if}}
+                {{#if (greaterInclusive item.system.costs.appointmentCost 2)}}<i class="fas fa-circle"></i>{{/if}}
+                {{#if (greaterInclusive item.system.costs.appointmentCost 3)}}<i class="fas fa-circle"></i>{{/if}}
+            </div>
+            <div class="item-controls"></div>
+            <div class="item-controls-small"></div>
+        </li>
+        {{/if}}
+        {{/each}}
+    </ol>
+    {{/if}}
 </div>

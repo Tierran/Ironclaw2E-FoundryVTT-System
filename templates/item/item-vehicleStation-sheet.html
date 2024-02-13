@@ -6,7 +6,7 @@
             <div class="flexrow flex-group-center flex-tight">
                 <label class="header-label">Station Captain:</label>
                 <input type="text" name="system.stationCaptain" value="{{system.stationCaptain}}" data-dtype="String" />
-                {{#if system.stationCaptain}}<div class="flex-group-center flex-tight rollable reset-captain" style="max-width:5%;" title="Reset Captain"><i class="fas fa-eraser fa-xl"></i></div>{{/if}}
+                {{#if system.stationCaptain}}<div class="flex-group-center flex-tight rollable vehicle-captain-reset" style="max-width:5%;" title="Reset Captain"><i class="fas fa-eraser fa-xl"></i></div>{{/if}}
             </div>
             {{#if system.resolvedCaptain}}
             <div class="flexrow flex-group-center flex-tight">
@@ -20,6 +20,7 @@
     <nav class="sheet-tabs tabs" data-group="primary">
         <a class="item" data-tab="description">Description</a>
         <a class="item" data-tab="attributes">Attributes</a>
+        <a class="item" data-tab="rollresults">Station Results</a>
         {{#if showDirectoryOptions}}<a class="item" data-tab="special">Advanced Settings</a>{{/if}}
     </nav>
 
@@ -87,6 +88,35 @@
                 {{else}}
                 <span class="normal-label flexrow flex-group-center">Has Modification Costs <input type="checkbox" name="system.hasCosts" {{checked system.hasCosts}} data-dtype="Boolean" /></span>
                 {{/if}}
+            </div>
+        </div>
+
+        {{!-- Roll Results Tab --}}
+        <div class="tab special" data-group="primary" data-tab="rollresults">
+            <div class="flexcol">
+                <ol class="items-list">
+                    <li class="item flexrow item-header">
+                        <div class="item-name">Successes</div>
+                        <div class="item-name">Name</div>
+                        <div class="item-controls">
+                            <a class="item-control create-station-result" title="{{localize "ironclaw2e.sheets.actor.gear.createItem"}}" data-type="vehicleStation"><i class="fas fa-plus"></i> Add Result</a>
+                        </div>
+                    </li>
+                    {{#each item.stationRollResults as |result id|}}
+                    <li class="item flexrow" data-result-index="{{@index}}">
+                        <h4 class="item-name double-clickable double-send-station-result">{{result.successNumber}}</h4>
+                        <div class="item-name double-clickable double-send-station-result">
+                            <label class="normal-text">{{result.nameField}}</label>
+                        </div>
+                        <div class="item-controls-small">
+                            {{#unless @first}}<a class="item-control backward-station-result" title="Move Up"><i class="fas fa-arrow-up"></i></a>{{/unless}}
+                            {{#unless @last}}<a class="item-control forward-station-result" title="Move Down"><i class="fas fa-arrow-down"></i></a>{{/unless}}
+                            <a class="item-control edit-station-result" title="{{localize "ironclaw2e.sheets.actor.gear.editItem"}}"><i class="fas fa-edit"></i></a>
+                            <a class="item-control delete-station-result" title="{{localize "ironclaw2e.sheets.actor.gear.deleteItem"}}"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ol>
             </div>
         </div>
 

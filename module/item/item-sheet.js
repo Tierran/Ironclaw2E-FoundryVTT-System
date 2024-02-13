@@ -110,6 +110,8 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         html.find('.special-change-field').change(this._onChangeSpecialField.bind(this));
         html.find('.special-change-number').change(this._onChangeSpecialNumber.bind(this));
         html.find('.special-change-boolean').change(this._onChangeSpecialBoolean.bind(this));
+
+        html.find('.vehicle-captain-reset').change(this._onVehicleCaptainReset.bind(this));
     }
 
     /** @inheritdoc */
@@ -316,5 +318,15 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         const name = event.currentTarget.name;
         const value = event.currentTarget.checked;
         this.item.giftChangeSpecialField(index, name, value);
+    }
+
+    /**
+     * Handle reseting the vehicle's default crew
+     * @param {Event} event   The originating change event
+     * @private
+     */
+    _onVehicleCaptainReset(event) {
+        event.preventDefault();
+        //TODO
     }
 }

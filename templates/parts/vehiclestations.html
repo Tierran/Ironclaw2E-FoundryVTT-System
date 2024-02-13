@@ -12,10 +12,11 @@
         <li class="item flexrow" data-item-id="{{item._id}}">
             <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
             <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
-            <div class="item-controls-small">
-                {{#if item.system.canUse}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.stationTooltip" name=item.name}}" data-roll="station" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/station-command.svg" width="24" height="24" /></a>{{/if}}
+            <div class="item-controls">
+                
             </div>
             <div class="item-controls">
+                {{#if item.system.canUse}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.stationTooltip" name=item.name}}" data-roll="station" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/station-command.svg" width="24" height="24" /></a>{{/if}}
                 <a class="rollable roll-item-change" title="{{#if item.system.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.hideBattleTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.showBattleTooltip" name=item.name}}{{/if}}" data-stat="showInBattleStats" data-item="{{item._id}}"><span>{{#if item.system.showInBattleStats}}{{localize "ironclaw2e.sheets.actor.shown"}}{{else}}{{localize "ironclaw2e.sheets.actor.hidden"}}{{/if}}</span></a>
             </div>
             <div class="item-controls-small">

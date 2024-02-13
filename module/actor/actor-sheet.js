@@ -301,6 +301,8 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         html.find('.roll-career-dice-change').change(this._onChangeExtraCareerDice.bind(this));
         html.find('.roll-effects-quota-change').change(this._onConditionQuotaChange.bind(this));
 
+        html.find('.vehicle-crew-reset').change(this._onVehicleCrewReset.bind(this));
+
         // Drag events for macros.
         if (this.actor.isOwner) {
             let handler = ev => this._onDragStart(ev);
@@ -979,5 +981,15 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             const inputvalue = (isNaN(element.value) ? parseInt(element.value) : element.value);
             setTargetConditionQuota(effect, inputvalue);
         }
+    }
+
+    /**
+     * Handle reseting the vehicle's default crew
+     * @param {Event} event   The originating change event
+     * @private
+     */
+    _onVehicleCrewReset(event) {
+        event.preventDefault();
+        // TODO
     }
 }

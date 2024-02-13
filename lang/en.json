@@ -756,11 +756,13 @@
   "ironclaw2e.sheets.actor.vehicleDetails.title": "Details",
   "ironclaw2e.sheets.actor.vehicleDetails.header": "Vehicle Details",
   "ironclaw2e.sheets.actor.vehicleDetails.defaultCrewMember": "Default Crew Member",
+  "ironclaw2e.sheets.actor.vehicleDetails.resetCrew": "Reset Crew Member",
   "ironclaw2e.sheets.actor.vehicleDetails.crewResolved": "Resolved as: {actor}",
   "ironclaw2e.sheets.actor.vehicleDetails.cargoSpaceUsed": "Cargo Space Used: {weight}/{max} tons",
   "ironclaw2e.sheets.actor.vehicleDetails.appointmentsUsed": "Total Appointments Used: {points}/{max} points",
   "ironclaw2e.sheets.actor.vehicleDetails.maxCrewUsed": "Fully using all stations will need {max} crew, {avail} available",
   "ironclaw2e.sheets.actor.vehicleDetails.vehicleModifications": "Vehicle Modifications",
+  "ironclaw2e.sheets.actor.vehicleDetails.vehicleStationsWithCosts": "Stations with Costs",
   "ironclaw2e.sheets.actor.vehicleDetails.addModification": "Add Modification",
 
 
