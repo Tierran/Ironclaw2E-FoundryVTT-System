@@ -138,13 +138,17 @@ export class Ironclaw2EActor extends Actor {
             if (actor) { // Make sure only the calling user executes the function and that the item actually had an actor assigned
 
                 // Call to remove any extra senses the Gift offered
-                if (item.type === "gift" && item.system.extraSense && item.system.hasPassiveDetection) {
+                if (item.type === "gift" && item.system.extraSense) {
                     let detectionUpdate = new Map();
                     let visionUpdate = null;
-                    const passives = CommonSystemInfo.extraSenses[item.system.extraSenseName].detectionPassives;
-                    for (let mode of passives) { // Remove the passive detections
-                        detectionUpdate.set(mode.id, { "remove": true, "range": mode.range ?? 0, "priority": false });
+                    // Handle passives if they exist
+                    if (item.system.hasPassiveDetection) {
+                        const passives = CommonSystemInfo.extraSenses[item.system.extraSenseName].detectionPassives;
+                        for (let mode of passives) { // Remove the passive detections
+                            detectionUpdate.set(mode.id, { "remove": true, "range": mode.range ?? 0, "priority": false });
+                        }
                     }
+                    // Handle actives if on
                     if (item.system.extraSenseEnabled > 0) {
                         const actives = CommonSystemInfo.extraSenses[item.system.extraSenseName].detectionModes;
                         for (let mode of actives) { // Remove the active detections
