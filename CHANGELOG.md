@@ -1,3 +1,11 @@
+### 0.8.2 Cold Fix Release
+ - Fixed vision modes in V12
+ - Context menu fixed
+
+### 0.8.1 "Hot" Fix Release
+ - Corrections to the system.json to let the system show up in Foundry V12. Thanks @Tierran !
+ - Work-In-Progress vehicle sheets
+
 ### 0.8.0 Brand-new condition release
  - Updated to Foundry V11
  - Made conditions use the new handling system, and removed CUB from the system
