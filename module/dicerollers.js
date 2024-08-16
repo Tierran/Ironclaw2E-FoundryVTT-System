@@ -117,7 +117,7 @@ export class CardinalDiceRoller {
      * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
      */
     static async copyToRollTN(tni, message, sendinchat = true, rerolltype = "", copyoptions = {}) {
-        if (!(message) || message.type !== CONST.CHAT_MESSAGE_TYPES.ROLL) {
+        if (!(message) || !(message.isRoll)) {
             console.warn("Somehow, a message that isn't a roll got into 'copyToRollTN'.");
             console.warn(message);
             return;
@@ -128,9 +128,11 @@ export class CardinalDiceRoller {
             return;
         }
 
-        const usedSpeaker = (copyoptions.replacespeaker ? { "alias": (message.speaker?.alias ?? game.i18n.localize("ironclaw2e.chatInfo.miniRoll")) } : message.speaker);
+        
+		const usedSpeaker = (copyoptions.replacespeaker ? { "alias": (message.speaker?.alias ?? game.i18n.localize("ironclaw2e.chatInfo.miniRoll")) } : message.speaker);
         let intermediary = [...message.getFlag("ironclaw2e", "rollIntermediary")];
         let rollString = CardinalDiceRoller.copyDicePoolResult(message.rolls?.[0]);
+		console.log("Roll String: " + rollString);
         let directCopy = true;
         let rerollFlavor = "";
         if (rerolltype) {
@@ -147,7 +149,7 @@ export class CardinalDiceRoller {
         }
 
         let roll = await new Roll("{" + rollString + "}cs>" + tni).evaluate({ async: true });
-
+		console.log("Roll Total: " + roll.total);
         const successes = roll.total;
         let highest = 0;
         let ties = 0;
@@ -226,7 +228,7 @@ export class CardinalDiceRoller {
      * @returns {Promise<DiceReturn>} Promise of the roll and the message object or data (depending on sendinchat, true | false) in an object
      */
     static async copyToRollHighest(message, sendinchat = true, rerolltype = "", copyoptions = {}) {
-        if (!(message) || message.type !== CONST.CHAT_MESSAGE_TYPES.ROLL) {
+        if (!(message) || !(message.isRoll)) {
             console.warn("Somehow, a message that isn't a roll got into 'copyToRollHighest'.");
             console.warn(message);
             return;
