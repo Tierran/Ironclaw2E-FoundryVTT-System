@@ -39,7 +39,7 @@ import { registerHandlebarsHelpers } from "./handlebars.js";
 
 import { WildcardTemplateConfig, WorldSettingsConfig } from "./config.js";
 import { CoinageSettingsConfig } from "./config.js";
-import { IronclawDetectionModes, IronclawVisionModes, measureDistances } from "./canvas.js";
+import { IronclawDetectionModes, IronclawVisionModes } from "./canvas.js";
 
 import { IronclawActorTour, IronclawConfigTour, IronclawGiftTour, IronclawItemTour } from "./tours.js";
 import { IronclawDocumentationViewer } from "./documentation.js";
@@ -376,16 +376,6 @@ function registerWorldSettings() {
     });
 
     // Range settings
-    game.settings.register("ironclaw2e", "diagonalRule", {
-        name: "ironclaw2e.config.diagonalRule",
-        hint: "ironclaw2e.config.diagonalRuleHint",
-        scope: "world",
-        config: false,
-        default: "EUCL",
-        type: String,
-        choices: CommonSystemInfo.diagonalRules,
-        onChange: rule => canvas.grid.diagonalRule = rule
-    });
     game.settings.register("ironclaw2e", "rangePenalties", {
         name: "ironclaw2e.config.rangePenalties",
         hint: "ironclaw2e.config.rangePenaltiesHint",
@@ -691,9 +681,7 @@ async function registerIronclawTours() {
 /* -------------------------------------------- */
 
 Hooks.on("canvasInit", function () {
-    // Insert system measurement
-    canvas.grid.diagonalRule = game.settings.get("ironclaw2e", "diagonalRule");
-    SquareGrid.prototype.measureDistances = measureDistances;
+    
 });
 
 /* -------------------------------------------- */

@@ -30,11 +30,9 @@ export class WorldSettingsConfig extends FormApplication {
     /** @override */
     async getData(options) {
         const settings = WorldSettingsConfig.getWorldSettingsObject;
-        const diagonals = CommonSystemInfo.diagonalRules;
         const rangeCombatRules = CommonSystemInfo.rangeCombatRules;
         return {
             settings,
-            diagonals,
             rangeCombatRules
         };
     }
@@ -76,7 +74,6 @@ export class WorldSettingsConfig extends FormApplication {
         settings.calculateAttackEffects = game.settings.get("ironclaw2e", "calculateAttackEffects");
         settings.calculateDisplaysFailed = game.settings.get("ironclaw2e", "calculateDisplaysFailed");
         settings.calculateDoesNotDisplay = game.settings.get("ironclaw2e", "calculateDoesNotDisplay");
-        settings.diagonalRule = game.settings.get("ironclaw2e", "diagonalRule");
         settings.rangePenalties = game.settings.get("ironclaw2e", "rangePenalties");
         settings.matchStandardRuler = game.settings.get("ironclaw2e", "matchStandardRuler");
         settings.requireSpecialRangeFound = game.settings.get("ironclaw2e", "requireSpecialRangeFound");

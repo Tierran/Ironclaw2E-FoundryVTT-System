@@ -3,45 +3,6 @@
 /* -------------------------------------------- */
 /* eslint-disable */
 
-/** @override */
-export const measureDistances = function (segments, options = {}) {
-    if (!options.gridSpaces) return BaseGrid.prototype.measureDistances.call(this, segments, options);
-
-    // Track the total number of diagonals
-    let nDiagonal = 0;
-    const rule = this.parent.diagonalRule;
-    const d = canvas.dimensions;
-
-    // Iterate over measured segments
-    return segments.map(s => {
-        let r = s.ray;
-
-        // Determine the total distance traveled
-        let nx = Math.abs(Math.ceil(r.dx / d.size));
-        let ny = Math.abs(Math.ceil(r.dy / d.size));
-
-        // Determine the number of straight and diagonal moves
-        let nd = Math.min(nx, ny);
-        let ns = Math.abs(ny - nx);
-        nDiagonal += nd;
-
-        // Standard Euclidean measurement
-        if (rule === "EUCL" || rule === "RDCL") {
-            return Math.round(Math.hypot(nx, ny) * canvas.scene.grid.distance);
-        }
-
-        // The one-two, or five-ten, compromise
-        else if (rule === "ONTW") {
-            let nd10 = Math.floor(nDiagonal / 2) - Math.floor((nDiagonal - nd) / 2);
-            let spaces = (nd10 * 2) + (nd - nd10) + ns;
-            return spaces * canvas.scene.grid.distance;
-        }
-
-        // Diagonal movement same as orthogonal
-        else return (ns + nd) * canvas.scene.grid.distance;
-    });
-};
-
 /* -------------------------------------------- */
 /*  Vision Modes                                */
 /* -------------------------------------------- */
@@ -103,12 +64,13 @@ export function IronclawVisionModes() {
             label: "ironclaw2e.info.sense.echolocation",
             canvas: {
                 shader: ColorAdjustmentsSamplerShader,
-                uniforms: { enable: true, contrast: 0.8, saturation: -1, exposure: 0.35, brightness: 0.15 }
+                uniforms: { contrast: 0, saturation: -1, exposure: -0.35 }
             },
             lighting: {
                 background: { visibility: VisionMode.LIGHTING_VISIBILITY.DISABLED },
                 illumination: { visibility: VisionMode.LIGHTING_VISIBILITY.DISABLED },
-                coloration: { visibility: VisionMode.LIGHTING_VISIBILITY.DISABLED }
+                coloration: { visibility: VisionMode.LIGHTING_VISIBILITY.DISABLED },
+                darkness: { visibility: VisionMode.LIGHTING_VISIBILITY.DISABLED }
             },
             vision: {
                 darkness: { adaptive: false },
@@ -213,7 +175,8 @@ class WaveOutwardBackgroundVisionShader extends BackgroundVisionShader {
      * @type {string}
      */
     static FRAGMENT_END = `
-  gl_FragColor = finalColor4c * depth;`;
+  gl_FragColor = vec4(finalColor, 1.0) * depth;
+  `;
 
     /** @inheritdoc */
     static fragmentShader = `
@@ -265,6 +228,11 @@ class WaveOutwardBackgroundVisionShader extends BackgroundVisionShader {
  */
 export function IronclawDetectionModes() {
     return {
+        lightPerception: new DetectionModeLightPerception({
+            id: "lightPerception",
+            label: "DETECTION.LightPerception",
+            type: DetectionMode.DETECTION_TYPES.SIGHT
+        }),
         basicSight: new DetectionModeBasicSight({
             id: "basicSight",
             label: "DETECTION.BasicSight",
@@ -279,6 +247,20 @@ export function IronclawDetectionModes() {
             id: "hearUltrasound",
             label: "ironclaw2e.info.detection.hearUltrasound",
             type: DetectionMode.DETECTION_TYPES.SOUND
+        }),
+
+
+        seeAll: new DetectionModeAll({
+            id: "seeAll",
+            label: "DETECTION.SeeAll",
+            type: DetectionMode.DETECTION_TYPES.SIGHT
+        }),
+        senseAll: new DetectionModeAll({
+            id: "senseAll",
+            label: "DETECTION.SenseAll",
+            walls: false,
+            angle: false,
+            type: DetectionMode.DETECTION_TYPES.OTHER
         })
     }
 }
@@ -296,6 +278,7 @@ class DetectionModeEmitUltrasound extends DetectionMode {
 
     /** @override */
     _canDetect(visionSource, target) {
+        // Echolocation can't notice things when muted, or invisible things
         const src = visionSource.object.document;
         if ((src instanceof TokenDocument) && src.hasStatusEffect(CONFIG.specialStatusEffects.MUTE)) return false;
         const tgt = target?.document;
@@ -312,7 +295,8 @@ class DetectionModeHearUltrasound extends DetectionMode {
     static getDetectionFilter() {
         return this._detectionFilter ??= OutlineOverlayFilter.create({
             outlineColor: [0, 0.60, 0.60, 1],
-            wave: true
+            wave: true,
+            knockout: false
         });
     }
 
