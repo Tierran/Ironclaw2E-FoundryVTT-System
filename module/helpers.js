@@ -645,8 +645,9 @@ export function getTokenFromSpeaker({ actor = "", scene = "", token = "" }) {
  * @returns {number} The total distance between origin and target
  */
 export function getDistanceBetweenPositions(origin, target, { measurevertical = true, usecombatrules = false } = {}) {
-    const useRulerMeasurement = game.settings.get("ironclaw2e", "matchStandardRuler"); // Whether to use the same imprecise ruler measurement, rather than the full-precision measurements
-    const diagonalRule = game.settings.get("ironclaw2e", "diagonalRule");
+    const useRulerMeasurement = false; // TODO: Right now, just default to raw Euclidean
+    // game.settings.get("ironclaw2e", "matchStandardRuler"); // Whether to use the same imprecise ruler measurement, rather than the full-precision measurements
+    const diagonalRule = game.settings.get("core", "gridDiagonals"); // What sort of diagonal rules are we dealing with
 
     // Null check for the two positions, this should never happen
     if (!origin || !target) {
@@ -655,34 +656,51 @@ export function getDistanceBetweenPositions(origin, target, { measurevertical = 
         return NaN;
     }
 
-    // Get the distance from the map grid, which gets the pure horizontal distance
-    let distance = canvas.grid.measureDistance(origin, target, { gridSpaces: useRulerMeasurement });
-    // See if the vertical distance can even be measured, or that there is a point to it
-    if (measurevertical && typeof origin.elevation === "number" && typeof target.elevation === "number" && Math.abs(target.elevation - origin.elevation) >= 1) {
-        // Check whether the measurement is asking for raw distance or for the distance according to combat rules
-        if (usecombatrules) {
-            // For combat rules, ignore the height difference from above the target unless the vertical distance is higher than horizontal distance
-            if (origin.elevation > target.elevation) {
-                if (origin.elevation - target.elevation > distance)
-                    distance = (useRulerMeasurement ? Math.round(origin.elevation - target.elevation) : origin.elevation - target.elevation);
-            } else { // But if the origin is below the target, add the vertical distance to the horizontal distance
-                distance += (useRulerMeasurement ? Math.round(target.elevation - origin.elevation) : target.elevation - origin.elevation);
+    let distance = 0;
+    const ray = new Ray(origin, target);
+
+    // If we aren't using the ruler measurements, just calculate the full Euclidean distance
+    if (!useRulerMeasurement) {
+        distance = ray.distance / canvas.grid.size;
+        // See if the vertical distance can even be measured, or that there is a point to it
+        if (measurevertical && typeof origin.elevation === "number" && typeof target.elevation === "number" && Math.abs(target.elevation - origin.elevation) >= 1) {
+            if (usecombatrules) {
+                // For combat rules, ignore the height difference from above the target unless the vertical distance is higher than horizontal distance
+                if (origin.elevation > target.elevation) {
+                    if (origin.elevation - target.elevation > distance)
+                        distance = origin.elevation - target.elevation;
+                } else { // But if the origin is below the target, add the vertical distance to the horizontal distance
+                    distance += target.elevation - origin.elevation;
+                }
+            } else {
+                distance = Math.hypot(distance, target.elevation - origin.elevation);
             }
         }
-        else {
-            if (useRulerMeasurement) {
-                // Mimic the imprecise ruler measurements for vertical distance as well
-                if (diagonalRule === "SAME") {
-                    // In "SAME" mode, apply the equidistant rule to vertical distance as well, which in practice means only take it into effect if the vertical distance is larger than horizontal
+    }
+    else {
+        // Otherwise, get the distance from the map grid
+        distance = canvas.grid.measureDistance(origin, target);
+        // See if the vertical distance can even be measured, or that there is a point to it
+        if (measurevertical && typeof origin.elevation === "number" && typeof target.elevation === "number" && Math.abs(target.elevation - origin.elevation) >= 1) {
+            // Check whether the measurement is asking for raw distance or for the distance according to combat rules
+            if (usecombatrules) {
+                // For combat rules, ignore the height difference from above the target unless the vertical distance is higher than horizontal distance
+                if (origin.elevation > target.elevation) {
+                    if (origin.elevation - target.elevation > distance)
+                        distance = (diagonalRule !== CONST.GRID_DIAGONALS.EXACT ? Math.round(origin.elevation - target.elevation) : origin.elevation - target.elevation);
+                } else { // But if the origin is below the target, add the vertical distance to the horizontal distance
+                    distance += (diagonalRule !== CONST.GRID_DIAGONALS.EXACT ? Math.round(target.elevation - origin.elevation) : target.elevation - origin.elevation);
+                }
+            }
+            else {
+                if (diagonalRule === CONST.GRID_DIAGONALS.EQUIDISTANT) {
+                    // Apply the equidistant rule to vertical distance as well, which in practice means only take it into effect if the vertical distance is larger than horizontal
                     if (Math.abs(origin.elevation - target.elevation) > distance)
                         distance = Math.abs(origin.elevation - target.elevation);
                 } else {
-                    // Round the output just like the ruler measurement would
-                    distance = Math.round(Math.hypot(distance, target.elevation - origin.elevation));
+                    // Round the output if the diagonal mode likely would
+                    distance = (diagonalRule !== CONST.GRID_DIAGONALS.EXACT ? Math.round(Math.hypot(distance, target.elevation - origin.elevation)) : Math.hypot(distance, target.elevation - origin.elevation));
                 }
-            } else {
-                // Fully precise measurement
-                distance = Math.hypot(distance, target.elevation - origin.elevation);
             }
         }
     }
