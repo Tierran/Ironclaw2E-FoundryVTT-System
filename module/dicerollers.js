@@ -65,7 +65,7 @@ export class CardinalDiceRoller {
         if (rollstring.length === 0)
             return null;
 
-        let roll = await new Roll("{" + rollstring + "}cs>" + tni).evaluate({ async: true });
+        let roll = await new Roll("{" + rollstring + "}cs>" + tni).evaluate();
         const typeText = game.i18n.localize("ironclaw2e.chat.rollingTN") + ": ";
 
         const successes = roll.total;
@@ -128,8 +128,7 @@ export class CardinalDiceRoller {
             return;
         }
 
-        console.log("REROLLING TO TN");
-		const usedSpeaker = (copyoptions.replacespeaker ? { "alias": (message.speaker?.alias ?? game.i18n.localize("ironclaw2e.chatInfo.miniRoll")) } : message.speaker);
+        const usedSpeaker = (copyoptions.replacespeaker ? { "alias": (message.speaker?.alias ?? game.i18n.localize("ironclaw2e.chatInfo.miniRoll")) } : message.speaker);
         let intermediary = [...message.getFlag("ironclaw2e", "rollIntermediary")];
         let rollString = CardinalDiceRoller.copyDicePoolResult(message.rolls?.[0]);
         let directCopy = true;
@@ -147,7 +146,7 @@ export class CardinalDiceRoller {
             return;
         }
 
-		let roll = await new Roll("{" + rollString + "}cs>" + tni).evaluate({ async: true });
+		let roll = await new Roll("{" + rollString + "}cs>" + tni).evaluate();
 		//let roll = message.rolls?.[0];
 		let successes = 0;
         let highest = 0;
@@ -191,7 +190,7 @@ export class CardinalDiceRoller {
         if (rollstring.length === 0)
             return null;
 
-        let roll = await new Roll("{" + rollstring + "}kh1").evaluate({ async: true });
+        let roll = await new Roll("{" + rollstring + "}kh1").evaluate();
         const typeText = game.i18n.localize("ironclaw2e.chat.rollingHighest") + ": ";
         const flavorstring = CardinalDiceRoller.flavorStringHighest(roll.total, typeText, label);
 
@@ -257,8 +256,7 @@ export class CardinalDiceRoller {
             return;
         }
 
-		console.log("Rolling string : " + rollString);
-        let roll = await new Roll("{" + rollString + "}kh1").evaluate({ async: true });
+		let roll = await new Roll("{" + rollString + "}kh1").evaluate();
 		//let roll = message.rolls?.[0];
 		let highest = 0;
 		
@@ -304,7 +302,7 @@ export class CardinalDiceRoller {
 
         const useTN = rolltype === "TN" && tni > 0;
         const rollEval = useTN ? "}cs>" + tni.toString() : (picklowest ? "}kl1" : "}kh1");
-        let roll = await new Roll("{" + rollstring + rollEval).evaluate({ async: true });
+        let roll = await new Roll("{" + rollstring + rollEval).evaluate();
 
         let successes = 0;
         let highest = 0;
@@ -455,7 +453,7 @@ export class CardinalDiceRoller {
             // Remove trailing comma
             rollstring = rollstring.slice(0, -1);
         }
-		console.log("Roll String : " + rollstring);
+		
         return rollstring;
     };
 
@@ -549,10 +547,10 @@ export class CardinalDiceRoller {
         let directCopy = true;
         let rerollFlavor = "";
         let rollUsed = message.rolls?.[0];
-		console.log("Reroll " + reroll);
+		
         switch (reroll) {
             case "ONE":
-				console.log("Intermediary " + intermediary);
+				
                 rollString = CardinalDiceRoller.copyRerollHighestOne(rollUsed, intermediary);
                 directCopy = false;
                 rerollFlavor = identifieroverride ? identifieroverride + "," : game.i18n.localize("ironclaw2e.chatInfo.reroll");
