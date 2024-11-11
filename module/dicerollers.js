@@ -128,7 +128,7 @@ export class CardinalDiceRoller {
             return;
         }
 
-        
+        console.log("REROLLING TO TN");
 		const usedSpeaker = (copyoptions.replacespeaker ? { "alias": (message.speaker?.alias ?? game.i18n.localize("ironclaw2e.chatInfo.miniRoll")) } : message.speaker);
         let intermediary = [...message.getFlag("ironclaw2e", "rollIntermediary")];
         let rollString = CardinalDiceRoller.copyDicePoolResult(message.rolls?.[0]);
@@ -147,7 +147,8 @@ export class CardinalDiceRoller {
             return;
         }
 
-		let roll = message.rolls?.[0];
+		let roll = await new Roll("{" + rollString + "}cs>" + tni).evaluate({ async: true });
+		//let roll = message.rolls?.[0];
 		let successes = 0;
         let highest = 0;
         let ties = 0;
@@ -256,8 +257,9 @@ export class CardinalDiceRoller {
             return;
         }
 
-        //let roll = await new Roll("{" + rollString + "}kh1").evaluate({ async: true });
-		let roll = message.rolls?.[0];
+		console.log("Rolling string : " + rollString);
+        let roll = await new Roll("{" + rollString + "}kh1").evaluate({ async: true });
+		//let roll = message.rolls?.[0];
 		let highest = 0;
 		
 		roll.terms[0].results.forEach(x => {
@@ -453,6 +455,7 @@ export class CardinalDiceRoller {
             // Remove trailing comma
             rollstring = rollstring.slice(0, -1);
         }
+		console.log("Roll String : " + rollstring);
         return rollstring;
     };
 
@@ -546,8 +549,10 @@ export class CardinalDiceRoller {
         let directCopy = true;
         let rerollFlavor = "";
         let rollUsed = message.rolls?.[0];
+		console.log("Reroll " + reroll);
         switch (reroll) {
             case "ONE":
+				console.log("Intermediary " + intermediary);
                 rollString = CardinalDiceRoller.copyRerollHighestOne(rollUsed, intermediary);
                 directCopy = false;
                 rerollFlavor = identifieroverride ? identifieroverride + "," : game.i18n.localize("ironclaw2e.chatInfo.reroll");
