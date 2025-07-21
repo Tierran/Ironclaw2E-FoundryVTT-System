@@ -1,7 +1,3 @@
-# NOTE
-
-This is a branch of the primary build of the Ironclaw Second Edition system and I intend to keep it in sync with the primary repository but I also may be ahead on some bug fixes
-
 # Ironclaw Second Edition system for Foundry VTT
 
 This is a system for running the second edition version of Ironclaw (the corebook named Ironclaw Omnibus: Squaring the Circle) in Foundry VTT.  
