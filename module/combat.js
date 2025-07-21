@@ -16,7 +16,7 @@ export class Ironclaw2ECombat extends Combat {
      * @param {any} formula
      */
     _getInitiativeRoll(combatant, formula) {
-        return combatant.actor ? combatant.actor.initiativeRoll(1).roll : Roll.create(formula).evaluate({ async: true });
+        return combatant.actor ? combatant.actor.initiativeRoll(1).roll : Roll.create(formula).evaluate();
     }
 
     /**
