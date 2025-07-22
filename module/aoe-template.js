@@ -3,7 +3,7 @@ import { CommonSystemInfo, getRangeDistanceFromBand } from "./systeminfo.js";
 
 /**
  * A helper class for building MeasuredTemplates for AoE attacks
- * @extends {MeasuredTemplate}
+ * @extends {foundry.canvas.placeables.MeasuredTemplate}
  */
 export class AoETemplateIronclaw extends MeasuredTemplate {
 
