@@ -40,7 +40,19 @@
       "module": "ironclaw2e",
       "path": "packs/status-effects",
       "type": "JournalEntry"
-    }
+    },
+    {
+      "name": "gifts",
+      "label": "Gifts",
+      "path": "packs/ironclaw-content-compendium/packs/gifts",
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "system": "ironclaw2e",
+      "flags": {}
+    }    
   ],
   "languages": [
     {
