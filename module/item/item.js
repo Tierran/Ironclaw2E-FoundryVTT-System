@@ -1078,7 +1078,11 @@ export class Ironclaw2EItem extends Item {
         // If a combatant for the current actor is found, check whether the current user's target is threatened through the combatant, and use the result for Tactics auto-check
         let useTactics = (foundCombatant ? foundCombatant.checkTacticsForTarget?.() : false) ?? false;
         const richDescription = itemSys.description ? await TextEditor.enrichHTML(itemSys.description, { async: true, secrets: false }) : "";
-
+		const skipSpecialDefense = false;
+		
+		if(itemSys.hasResist && (checkStandardDefense(itemSys.defendWith) == "defense")){
+			skipSpecialDefense = true;
+		}
         const templateData = {
             "item": item,
             "itemSys": itemSys,
@@ -1092,7 +1096,8 @@ export class Ironclaw2EItem extends Item {
             "equipHandedness": (item.type === 'weapon' || item.type === 'shield' ? CommonSystemInfo.equipHandedness[itemSys.equip] : ""),
             "equipRange": (item.type === 'weapon' ? CommonSystemInfo.rangeBands[itemSys.range] : ""),
             "hasTactics": hasTactics,
-            "useTactics": useTactics
+            "useTactics": useTactics,
+			"skipSpecialDefense": skipSpecialDefense
         };
 
         const contents = await renderTemplate("systems/ironclaw2e/templates/chat/item-info.html", templateData);
