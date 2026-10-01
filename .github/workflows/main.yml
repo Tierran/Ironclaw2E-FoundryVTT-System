@@ -85,6 +85,22 @@ jobs:
         uses: battila7/get-version-action@v2
 
 
+      # Make sure the version committed in "system.json" matches the release tag.
+      # The repository keeps a real version number in "system.json" so the system
+      # works when run straight from a git checkout, which means it has to be
+      # bumped by hand before tagging a release. Fail here rather than publish a
+      # release whose manifest reports the wrong version.
+      - name: Check System Version Matches Tag
+        run: |
+          TAG_VERSION="${{ steps.get_version.outputs.version-without-v }}"
+          MANIFEST_VERSION="$(jq -r '.version' system.json)"
+          if [ "$TAG_VERSION" != "$MANIFEST_VERSION" ]; then
+            echo "::error file=system.json::system.json version ($MANIFEST_VERSION) does not match the release tag ($TAG_VERSION). Update the version in system.json, commit it, and recreate the release."
+            exit 1
+          fi
+          echo "system.json version $MANIFEST_VERSION matches the release tag."
+
+
       # Modify "system.json" with values specific to the release.
       # Since the values for the "version" and "url" keys aren't known ahead of
       # time, the manifest file in the repository is updated with these values.
