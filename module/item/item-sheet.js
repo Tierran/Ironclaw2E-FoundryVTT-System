@@ -1,6 +1,8 @@
 import { CommonSystemInfo, getRangeDistanceFromBand, getSpecialSettingsRerolls, getThreatRanges } from "../systeminfo.js";
 import { getAllItemsInWorld } from "../helpers.js";
 import { getConditionSelectObject } from "../conditions.js";
+const { ItemSheet } = foundry.appv1.sheets;
+const TextEditor = foundry.applications.ux.TextEditor.implementation;
 
 /**
  * Extend the basic ItemSheet with some very simple modifications
@@ -10,7 +12,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
 
     /** @override */
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundry.utils.mergeObject(super.defaultOptions, {
             classes: ["ironclaw2e", "sheet", "item"],
             width: 720,
             height: 600,

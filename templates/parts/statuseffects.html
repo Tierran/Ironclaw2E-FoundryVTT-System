@@ -17,7 +17,7 @@
         </li>
         {{#each actor.effects as |effect id|}}
         <li class="item effect flexrow" data-effect-id="{{effect._id}}">
-            <div class="item-image"><img src="{{effect.icon}}" title="{{effect.name}}" width="24" height="24" /></div>
+            <div class="item-image"><img src="{{effect.img}}" title="{{effect.name}}" width="24" height="24" /></div>
             <h4 class="item-name double-clickable roll-double-info-cond">{{effect.name}}</h4>
             {{#if (conditionCheck effect "onfire")}}
             <div class="item-controls-small flexrow">

@@ -2,6 +2,7 @@ import { Ironclaw2EActor } from "./actor/actor.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { checkIfDisadvantagedIronclaw, hasConditionsIronclaw } from "./conditions.js";
 import { CommonSystemInfo, getRangeDistanceFromBand, getRangeMinMaxFromBand, getRangeDiceFromDistance, getRangeBandFromDistance } from "./systeminfo.js";
+const { Ray } = foundry.canvas.geometry;
 
 /* -------------------------------------------- */
 /*  Dice Helpers                                */

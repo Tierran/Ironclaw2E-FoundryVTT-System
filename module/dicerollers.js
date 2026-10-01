@@ -2,6 +2,7 @@ import { addArrays, findTotalDice, findTotalDiceArrays, parseSingleDiceString } 
 import { getMacroSpeaker } from "./helpers.js";
 
 import { CommonSystemInfo, specialSettingsRerollGMMap, specialSettingsRerollIntersection } from "./systeminfo.js";
+const { renderTemplate } = foundry.applications.handlebars;
 
 /**
  * The unified dice roller system class for the Cardinal dice pool system.
@@ -828,7 +829,7 @@ export class CardinalDiceRoller {
         };
 
         if (hangingType) {
-            updatedata.flags = mergeObject(updatedata.flags, {
+            updatedata.flags = foundry.utils.mergeObject(updatedata.flags, {
                 "ironclaw2e.hangingAttack": hangingType, "ironclaw2e.hangingWeapon": origin.getFlag("ironclaw2e", "hangingWeapon"), "ironclaw2e.hangingActor": origin.getFlag("ironclaw2e", "hangingActor"),
                 "ironclaw2e.hangingToken": origin.getFlag("ironclaw2e", "hangingToken"), "ironclaw2e.hangingScene": origin.getFlag("ironclaw2e", "hangingScene"), "ironclaw2e.hangingSlaying": origin.getFlag("ironclaw2e", "hangingSlaying")
             });
@@ -840,17 +841,17 @@ export class CardinalDiceRoller {
                 const usedsuccesses = (success ? successes : ties);
 
                 if (hangingType === "attack") {
-                    updatedata.flags = mergeObject(updatedata.flags, { "ironclaw2e.attackSuccess": success, "ironclaw2e.attackSuccessCount": usedsuccesses });
+                    updatedata.flags = foundry.utils.mergeObject(updatedata.flags, { "ironclaw2e.attackSuccess": success, "ironclaw2e.attackSuccessCount": usedsuccesses });
                 } else if (hangingType === "resist") {
-                    updatedata.flags = mergeObject(updatedata.flags, { "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses });
+                    updatedata.flags = foundry.utils.mergeObject(updatedata.flags, { "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses });
                 }
             }
         }
         if (defenseAttack) {
-            updatedata.flags = mergeObject(updatedata.flags, { "ironclaw2e.defenseForAttack": defenseAttack });
+            updatedata.flags = foundry.utils.mergeObject(updatedata.flags, { "ironclaw2e.defenseForAttack": defenseAttack });
         }
         if (usedActorStats) {
-            updatedata.flags = mergeObject(updatedata.flags, { "ironclaw2e.usedActorStats": usedActorStats });
+            updatedata.flags = foundry.utils.mergeObject(updatedata.flags, { "ironclaw2e.usedActorStats": usedActorStats });
         }
 
         await target.update(updatedata);

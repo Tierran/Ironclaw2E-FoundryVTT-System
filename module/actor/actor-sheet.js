@@ -4,6 +4,8 @@ import { getBaseConditionIronclaw, setTargetConditionQuota } from "../conditions
 import { hasConditionsIronclaw } from "../conditions.js";
 import { Ironclaw2EItem } from "../item/item.js";
 import { AoETemplateIronclaw } from "../aoe-template.js";
+const { ActorSheet } = foundry.appv1.sheets;
+const TextEditor = foundry.applications.ux.TextEditor.implementation;
 
 /**
  * Extend the basic ActorSheet
@@ -13,7 +15,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
     /** @override */
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundry.utils.mergeObject(super.defaultOptions, {
             classes: ["ironclaw2e", "sheet", "actor"],
             width: 800,
             height: 720,
@@ -350,7 +352,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         // Get the type of item to create.
         const type = header.dataset.type;
         // Grab any data associated with this control.
-        const data = duplicate(header.dataset);
+        const data = foundry.utils.duplicate(header.dataset);
         // Initialize a default name.
         const name = `New ${type.capitalize()}`;
         // Prepare the item object.
@@ -957,7 +959,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
             let localname = basecondition.name;
             chatdata = {
                 speaker: speak,
-                content: `<div class="ironclaw2e"><div class="flexrow flex-left"><img class="item-image" style="max-width:20px" src="${basecondition.icon}" title="${localname}" width="20" height="20"/>
+                content: `<div class="ironclaw2e"><div class="flexrow flex-left"><img class="item-image" style="max-width:20px" src="${basecondition.img}" title="${localname}" width="20" height="20"/>
                           <span class="normal-label">${localname}</span></div></div>`
             };
         }

@@ -1,6 +1,7 @@
 import { makeCompareReady } from "./helpers.js";
 import { checkConditionIronclaw, checkConditionQuota, hasConditionsIronclaw } from "./conditions.js";
 import { CommonSystemInfo } from "./systeminfo.js";
+const { loadTemplates } = foundry.applications.handlebars;
 
 /* eslint-disable */
 /** Handlebars helper registration */
