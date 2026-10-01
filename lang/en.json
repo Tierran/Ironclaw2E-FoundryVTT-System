@@ -66,6 +66,7 @@
   "ironclaw2e.ui.macroOwnedItemsWarning": "You can only create macro buttons for owned Items.",
   "ironclaw2e.ui.actorDoesNotHaveItem": "Your controlled Actor does not have an item named {itemName}.",
   "ironclaw2e.ui.actorNotFoundForMacro": "No actor found to popup macro for.",
+  "ironclaw2e.ui.noAttackWeapons": "{name} has no weapons that can attack.",
   "ironclaw2e.ui.ownershipInsufficient": "Insufficient ownership of the {thing} to perform action.",
   "ironclaw2e.ui.popupNotFoundForMacro": "No specific popup command found for {popup}.",
   "ironclaw2e.ui.actorNotSelectedActorroll": "No actor selected for a chat roll.",
@@ -473,6 +474,9 @@
   "ironclaw2e.dialog.requestRoll.targetNumber": "Default Target Number",
   "ironclaw2e.dialog.requestRoll.rollToRequest": "The Roll to request, in Dice Pool format",
   "ironclaw2e.dialog.requestRoll.whisperEveryone": "Everyone (no whisper)",
+  "ironclaw2e.dialog.attackDefense.title": "Attack This Defense",
+  "ironclaw2e.dialog.attackDefense.pickWeapon": "Weapon for {name} to attack with",
+  "ironclaw2e.dialog.attackDefense.attack": "Attack",
   "ironclaw2e.dialog.requestRoll.giftsToRequest": "Optionally, Gifts to include in the request, names separated by commas",
 
   "ironclaw2e.dialog.reroll.heading": "Rerolling Dialog",
@@ -569,6 +573,7 @@
   "ironclaw2e.chatInfo.itemInfo.dodgeDefense": "Dodge",
   "ironclaw2e.chatInfo.itemInfo.parryDefense": "Parry with...",
   "ironclaw2e.chatInfo.itemInfo.counterDefense": "Counter with...",
+  "ironclaw2e.chatInfo.attackThisDefense": "Attack This Defense",
   "ironclaw2e.chatInfo.itemInfo.specialDefense": "Special Defend",
   "ironclaw2e.chatInfo.itemInfo.resistAgainst": "Resist Against",
 
