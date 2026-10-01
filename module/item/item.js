@@ -17,6 +17,8 @@ import { CardinalDiceRoller, rollTargetNumberOneLine, rollVariableOneLine } from
 import { rollHighestOneLine } from "../dicerollers.js";
 import { copyToRollTNDialog } from "../dicerollers.js";
 import { Ironclaw2EActor } from "../actor/actor.js";
+const { renderTemplate } = foundry.applications.handlebars;
+const TextEditor = foundry.applications.ux.TextEditor.implementation;
 
 /**
  * Extend the basic Item for Ironclaw's systems.
@@ -1034,13 +1036,13 @@ export class Ironclaw2EItem extends Item {
 
         let flags = { "ironclaw2e.itemId": this.id, "ironclaw2e.itemActorId": actor?.id, "ironclaw2e.itemTokenId": actor?.token?.id, "ironclaw2e.itemSceneId": actor?.token?.parent?.id };
         if (item.type === "weapon") {
-            flags = mergeObject(flags, {
+            flags = foundry.utils.mergeObject(flags, {
                 "ironclaw2e.weaponName": item.name, "ironclaw2e.weaponDescriptors": itemSys.descriptorsSplit, "ironclaw2e.weaponEffects": itemSys.effectsSplit,
                 "ironclaw2e.weaponAttackStats": itemSys.attackStats, "ironclaw2e.weaponEquip": itemSys.equip, "ironclaw2e.weaponRange": itemSys.range,
                 "ironclaw2e.attackUsingTactics": useTactics, "ironclaw2e.weaponHasResist": itemSys.hasResist
             });
             if (itemSys.multiAttackType) {
-                flags = mergeObject(flags, {
+                flags = foundry.utils.mergeObject(flags, {
                     "ironclaw2e.weaponMultiAttack": itemSys.multiAttackType, "ironclaw2e.weaponMultiRange": itemSys.multiAttackRange ?? null,
                 });
             }
@@ -1050,7 +1052,7 @@ export class Ironclaw2EItem extends Item {
             const rangePenalty = actor.getRangePenaltyReduction(this);
             let userPos = { "x": foundToken.x, "y": foundToken.y };
             if (foundToken.elevation) userPos.elevation = foundToken.elevation;
-            flags = mergeObject(flags, {
+            flags = foundry.utils.mergeObject(flags, {
                 "ironclaw2e.itemUserPos": userPos,
                 "ironclaw2e.itemUserRangeReduction": rangePenalty.reduction, "ironclaw2e.itemUserRangeAutocheck": rangePenalty.autocheck
             });
@@ -1097,7 +1099,7 @@ export class Ironclaw2EItem extends Item {
         const contents = await renderTemplate("systems/ironclaw2e/templates/chat/item-info.html", templateData);
 
         let flags = { "ironclaw2e.itemInfo": true };
-        flags = mergeObject(flags, this.getItemFlags({ useTactics }));
+        flags = foundry.utils.mergeObject(flags, this.getItemFlags({ useTactics }));
 
         let chatData = {
             content: contents,
@@ -1400,7 +1402,7 @@ export class Ironclaw2EItem extends Item {
         const contents = await renderTemplate("systems/ironclaw2e/templates/chat/damage-info.html", templateData);
 
         let flags = { "ironclaw2e.attackDamageInfo": true, "ironclaw2e.attackDamageAutoHits": itemSys.attackAutoHits, "ironclaw2e.attackDamageDefense": itemSys.opposingDefenseStats, "ironclaw2e.attackDamageSlaying": slaying };
-        flags = mergeObject(flags, this.getItemFlags());
+        flags = foundry.utils.mergeObject(flags, this.getItemFlags());
 
         let chatData = {
             content: contents,

@@ -31,6 +31,7 @@ import { CardinalDiceRoller, rollHighestOneLine } from "../dicerollers.js";
 import { enforceLimit } from "../helpers.js";
 import { burdenedLimitedStat } from "../helpers.js";
 import { Ironclaw2EItem } from "../item/item.js";
+const { renderTemplate } = foundry.applications.handlebars;
 
 /**
  * Extend the base Actor entity by defining a custom data necessary for the Ironclaw system
@@ -2214,7 +2215,7 @@ export class Ironclaw2EActor extends Actor {
         // Merge the default vision settings to the update
         if (updatedVisionData.visionMode) {
             const visionDefaults = CONFIG.Canvas.visionModes[updatedVisionData.visionMode]?.vision?.defaults || {};
-            updatedVisionData = mergeObject(updatedVisionData, visionDefaults);
+            updatedVisionData = foundry.utils.mergeObject(updatedVisionData, visionDefaults);
         }
 
         return this._updateTokenVision(updatedVisionData, detectionModeUpdates, recordDefault);

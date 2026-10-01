@@ -6,6 +6,7 @@ import { Ironclaw2EItem } from "./item/item.js";
 import { getRangeBandFromDistance } from "./systeminfo.js";
 import { hasConditionsIronclaw } from "./conditions.js";
 import { CardinalDiceRoller, copyToRollTNDialog, rerollDialog } from "./dicerollers.js";
+const { renderTemplate } = foundry.applications.handlebars;
 
 /* -------------------------------------------- */
 /*  Hooks                                       */

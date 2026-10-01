@@ -296,14 +296,14 @@ export function getGiftSpecialOptionPrototype(option) {
 
     switch (option) {
         case ("attackBonus"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState", "needsSecondReadiedWeapon": false,
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": "always", "bonusExhaustsOnUse": false, "replaceNameField": ""
             });
             break;
 
         case ("defenseBonus"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState", "needsSecondReadiedWeapon": false,
                 "nameOtherField": "", "descriptorOtherField": "", "effectOtherField": "", "statOtherField": "", "equipOtherField": "", "rangeOtherField": "", "useActualRange": true, "appliesLongerRange": false, "appliesShorterRange": false,
                 "appliesToDodges": true, "appliesToParries": true, "appliesToSpecialDefenses": true,
@@ -312,7 +312,7 @@ export function getGiftSpecialOptionPrototype(option) {
             break;
 
         case ("counterBonus"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState", "needsSecondReadiedWeapon": false,
                 "nameOtherField": "", "descriptorOtherField": "", "effectOtherField": "", "statOtherField": "", "equipOtherField": "", "rangeOtherField": "", "useActualRange": true, "appliesLongerRange": false, "appliesShorterRange": false,
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": "always", "bonusExhaustsOnUse": false, "replaceNameField": ""
@@ -320,7 +320,7 @@ export function getGiftSpecialOptionPrototype(option) {
             break;
 
         case ("resistBonus"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "nameOtherField": "", "descriptorOtherField": "", "effectOtherField": "", "statOtherField": "", "equipOtherField": "", "rangeOtherField": "", "useActualRange": true, "appliesLongerRange": false, "appliesShorterRange": false,
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": "always", "bonusExhaustsOnUse": false, "replaceNameField": ""
@@ -328,91 +328,91 @@ export function getGiftSpecialOptionPrototype(option) {
             break;
 
         case ("soakBonus"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": "always", "bonusExhaustsOnUse": false, "replaceNameField": ""
             });
             break;
 
         case ("guardBonus"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "bonusDiceField": "", "replaceNameField": "", "replacesBaseBonus": true
             });
             break;
 
         case ("aimBonus"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "bonusDiceField": "", "replaceNameField": "", "replacesBaseBonus": true
             });
             break;
 
         case ("sprintBonus"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": "always", "bonusExhaustsOnUse": false, "replaceNameField": ""
             });
             break;
 
         case ("initiativeBonus"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "bonusSourcesField": "", "bonusStatsField": "", "bonusDiceField": "", "bonusAutoUsed": "always", "bonusExhaustsOnUse": false, "replaceNameField": ""
             });
             break;
 
         case ("moveBonus"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "bonusStrideNumber": 0, "bonusDashNumber": 0, "bonusRunNumber": 0, "ignoreBadFooting": false, "replaceNameField": ""
             });
             break;
 
         case ("flyingBonus"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "bonusStrideNumber": 0, "bonusDashNumber": 0, "bonusRunNumber": 0, "replaceNameField": ""
             });
             break;
 
         case ("rerollBonus"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "statField": "", "conditionField": "", "worksWhenState": "anyState", "allowOnOthers": false,
                 "rerollType": "FAVOR", "bonusExhaustsOnUse": false, "identifierOverride": "", "replaceNameField": ""
             });
             break;
 
         case ("rangePenaltyReduction"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "nameField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "conditionField": "", "worksWhenState": "anyState", "appliesToRallying": false,
                 "penaltyReductionNumber": 0, "replaceNameField": ""
             });
             break;
 
         case ("encumbranceBonus"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "conditionField": "", "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "encumbranceBonusNumber": 0, "replaceNameField": ""
             });
             break;
 
         case ("currencyValueChange"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "otherOwnedItemField": "", "worksWhenState": "anyState",
                 "currencyName": "addedCurrency1", "currencyValue": "0", "replaceNameField": ""
             });
             break;
 
         case ("statChange"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "typeField": "", "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "otherOwnedItemField": "",
                 "changeFromField": "", "changeToField": "", "nameAdditionField": ""
             });
             break;
 
         case ("diceUpgrade"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "typeField": "", "nameField": "", "tagField": "", "descriptorField": "", "effectField": "", "statField": "", "equipField": "", "rangeField": "", "otherOwnedItemField": "",
                 "upgradeStepsNumber": 0, "nameAdditionField": ""
             });
@@ -440,13 +440,13 @@ export function getVehicleStationResultPrototype(option) {
 
     switch (option) {
         case ("genericResult"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "successNumber": "", "nameField": "", "effectField": "", "specialCaseField": "", "needsToBeFine": false
             });
             break;
 
         case ("attackResult"):
-            return mergeObject(special, {
+            return foundry.utils.mergeObject(special, {
                 "successNumber": "", "nameField": "", "effectField": "", "specialCaseField": "", "needsToBeFine": false,
                 "permitsDefense": true, "rangeField": "long", "damageNumber": 0, "burningNumber": 0
             });

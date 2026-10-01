@@ -1,3 +1,4 @@
+const TextEditor = foundry.applications.ux.TextEditor.implementation;
 
 /** Application meant to view Ironclaw's markdown files within Foundry itself
  *  @extends {Application}

@@ -1,5 +1,6 @@
 import { checkIfDefeatedIronclaw, checkIfDisadvantagedIronclaw } from "./conditions.js";
 import { getDistanceBetweenPositions } from "./helpers.js";
+const { CombatTracker } = foundry.applications.sidebar.tabs;
 
 /**
  * Extend the base Combat class to allow for the use of Ironclaw's initiative systems
@@ -191,7 +192,7 @@ export class Ironclaw2ECombat extends Combat {
             if ((combatant.token?.hidden || combatant.hidden) && (["roll", "publicroll"].includes(rollMode))) rollMode = "gmroll";
 
             // Construct chat message data
-            let messageData = mergeObject({
+            let messageData = foundry.utils.mergeObject({
                 speaker: {
                     scene: canvas.scene.id,
                     actor: combatant.actor ? combatant.actor.id : null,
@@ -201,7 +202,7 @@ export class Ironclaw2ECombat extends Combat {
                 flavor: flavorString,
                 flags: { "core.initiativeRoll": true }
             }, messageOptions);
-            messageData = mergeObject(initRoll.message, messageData);
+            messageData = foundry.utils.mergeObject(initRoll.message, messageData);
             // Play 1 sound for the whole rolled set
             if (i > 0) messageData.sound = null;
             const chatData = await initRoll.roll.toMessage(messageData, { create: false, rollMode });
@@ -429,7 +430,7 @@ export class Ironclaw2ECombatTracker extends CombatTracker {
         super(options);
     }
 
-    /** Replace the default settings button action with the system one (Foundry v13+, ignored by the v12 tracker) */
+    /** Replace the default settings button action with the system one */
     static DEFAULT_OPTIONS = {
         actions: {
             trackerSettings: Ironclaw2ECombatTracker._onConfigureIronclaw
@@ -441,21 +442,6 @@ export class Ironclaw2ECombatTracker extends CombatTracker {
      */
     static _onConfigureIronclaw() {
         new Ironclaw2ECombatTrackerConfig().render(true);
-    }
-
-    /** Replace the default CombatTrackerConfig with a system one (Foundry v12)
-     *  @override 
-     */
-    activateListeners(html) {
-        super.activateListeners(html);
-
-        html.find('.combat-settings').off("click");
-
-        // Display Combat settings
-        html.find('.combat-settings').click(ev => {
-            ev.preventDefault();
-            Ironclaw2ECombatTracker._onConfigureIronclaw();
-        });
     }
 }
 
@@ -514,8 +500,7 @@ export class Ironclaw2ECombatTrackerConfig extends HandlebarsApplicationMixin(Ap
      * Open the core combat tracker settings, for the settings the system doesn't handle itself (skip defeated, turn markers and such)
      */
     static _openCoreSettings() {
-        const CoreConfig = foundry.applications.apps?.CombatTrackerConfig ?? CombatTrackerConfig;
-        new CoreConfig().render(true);
+        new foundry.applications.apps.CombatTrackerConfig().render(true);
     }
 
     static getInitiativeOptions() {

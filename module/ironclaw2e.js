@@ -5,7 +5,7 @@ import { Ironclaw2EActorSheet } from "./actor/actor-sheet.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { Ironclaw2EItemSheet } from "./item/item-sheet.js";
 
-import { TokenExtenderOptions, TokenHUDStatusMonkeyPatch } from "./token/token-hud-extender.js"
+import { Ironclaw2ETokenHUD, TokenExtenderOptions } from "./token/token-hud-extender.js"
 import { Ironclaw2EToken } from "./token/token.js"
 
 import { Ironclaw2EChatMessage } from "./chatmessage.js";
@@ -43,6 +43,8 @@ import { IronclawDetectionModes, IronclawVisionModes } from "./canvas.js";
 
 import { IronclawActorTour, IronclawConfigTour, IronclawGiftTour, IronclawItemTour } from "./tours.js";
 import { IronclawDocumentationViewer } from "./documentation.js";
+const { ActorSheet, ItemSheet } = foundry.appv1.sheets;
+const { Actors, Items } = foundry.documents.collections;
 
 /* -------------------------------------------- */
 /*  Base Initialization Hooks                   */
@@ -99,8 +101,8 @@ Hooks.once('init', function () {
     CONFIG.ChatMessage.documentClass = Ironclaw2EChatMessage;
     CONFIG.ChatMessage.template = "systems/ironclaw2e/templates/chat/chat-message.html";
 
-    // Foundry VTT core monkey-patches
-    TokenHUDStatusMonkeyPatch();
+    // System Token HUD, with actor type filtered status effects and extra buttons
+    CONFIG.Token.hudClass = Ironclaw2ETokenHUD;
 
     /**
      * Set an initiative formula for the system
