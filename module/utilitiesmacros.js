@@ -1,6 +1,6 @@
 // Utilities and Macros
 // Random non-helper stuff that are substantial, relatively self-contained, and I couldn't really think of another place to dump into
-import { checkQuickModifierKey, findActorToken, getActorFromSpeaker, getDistanceBetweenPositions, getMacroSpeaker, getSpeakerActor, splitStatsAndBonus, splitStatString } from "./helpers.js";
+import { checkQuickModifierKey, convertCamelCase, findActorToken, getActorFromSpeaker, getDistanceBetweenPositions, getMacroSpeaker, getSpeakerActor, makeCompareReady, splitStatsAndBonus, splitStatString } from "./helpers.js";
 import { Ironclaw2EActor } from "./actor/actor.js";
 import { Ironclaw2EItem } from "./item/item.js";
 import { getRangeBandFromDistance } from "./systeminfo.js";
@@ -144,12 +144,29 @@ Hooks.on("updateToken", function (token, data, options, userid) {
 /* -------------------------------------------- */
 
 /**
+ * Split a free-text dice pool into its stat names and bonus dice, keeping the names as typed
+ * @param {string} text Dice pool text, eg. "Body, Melee Combat;d12"
+ * @returns {{names: string[], bonus: string}}
+ */
+function splitRequestPoolText(text) {
+    text = (text ?? "").trim();
+    if (!text) return { "names": [], "bonus": "" };
+    // A plain dice string without a semicolon, eg. "2d6", is all bonus dice
+    if (!text.includes(";") && splitStatsAndBonus(text)[0].length === 0) return { "names": [], "bonus": text };
+
+    const index = text.indexOf(";");
+    const statPart = (index >= 0 ? text.slice(0, index) : text);
+    const bonus = (index >= 0 ? text.slice(index + 1).trim() : "");
+    return { "names": statPart.split(",").map(x => x.trim()).filter(x => x.length > 0), bonus };
+}
+
+/**
  * Trigger a popup to specify what roll to request
  * @param {string} readydice
  * @param {number} tnnum
  * @param {string} whispername
  */
-export async function requestRollPopup(readydice = "", readygifts = "", tnnum = -1, whispername = "") {
+export async function requestRollPopup(readydice = "", readygifts = "", tnnum = 3, whispername = "") {
     const allowNonGM = game.settings.get("ironclaw2e", "allowNonGMRequestRolls");
     if (!game.user.isGM && !allowNonGM) {
         // If the user is not a GM and the world settings do not allow non-GM's to ask rolls
@@ -157,56 +174,66 @@ export async function requestRollPopup(readydice = "", readygifts = "", tnnum = 
         return;
     }
 
-    let confirmed = false;
-    const macroSpeaker = getMacroSpeaker(this.actor);
+    const macroSpeaker = getMacroSpeaker(this?.actor);
     const userSpeaker = { alias: game.user.name };
+
+    // Build the trait and skill checkbox lists from the character data model, pre-checking any that are in the given dice pool
+    const characterModel = game.model.Actor.character;
+    const ready = splitRequestPoolText(readydice);
+    const readyNames = new Set(ready.names.map(x => makeCompareReady(x)));
+    const usedNames = new Set();
+    const makeStat = key => {
+        const checked = readyNames.has(makeCompareReady(key));
+        if (checked) usedNames.add(makeCompareReady(key));
+        return { key, "label": convertCamelCase(key), checked };
+    };
+    const traits = Object.keys(characterModel.traits).map(makeStat);
+    const skills = Object.keys(characterModel.skills).map(makeStat);
+
+    // Whisper options are the other users currently online, plus the given whisper target if it's someone else
+    const whisperUsers = game.users.filter(x => x.active && x.id !== game.user.id).map(x => ({ "name": x.name, "selected": x.name === whispername }));
+    if (whispername && !whisperUsers.some(x => x.selected)) whisperUsers.push({ "name": whispername, "selected": true });
 
     const templateData = {
         "userAlias": userSpeaker.alias,
         "macroAlias": macroSpeaker.alias,
-        "whispername": whispername,
-        "readydice": readydice,
+        whisperUsers,
         "readygifts": readygifts,
-        "tnnum": tnnum
+        "tnnum": tnnum,
+        traits,
+        skills
     };
 
-    let dialogContent = await renderTemplate("systems/ironclaw2e/templates/popup/request-popup.html", templateData);
+    const dialogContent = await renderTemplate("systems/ironclaw2e/templates/popup/request-popup.html", templateData);
 
-    let dlog = new Dialog({
-        title: game.i18n.localize("ironclaw2e.dialog.requestRoll.requestRollHeader"),
+    const data = await foundry.applications.api.DialogV2.wait({
+        window: { title: "ironclaw2e.dialog.requestRoll.requestRollHeader" },
+        position: { width: 600 },
         content: dialogContent,
-        buttons: {
-            one: {
-                icon: '<i class="fas fa-check"></i>',
-                label: game.i18n.localize("ironclaw2e.dialog.request"),
-                callback: () => confirmed = true
-            },
-            two: {
-                icon: '<i class="fas fa-times"></i>',
-                label: game.i18n.localize("ironclaw2e.dialog.cancel"),
-                callback: () => confirmed = false
-            }
-        },
-        default: "one",
-        render: html => { document.getElementById("dices").focus(); },
-        close: html => {
-            if (confirmed) {
-                let USER = html.find('[name=selectuser]')[0].value;
-                let usernumber = 0; if (USER.length > 0) usernumber = parseInt(USER);
-                let WHISPER = html.find('[name=whisper]')[0].value;
-                let whisper = ""; if (WHISPER.length > 0) whisper = WHISPER;
-                let TNNUM = html.find('[name=tn]')[0].value;
-                let tn = -1; if (TNNUM.length > 0) tn = parseInt(TNNUM);
-                let DICES = html.find('[name=dices]')[0].value;
-                let dices = ""; if (DICES.length > 0) dices = DICES;
-                let GIFTS = html.find('[name=gifts]')[0].value;
-                let gifts = ""; if (GIFTS.length > 0) gifts = GIFTS;
+        buttons: [{
+            action: "request",
+            icon: "fas fa-check",
+            label: "ironclaw2e.dialog.request",
+            default: true,
+            callback: (event, button) => new foundry.applications.ux.FormDataExtended(button.form).object
+        }, {
+            action: "cancel",
+            icon: "fas fa-times",
+            label: "ironclaw2e.dialog.cancel"
+        }],
+        rejectClose: false
+    });
+    if (!data || typeof data !== "object") return; // Cancelled or closed
 
-                requestRollToMessage(dices, tn, { "speaker": (usernumber === 1 ? macroSpeaker : userSpeaker), "whisper": whisper, "requestedgifts": gifts });
-            }
-        }
-    }, { focus: false });
-    dlog.render(true);
+    const usernumber = parseInt(data.selectuser) || 0;
+    const whisper = data.whisper ?? "";
+    const tn = (data.tn === null || data.tn === undefined || data.tn === "" ? -1 : parseInt(data.tn));
+    const gifts = data.gifts ?? "";
+
+    // The requested dice pool is the checked traits and skills
+    const dices = [...traits, ...skills].filter(x => data[`stat.${x.key}`]).map(x => x.label).join(", ");
+
+    requestRollToMessage(dices, (isNaN(tn) ? -1 : tn), { "speaker": (usernumber === 1 ? macroSpeaker : userSpeaker), "whisper": whisper, "requestedgifts": gifts });
 }
 
 /**
