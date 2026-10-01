@@ -122,9 +122,9 @@
                 {{#if standardDefense}}
                 <button class="dodge-defense" data-defensetype="dodge">{{localize "ironclaw2e.chatInfo.itemInfo.dodgeDefense"}}</button>
                 <button class="parry-defense small-text" data-defensetype="parry">{{localize "ironclaw2e.chatInfo.itemInfo.parryDefense"}}</button>
-                {{else}}{{#unless skipSpecialDefense}}{{#unless itemSys.hasResist}}
+                {{else}}{{#unless itemSys.hasResist}}
                 <button class="special-defense" data-defensetype="special">{{localize "ironclaw2e.chatInfo.itemInfo.specialDefense"}}</button>
-                {{/unless}}{{/unless}}{{/if}}
+                {{/unless}}{{/if}}
                 
                 {{#if itemSys.hasResist}}{{#unless standardDefense}}{{#unless itemSys.attackAutoHits}}
                 <button class="resist-defense" data-defensetype="resist">{{localize "ironclaw2e.chatInfo.itemInfo.resistAgainst"}}</button>
