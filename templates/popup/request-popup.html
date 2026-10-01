@@ -1,29 +1,47 @@
-<form class="ironclaw2e">
+<div class="ironclaw2e ironclaw2e-request-roll">
     <div class="form-group">
         <label>{{localize "ironclaw2e.dialog.requestRoll.requestRollAsUser"}}:</label>
-        <select style="width: 60%" id="selectuser" name="selectuser">
+        <select name="selectuser">
             <option value="0" selected>{{userAlias}}</option>
             <option value="1">{{macroAlias}}</option>
         </select>
     </div>
     <div class="form-group">
         <label>{{localize "ironclaw2e.dialog.requestRoll.whisperLabel"}}:</label>
-        <input type="text" id="whisper" name="whisper" value="{{whispername}}" />
+        <select name="whisper">
+            <option value="">{{localize "ironclaw2e.dialog.requestRoll.whisperEveryone"}}</option>
+            {{#each whisperUsers as |user|}}
+            <option value="{{user.name}}" {{#if user.selected}}selected{{/if}}>{{user.name}}</option>
+            {{/each}}
+        </select>
     </div>
     <div class="form-group">
         <label>{{localize "ironclaw2e.dialog.requestRoll.targetNumber"}}:</label>
-        <input type="text" id="tn" name="tn" value="{{tnnum}}" onfocus="this.select();" />
+        <input type="number" name="tn" value="{{tnnum}}" step="1" onfocus="this.select();" />
     </div>
-    <div class="form-group">
-        <label>{{localize "ironclaw2e.dialog.requestRoll.rollToRequest"}}:</label>
+
+    <h3 class="request-roll-header">{{localize "ironclaw2e.actor.traits"}}</h3>
+    <div class="request-roll-stats">
+        {{#each traits as |stat|}}
+        <label class="request-roll-stat">
+            <input type="checkbox" name="stat.{{stat.key}}" {{checked stat.checked}} />
+            <span>{{stat.label}}</span>
+        </label>
+        {{/each}}
     </div>
-    <div class="form-group">
-        <input type="text" id="dices" name="dices" value="{{readydice}}" />
+
+    <h3 class="request-roll-header">{{localize "ironclaw2e.actor.skills"}}</h3>
+    <div class="request-roll-stats">
+        {{#each skills as |stat|}}
+        <label class="request-roll-stat">
+            <input type="checkbox" name="stat.{{stat.key}}" {{checked stat.checked}} />
+            <span>{{stat.label}}</span>
+        </label>
+        {{/each}}
     </div>
-    <div class="form-group">
+
+    <div class="request-roll-extra">
         <label>{{localize "ironclaw2e.dialog.requestRoll.giftsToRequest"}}:</label>
+        <input type="text" name="gifts" value="{{readygifts}}" />
     </div>
-    <div class="form-group">
-        <input type="text" id="gifts" name="gifts" value="{{readygifts}}" />
-    </div>
-</form>
+</div>
