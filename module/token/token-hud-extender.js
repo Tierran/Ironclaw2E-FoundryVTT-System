@@ -1,3 +1,5 @@
+import { getHudHiddenConditions } from "../condition-config.js";
+
 /**
  * The system Token HUD, which filters status effects by actor type and replaces the bottom resource bar with additional Ironclaw buttons
  */
@@ -9,14 +11,19 @@ export class Ironclaw2ETokenHUD extends foundry.applications.hud.TokenHUD {
     };
 
     /**
-     * Filter the status effects to only those meant for the actor's type (personal or vehicle)
+     * Filter the status effects to only those meant for the actor's type (personal or vehicle), and remove the ones the world has hidden
+     * Hidden conditions that are active on the token are kept, so that they can still be removed through the HUD
      * @override
      */
     _getStatusEffectChoices() {
         const choices = super._getStatusEffectChoices();
         const actorScale = this.actor?.getActorScaleType?.();
+        const hidden = getHudHiddenConditions();
         for (const status of CONFIG.statusEffects) {
-            if (("actorType" in status) && status.actorType !== actorScale) delete choices[status.id];
+            if (!choices[status.id]) continue;
+            const wrongType = ("actorType" in status) && status.actorType !== actorScale;
+            const isHidden = hidden.has(status.id) && !choices[status.id].isActive;
+            if (wrongType || isHidden) delete choices[status.id];
         }
         return choices;
     }
