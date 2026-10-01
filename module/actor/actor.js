@@ -572,6 +572,7 @@ export class Ironclaw2EActor extends Actor {
         otheritem.range = flags.weaponRange;
         otheritem.multiAttack = flags.weaponMultiAttack;
         otheritem.multiRange = flags.weaponMultiRange;
+        otheritem.hasResist = flags.weaponHasResist === true;
         otheritem.attackerPos = flags.itemUserPos;
         otheritem.templatePos = getTemplatePosition(flags);
         otheritem.attackerRangeReduction = flags.itemUserRangeReduction;
@@ -2885,6 +2886,7 @@ export class Ironclaw2EActor extends Actor {
         let constructionnames = new Map(othernames);
         let constructionbools = new Map(otherbools);
         let formconstruction = otherinputs;
+        if (otheritem?.hasResist) tnyes = true; // Defending against a resisted attack is rolled against a TN
 
         // Shield cover die
         const shield = this._getShieldConstruction(constructionkeys, constructionarray, constructionnames, constructionbools, formconstruction);
@@ -2984,6 +2986,7 @@ export class Ironclaw2EActor extends Actor {
         let constructionnames = new Map(othernames);
         let constructionbools = new Map(otherbools);
         let formconstruction = otherinputs;
+        if (otheritem?.hasResist) tnyes = true; // Countering a resisted attack is rolled against a TN
 
         // Guarding bonus
         const guard = this._getStatusBonusConstruction("guard", false, constructionkeys, constructionarray, constructionnames, constructionbools, formconstruction);

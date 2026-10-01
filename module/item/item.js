@@ -1037,7 +1037,7 @@ export class Ironclaw2EItem extends Item {
             flags = mergeObject(flags, {
                 "ironclaw2e.weaponName": item.name, "ironclaw2e.weaponDescriptors": itemSys.descriptorsSplit, "ironclaw2e.weaponEffects": itemSys.effectsSplit,
                 "ironclaw2e.weaponAttackStats": itemSys.attackStats, "ironclaw2e.weaponEquip": itemSys.equip, "ironclaw2e.weaponRange": itemSys.range,
-                "ironclaw2e.attackUsingTactics": useTactics
+                "ironclaw2e.attackUsingTactics": useTactics, "ironclaw2e.weaponHasResist": itemSys.hasResist
             });
             if (itemSys.multiAttackType) {
                 flags = mergeObject(flags, {
@@ -1078,11 +1078,6 @@ export class Ironclaw2EItem extends Item {
         // If a combatant for the current actor is found, check whether the current user's target is threatened through the combatant, and use the result for Tactics auto-check
         let useTactics = (foundCombatant ? foundCombatant.checkTacticsForTarget?.() : false) ?? false;
         const richDescription = itemSys.description ? await TextEditor.enrichHTML(itemSys.description, { async: true, secrets: false }) : "";
-		const skipSpecialDefense = false;
-		
-		if(itemSys.hasResist && (checkStandardDefense(itemSys.defendWith) == "defense")){
-			skipSpecialDefense = true;
-		}
         const templateData = {
             "item": item,
             "itemSys": itemSys,
@@ -1096,8 +1091,7 @@ export class Ironclaw2EItem extends Item {
             "equipHandedness": (item.type === 'weapon' || item.type === 'shield' ? CommonSystemInfo.equipHandedness[itemSys.equip] : ""),
             "equipRange": (item.type === 'weapon' ? CommonSystemInfo.rangeBands[itemSys.range] : ""),
             "hasTactics": hasTactics,
-            "useTactics": useTactics,
-			"skipSpecialDefense": skipSpecialDefense
+            "useTactics": useTactics
         };
 
         const contents = await renderTemplate("systems/ironclaw2e/templates/chat/item-info.html", templateData);
@@ -1153,8 +1147,10 @@ export class Ironclaw2EItem extends Item {
      * @param {boolean} ignoreresist Whether to ignore the fact that the weapon has a resist roll, used when such a weapon is used in a counter-attack
      * @param {boolean} onlyupdate If true, only update the roll data, do not send anything to chat yet
      * @param {number} opposingsuccesses The already-rolled resisting successes, -1 means they haven't been rolled yet
+     * @param {boolean} iscounter Whether the roll is a counter-attack, which can be rolled against a TN when countering a resisted attack
+     * @param {boolean} countered Whether the attack is against a counter-attack, in which case a tie means both hit
      */
-    automaticDamageCalculation(info, ignoreresist = false, onlyupdate = false, opposingsuccesses = -1) {
+    automaticDamageCalculation(info, ignoreresist = false, onlyupdate = false, opposingsuccesses = -1, { iscounter = false, countered = false } = {}) {
         if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
             return null; // If the system is turned off, return out
         }
@@ -1173,13 +1169,19 @@ export class Ironclaw2EItem extends Item {
         }
 
 
-        if (!info.tnData) { // If the roll info is in highest mode, assume the attack was a counter-attack, and set the flags accordingly
+        if (!info.tnData || iscounter) { // If the roll is a counter-attack, or is in highest mode and assumed to be one, set the flags accordingly
             let updatedata = {
                 flags: {
                     "ironclaw2e.hangingAttack": "counter", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
                     "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.hangingSlaying": itemSys.effectsSplit?.includes("slaying") ?? false
                 }
             };
+            if (info.tnData) { // A counter rolled against a TN (countering a resisted attack) is resolved by comparing successes, like a resisted attack
+                const countersuccesses = (isNaN(info.tnData.successes) ? 0 : info.tnData.successes);
+                updatedata.flags["ironclaw2e.counterAgainstTN"] = true;
+                updatedata.flags["ironclaw2e.resistSuccess"] = countersuccesses > 0;
+                updatedata.flags["ironclaw2e.resistSuccessCount"] = countersuccesses;
+            }
             info.message?.update(updatedata);
             return null; // Return out of a counter-attack
         }
@@ -1216,14 +1218,18 @@ export class Ironclaw2EItem extends Item {
         if (onlyupdate) {
             return null; // Return out to not send anything in update mode
         } else if (toChat) {
-            return this.attackToChat({ success, "rawsuccesses": usedsuccesses, "opposingrolled": opposingsuccesses >= 0, "opposingsuccesses": opposingsuccesses });
+            return this.attackToChat({ success, "rawsuccesses": usedsuccesses, "opposingrolled": opposingsuccesses >= 0, "opposingsuccesses": opposingsuccesses, "countertie": countered });
         }
     }
 
     /**
      * Resolve a counter-attack roll by giving it a TN from which to calculate damage
+     * Counters rolled against a TN (countering a resisted attack) are instead resolved by the opposing successes
      */
     async resolveCounterAttack(message) {
+        if (message.getFlag("ironclaw2e", "counterAgainstTN")) {
+            return this.resolveResistedAttack(message);
+        }
         let info = await copyToRollTNDialog(message, "ironclaw2e.dialog.counterResolve.title");
         this.automaticDamageCalculation(info, true); // No separate return in case of null, the calculation function itself checks for null
     }
@@ -1292,7 +1298,8 @@ export class Ironclaw2EItem extends Item {
         let opposingsuccesses = await resolvedopfor;
         if (opposingsuccesses === null) return; // Return out if the user just cancels the prompt
 
-        this.attackToChat({ "success": successes > opposingsuccesses, "rawsuccesses": successes, "opposingrolled": true, "opposingsuccesses": opposingsuccesses, "forceslaying": forceSlaying });
+        const isCounter = message.getFlag("ironclaw2e", "hangingAttack") === "counter";
+        this.attackToChat({ "success": successes > opposingsuccesses, "rawsuccesses": successes, "opposingrolled": true, "opposingsuccesses": opposingsuccesses, "forceslaying": forceSlaying, "countertie": isCounter });
     }
 
     /**
@@ -1322,15 +1329,20 @@ export class Ironclaw2EItem extends Item {
      * @param {boolean} opposingrolled Whether the opposing successes have been rolled
      * @param {number} opposingsuccesses The opposing successes
      * @param {boolean} forceslaying Whether to force the attack to have the slaying trait, for resolving attacks against vulnerabilities
+     * @param {boolean} countertie Whether the attack is part of a counter-attack exchange, where tied successes mean both sides hit with half the successes, rounded up
      */
-    async attackToChat({ success = false, rawsuccesses = 0, opposingrolled = false, opposingsuccesses = 0, forceslaying = false } = {}) {
+    async attackToChat({ success = false, rawsuccesses = 0, opposingrolled = false, opposingsuccesses = 0, forceslaying = false, countertie = false } = {}) {
         if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
             return null; // If the system is turned off, return out
         }
         const item = this;
         const itemSys = item.system;
 
-        const usedsuccesses = opposingrolled ? rawsuccesses - opposingsuccesses : rawsuccesses;
+        const netsuccesses = opposingrolled ? rawsuccesses - opposingsuccesses : rawsuccesses;
+        // In a counter-attack exchange, tied successes mean both sides hit, with half the tied successes (rounded up) applied to the damage
+        const counterTied = countertie && opposingrolled && rawsuccesses > 0 && netsuccesses === 0;
+        if (counterTied) success = false; // Shown as a tie
+        const usedsuccesses = counterTied ? Math.ceil(rawsuccesses / 2) : netsuccesses;
         const successfulAttack = usedsuccesses > 0 || itemSys.attackAutoHits;
         const negativeSuccesses = usedsuccesses <= 0; // More like non-positive, but I prefer two-word variable names
 
@@ -1516,7 +1528,8 @@ export class Ironclaw2EItem extends Item {
         const callback = (async x => {
             if (exhaust) exhaust.giftToggleExhaust("true", sendToChat);
             await item.weaponAutoStow();
-            const foo = await item.automaticDamageCalculation(x, ignoreresist, donotdisplay, opposingsuccesses);
+            const countered = defendermessage?.getFlag("ironclaw2e", "hangingAttack") === "counter";
+            const foo = await item.automaticDamageCalculation(x, ignoreresist, donotdisplay, opposingsuccesses, { countered });
             if (sourcemessage && foo) Ironclaw2EItem.transferTemplateFlags(sourcemessage, foo);
         });
 
@@ -1602,7 +1615,7 @@ export class Ironclaw2EItem extends Item {
         const callback = (async x => {
             if (exhaust) exhaust.giftToggleExhaust("true", sendToChat);
             await item.weaponAutoStow();
-            await item.automaticDamageCalculation(x);
+            await item.automaticDamageCalculation(x, false, false, -1, { "iscounter": true });
             Ironclaw2EActor.addCallbackToAttackMessage(x?.message, otheritem?.messageId);
         });
 
