@@ -465,3 +465,54 @@ input.center-text {
     -ms-user-select: text;
     user-select: text;
 }
+/* Combat settings dialog: controls on the left, explanations on the right */
+.ironclaw2e-combat-config {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ironclaw2e-combat-config .combat-config-row {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  gap: 1rem;
+  align-items: start;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-border-light-tertiary, #b5b3a4);
+}
+
+.ironclaw2e-combat-config .combat-config-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.ironclaw2e-combat-config .combat-config-control label {
+  font-weight: bold;
+}
+
+.ironclaw2e-combat-config .combat-config-control select,
+.ironclaw2e-combat-config .combat-config-control input[type="number"] {
+  width: 100%;
+}
+
+.ironclaw2e-combat-config .combat-config-control input[type="checkbox"] {
+  margin: 0;
+  align-self: flex-start;
+}
+
+.ironclaw2e-combat-config .combat-config-hint {
+  margin: 0;
+  font-size: var(--font-size-13, 13px);
+  color: var(--color-text-secondary, #4b4a44);
+}
+
+.ironclaw2e-combat-config .combat-config-footer {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+.ironclaw2e-combat-config .combat-config-footer button {
+  flex: 1;
+}

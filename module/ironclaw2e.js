@@ -126,6 +126,14 @@ Hooks.once('init', function () {
         config: false
     });
 
+    // Register the system's own combat settings; Foundry v13 strips unknown keys from the core combat tracker setting, so these can't live there
+    game.settings.register("ironclaw2e", "combatSettings", {
+        scope: "world",
+        type: Object,
+        default: { sideBased: true, initType: 2, forceSettings: false, manualTN: -1 },
+        config: false
+    });
+
     // Register system world settins
     registerWorldSettings();
 
@@ -192,15 +200,14 @@ Hooks.once("ready", function () {
     // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
     Hooks.on("hotbarDrop", (bar, data, slot) => createIronclaw2EMacro(data, slot));
 	console.log(game.ironclaw2e.ironclawLogHeader + "Ironclaw2E System Ready One");
-    // Check and set default Combat Tracker options if they do not exist
-    let ctOptions = game.settings.get("core", Combat.CONFIG_SETTING);
-    if (jQuery.isEmptyObject(ctOptions)) {
-        game.settings.set("core", Combat.CONFIG_SETTING, {
-            sideBased: true,
-            initType: 2,
-            forceSettings: false,
-            skipDefeated: false,
-            manualTN: -1
+    // Move combat settings saved into the core combat tracker setting by older versions (v12 worlds) over to the system's own setting
+    const ctOptions = game.settings.get("core", Combat.CONFIG_SETTING);
+    if (game.user.isGM && ctOptions?.initType != null && !game.settings.storage.get("world").getSetting("ironclaw2e.combatSettings")) {
+        game.settings.set("ironclaw2e", "combatSettings", {
+            sideBased: ctOptions.sideBased ?? true,
+            initType: parseInt(ctOptions.initType),
+            forceSettings: ctOptions.forceSettings ?? false,
+            manualTN: ctOptions.manualTN ?? -1
         });
     }
 	console.log(game.ironclaw2e.ironclawLogHeader + "Ironclaw2E System Ready Two");
