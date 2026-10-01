@@ -2959,8 +2959,8 @@ export class Ironclaw2EActor extends Actor {
         constructionnames = bonuses.othernames;
         constructionbools = bonuses.otherbools;
 
-        // Combat Advantage
-        if (target) {
+        // Combat Advantage, unless the world has turned off automatic Combat Advantage
+        if (target && game.settings.get("ironclaw2e", "autoCombatAdvantage")) {
             const advantage = getCombatAdvantageConstruction(constructionkeys, constructionarray, constructionnames, constructionbools, formconstruction, target);
             formconstruction = advantage.otherinputs;
             constructionkeys = advantage.otherkeys;

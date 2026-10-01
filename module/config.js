@@ -90,6 +90,7 @@ export class WorldSettingsConfig extends FormApplication {
         settings.allowRerollingOthersDice = game.settings.get("ironclaw2e", "allowRerollingOthersDice");
         settings.showOthersTacticsUse = game.settings.get("ironclaw2e", "showOthersTacticsUse");
         settings.autoAddOnFireLight = game.settings.get("ironclaw2e", "autoAddOnFireLight");
+        settings.autoCombatAdvantage = game.settings.get("ironclaw2e", "autoCombatAdvantage");
         settings.vehicleStationCaptainOverride = game.settings.get("ironclaw2e", "vehicleStationCaptainOverride");
         return settings;
     }

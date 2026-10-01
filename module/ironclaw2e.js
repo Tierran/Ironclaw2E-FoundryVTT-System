@@ -382,6 +382,14 @@ function registerWorldSettings() {
         default: true,
         config: false
     });
+    game.settings.register("ironclaw2e", "autoCombatAdvantage", {
+        name: "ironclaw2e.config.autoCombatAdvantage",
+        hint: "ironclaw2e.config.autoCombatAdvantageHint",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: false
+    });
 
     // Range settings
     game.settings.register("ironclaw2e", "rangePenalties", {
