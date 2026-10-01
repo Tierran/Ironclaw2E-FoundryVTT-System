@@ -1301,6 +1301,7 @@ export class Ironclaw2EItem extends Item {
         if (opposingsuccesses === null) return; // Return out if the user just cancels the prompt
 
         const isCounter = message.getFlag("ironclaw2e", "hangingAttack") === "counter";
+        if (isCounter) await message.setFlag("ironclaw2e", "counterResolved", true); // Stop the automatic counter resolution from posting it again
         this.attackToChat({ "success": successes > opposingsuccesses, "rawsuccesses": successes, "opposingrolled": true, "opposingsuccesses": opposingsuccesses, "forceslaying": forceSlaying, "countertie": isCounter });
     }
 
@@ -1530,6 +1531,11 @@ export class Ironclaw2EItem extends Item {
             const countered = defendermessage?.getFlag("ironclaw2e", "hangingAttack") === "counter";
             const foo = await item.automaticDamageCalculation(x, ignoreresist, donotdisplay, opposingsuccesses, { countered });
             if (sourcemessage && foo) Ironclaw2EItem.transferTemplateFlags(sourcemessage, foo);
+            // When attacking against a counter-attack rolled against a TN, record the attack's successes so the counter's owner can resolve the counter automatically
+            if (countered && defendermessage.getFlag("ironclaw2e", "counterAgainstTN") && x?.message && x.tnData) {
+                const successes = (isNaN(x.tnData.successes) ? 0 : x.tnData.successes);
+                await x.message.setFlag("ironclaw2e", "counterAnswer", { "counterMessageId": defendermessage.id, successes });
+            }
         });
 
         // If the weapon has a gift to exhaust that can't be found or is exhausted, warn about it or pop a refresh request about it respectively instead of the roll

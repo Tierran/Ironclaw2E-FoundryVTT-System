@@ -750,23 +750,128 @@ function addIronclawChatLogContext(app, entryOptions) {
       callback: async target => {
         const message = _icGetMessageFromTarget(target);
         if (!message) return;
-
-        const type = message.getFlag("ironclaw2e", "rollType");
-        const messageid = message.getFlag("ironclaw2e", "defenseForAttack");
-        const attackMessage = game.messages.get(messageid);
-        if (!attackMessage) return;
-
-        const tn = (type === "HIGH" ? message.rolls[0].result : 3);
-        const resists = (type === "TN" ? message.rolls[0].result : -1);
-        Ironclaw2EActor.triggerAttackerRoll(
-          attackMessage, "attack", false, type === "HIGH", message, tn, resists
-        );
+        attackAgainstDefense(message);
       }
     }
   );
 }
 
 Hooks.on("getChatMessageContextOptions", addIronclawChatLogContext);
+
+/**
+ * Attack against a defense roll, using its result as the attack's TN or as the opposing successes
+ * The original attacker rolls the original weapon, anyone else picks one of their own actor's weapons
+ * @param {ChatMessage} message The defense roll message
+ * @param {boolean} anyAttacker Whether actors other than the original attacker can attack, as with the chat button
+ */
+async function attackAgainstDefense(message, anyAttacker = false) {
+    const type = message.getFlag("ironclaw2e", "rollType");
+    const attackMessage = game.messages.get(message.getFlag("ironclaw2e", "defenseForAttack"));
+    if (!type || !attackMessage) return;
+
+    const tn = (type === "HIGH" ? message.rolls[0].result : 3);
+    const resists = (type === "TN" ? message.rolls[0].result : -1);
+    const ignoreresist = type === "HIGH";
+
+    if (anyAttacker) {
+        // Attack as the actor the user is acting as, unless that's the original attacker
+        const originalActor = Ironclaw2EActor.getItemActor(Ironclaw2EActor.getItemActorFlags(attackMessage.flags?.ironclaw2e));
+        const actor = getSpeakerActor();
+        if (actor && actor.uuid !== originalActor?.uuid) {
+            const weapon = await pickAttackWeapon(actor);
+            return weapon?.attackRoll(false, ignoreresist, tn, resists, { "defendermessage": message });
+        }
+        if (!actor && originalActor && !originalActor.isOwner) {
+            ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
+            return;
+        }
+    }
+
+    Ironclaw2EActor.triggerAttackerRoll(attackMessage, "attack", false, ignoreresist, message, tn, resists);
+}
+
+/**
+ * Ask which of an actor's weapons to attack with, skipping the question if there is only one
+ * @param {Ironclaw2EActor} actor
+ * @returns {Promise<Ironclaw2EItem|null>}
+ */
+async function pickAttackWeapon(actor) {
+    const weapons = actor.items.filter(x => x.type === "weapon" && x.system.canAttack);
+    if (weapons.length === 0) {
+        ui.notifications.warn(game.i18n.format("ironclaw2e.ui.noAttackWeapons", { "name": actor.name }));
+        return null;
+    }
+    if (weapons.length === 1) return weapons[0];
+
+    const options = weapons.map(x => `<option value="${x.id}">${Handlebars.escapeExpression(x.name)}</option>`).join("");
+    const picked = await foundry.applications.api.DialogV2.wait({
+        window: { title: "ironclaw2e.dialog.attackDefense.title" },
+        content: `<div class="form-group"><label>${game.i18n.format("ironclaw2e.dialog.attackDefense.pickWeapon", { "name": Handlebars.escapeExpression(actor.name) })}</label><select name="weapon">${options}</select></div>`,
+        buttons: [{
+            action: "attack",
+            icon: "fas fa-fist-raised",
+            label: "ironclaw2e.dialog.attackDefense.attack",
+            default: true,
+            callback: (event, button) => button.form.elements.weapon.value
+        }, {
+            action: "cancel",
+            icon: "fas fa-times",
+            label: "ironclaw2e.dialog.cancel"
+        }],
+        rejectClose: false
+    });
+    return (picked && picked !== "cancel" ? actor.items.get(picked) : null);
+}
+
+// Add an "Attack This Defense" button to defense rolls that answer an attack, usable by anyone
+Hooks.on("renderChatMessageHTML", function (message, html) {
+    if (game.settings.get("ironclaw2e", "chatButtons") === false) return;
+    const attackMessage = game.messages.get(message.getFlag("ironclaw2e", "defenseForAttack"));
+    if (!message.isRoll || !message.getFlag("ironclaw2e", "rollType") || !attackMessage || !message.isContentVisible) return;
+
+    const content = html.querySelector(".message-content");
+    if (!content || content.querySelector(".attack-this-defense")) return;
+
+    const holder = document.createElement("div");
+    holder.className = "ironclaw2e";
+    holder.innerHTML = `<div class="chat-item button-holder flexrow"><button type="button" class="attack-this-defense"><i class="fas fa-fist-raised"></i> ${game.i18n.localize("ironclaw2e.chatInfo.attackThisDefense")}</button></div>`;
+    content.append(holder);
+    holder.querySelector(".attack-this-defense").addEventListener("click", event => {
+        event.preventDefault();
+        attackAgainstDefense(message, true);
+    });
+});
+
+/**
+ * Automatically resolve a counter-attack rolled against a TN (countering a resisted attack) once the attacker has rolled against it
+ * If the counter has as many or more successes than the attack, the counter's damage is sent to chat, the same as resolving it from the context menu
+ * Only one client does this: the counter roll's author if they are online, otherwise the active GM
+ * @param {ChatMessage} message The attack roll message that was updated
+ * @param {object} changes The changes made to the message
+ */
+async function autoResolveCounterAttack(message, changes) {
+    const answer = foundry.utils.getProperty(changes, "flags.ironclaw2e.counterAnswer");
+    if (!answer?.counterMessageId || !game.settings.get("ironclaw2e", "calculateAttackEffects")) return;
+
+    const counterMessage = game.messages.get(answer.counterMessageId);
+    if (!counterMessage?.getFlag("ironclaw2e", "counterAgainstTN")) return;
+    const resolver = (counterMessage.author?.active ? counterMessage.author : game.users.activeGM);
+    if (resolver?.id !== game.user.id || counterMessage.getFlag("ironclaw2e", "counterResolved")) return;
+
+    // The counter only deals damage if it ties or beats the attack
+    const countersuccesses = counterMessage.getFlag("ironclaw2e", "resistSuccessCount") ?? 0;
+    const attacksuccesses = answer.successes ?? 0;
+    if (countersuccesses <= 0 || countersuccesses < attacksuccesses) return;
+
+    const weaponid = counterMessage.getFlag("ironclaw2e", "hangingWeapon");
+    const actor = getHangingActor(counterMessage);
+    const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
+    if (!weapon) return;
+
+    await counterMessage.setFlag("ironclaw2e", "counterResolved", true);
+    return weapon.attackToChat({ "success": countersuccesses > attacksuccesses, "rawsuccesses": countersuccesses, "opposingrolled": true, "opposingsuccesses": attacksuccesses, "countertie": true });
+}
+Hooks.on("updateChatMessage", autoResolveCounterAttack);
 /* eslint-enable */
 
 /**
