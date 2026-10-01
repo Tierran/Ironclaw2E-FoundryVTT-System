@@ -516,3 +516,58 @@ input.center-text {
 .ironclaw2e-combat-config .combat-config-footer button {
   flex: 1;
 }
+
+/* Token HUD condition settings */
+.ironclaw2e-condition-config {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  height: 100%;
+}
+
+.ironclaw2e-condition-config .condition-config-hint {
+  margin: 0;
+  font-size: var(--font-size-13, 13px);
+  color: var(--color-text-secondary, #4b4a44);
+}
+
+.ironclaw2e-condition-config .condition-config-groups {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.ironclaw2e-condition-config .condition-config-group {
+  margin: 0.75rem 0 0.25rem;
+  border-bottom: 1px solid var(--color-border-light-tertiary, #b5b3a4);
+}
+
+.ironclaw2e-condition-config .condition-config-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem 1rem;
+}
+
+.ironclaw2e-condition-config .condition-config-entry {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.ironclaw2e-condition-config .condition-config-entry input {
+  margin: 0;
+}
+
+.ironclaw2e-condition-config .condition-config-entry img {
+  border: none;
+  flex: 0 0 24px;
+}
+
+.ironclaw2e-condition-config .condition-config-footer {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.ironclaw2e-condition-config .condition-config-footer button {
+  flex: 1;
+}

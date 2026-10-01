@@ -1,0 +1,27 @@
+<div class="ironclaw2e-condition-config">
+    <p class="condition-config-hint">{{localize 'ironclaw2e.config.conditionConfig.hint'}}</p>
+
+    <div class="condition-config-groups">
+        {{#each groups as |group|}}
+        <h3 class="condition-config-group">{{localize group.label}}</h3>
+        <div class="condition-config-list">
+            {{#each group.conditions as |condition|}}
+            <label class="condition-config-entry">
+                <input type="checkbox" name="shown.{{condition.id}}" {{checked condition.shown}} />
+                <img src="{{condition.img}}" width="24" height="24" alt="" />
+                <span>{{localize condition.name}}</span>
+            </label>
+            {{/each}}
+        </div>
+        {{/each}}
+    </div>
+
+    <footer class="condition-config-footer">
+        <button type="button" data-action="showAll">
+            <i class="fas fa-eye"></i> {{localize 'ironclaw2e.config.conditionConfig.showAll'}}
+        </button>
+        <button type="submit" name="submit">
+            <i class="fas fa-save"></i> {{localize 'ironclaw2e.config.conditionConfig.menuSave'}}
+        </button>
+    </footer>
+</div>

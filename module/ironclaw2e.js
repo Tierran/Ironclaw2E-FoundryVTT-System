@@ -39,6 +39,7 @@ import { registerHandlebarsHelpers } from "./handlebars.js";
 
 import { WildcardTemplateConfig, WorldSettingsConfig } from "./config.js";
 import { CoinageSettingsConfig } from "./config.js";
+import { ConditionSettingsConfig } from "./condition-config.js";
 import { IronclawDetectionModes, IronclawVisionModes } from "./canvas.js";
 
 import { IronclawActorTour, IronclawConfigTour, IronclawGiftTour, IronclawItemTour } from "./tours.js";
@@ -269,6 +270,21 @@ function registerWorldSettings() {
         icon: "fas fa-user-circle",
         type: WildcardTemplateConfig,
         restricted: true
+    });
+    game.settings.registerMenu("ironclaw2e", "conditionSettingsConfig", {
+        name: "ironclaw2e.config.conditionConfig.menuName",
+        hint: "ironclaw2e.config.conditionConfig.menuHint",
+        label: "ironclaw2e.config.conditionConfig.menuLabel",
+        icon: "fas fa-list-check",
+        type: ConditionSettingsConfig,
+        restricted: true
+    });
+    game.settings.register("ironclaw2e", "hudHiddenConditions", {
+        scope: "world",
+        type: Array,
+        default: [],
+        config: false,
+        onChange: () => { if (canvas.hud?.token?.rendered) canvas.hud.token.render(); }
     });
 
     // General configurations
