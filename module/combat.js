@@ -27,7 +27,7 @@ export class Ironclaw2ECombat extends Combat {
      * @private
      */
     static getInitiativeGroup(combatant, settings) {
-        if (combatant?.actor && combatant?.token && settings?.initType) {
+        if (combatant?.actor && combatant?.token && settings?.initType != null) {
             let side = -1;
             const initType = parseInt(settings.initType);
             switch (initType) {
@@ -69,8 +69,8 @@ export class Ironclaw2ECombat extends Combat {
         if (settings?.manualTN && settings.manualTN > 0) {
             return settings.manualTN;
         }
-        else if (combatant && settings?.initType && allcombatants) {
-            let otherSide = combatant.getSideCombatants(false, allcombatants);
+        else if (combatant && settings?.initType != null && allcombatants) {
+            let otherSide = combatant.getSideCombatants(false, { allcombatants: Array.from(allcombatants), settings });
             return Ironclaw2ECombat.getDistanceTN(Ironclaw2ECombat.getDistanceToClosestOther(combatant, otherSide));
         }
         else return 6;
@@ -296,7 +296,9 @@ export class Ironclaw2ECombatant extends Combatant {
      */
     getSide(settings = null) {
         // Check if the given settings exist and have the initType set, if not check the combat for settings, if that doesn't work just put out an error value
-        let initType = settings?.initType ?? this.combat?.getCombatSettings?.initType ?? -1;
+        // The combat config form saves initType as a string, so parse it to make the comparisons below work
+        let initType = parseInt(settings?.initType ?? this.combat?.getCombatSettings?.initType ?? -1);
+        if (Number.isNaN(initType)) initType = -1;
         if (initType === 0 || initType === 1) {
             return this.actor?.hasPlayerOwner;
         } else if (initType >= 0) {
@@ -312,8 +314,9 @@ export class Ironclaw2ECombatant extends Combatant {
      * @param {boolean} getallies Whether to get the opponents or allies
      * @returns {Ironclaw2ECombatant[]}
      */
-    getSideCombatants(getallies, { allcombatants = [], excludeself = true } = {}) {
+    getSideCombatants(getallies, { allcombatants = [], excludeself = true, settings = null } = {}) {
         const foo = this;
+        settings ??= foo.combat?.getCombatSettings;
         // Check if the function is given a set of specific combatants to filter
         if (allcombatants == null || (Array.isArray(allcombatants) && allcombatants.length === 0)) {
             allcombatants = foo.combat?.combatants; // Get the combatant's combat's combatants
@@ -465,7 +468,7 @@ export class Ironclaw2ECombatTrackerConfig extends CombatTrackerConfig {
     async _updateObject(event, formData) {
         return game.settings.set("core", Combat.CONFIG_SETTING, {
             sideBased: formData.sideBased,
-            initType: formData.initType,
+            initType: parseInt(formData.initType),
             forceSettings: formData.forceSettings,
             skipDefeated: formData.skipDefeated,
             manualTN: formData.manualTN

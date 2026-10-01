@@ -661,7 +661,8 @@ export function getDistanceBetweenPositions(origin, target, { measurevertical = 
 
     // If we aren't using the ruler measurements, just calculate the full Euclidean distance
     if (!useRulerMeasurement) {
-        distance = ray.distance / canvas.grid.size;
+        // Convert from pixels to scene distance units (paces), not just grid spaces
+        distance = (ray.distance / canvas.grid.size) * canvas.grid.distance;
         // See if the vertical distance can even be measured, or that there is a point to it
         if (measurevertical && typeof origin.elevation === "number" && typeof target.elevation === "number" && Math.abs(target.elevation - origin.elevation) >= 1) {
             if (usecombatrules) {
