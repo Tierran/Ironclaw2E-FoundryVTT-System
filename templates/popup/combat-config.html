@@ -1,41 +1,46 @@
-<form autocomplete="off" onsubmit="event.preventDefault();">
-    <div class="form-group">
-        <label>{{localize 'ironclaw2e.combat.sideBasedInitiative'}}</label>
-        <input type="checkbox" name="sideBased" {{checked settings.sideBased}} data-dtype="Boolean" />
-        <p class="notes">{{localize 'ironclaw2e.combat.sideBasedInitiativeHint'}}</p>
+<div class="ironclaw2e-combat-config">
+    <div class="combat-config-row">
+        <div class="combat-config-control">
+            <label for="ironclaw2e-sideBased">{{localize 'ironclaw2e.combat.sideBasedInitiative'}}</label>
+            <input type="checkbox" id="ironclaw2e-sideBased" name="sideBased" {{checked settings.sideBased}} {{disabled (not canConfigure)}} />
+        </div>
+        <p class="combat-config-hint">{{localize 'ironclaw2e.combat.sideBasedInitiativeHint'}}</p>
     </div>
 
-    <div class="form-group">
-        <label>{{localize 'ironclaw2e.combat.sidesUsed'}}</label>
-        <select name="initType">
-            {{#select settings.initType}}
-            {{#each initOptions}}
-            <option value="{{this.value}}">{{localize this.key}}</option>
-            {{/each}}
-            {{/select}}
-        </select>
-        <p class="notes">{{localize 'ironclaw2e.combat.sidesUsedHint'}}</p>
+    <div class="combat-config-row">
+        <div class="combat-config-control">
+            <label for="ironclaw2e-initType">{{localize 'ironclaw2e.combat.sidesUsed'}}</label>
+            <select id="ironclaw2e-initType" name="initType" {{disabled (not canConfigure)}}>
+                {{selectOptions initOptions selected=settings.initType valueAttr="value" labelAttr="key" localize=true}}
+            </select>
+        </div>
+        <p class="combat-config-hint">{{localize 'ironclaw2e.combat.sidesUsedHint'}}</p>
     </div>
 
-    <div class="form-group">
-        <label>{{localize 'ironclaw2e.combat.manualTN'}}</label>
-        <input type="text" name="manualTN" value="{{settings.manualTN}}" data-dtype="Number" />
-        <p class="notes">{{localize 'ironclaw2e.combat.manualTNHint'}}</p>
+    <div class="combat-config-row">
+        <div class="combat-config-control">
+            <label for="ironclaw2e-manualTN">{{localize 'ironclaw2e.combat.manualTN'}}</label>
+            <input type="number" id="ironclaw2e-manualTN" name="manualTN" value="{{settings.manualTN}}" step="1" {{disabled (not canConfigure)}} />
+        </div>
+        <p class="combat-config-hint">{{localize 'ironclaw2e.combat.manualTNHint'}}</p>
     </div>
 
-    <div class="form-group">
-        <label>{{localize 'ironclaw2e.combat.forceSettings'}}</label>
-        <input type="checkbox" name="forceSettings" {{checked settings.forceSettings}} data-dtype="Boolean" />
-        <p class="notes">{{localize 'ironclaw2e.combat.forceSettingsHint'}}</p>
+    <div class="combat-config-row">
+        <div class="combat-config-control">
+            <label for="ironclaw2e-forceSettings">{{localize 'ironclaw2e.combat.forceSettings'}}</label>
+            <input type="checkbox" id="ironclaw2e-forceSettings" name="forceSettings" {{checked settings.forceSettings}} {{disabled (not canConfigure)}} />
+        </div>
+        <p class="combat-config-hint">{{localize 'ironclaw2e.combat.forceSettingsHint'}}</p>
     </div>
 
-    <div class="form-group">
-        <label>{{localize 'COMBAT.SkipDefeated'}}</label>
-        <input type="checkbox" name="skipDefeated" {{checked settings.skipDefeated}} data-dtype="Boolean" />
-        <p class="notes">{{localize 'COMBAT.SkipDefeatedHint'}}</p>
-    </div>
-
-    <button type="submit" name="submit">
-        <i class="fas fa-save"></i> {{localize 'COMBAT.SettingsSave'}}
-    </button>
-</form>
+    <footer class="combat-config-footer">
+        <button type="button" data-action="coreSettings">
+            <i class="fas fa-gear"></i> {{localize 'ironclaw2e.combat.coreSettings'}}
+        </button>
+        {{#if canConfigure}}
+        <button type="submit" name="submit">
+            <i class="fas fa-save"></i> {{localize 'COMBAT.SettingsSave'}}
+        </button>
+        {{/if}}
+    </footer>
+</div>

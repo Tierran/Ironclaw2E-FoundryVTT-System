@@ -140,6 +140,7 @@
   "ironclaw2e.combat.manualTNHint": "Set the initiative check TN manually. If set to -1, the system will do its best to automatically determine the appropriate TN based on the distance to the nearest enemy token.",
   "ironclaw2e.combat.forceSettings": "Force initiative settings",
   "ironclaw2e.combat.forceSettingsHint": "Force the initiative style, side and TN settings to be used from the combat tracker rather than what the combat encounter saved into itself when the 'Begin Combat' button was pressed.",
+  "ironclaw2e.combat.coreSettings": "Core Combat Settings",
 
 
   "ironclaw2e.config.worldConfig.menuName": "Ironclaw World Settings Config",

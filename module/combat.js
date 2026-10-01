@@ -27,7 +27,7 @@ export class Ironclaw2ECombat extends Combat {
      * @private
      */
     static getInitiativeGroup(combatant, settings) {
-        if (combatant?.actor && combatant?.token && settings?.initType) {
+        if (combatant?.actor && combatant?.token && settings?.initType != null) {
             let side = -1;
             const initType = parseInt(settings.initType);
             switch (initType) {
@@ -69,8 +69,8 @@ export class Ironclaw2ECombat extends Combat {
         if (settings?.manualTN && settings.manualTN > 0) {
             return settings.manualTN;
         }
-        else if (combatant && settings?.initType && allcombatants) {
-            let otherSide = combatant.getSideCombatants(false, allcombatants);
+        else if (combatant && settings?.initType != null && allcombatants) {
+            let otherSide = combatant.getSideCombatants(false, { allcombatants: Array.from(allcombatants), settings });
             return Ironclaw2ECombat.getDistanceTN(Ironclaw2ECombat.getDistanceToClosestOther(combatant, otherSide));
         }
         else return 6;
@@ -235,7 +235,7 @@ export class Ironclaw2ECombat extends Combat {
 
     /** @override */
     async startCombat() {
-        const settings = game.settings.get("core", Combat.CONFIG_SETTING);
+        const settings = game.settings.get("ironclaw2e", "combatSettings");
         let updateData = { round: 1, turn: 0 };
         updateData.flags = { "ironclaw2e.sideBased": settings.sideBased, "ironclaw2e.initiativeType": settings.initType, "ironclaw2e.manualTN": settings.manualTN };
         this._playCombatSound("startEncounter");
@@ -266,13 +266,14 @@ export class Ironclaw2ECombat extends Combat {
      */
     get getCombatSettings() {
         // Get settings to know what type of initiative we are using
-        const settings = game.settings.get("core", Combat.CONFIG_SETTING);
+        const settings = { ...game.settings.get("ironclaw2e", "combatSettings") };
 
         // Grab potential settings from the combat instance flags, if the combat has already started
+        // Encounters started while the settings were being lost have no saved values, so keep the world settings for any missing ones
         if (this.round > 0 && settings?.forceSettings === false) {
-            settings.sideBased = this.getFlag("ironclaw2e", "sideBased");
-            settings.initType = this.getFlag("ironclaw2e", "initiativeType");
-            settings.manualTN = this.getFlag("ironclaw2e", "manualTN");
+            settings.sideBased = this.getFlag("ironclaw2e", "sideBased") ?? settings.sideBased;
+            settings.initType = this.getFlag("ironclaw2e", "initiativeType") ?? settings.initType;
+            settings.manualTN = this.getFlag("ironclaw2e", "manualTN") ?? settings.manualTN;
         }
 
         return settings;
@@ -296,7 +297,9 @@ export class Ironclaw2ECombatant extends Combatant {
      */
     getSide(settings = null) {
         // Check if the given settings exist and have the initType set, if not check the combat for settings, if that doesn't work just put out an error value
-        let initType = settings?.initType ?? this.combat?.getCombatSettings?.initType ?? -1;
+        // The combat config form saves initType as a string, so parse it to make the comparisons below work
+        let initType = parseInt(settings?.initType ?? this.combat?.getCombatSettings?.initType ?? -1);
+        if (Number.isNaN(initType)) initType = -1;
         if (initType === 0 || initType === 1) {
             return this.actor?.hasPlayerOwner;
         } else if (initType >= 0) {
@@ -312,8 +315,9 @@ export class Ironclaw2ECombatant extends Combatant {
      * @param {boolean} getallies Whether to get the opponents or allies
      * @returns {Ironclaw2ECombatant[]}
      */
-    getSideCombatants(getallies, { allcombatants = [], excludeself = true } = {}) {
+    getSideCombatants(getallies, { allcombatants = [], excludeself = true, settings = null } = {}) {
         const foo = this;
+        settings ??= foo.combat?.getCombatSettings;
         // Check if the function is given a set of specific combatants to filter
         if (allcombatants == null || (Array.isArray(allcombatants) && allcombatants.length === 0)) {
             allcombatants = foo.combat?.combatants; // Get the combatant's combat's combatants
@@ -425,51 +429,93 @@ export class Ironclaw2ECombatTracker extends CombatTracker {
         super(options);
     }
 
-    /** Replace the default CombatTrackerConfig with a system one
+    /** Replace the default settings button action with the system one (Foundry v13+, ignored by the v12 tracker) */
+    static DEFAULT_OPTIONS = {
+        actions: {
+            trackerSettings: Ironclaw2ECombatTracker._onConfigureIronclaw
+        }
+    };
+
+    /**
+     * Open the system combat settings instead of the core ones
+     */
+    static _onConfigureIronclaw() {
+        new Ironclaw2ECombatTrackerConfig().render(true);
+    }
+
+    /** Replace the default CombatTrackerConfig with a system one (Foundry v12)
      *  @override 
      */
     activateListeners(html) {
         super.activateListeners(html);
-        const tracker = html.find("#combat-tracker");
-        const combatants = tracker.find(".combatant");
 
         html.find('.combat-settings').off("click");
 
         // Display Combat settings
         html.find('.combat-settings').click(ev => {
             ev.preventDefault();
-            new Ironclaw2ECombatTrackerConfig().render(true);
+            Ironclaw2ECombatTracker._onConfigureIronclaw();
         });
     }
 }
 
-export class Ironclaw2ECombatTrackerConfig extends CombatTrackerConfig {
-    /** @override */
-    static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
-            template: "systems/ironclaw2e/templates/popup/combat-config.html",
-            width: 420
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-        });
-    }
+/**
+ * The system's combat settings, stored in the system's own world setting rather than the core combat tracker setting
+ */
+export class Ironclaw2ECombatTrackerConfig extends HandlebarsApplicationMixin(ApplicationV2) {
+    static DEFAULT_OPTIONS = {
+        id: "ironclaw2e-combat-config",
+        tag: "form",
+        window: {
+            title: "COMBAT.Settings",
+            icon: "fas fa-swords"
+        },
+        position: { width: 750 },
+        form: {
+            closeOnSubmit: true,
+            handler: Ironclaw2ECombatTrackerConfig._saveSettings
+        },
+        actions: {
+            coreSettings: Ironclaw2ECombatTrackerConfig._openCoreSettings
+        }
+    };
+
+    static PARTS = {
+        form: { template: "systems/ironclaw2e/templates/popup/combat-config.html" }
+    };
 
     /** @override */
-    async getData(options) {
+    async _prepareContext(options) {
         return {
-            settings: game.settings.get("core", Combat.CONFIG_SETTING),
-            initOptions: Ironclaw2ECombatTrackerConfig.getInitiativeOptions()
+            settings: game.settings.get("ironclaw2e", "combatSettings"),
+            initOptions: Ironclaw2ECombatTrackerConfig.getInitiativeOptions(),
+            canConfigure: game.user.isGM
         };
     }
 
-    /** @override */
-    async _updateObject(event, formData) {
-        return game.settings.set("core", Combat.CONFIG_SETTING, {
-            sideBased: formData.sideBased,
-            initType: formData.initType,
-            forceSettings: formData.forceSettings,
-            skipDefeated: formData.skipDefeated,
-            manualTN: formData.manualTN
+    /**
+     * Save the form into the system combat settings
+     */
+    static async _saveSettings(event, form, formData) {
+        if (!game.user.isGM) return;
+        const data = formData.object;
+        const manualTN = parseInt(data.manualTN);
+        return game.settings.set("ironclaw2e", "combatSettings", {
+            sideBased: !!data.sideBased,
+            initType: parseInt(data.initType),
+            forceSettings: !!data.forceSettings,
+            manualTN: Number.isNaN(manualTN) ? -1 : manualTN
         });
+    }
+
+    /**
+     * Open the core combat tracker settings, for the settings the system doesn't handle itself (skip defeated, turn markers and such)
+     */
+    static _openCoreSettings() {
+        const CoreConfig = foundry.applications.apps?.CombatTrackerConfig ?? CombatTrackerConfig;
+        new CoreConfig().render(true);
     }
 
     static getInitiativeOptions() {
