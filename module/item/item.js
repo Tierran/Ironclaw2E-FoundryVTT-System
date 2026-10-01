@@ -1331,7 +1331,7 @@ export class Ironclaw2EItem extends Item {
      * @param {boolean} opposingrolled Whether the opposing successes have been rolled
      * @param {number} opposingsuccesses The opposing successes
      * @param {boolean} forceslaying Whether to force the attack to have the slaying trait, for resolving attacks against vulnerabilities
-     * @param {boolean} countertie Whether the attack is part of a counter-attack exchange, where tied successes mean both sides hit with half the successes, rounded up
+     * @param {boolean} countertie Whether the attack is part of a counter-attack exchange, where tied successes mean both sides hit with half the successes, rounded down
      */
     async attackToChat({ success = false, rawsuccesses = 0, opposingrolled = false, opposingsuccesses = 0, forceslaying = false, countertie = false } = {}) {
         if (!game.settings.get("ironclaw2e", "calculateAttackEffects")) {
@@ -1341,11 +1341,11 @@ export class Ironclaw2EItem extends Item {
         const itemSys = item.system;
 
         const netsuccesses = opposingrolled ? rawsuccesses - opposingsuccesses : rawsuccesses;
-        // In a counter-attack exchange, tied successes mean both sides hit, with half the tied successes (rounded up) applied to the damage
+        // In a counter-attack exchange, tied successes mean both sides hit, with half the tied successes (rounded down) applied to the damage
         const counterTied = countertie && opposingrolled && rawsuccesses > 0 && netsuccesses === 0;
         if (counterTied) success = false; // Shown as a tie
-        const usedsuccesses = counterTied ? Math.ceil(rawsuccesses / 2) : netsuccesses;
-        const successfulAttack = usedsuccesses > 0 || itemSys.attackAutoHits;
+        const usedsuccesses = counterTied ? Math.floor(rawsuccesses / 2) : netsuccesses;
+        const successfulAttack = usedsuccesses > 0 || itemSys.attackAutoHits || counterTied; // A counter tie always hits, even when no successes are added
         const negativeSuccesses = usedsuccesses <= 0; // More like non-positive, but I prefer two-word variable names
 
         const flat = itemSys.damageFlat ?? false;
