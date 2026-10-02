@@ -1,4 +1,5 @@
 ### Unreleased
+ - Vehicles, vehicle stations and vehicle modifications can no longer be created, and the vehicle captain setting is no longer shown; existing vehicles still work
  - Fixed the Items sidebar right-click options on Foundry v13: "Set as Species/Career Template Source" on folders and "Send Info to Chat" on items were missing
  - Rewrote the README and moved the documentation into task-based pages in `docs/`, updated for the current system
  - Added a new Magic Gift item type for spells: a gift that can have any number of named spell attacks, each with its own effect, defense, descriptors, range, and attack and counter pools
