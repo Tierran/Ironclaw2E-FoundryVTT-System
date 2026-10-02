@@ -3,7 +3,7 @@ import { parseSingleDiceString } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
 import { splitStatString } from "../helpers.js";
-import { splitStatsAndBonus } from "../helpers.js";
+import { splitDefenseStats, splitStatsAndBonus } from "../helpers.js";
 import { getMacroSpeaker } from "../helpers.js";
 import { checkDiceArrayEmpty } from "../helpers.js";
 import { checkQuickModifierKey } from "../helpers.js";
@@ -25,6 +25,39 @@ const TextEditor = foundry.applications.ux.TextEditor.implementation;
  * @extends {Item}
  */
 export class Ironclaw2EItem extends Item {
+
+    /* -------------------------------------------- */
+    /* Getters                                      */
+    /* -------------------------------------------- */
+
+    /**
+     * Whether the item works as a gift, which magic gifts also do
+     */
+    get isGiftLike() {
+        return this.type === "gift" || this.type === "magicGift";
+    }
+
+    /**
+     * Whether the item works as a weapon, which magic gifts also do
+     */
+    get isWeaponLike() {
+        return this.type === "weapon" || this.type === "magicGift";
+    }
+
+    /**
+     * Whether the item is a temporary copy of a magic gift set up as one of its spell attacks
+     */
+    get isSpellAttack() {
+        return this.type === "magicGift" && Number.isInteger(this.system.spellAttackIndex);
+    }
+
+    /**
+     * The stored magic gift a spell attack copy was made from, or the item itself for anything else
+     */
+    get spellSource() {
+        if (!this.isSpellAttack) return this;
+        return (this.parent ? this.parent.items.get(this.id) : game.items.get(this.id)) ?? this;
+    }
 
     /* -------------------------------------------- */
     /* Static Functions                             */
@@ -101,12 +134,13 @@ export class Ironclaw2EItem extends Item {
             system.totalWeight = usedWeight * system.quantity;
         }
 
-        if (item.type === 'gift') {
+        if (item.isGiftLike) {
             this._prepareGiftData(item, actor);
             this._prepareGiftSpecialSettings(item);
         }
         if (item.type === 'extraCareer') this._prepareCareerData(item, actor);
-        if (item.type === 'weapon') this._prepareWeaponData(item, actor);
+        if (item.type === 'weapon' || item.isSpellAttack) this._prepareWeaponData(item, actor);
+        if (item.type === 'magicGift') this._prepareMagicGiftData(item, actor);
         if (item.type === 'armor') this._prepareArmorData(item, actor);
         if (item.type === 'shield') this._prepareShieldData(item, actor);
         if (item.type === 'illumination') this._prepareIlluminationData(item, actor);
@@ -363,14 +397,12 @@ export class Ironclaw2EItem extends Item {
         if (system.effect.length > 0) {
             system.effectsSplit = splitStatString(system.effect);
             // Damage
-            const foo = system.effectsSplit.findIndex(element => element.includes("damage"));
+            // "Flat" anywhere in the effects makes the damage flat, and "Flat 2" alone counts as the damage entry
+            const flat = system.effectsSplit.some(element => element.includes("flat"));
+            let foo = system.effectsSplit.findIndex(element => element.includes("damage"));
+            if (foo < 0) foo = system.effectsSplit.findIndex(element => element.includes("flat") && /[0-9]/.test(element));
             if (foo >= 0) {
-                let bar = system.effectsSplit[foo];
-                let flat = false;
-                if (bar.includes("flat")) {
-                    bar = bar.replaceAll("flat", "");
-                    flat = true;
-                }
+                const bar = system.effectsSplit[foo].replaceAll("flat", "");
                 if (bar.length > 0) {
                     const damage = parseInt(bar.match(/([0-9])+/i)?.[0]); // Grabs the first number group of the damage, which should always return the correct damage number
                     system.damageEffect = isNaN(damage) ? -1 : damage;
@@ -428,9 +460,12 @@ export class Ironclaw2EItem extends Item {
         }
         // Defense
         if (system.defendWith.length > 0) {
-            system.opposingDefenseStats = splitStatString(system.defendWith);
+            const defense = splitDefenseStats(system.defendWith);
+            system.opposingDefenseStats = defense.stats;
+            system.opposingDefenseDice = defense.dice;
         } else {
             system.opposingDefenseStats = null;
+            system.opposingDefenseDice = "";
         }
         // Descriptors
         if (system.descriptors.length > 0) {
@@ -453,6 +488,55 @@ export class Ironclaw2EItem extends Item {
                 system.threatDistance = system.threatRangeBand in CommonSystemInfo.rangeBands ? CommonSystemInfo.rangePaces[system.threatRangeBand] : -1;
             }
         }
+    }
+
+    /**
+     * Process Magic Gift type specific data, run after both the gift and weapon data are prepared
+     * Magic gifts never threaten, and exhaust themselves when readied, or when cast without being readied, if set to exhaust
+     * Casting a readied spell does not exhaust it again, but unreadies it, and only readied spells can counter
+     * The stored magic gift only summarizes its spell attacks, the weapon data is prepared for the spell attack copies from getSpellAttack
+     */
+    _prepareMagicGiftData(item, actor) {
+        const system = item.system;
+
+        if (!item.isSpellAttack) {
+            const attacks = Array.isArray(system.spellAttacks) ? system.spellAttacks : [];
+            system.canAttack = attacks.some(x => x.attackDice?.length > 0);
+            system.canCounter = system.readied && attacks.some(x => x.counterDice?.length > 0);
+            system.attackStats = null;
+            system.effectsSplit = null;
+            system.descriptorsSplit = null;
+            system.opposingDefenseStats = null;
+        }
+        // Spells have no parry
+        system.canDefend = false;
+        system.defenseStats = null;
+        system.defenseArray = null;
+
+        // Only readied spells can counter
+        system.canCounter = system.canCounter && system.readied;
+
+        // Success tiers of a spell attack, highest first
+        if (item.isSpellAttack) {
+            system.successTiersSorted = (Array.isArray(system.successTiers) ? system.successTiers : [])
+                .filter(x => x.successes > 0 && (x.addConditions || x.removeConditions || x.note))
+                .sort((a, b) => b.successes - a.successes);
+        }
+
+        // Fill in the weapon fields magic gifts do not store, so the weapon code paths treat them correctly
+        // A readied spell was already exhausted when readied, so casting it only unreadies it
+        system.readyWhenUsed = false;
+        system.autoStow = system.readied;
+        system.threatens = false;
+        system.exhaustGift = system.exhaustWhenUsed && !system.readied;
+        system.exhaustGiftWhenReadied = false;
+        system.exhaustGiftName = item.name;
+        system.upgradeWeapon = false;
+        // Magic gifts have no spark
+        system.canSpark = false;
+        system.sparkArray = null;
+        // Whether the gift has its own gift roll separate from the weapon rolls
+        system.canGiftRoll = !item.isSpellAttack && !!(system.giftStats || system.giftArray);
     }
 
     /**
@@ -527,6 +611,185 @@ export class Ironclaw2EItem extends Item {
     }
 
     /* -------------------------------------------- */
+    /* Spell Attack Functions                       */
+    /* -------------------------------------------- */
+
+    /**
+     * Get the magic gift set up as one of its spell attacks
+     * The result is a temporary copy with the attack's fields in place of the weapon fields, so the weapon functions work on it as is
+     * Updates made through the copy still go to the stored magic gift, since the copy keeps its id and parent
+     * @param {number} index The index of the spell attack
+     * @returns {Ironclaw2EItem | null}
+     */
+    getSpellAttack(index) {
+        if (this.type !== "magicGift") return null;
+        const attack = this.system.spellAttacks?.[index];
+        if (!attack) return null;
+
+        const { name, ...fields } = attack;
+        const data = this.toObject();
+        data.name = `${this.name}: ${name}`;
+        Object.assign(data.system, fields, { "defenseDice": "", "spellAttackIndex": index });
+        return new this.constructor(data, { "parent": this.parent, "pack": this.pack, "strict": false });
+    }
+
+    /**
+     * Get the item as the given spell attack, if it is a magic gift and an index is given, otherwise return the item itself
+     * Used when resolving items from chat message flags
+     * @param {number | null} index
+     * @returns {Ironclaw2EItem}
+     */
+    asSpellAttack(index) {
+        if (this.type === "magicGift" && !this.isSpellAttack && Number.isInteger(index)) {
+            return this.getSpellAttack(index) ?? this;
+        }
+        return this;
+    }
+
+    /**
+     * Pop up a dialog to pick which of the magic gift's spell attacks to use, skipping it when there is only one choice
+     * @param {string} use "attack" or "counter" to only list the attacks with that dice pool, "info" to list all the attacks plus the spell itself
+     * @returns {Promise<Ironclaw2EItem | null>} The spell attack copy, the magic gift itself if picked for info, or null if cancelled or nothing to pick
+     */
+    async pickSpellAttack(use = "attack") {
+        if (this.type !== "magicGift") return null;
+        if (this.isSpellAttack) return this;
+
+        const attacks = Array.isArray(this.system.spellAttacks) ? this.system.spellAttacks : [];
+        let choices = [];
+        attacks.forEach((attack, index) => {
+            if (use === "attack" && !(attack.attackDice?.length > 0)) return;
+            if (use === "counter" && !(attack.counterDice?.length > 0)) return;
+            choices.push({ "value": String(index), "label": attack.name });
+        });
+        const allowSpell = use === "info";
+
+        if (choices.length === 0) {
+            if (allowSpell) return this;
+            ui.notifications.warn(game.i18n.format("ironclaw2e.ui.noSpellAttacks", { "name": this.name }));
+            return null;
+        }
+        if (choices.length === 1 && !(allowSpell && this.system.canGiftRoll)) {
+            return this.getSpellAttack(parseInt(choices[0].value));
+        }
+        if (allowSpell) {
+            choices.push({ "value": "spell", "label": game.i18n.localize("ironclaw2e.dialog.spellAttack.spellOnly") });
+        }
+
+        const options = choices.map(x => `<option value="${x.value}">${Handlebars.escapeExpression(x.label)}</option>`).join("");
+        const picked = await foundry.applications.api.DialogV2.wait({
+            window: { title: game.i18n.format("ironclaw2e.dialog.spellAttack.title", { "name": this.name }) },
+            content: `<div class="form-group"><label>${game.i18n.localize("ironclaw2e.dialog.spellAttack.label")}</label><select name="spellattack">${options}</select></div>`,
+            buttons: [{
+                action: "pick",
+                icon: "fas fa-check",
+                label: "ironclaw2e.dialog.pick",
+                default: true,
+                callback: (event, button) => button.form.elements.spellattack.value
+            }, {
+                action: "cancel",
+                icon: "fas fa-times",
+                label: "ironclaw2e.dialog.cancel"
+            }],
+            rejectClose: false
+        });
+
+        if (!picked || picked === "cancel") return null;
+        if (picked === "spell") return this;
+        return this.getSpellAttack(parseInt(picked));
+    }
+
+    /**
+     * Add a new spell attack to a magic gift
+     */
+    async spellAddAttack() {
+        if (this.type !== "magicGift") return null;
+        const attacks = foundry.utils.deepClone(Array.isArray(this.system.spellAttacks) ? this.system.spellAttacks : []);
+        attacks.push(foundry.utils.deepClone(CommonSystemInfo.spellAttackDefaults));
+        return this.update({ "system.spellAttacks": attacks });
+    }
+
+    /**
+     * Delete a spell attack from a magic gift
+     * @param {number} index Index of the spell attack
+     */
+    async spellDeleteAttack(index) {
+        if (this.type !== "magicGift") return null;
+        const attacks = foundry.utils.deepClone(this.system.spellAttacks ?? []);
+        attacks.splice(index, 1);
+        return this.update({ "system.spellAttacks": attacks });
+    }
+
+    /**
+     * Change a field in a spell attack
+     * @param {number} index Index of the spell attack
+     * @param {string} name The field to change
+     * @param {any} value
+     */
+    async spellChangeAttackField(index, name, value) {
+        if (this.type !== "magicGift") return null;
+        const attacks = foundry.utils.deepClone(this.system.spellAttacks ?? []);
+        if (!attacks[index]) return null;
+        attacks[index][name] = value;
+        return this.update({ "system.spellAttacks": attacks });
+    }
+
+    /**
+     * Add a new success tier to a spell attack
+     * @param {number} attackindex Index of the spell attack
+     */
+    async spellAddTier(attackindex) {
+        if (this.type !== "magicGift") return null;
+        const attacks = foundry.utils.deepClone(this.system.spellAttacks ?? []);
+        const attack = attacks[attackindex];
+        if (!attack) return null;
+        if (!Array.isArray(attack.successTiers)) attack.successTiers = [];
+        const tier = foundry.utils.deepClone(CommonSystemInfo.spellTierDefaults);
+        tier.successes = attack.successTiers.reduce((highest, x) => Math.max(highest, x.successes ?? 0), 0) + 1;
+        attack.successTiers.push(tier);
+        return this.update({ "system.spellAttacks": attacks });
+    }
+
+    /**
+     * Delete a success tier from a spell attack
+     * @param {number} attackindex Index of the spell attack
+     * @param {number} tierindex Index of the tier
+     */
+    async spellDeleteTier(attackindex, tierindex) {
+        if (this.type !== "magicGift") return null;
+        const attacks = foundry.utils.deepClone(this.system.spellAttacks ?? []);
+        if (!Array.isArray(attacks[attackindex]?.successTiers)) return null;
+        attacks[attackindex].successTiers.splice(tierindex, 1);
+        return this.update({ "system.spellAttacks": attacks });
+    }
+
+    /**
+     * Change a field in a spell attack's success tier
+     * @param {number} attackindex Index of the spell attack
+     * @param {number} tierindex Index of the tier
+     * @param {string} name The field to change
+     * @param {any} value
+     */
+    async spellChangeTierField(attackindex, tierindex, name, value) {
+        if (this.type !== "magicGift") return null;
+        const attacks = foundry.utils.deepClone(this.system.spellAttacks ?? []);
+        const tier = attacks[attackindex]?.successTiers?.[tierindex];
+        if (!tier) return null;
+        tier[name] = value;
+        return this.update({ "system.spellAttacks": attacks });
+    }
+
+    /**
+     * Get the highest success tier of a spell attack reached with the given successes
+     * @param {number} successes
+     * @returns {object | null}
+     */
+    getSuccessTier(successes) {
+        if (!this.isSpellAttack || !(successes > 0)) return null;
+        return this.system.successTiersSorted?.find(x => successes >= x.successes) ?? null;
+    }
+
+    /* -------------------------------------------- */
     /* Item Data Modification Functions             */
     /* -------------------------------------------- */
 
@@ -539,7 +802,7 @@ export class Ironclaw2EItem extends Item {
     async giftToggleExhaust(toggle = "toggle", sendToChat = false) {
         const item = this;
         const system = this.system;
-        if (!(item.type === 'gift')) {
+        if (!item.isGiftLike) {
             console.error("Gift exhaust toggle attempted on a non-gift item: " + item.name);
             return null;
         }
@@ -552,7 +815,7 @@ export class Ironclaw2EItem extends Item {
         let endState = null;
         switch (toggle) {
             case "toggle":
-                endState = !system.readied;
+                endState = !system.exhausted;
                 break;
             case "true": // Exhausted
                 endState = true;
@@ -602,13 +865,28 @@ export class Ironclaw2EItem extends Item {
     }
 
     /**
+     * Convert a normal gift into a magic gift in place, keeping its id and all of its gift settings
+     * @returns {Promise<Ironclaw2EItem | null>}
+     */
+    async giftConvertToMagic() {
+        if (this.type !== "gift") {
+            console.error("Magic gift conversion attempted on a non-gift item: " + this.name);
+            return null;
+        }
+
+        // Start from the magic gift defaults and fill in every field the two types share from the gift
+        const system = foundry.utils.mergeObject(foundry.utils.deepClone(game.model.Item.magicGift), foundry.utils.deepClone(this._source.system), { "insertKeys": false });
+        return this.update({ "type": "magicGift", "==system": system });
+    }
+
+    /**
      * Add a new special setting to a gift
      * @param {string} bonusType What kind of bonus to add
      */
     async giftAddSpecialSetting(bonusType = "attackBonus") {
         const item = this;
         const system = item.system;
-        if (!(item.type === 'gift')) {
+        if (!item.isGiftLike) {
             console.error("Gift special setting adding attempted on a non-gift item: " + item.name);
             return;
         }
@@ -642,7 +920,7 @@ export class Ironclaw2EItem extends Item {
     async giftDeleteSpecialSetting(index) {
         const item = this;
         const system = item.system;
-        if (!(item.type === 'gift')) {
+        if (!item.isGiftLike) {
             console.error("Gift special setting deletion attempted on a non-gift item: " + item.name);
             return;
         }
@@ -668,7 +946,7 @@ export class Ironclaw2EItem extends Item {
     async giftChangeSpecialSetting(index, settingmode, force = false) {
         const item = this;
         const system = item.system;
-        if (!(item.type === 'gift')) {
+        if (!item.isGiftLike) {
             console.error("Gift special setting change attempted on a non-gift item: " + item.name);
             return null;
         }
@@ -708,7 +986,7 @@ export class Ironclaw2EItem extends Item {
     async giftValidateSpecialSetting() {
         const item = this;
         const system = item.system;
-        if (!(item.type === 'gift')) {
+        if (!item.isGiftLike) {
             console.error("Gift special setting validation attempted on a non-gift item: " + item.name);
             return null;
         }
@@ -757,7 +1035,7 @@ export class Ironclaw2EItem extends Item {
     async giftChangeSpecialField(index, name, value) {
         const item = this;
         const system = item.system;
-        if (!(item.type === 'gift')) {
+        if (!item.isGiftLike) {
             console.error("Gift special setting change attempted on a non-gift item: " + item.name);
             return null;
         }
@@ -775,7 +1053,7 @@ export class Ironclaw2EItem extends Item {
     weaponGetGiftToExhaust(notifications = true) {
         const item = this;
         const system = item.system;
-        if (!(item.type === 'weapon')) {
+        if (!item.isWeaponLike) {
             console.error("Weapon get exhaust gift attempted on a non-weapon item: " + item.name);
             return;
         }
@@ -785,9 +1063,14 @@ export class Ironclaw2EItem extends Item {
             return null;
         }
 
+        // Magic gifts exhaust themselves
+        if (item.type === 'magicGift') {
+            return system.exhaustGift ? item.spellSource : null;
+        }
+
         if (system.exhaustGift && system.exhaustGiftName.length > 0) {
             // Could use a simple .getName(), but the function below is more typo-resistant
-            const giftToExhaust = findInItems(this.actor?.items, system.exhaustGiftName, "gift");
+            const giftToExhaust = findInItems(this.actor?.items, system.exhaustGiftName, ["gift", "magicGift"]);
             if (!giftToExhaust) {
                 if (notifications) ui.notifications.warn(game.i18n.format("ironclaw2e.ui.weaponGiftExhaustFailure", { "name": item.name, "gift": system.exhaustGiftName, "actor": this.actor.name }));
                 return null;
@@ -807,7 +1090,7 @@ export class Ironclaw2EItem extends Item {
     weaponGetWeaponToUpgrade(notifications = true) {
         const item = this;
         const system = item.system;
-        if (!(item.type === 'weapon')) {
+        if (!item.isWeaponLike) {
             console.error("Weapon get weapon upgrade attempted on a non-weapon item: " + item.name);
             return;
         }
@@ -839,7 +1122,7 @@ export class Ironclaw2EItem extends Item {
     async weaponToggleReady(toggle = "toggle") {
         const item = this;
         const system = item.system;
-        if (!(item.type === 'weapon')) {
+        if (!item.isWeaponLike) {
             console.error("Weapon ready toggle attempted on a non-weapon item: " + item.name);
             return null;
         }
@@ -858,6 +1141,26 @@ export class Ironclaw2EItem extends Item {
             default:
                 console.error("Weapon ready toggle defaulted! " + toggle);
                 break;
+        }
+
+        // Magic gifts exhaust themselves when readied, offering to refresh first if already exhausted
+        if (endState !== null && item.type === 'magicGift') {
+            const spell = item.spellSource;
+            if (endState === true && !spell.system.readied && spell.system.exhaustWhenUsed) {
+                if (spell.system.exhausted) {
+                    const refreshed = await spell.popupRefreshGift();
+                    if (refreshed !== false) {
+                        return null;
+                    }
+                }
+                const sendToChat = game.settings.get("ironclaw2e", "sendWeaponReadyExhaustMessage");
+                const worked = await spell.giftToggleExhaust("true", sendToChat);
+                if (worked !== true) {
+                    return null;
+                }
+            }
+            await spell.update({ "_id": spell.id, "system.readied": endState });
+            return endState;
         }
 
         if (endState !== null) {
@@ -939,7 +1242,7 @@ export class Ironclaw2EItem extends Item {
     async weaponAutoStow() {
         const item = this;
         const system = item.system;
-        if (!(item.type === 'weapon')) {
+        if (!item.isWeaponLike) {
             console.error("Weapon ready toggle attempted on a non-weapon item: " + item.name);
             return;
         }
@@ -961,7 +1264,7 @@ export class Ironclaw2EItem extends Item {
     async weaponReadyWhenUsed() {
         const item = this;
         const system = item.system;
-        if (!(item.type === 'weapon')) {
+        if (!item.isWeaponLike) {
             console.error("Weapon ready toggle attempted on a non-weapon item: " + item.name);
             return false;
         }
@@ -1007,12 +1310,20 @@ export class Ironclaw2EItem extends Item {
             case 'gift':
                 this.giftRoll();
                 break;
+            case 'magicGift':
             case 'weapon':
                 let rolls = [];
                 if (itemSys.canAttack) rolls.push(0);
                 if (itemSys.canSpark) rolls.push(1);
                 if (itemSys.canDefend) rolls.push(2);
                 if (itemSys.canCounter) rolls.push(3);
+                if (itemSys.canGiftRoll) rolls.push(4);
+
+                // A magic gift with no attacks works like a plain gift
+                if (item.type === 'magicGift' && rolls.length === 0) {
+                    this.giftRoll();
+                    break;
+                }
 
                 if (rolls.length === 1) {
                     this._itemRollSelection(rolls[0], directroll);
@@ -1046,7 +1357,7 @@ export class Ironclaw2EItem extends Item {
         const actor = this.actor;
 
         let flags = { "ironclaw2e.itemId": this.id, "ironclaw2e.itemActorId": actor?.id, "ironclaw2e.itemTokenId": actor?.token?.id, "ironclaw2e.itemSceneId": actor?.token?.parent?.id };
-        if (item.type === "weapon") {
+        if (item.isWeaponLike) {
             flags = foundry.utils.mergeObject(flags, {
                 "ironclaw2e.weaponName": item.name, "ironclaw2e.weaponDescriptors": itemSys.descriptorsSplit, "ironclaw2e.weaponEffects": itemSys.effectsSplit,
                 "ironclaw2e.weaponAttackStats": itemSys.attackStats, "ironclaw2e.weaponEquip": itemSys.equip, "ironclaw2e.weaponRange": itemSys.range,
@@ -1056,6 +1367,9 @@ export class Ironclaw2EItem extends Item {
                 flags = foundry.utils.mergeObject(flags, {
                     "ironclaw2e.weaponMultiAttack": itemSys.multiAttackType, "ironclaw2e.weaponMultiRange": itemSys.multiAttackRange ?? null,
                 });
+            }
+            if (item.isSpellAttack) {
+                flags = foundry.utils.mergeObject(flags, { "ironclaw2e.spellAttack": itemSys.spellAttackIndex });
             }
         }
         const foundToken = findActorToken(actor);
@@ -1076,6 +1390,13 @@ export class Ironclaw2EItem extends Item {
      *  Send information about the item to the chat as a message
      */
     async sendInfoToChat() {
+        // For magic gifts with attacks, pick which attack to send first
+        if (this.type === "magicGift" && !this.isSpellAttack && this.system.spellAttacks?.length > 0) {
+            const picked = await this.pickSpellAttack("info");
+            if (!picked) return;
+            if (picked !== this) return picked.sendInfoToChat();
+        }
+
         const item = this;
         const itemSys = item.system;
         const actor = this.actor;
@@ -1091,18 +1412,26 @@ export class Ironclaw2EItem extends Item {
         // If a combatant for the current actor is found, check whether the current user's target is threatened through the combatant, and use the result for Tactics auto-check
         let useTactics = (foundCombatant ? foundCombatant.checkTacticsForTarget?.() : false) ?? false;
         const richDescription = itemSys.description ? await TextEditor.enrichHTML(itemSys.description, { async: true, secrets: false }) : "";
+        // Magic gifts only show the weapon or gift buttons for the uses they actually have
+        const weaponButtons = item.type === "weapon" || item.isSpellAttack;
+        const giftButtons = (item.type === "gift" && itemSys.canUse) || itemSys.canGiftRoll === true;
         const templateData = {
             "item": item,
             "itemSys": itemSys,
-            "hasButtons": item.type === "weapon" || (item.type === "gift" && itemSys.canUse),
+            "isGiftLike": item.isGiftLike,
+            "isWeaponLike": item.type === "weapon" || item.isSpellAttack,
+            "isSpellAttack": item.isSpellAttack,
+            "weaponButtons": weaponButtons,
+            "giftButtons": giftButtons,
+            "hasButtons": weaponButtons || giftButtons,
             "richDescription": richDescription,
             "standardDefense": checkStandardDefense(itemSys.defendWith),
             "hasActor": !!(actor),
             "actorId": actor?.id ?? null,
             "tokenId": actor?.token?.id ?? null,
             "sceneId": actor?.token?.parent?.id ?? null,
-            "equipHandedness": (item.type === 'weapon' || item.type === 'shield' ? CommonSystemInfo.equipHandedness[itemSys.equip] : ""),
-            "equipRange": (item.type === 'weapon' ? CommonSystemInfo.rangeBands[itemSys.range] : ""),
+            "equipHandedness": (item.isWeaponLike || item.type === 'shield' ? CommonSystemInfo.equipHandedness[itemSys.equip] : ""),
+            "equipRange": (item.isWeaponLike ? CommonSystemInfo.rangeBands[itemSys.range] : ""),
             "hasTactics": hasTactics,
             "useTactics": useTactics
         };
@@ -1173,19 +1502,19 @@ export class Ironclaw2EItem extends Item {
 
         const item = this;
         const itemSys = item.system;
-        if (item.type !== 'weapon') {
+        if (!item.isWeaponLike) {
             console.error("A non-weapon type attempted to send Attack Data: " + item.name);
             return null;
         }
-        if (itemSys.effect.length === 0) {
-            return null; // If the weapon has no effects listed, return out
+        if (itemSys.effect.length === 0 && !(itemSys.successTiersSorted?.length > 0)) {
+            return null; // If the weapon has no effects or spell success tiers listed, return out
         }
 
 
         if (!info.tnData || iscounter) { // If the roll is a counter-attack, or is in highest mode and assumed to be one, set the flags accordingly
             let updatedata = {
                 flags: {
-                    "ironclaw2e.hangingAttack": "counter", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
+                    "ironclaw2e.hangingAttack": "counter", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingSpellAttack": itemSys.spellAttackIndex ?? null, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
                     "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.hangingSlaying": itemSys.effectsSplit?.includes("slaying") ?? false
                 }
             };
@@ -1207,7 +1536,7 @@ export class Ironclaw2EItem extends Item {
         if (ignoreresist === false && itemSys.hasResist) { // If the weapon's attack is a resisted one, set the flags accordingly
             let updatedata = {
                 flags: {
-                    "ironclaw2e.hangingAttack": "resist", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
+                    "ironclaw2e.hangingAttack": "resist", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingSpellAttack": itemSys.spellAttackIndex ?? null, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
                     "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.hangingSlaying": itemSys.effectsSplit?.includes("slaying") ?? false, "ironclaw2e.resistSuccess": success, "ironclaw2e.resistSuccessCount": usedsuccesses
                 }
             };
@@ -1219,7 +1548,7 @@ export class Ironclaw2EItem extends Item {
         else { // Else, treat it as a normal attack and set the flags to store the information for future reference
             let updatedata = {
                 flags: {
-                    "ironclaw2e.hangingAttack": "attack", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
+                    "ironclaw2e.hangingAttack": "attack", "ironclaw2e.hangingWeapon": this.id, "ironclaw2e.hangingSpellAttack": itemSys.spellAttackIndex ?? null, "ironclaw2e.hangingActor": this.actor?.id, "ironclaw2e.hangingToken": this.actor?.token?.id,
                     "ironclaw2e.hangingScene": this.actor?.token?.parent?.id, "ironclaw2e.hangingSlaying": itemSys.effectsSplit?.includes("slaying") ?? false, "ironclaw2e.attackSuccess": success, "ironclaw2e.attackSuccessCount": usedsuccesses
                 }
             };
@@ -1383,10 +1712,17 @@ export class Ironclaw2EItem extends Item {
             }
         }
 
+        // Spell attack success tiers, based on the same successes the damage uses
+        const tier = successfulAttack ? item.getSuccessTier(usedsuccesses) : null;
+        const hasTiers = itemSys.successTiersSorted?.length > 0;
+
         const templateData = {
             "item": item,
             "itemSys": itemSys,
             "successfulAttack": successfulAttack,
+            "tier": tier,
+            "tierSuccesses": usedsuccesses,
+            "hasSoak": itemSys.damageEffect >= 0 || !(hasTiers && !itemSys.effectConditions),
             "hasResist": itemSys.hasResist,
             "success": success,
             "negativeSuccesses": negativeSuccesses,
@@ -1397,7 +1733,7 @@ export class Ironclaw2EItem extends Item {
             "isImpaling": impaling,
             "isCritical": critical,
             "isNormal": itemSys.damageEffect >= 0,
-            "isConditional": itemSys.damageEffect < 0,
+            "isConditional": itemSys.damageEffect < 0 && !(hasTiers && !itemSys.effectConditions), // Spells whose conditions all come from success tiers have no separate condition effect
             "isPenetrating": penetrating,
             "isWeak": weak,
             "doubleDamage": itemSys.damageEffect + (usedsuccesses * 2),
@@ -1413,7 +1749,7 @@ export class Ironclaw2EItem extends Item {
 
         const contents = await renderTemplate("systems/ironclaw2e/templates/chat/damage-info.html", templateData);
 
-        let flags = { "ironclaw2e.attackDamageInfo": true, "ironclaw2e.attackDamageAutoHits": itemSys.attackAutoHits, "ironclaw2e.attackDamageDefense": itemSys.opposingDefenseStats, "ironclaw2e.attackDamageSlaying": slaying };
+        let flags = { "ironclaw2e.attackDamageInfo": true, "ironclaw2e.attackDamageAutoHits": itemSys.attackAutoHits, "ironclaw2e.attackDamageDefense": itemSys.opposingDefenseStats, "ironclaw2e.attackDamageDefenseDice": itemSys.opposingDefenseDice ?? "", "ironclaw2e.attackDamageSlaying": slaying };
         flags = foundry.utils.mergeObject(flags, this.getItemFlags());
 
         let chatData = {
@@ -1435,7 +1771,7 @@ export class Ironclaw2EItem extends Item {
         const item = this;
         const system = item.system;
 
-        if (!(item.type === 'gift')) {
+        if (!item.isGiftLike) {
             console.error("Gift roll attempted on a non-gift item: " + item.name);
             return;
         }
@@ -1480,6 +1816,9 @@ export class Ironclaw2EItem extends Item {
             case 3:
                 this.counterRoll(directroll);
                 break;
+            case 4:
+                this.giftRoll(directroll);
+                break;
             default:
                 console.error("Defaulted weapon roll type: " + this);
                 break;
@@ -1498,9 +1837,15 @@ export class Ironclaw2EItem extends Item {
         const actor = this.actor ? this.actor : {};
         const itemSys = item.system;
 
-        if (!(item.type === 'weapon')) {
+        if (!item.isWeaponLike) {
             console.error("Attack roll attempted on a non-weapon item: " + item.name);
             return;
+        }
+
+        // For a magic gift, pick which spell attack to use first
+        if (item.type === 'magicGift' && !item.isSpellAttack) {
+            const attack = await item.pickSpellAttack("attack");
+            return attack?.attackRoll(directroll, ignoreresist, presettn, opposingsuccesses, { sourcemessage, defendermessage, addtactics });
         }
 
         // Make sure this weapon can actually attack
@@ -1572,7 +1917,7 @@ export class Ironclaw2EItem extends Item {
         const actor = this.actor ? this.actor : {};
         const itemSys = item.system;
 
-        if (!(item.type === 'weapon')) {
+        if (!item.isWeaponLike) {
             console.error("Defense roll attempted on a non-weapon item: " + item.name);
             return;
         }
@@ -1606,9 +1951,21 @@ export class Ironclaw2EItem extends Item {
         const actor = this.actor ? this.actor : {};
         const itemSys = item.system;
 
-        if (!(item.type === 'weapon')) {
+        if (!item.isWeaponLike) {
             console.error("Counter roll attempted on a non-weapon item: " + item.name);
             return;
+        }
+
+        // Spells can only counter while readied
+        if (item.type === 'magicGift' && !itemSys.readied) {
+            ui.notifications.warn(game.i18n.format("ironclaw2e.ui.spellNotReadied", { "name": item.spellSource.name }));
+            return;
+        }
+
+        // For a magic gift, pick which spell attack to counter with first
+        if (item.type === 'magicGift' && !item.isSpellAttack) {
+            const attack = await item.pickSpellAttack("counter");
+            return attack?.counterRoll(directroll, otheritem, extradice);
         }
 
         // Make sure the weapon can actually counter
@@ -1656,7 +2013,7 @@ export class Ironclaw2EItem extends Item {
         const actor = this.actor ? this.actor : {};
         const system = item.system;
 
-        if (!(item.type === 'weapon')) {
+        if (!item.isWeaponLike) {
             console.error("Spark roll attempted on a non-weapon item: " + item.name);
             return;
         }
@@ -1833,7 +2190,7 @@ export class Ironclaw2EItem extends Item {
      * @param {boolean} mode What state to change to, true for Exhausted and false for Refreshed
      */
     async popupGiftExhaustToggle(mode) {
-        if (this.type !== "gift") {
+        if (!this.isGiftLike) {
             console.error("Tried to set exhaust on a non-gift item: " + this);
             return null;
         }
@@ -1872,7 +2229,7 @@ export class Ironclaw2EItem extends Item {
      * Pop up a dialog box to pick what way to use a weapon
      */
     popupWeaponRollType() {
-        if (this.type !== "weapon")
+        if (!this.isWeaponLike)
             return console.error("Tried to popup a weapon roll question a non-weapon item: " + this);
 
         const item = this;
@@ -1917,6 +2274,11 @@ export class Ironclaw2EItem extends Item {
             constructionstring += `<label>${game.i18n.localize("ironclaw2e.counter")}:</label>
 	    <input type="radio" id="counter" name="weapon" value="3" ${first ? "" : "checked"}></input>`;
             first = first || "counter";
+        }
+        if (itemSys.canGiftRoll) {
+            constructionstring += `<label>${game.i18n.localize("ironclaw2e.giftRoll")}:</label>
+	    <input type="radio" id="giftroll" name="weapon" value="4" ${first ? "" : "checked"}></input>`;
+            first = first || "giftroll";
         }
 
         constructionstring += `

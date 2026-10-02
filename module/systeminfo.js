@@ -98,13 +98,23 @@ export class CommonSystemInfo {
      * Contains sets for each actor type that determines what sorts of items the system will allow them to have
      */
     static actorAllowedTypes = {
-        "character": new Set(["gift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "item"]),
-        "mook": new Set(["gift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "item"]),
-        "beast": new Set(["gift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "item"]),
+        "character": new Set(["gift", "magicGift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "item"]),
+        "mook": new Set(["gift", "magicGift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "item"]),
+        "beast": new Set(["gift", "magicGift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "item"]),
         "marker": new Set([]),
         "vehicle": new Set(["weapon", "armor", "shield", "illumination", "item", "vehicleStation", "vehicleModification"])
     };
 
+    /**
+     * The default fields of a new spell attack in a magic gift
+     */
+    static spellAttackDefaults = {
+        "name": "New Attack", "effect": "", "defendWith": "Defense", "hasResist": false, "descriptors": "", "range": "close", "attackDice": "", "counterDice": "", "successTiers": []
+    };
+    /**
+     * The default fields of a new success tier in a spell attack, the conditions are comma-separated condition names
+     */
+    static spellTierDefaults = { "successes": 1, "addConditions": "", "removeConditions": "", "note": "" };
     /**
      * The handedness of a weapon
      */

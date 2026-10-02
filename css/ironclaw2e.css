@@ -459,6 +459,27 @@ input.center-text {
   text-align: right;
 }
 
+/* Magic gifts list: keep every row on one line so nothing spills out of the fixed-height rows */
+.ironclaw2e .magic-gifts-list .item-name,
+.ironclaw2e .magic-gifts-list .item-controls,
+.ironclaw2e .magic-gifts-list .item-controls-small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ironclaw2e .magic-gifts-list .item-controls {
+  flex-basis: 180px;
+}
+
+.ironclaw2e .magic-gifts-list .item-name {
+  min-width: 0;
+}
+
+.ironclaw2e .magic-gifts-list .item-header .item-controls-small {
+  flex-basis: 140px;
+}
+
 .ironclaw2e .allow-selection {
     -moz-user-select: text;
     -webkit-user-select: text;

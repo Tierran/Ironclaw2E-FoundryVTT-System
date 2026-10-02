@@ -46,15 +46,15 @@
         <div class="tab attributes" data-group="primary" data-tab="attributes">
             <div class="flexcol">
                 <h3 class="header-label">Attributes</h3>
-                <div class="resource effect flex-group-center">
-                    <label class="resource-label">Effect:</label>
-                    <div class="resource flexrow flex-center">
-                        <label class="resource-label" style="max-width:160px">{{#if system.hasResist}}Resist With:{{else}}Opposing Defense:{{/if}}</label>
-                        {{#unless system.hasResist}}<span class="resource-label" style="max-width:120px">Attack vs.</span>{{/unless}}
-                        <input type="text" name="system.defendWith" value="{{system.defendWith}}" data-dtype="String" />
-                        {{#if system.hasResist}}<span class="resource-label" style="max-width:60px">vs. 3</span>{{/if}}
-                    </div>
+                <div class="resource effect flexrow flex-group-center">
+                    <label class="resource-label" style="max-width:160px">Effect:</label>
                     <input type="text" name="system.effect" value="{{system.effect}}" data-dtype="String" />
+                </div>
+                <div class="resource defense flexrow flex-group-center">
+                    <label class="resource-label" style="max-width:160px">{{#if system.hasResist}}Resist With:{{else}}Opposing Defense:{{/if}}</label>
+                    {{#unless system.hasResist}}<span class="resource-label" style="max-width:120px">Attack vs.</span>{{/unless}}
+                    <input type="text" name="system.defendWith" value="{{system.defendWith}}" data-dtype="String" />
+                    {{#if system.hasResist}}<span class="resource-label" style="max-width:60px">vs. 3</span>{{/if}}
                 </div>
                 <div class="resource descriptors flex-group-center">
                     <label class="resource-label">Descriptors:</label>

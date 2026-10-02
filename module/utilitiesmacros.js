@@ -76,6 +76,7 @@ Hooks.on("renderChatMessage", function (message, html, data) {
         if (attackInfo) {
             if (showOthers) {
                 buttons.find('.soak-button').click(Ironclaw2EActor.onChatSoakClick.bind(this));
+                buttons.find('.apply-tier-button').click(Ironclaw2EActor.onChatApplyTierClick.bind(this));
             } else {
                 buttons.remove();
             }
@@ -426,6 +427,18 @@ function getHangingActor(message) {
 }
 
 /**
+ * Get the weapon a hanging attack message was rolled with, as the right spell attack for magic gifts
+ * @param {ChatMessage} message
+ * @returns {Ironclaw2EItem | null}
+ */
+function getHangingWeapon(message) {
+    const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
+    const actor = getHangingActor(message);
+    const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
+    return weapon?.asSpellAttack(message.getFlag("ironclaw2e", "hangingSpellAttack")) ?? null;
+}
+
+/**
  * Adds the Ironclaw context menu options to the chat log
  * @param {any} html
  * @param {any} entryOptions The menu
@@ -591,9 +604,7 @@ function addIronclawChatLogContext(app, entryOptions) {
         const message = _icGetMessageFromTarget(target);
         if (!message) return;
 
-        const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
-        const actor = getHangingActor(message);
-        const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
+        const weapon = getHangingWeapon(message);
         weapon?.resendNormalAttack?.(message);
       }
     },
@@ -618,9 +629,7 @@ function addIronclawChatLogContext(app, entryOptions) {
         const message = _icGetMessageFromTarget(target);
         if (!message) return;
 
-        const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
-        const actor = getHangingActor(message);
-        const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
+        const weapon = getHangingWeapon(message);
         weapon?.resendNormalAttack?.(message, true);
       }
     },
@@ -643,9 +652,7 @@ function addIronclawChatLogContext(app, entryOptions) {
         const message = _icGetMessageFromTarget(target);
         if (!message) return;
 
-        const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
-        const actor = getHangingActor(message);
-        const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
+        const weapon = getHangingWeapon(message);
         weapon?.resolveCounterAttack?.(message);
       }
     },
@@ -669,9 +676,7 @@ function addIronclawChatLogContext(app, entryOptions) {
         const message = _icGetMessageFromTarget(target);
         if (!message) return;
 
-        const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
-        const actor = getHangingActor(message);
-        const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
+        const weapon = getHangingWeapon(message);
         weapon?.resolveResistedAttack?.(message);
       }
     },
@@ -695,9 +700,7 @@ function addIronclawChatLogContext(app, entryOptions) {
         const message = _icGetMessageFromTarget(target);
         if (!message) return;
 
-        const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
-        const actor = getHangingActor(message);
-        const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
+        const weapon = getHangingWeapon(message);
         weapon?.resolveAsNormalAttack?.(message);
       }
     },
@@ -722,9 +725,7 @@ function addIronclawChatLogContext(app, entryOptions) {
         const message = _icGetMessageFromTarget(target);
         if (!message) return;
 
-        const weaponid = message.getFlag("ironclaw2e", "hangingWeapon");
-        const actor = getHangingActor(message);
-        const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
+        const weapon = getHangingWeapon(message);
         weapon?.resolveAsNormalAttack?.(message, true);
       }
     },
@@ -796,14 +797,28 @@ async function attackAgainstDefense(message, anyAttacker = false) {
  * @returns {Promise<Ironclaw2EItem|null>}
  */
 async function pickAttackWeapon(actor) {
-    const weapons = actor.items.filter(x => x.type === "weapon" && x.system.canAttack);
+    // Magic gifts are listed once per spell attack that can attack
+    const weapons = [];
+    for (let item of actor.items) {
+        if (item.type === "magicGift") {
+            item.system.spellAttacks?.forEach((attack, index) => {
+                if (attack.attackDice?.length > 0) weapons.push({ "value": `${item.id}.${index}`, "name": `${item.name}: ${attack.name}` });
+            });
+        } else if (item.isWeaponLike && item.system.canAttack) {
+            weapons.push({ "value": item.id, "name": item.name });
+        }
+    }
     if (weapons.length === 0) {
         ui.notifications.warn(game.i18n.format("ironclaw2e.ui.noAttackWeapons", { "name": actor.name }));
         return null;
     }
-    if (weapons.length === 1) return weapons[0];
+    const getPicked = value => {
+        const [id, index] = value.split(".");
+        return actor.items.get(id)?.asSpellAttack(index === undefined ? null : parseInt(index)) ?? null;
+    };
+    if (weapons.length === 1) return getPicked(weapons[0].value);
 
-    const options = weapons.map(x => `<option value="${x.id}">${Handlebars.escapeExpression(x.name)}</option>`).join("");
+    const options = weapons.map(x => `<option value="${x.value}">${Handlebars.escapeExpression(x.name)}</option>`).join("");
     const picked = await foundry.applications.api.DialogV2.wait({
         window: { title: "ironclaw2e.dialog.attackDefense.title" },
         content: `<div class="form-group"><label>${game.i18n.format("ironclaw2e.dialog.attackDefense.pickWeapon", { "name": Handlebars.escapeExpression(actor.name) })}</label><select name="weapon">${options}</select></div>`,
@@ -820,7 +835,7 @@ async function pickAttackWeapon(actor) {
         }],
         rejectClose: false
     });
-    return (picked && picked !== "cancel" ? actor.items.get(picked) : null);
+    return (picked && picked !== "cancel" ? getPicked(picked) : null);
 }
 
 // Add an "Attack This Defense" button to defense rolls that answer an attack, usable by anyone
@@ -863,9 +878,7 @@ async function autoResolveCounterAttack(message, changes) {
     const attacksuccesses = answer.successes ?? 0;
     if (countersuccesses <= 0 || countersuccesses < attacksuccesses) return;
 
-    const weaponid = counterMessage.getFlag("ironclaw2e", "hangingWeapon");
-    const actor = getHangingActor(counterMessage);
-    const weapon = actor?.items.get(weaponid) || game.items.get(weaponid);
+    const weapon = getHangingWeapon(counterMessage);
     if (!weapon) return;
 
     await counterMessage.setFlag("ironclaw2e", "counterResolved", true);
@@ -876,20 +889,22 @@ Hooks.on("updateChatMessage", autoResolveCounterAttack);
 
 /**
  * Adds the Ironclaw context menu options to the item folder directory
- * @param {any} html
+ * @param {foundry.applications.sidebar.DocumentDirectory} application
  * @param {any} entryOptions The menu
  */
-function addIronclawItemDirectoryFolderContext(html, entryOptions) {
+function addIronclawItemDirectoryFolderContext(application, entryOptions) {
+    // The folder hook fires for every directory, only the Items directory has template folders
+    if (application.documentName !== "Item") return;
     entryOptions.push(
         {
             name: "ironclaw2e.context.items.setAsSpeciesSource",
             icon: '<i class="fas fa-bullseye"></i>',
             condition: header => {
-                const folder = game.folders.get(header.parent().data("folderId"));
-                return game.user.isGM && folder.contents.some(x => x.type === "speciesTemplate");
+                const folder = game.folders.get(header.closest(".directory-item")?.dataset.folderId);
+                return game.user.isGM && !!folder?.contents.some(x => x.type === "speciesTemplate");
             },
             callback: header => {
-                const id = header.parent().data("folderId");
+                const id = header.closest(".directory-item").dataset.folderId;
                 game.settings.set("ironclaw2e", "templateSpeciesFolder", id);
             }
         },
@@ -897,33 +912,33 @@ function addIronclawItemDirectoryFolderContext(html, entryOptions) {
             name: "ironclaw2e.context.items.setAsCareerSource",
             icon: '<i class="fas fa-bullseye"></i>',
             condition: header => {
-                const folder = game.folders.get(header.parent().data("folderId"));
-                return game.user.isGM && folder.contents.some(x => x.type === "careerTemplate");
+                const folder = game.folders.get(header.closest(".directory-item")?.dataset.folderId);
+                return game.user.isGM && !!folder?.contents.some(x => x.type === "careerTemplate");
             },
             callback: header => {
-                const id = header.parent().data("folderId");
+                const id = header.closest(".directory-item").dataset.folderId;
                 game.settings.set("ironclaw2e", "templateCareerFolder", id);
             }
         });
 }
-Hooks.on("getItemDirectoryFolderContext", addIronclawItemDirectoryFolderContext);
+Hooks.on("getFolderContextOptions", addIronclawItemDirectoryFolderContext);
 
 /**
  * Adds the Ironclaw context menu options to the item directory
- * @param {any} html
+ * @param {foundry.applications.sidebar.tabs.ItemDirectory} application
  * @param {any} entryOptions The menu
  */
-function addIronclawItemDirectoryEntryContext(html, entryOptions) {
+function addIronclawItemDirectoryEntryContext(application, entryOptions) {
     entryOptions.push(
         {
             name: "ironclaw2e.context.items.sendToChat",
             icon: '<i class="fas fa-comment-dots"></i>',
             condition: li => {
-                const id = li.data("documentId");
+                const id = li.dataset.entryId;
                 return game.user.isGM && game.items.has(id);
             },
             callback: li => {
-                const id = li.data("documentId");
+                const id = li.dataset.entryId;
                 const item = game.items.get(id);
                 if (item)
                     item.sendInfoToChat();
@@ -932,4 +947,4 @@ function addIronclawItemDirectoryEntryContext(html, entryOptions) {
             }
         });
 }
-Hooks.on("getItemDirectoryEntryContext", addIronclawItemDirectoryEntryContext);
+Hooks.on("getItemContextOptions", addIronclawItemDirectoryEntryContext);
