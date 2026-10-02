@@ -6,7 +6,7 @@
     <div class="chat-content">
         <div class="chat-item item-description">{{{richDescription}}}</div>
         <div class="chat-item item-statistics">
-            {{#if (typeCheck item.type "gift")}}
+            {{#if isGiftLike}}
             <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.tags"}}:</strong> {{itemSys.giftTags}}</p>
             <p>
                 <strong>{{localize "ironclaw2e.chatInfo.itemInfo.refresh"}}:</strong> {{itemSys.refresh}}, <strong>{{localize "ironclaw2e.chatInfo.itemInfo.exhausted"}}:</strong>
@@ -23,14 +23,14 @@
             <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.dice"}}:</strong> {{itemSys.dice}}</p>
             <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.skills"}}:</strong> {{itemSys.careerSkill1}}, {{itemSys.careerSkill2}}, {{itemSys.careerSkill3}}</p>
             {{/if}}
-            {{#if (typeCheck item.type "weapon")}}
+            {{#if isWeaponLike}}
             <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.effect"}}:</strong> {{itemSys.effect}}</p>
             <p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.descriptors"}}:</strong> {{itemSys.descriptors}}</p>
             <p>
-                <strong>{{localize "ironclaw2e.chatInfo.itemInfo.equip"}}:</strong> {{equipHandedness}},
+                {{#unless isSpellAttack}}<strong>{{localize "ironclaw2e.chatInfo.itemInfo.equip"}}:</strong> {{equipHandedness}},{{/unless}}
                 <strong>{{localize "ironclaw2e.chatInfo.itemInfo.range"}}:</strong> {{equipRange}}
             </p>
-            {{#if itemSys.exhaustGift}}{{#if itemSys.exhaustGiftName}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.exhaustGift"}}:</strong> {{itemSys.exhaustGiftName}}</p>{{/if}}{{/if}}
+            {{#if (typeCheck item.type "weapon")}}{{#if itemSys.exhaustGift}}{{#if itemSys.exhaustGiftName}}<p><strong>{{localize "ironclaw2e.chatInfo.itemInfo.exhaustGift"}}:</strong> {{itemSys.exhaustGiftName}}</p>{{/if}}{{/if}}{{/if}}
             {{#if itemSys.upgradeWeapon}}{{#if itemSys.upgradeWeaponName}}<p>
                 {{{localize "ironclaw2e.chatInfo.itemInfo.upgradeWeapon" weapon=itemSys.upgradeWeaponName action=itemSys.upgradeWeaponAction}}}
             </p>{{/if}}{{/if}}
@@ -96,7 +96,7 @@
         </div>
         {{#if hasButtons}}
         <div class="chat-item button-holder" data-itemid="{{item._id}}" data-actorid="{{actorId}}" data-tokenid="{{tokenId}}" data-sceneid="{{sceneId}}">
-            {{#if (typeCheck item.type "weapon")}}
+            {{#if weaponButtons}}
             <div class="attack-holder">
                 <div class="attack-buttons flexrow">
                     <button class="default-attack" data-skipresist="false">{{localize "ironclaw2e.chatInfo.itemInfo.attackWith" name=item.name}}</button>
@@ -132,7 +132,7 @@
                 <button class="counter-defense small-text" data-defensetype="counter">{{localize "ironclaw2e.chatInfo.itemInfo.counterDefense"}}</button>
             </div>
             {{/if}}
-            {{#if (typeCheck item.type "gift")}}
+            {{#if giftButtons}}
             <div class="gift-holder">
                 <div class="gift-buttons flexrow">
                     <button class="default-gift-use">{{localize "ironclaw2e.chatInfo.itemInfo.useGift" name=item.name}}</button>

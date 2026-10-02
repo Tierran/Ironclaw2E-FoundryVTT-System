@@ -39,13 +39,14 @@
 
     {{!-- Sheet Tab Navigation --}}
     <nav class="sheet-tabs tabs" data-group="primary">
-        <a class="item" data-tab="description">{{localize "ironclaw2e.sheets.actor.description"}}</a>
         <a class="item" data-tab="skills">{{localize "ironclaw2e.sheets.actor.details.title"}}</a>
         <a class="item" data-tab="battlestats">{{localize "ironclaw2e.sheets.actor.battleStatistics"}}</a>
-        <a class="item" data-tab="statuseffects">{{localize "ironclaw2e.sheets.actor.status.title"}}</a>
+        <a class="item" data-tab="magicgifts">{{localize "ironclaw2e.sheets.actor.gear.magic"}}</a>
         <a class="item" data-tab="gifts">{{localize "ironclaw2e.sheets.actor.gear.gifts"}}</a>
+        <a class="item" data-tab="statuseffects">{{localize "ironclaw2e.sheets.actor.status.title"}}</a>
         <a class="item" data-tab="weapons">{{localize "ironclaw2e.sheets.actor.combatGear"}}</a>
         <a class="item" data-tab="items">{{localize "ironclaw2e.sheets.actor.gear.items"}}</a>
+        <a class="item" data-tab="description">{{localize "ironclaw2e.sheets.actor.description"}}</a>
     </nav>
 
     {{!-- Sheet Body --}}
@@ -53,7 +54,8 @@
 
         {{!-- Description Tab --}}
         <div class="tab description" data-group="primary" data-tab="description">
-            {{editor richDescription target="system.description" button=true editable=editable engine=sheetEngine}}
+            {{> 'systems/ironclaw2e/templates/parts/attributes.html'}}
+            <div style="height:calc(100% - 105px)">{{editor richDescription target="system.description" button=true editable=editable engine=sheetEngine}}</div>
         </div>
 
         {{!-- Battle Stats Tab --}}
@@ -74,6 +76,11 @@
         {{!-- Owned Gifts Tab --}}
         <div class="tab gifts" data-group="primary" data-tab="gifts">
             {{> 'systems/ironclaw2e/templates/parts/gifts.html'}}
+        </div>
+
+        {{!-- Magic Gifts Tab --}}
+        <div class="tab magicgifts" data-group="primary" data-tab="magicgifts">
+            {{> 'systems/ironclaw2e/templates/parts/magicgifts.html'}}
         </div>
 
         {{!-- Owned Items Tab --}}

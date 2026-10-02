@@ -830,7 +830,7 @@ export class CardinalDiceRoller {
 
         if (hangingType) {
             updatedata.flags = foundry.utils.mergeObject(updatedata.flags, {
-                "ironclaw2e.hangingAttack": hangingType, "ironclaw2e.hangingWeapon": origin.getFlag("ironclaw2e", "hangingWeapon"), "ironclaw2e.hangingActor": origin.getFlag("ironclaw2e", "hangingActor"),
+                "ironclaw2e.hangingAttack": hangingType, "ironclaw2e.hangingWeapon": origin.getFlag("ironclaw2e", "hangingWeapon"), "ironclaw2e.hangingSpellAttack": origin.getFlag("ironclaw2e", "hangingSpellAttack") ?? null, "ironclaw2e.hangingActor": origin.getFlag("ironclaw2e", "hangingActor"),
                 "ironclaw2e.hangingToken": origin.getFlag("ironclaw2e", "hangingToken"), "ironclaw2e.hangingScene": origin.getFlag("ironclaw2e", "hangingScene"), "ironclaw2e.hangingSlaying": origin.getFlag("ironclaw2e", "hangingSlaying")
             });
 

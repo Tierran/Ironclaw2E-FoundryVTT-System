@@ -1,5 +1,5 @@
 import { CommonSystemInfo, getRangeDistanceFromBand, getSpecialSettingsRerolls, getThreatRanges } from "../systeminfo.js";
-import { getAllItemsInWorld } from "../helpers.js";
+import { getAllItemsInWorld, popupConfirmationBox } from "../helpers.js";
 import { getConditionSelectObject } from "../conditions.js";
 const { ItemSheet } = foundry.appv1.sheets;
 const TextEditor = foundry.applications.ux.TextEditor.implementation;
@@ -107,6 +107,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         html.find('.delete-special-option').click(this._onDeleteSpecial.bind(this));
         html.find('.copy-special-settings').click(this._onCopySpecialSettings.bind(this));
         html.find('.copy-all-aspects').click(this._onCopyAllAspects.bind(this));
+        html.find('.convert-to-magic').click(this._onConvertToMagic.bind(this));
 
         html.find('.change-setting-mode').change(this._onChangeSpecialOption.bind(this));
         html.find('.special-change-field').change(this._onChangeSpecialField.bind(this));
@@ -114,6 +115,121 @@ export class Ironclaw2EItemSheet extends ItemSheet {
         html.find('.special-change-boolean').change(this._onChangeSpecialBoolean.bind(this));
 
         html.find('.vehicle-captain-reset').change(this._onVehicleCaptainReset.bind(this));
+
+        // Spell attack handlers
+        html.find('.add-spell-attack').click(this._onAddSpellAttack.bind(this));
+        html.find('.delete-spell-attack').click(this._onDeleteSpellAttack.bind(this));
+        html.find('.spell-attack-field').change(this._onChangeSpellAttackField.bind(this));
+        html.find('.spell-attack-boolean').change(this._onChangeSpellAttackField.bind(this));
+        html.find('.add-spell-tier').click(this._onAddSpellTier.bind(this));
+        html.find('.delete-spell-tier').click(this._onDeleteSpellTier.bind(this));
+        html.find('.spell-tier-field').change(this._onChangeSpellTierField.bind(this));
+        html.find('.spell-tier-number').change(this._onChangeSpellTierField.bind(this));
+    }
+
+    /**
+     * Convert a gift into a magic gift, after confirmation
+     * @param {Event} event
+     * @private
+     */
+    async _onConvertToMagic(event) {
+        event.preventDefault();
+        const confirmation = await popupConfirmationBox("ironclaw2e.dialog.convertMagicGift.title", "ironclaw2e.dialog.convertMagicGift.header", "ironclaw2e.dialog.convert",
+            { "itemname": this.item.name, "defaultbutton": "two" });
+        if (!confirmation.confirmed) return;
+
+        // Close the gift sheet first, so the item reopens with the magic gift sheet
+        const item = this.item;
+        await this.close();
+        const converted = await item.giftConvertToMagic();
+        if (converted) converted.sheet.render(true);
+    }
+
+    /**
+     * Add a new spell attack to a magic gift
+     * @param {Event} event
+     * @private
+     */
+    _onAddSpellAttack(event) {
+        event.preventDefault();
+        this.item.spellAddAttack();
+    }
+
+    /**
+     * Delete a spell attack from a magic gift
+     * @param {Event} event
+     * @private
+     */
+    _onDeleteSpellAttack(event) {
+        event.preventDefault();
+        const index = parseInt($(event.currentTarget).closest(".spell-attack").data("attackIndex"));
+        this.item.spellDeleteAttack(index);
+    }
+
+    /**
+     * Change a field in a spell attack
+     * @param {Event} event
+     * @private
+     */
+    _onChangeSpellAttackField(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const element = event.currentTarget;
+        const index = parseInt($(element).closest(".spell-attack").data("attackIndex"));
+        const value = element.type === "checkbox" ? element.checked : element.value;
+        this.item.spellChangeAttackField(index, element.dataset.field, value);
+    }
+
+    /**
+     * Get the spell attack and success tier indices of a tier element
+     * @param {HTMLElement} element
+     * @returns {number[]}
+     * @private
+     */
+    _getSpellTierIndices(element) {
+        const attackindex = parseInt($(element).closest(".spell-attack").data("attackIndex"));
+        const tierindex = parseInt($(element).closest(".spell-tier").data("tierIndex"));
+        return [attackindex, tierindex];
+    }
+
+    /**
+     * Add a new success tier to a spell attack
+     * @param {Event} event
+     * @private
+     */
+    _onAddSpellTier(event) {
+        event.preventDefault();
+        const attackindex = parseInt($(event.currentTarget).closest(".spell-attack").data("attackIndex"));
+        this.item.spellAddTier(attackindex);
+    }
+
+    /**
+     * Delete a success tier from a spell attack
+     * @param {Event} event
+     * @private
+     */
+    _onDeleteSpellTier(event) {
+        event.preventDefault();
+        const [attackindex, tierindex] = this._getSpellTierIndices(event.currentTarget);
+        this.item.spellDeleteTier(attackindex, tierindex);
+    }
+
+    /**
+     * Change a field in a spell attack's success tier
+     * @param {Event} event
+     * @private
+     */
+    _onChangeSpellTierField(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const element = event.currentTarget;
+        const [attackindex, tierindex] = this._getSpellTierIndices(element);
+        let value = element.value;
+        if (element.type === "number") {
+            value = parseInt(value);
+            if (isNaN(value)) return;
+        }
+        this.item.spellChangeTierField(attackindex, tierindex, element.dataset.field, value);
     }
 
     /** @inheritdoc */
@@ -202,7 +318,7 @@ export class Ironclaw2EItemSheet extends ItemSheet {
                 render: html => { },
                 close: async html => {
                     if (confirmed) { // Only copy these settings and replace existing ones if confirmed
-                        const gifts = getAllItemsInWorld("gift");
+                        const gifts = getAllItemsInWorld(this.item.type);
                         gifts.delete(this.item);
                         ui.notifications.info("ironclaw2e.ui.itemUpdateInProgress", { localize: true, permanent: true });
                         for (let gift of gifts) {

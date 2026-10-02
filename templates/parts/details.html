@@ -1,34 +1,24 @@
 <div class="flexcol">
-    <div class="speciesstuff">
-        <div class="flexrow flex-tight">
-            <h4 class="header-label flexrow flex-center">{{localize "ironclaw2e.sheets.actor.details.species"}}</h4>
-            <input class="bold-text" name="system.traits.species.name" type="text" value="{{system.traits.species.name}}" placeholder="{{localize "ironclaw2e.sheets.actor.details.speciesName"}}" data-dtype="String" />
-        </div>
-        <div class="flex-group-center flex-tight arrange-vertically">
-            <div class="trait flexrow flex-center">
-                <label for="system.traits.species.speciesSkill1" class="normal-label">{{localize "ironclaw2e.sheets.actor.details.speciesSkills"}}</label>
+    <div class="traitnames grid grid-2col">
+        <div class="speciesstuff flexcol">
+            <div class="flexrow flex-tight">
+                <h4 class="header-label flexrow flex-center">{{localize "ironclaw2e.sheets.actor.details.species"}}</h4>
+                <input class="bold-text" name="system.traits.species.name" type="text" value="{{system.traits.species.name}}" placeholder="{{localize "ironclaw2e.sheets.actor.details.speciesName"}}" data-dtype="String" />
+            </div>
+            <label class="normal-label">{{localize "ironclaw2e.sheets.actor.details.speciesSkills"}}</label>
+            <div class="flexrow flex-tight">
                 <input type="text" name="system.traits.species.speciesSkill1" value="{{system.traits.species.speciesSkill1}}" data-dtype="String" />
                 <input type="text" name="system.traits.species.speciesSkill2" value="{{system.traits.species.speciesSkill2}}" data-dtype="String" />
                 <input type="text" name="system.traits.species.speciesSkill3" value="{{system.traits.species.speciesSkill3}}" data-dtype="String" />
             </div>
-            <div class="attributes grid grid-4col grid-minimal">
-                {{#each system.attributes as |attribute key|}}
-                <div class="trait flexrow flex-center flex-tight arrange-vertically">
-                    <label for="system.attributes.{{key}}" class="normal-label">{{key}}</label>
-                    <input type="text" name="system.attributes.{{key}}" value="{{attribute}}" data-dtype="String" />
-                </div>
-                {{/each}}
+        </div>
+        <div class="careerstuff flexcol">
+            <div class="flexrow flex-tight">
+                <h4 class="header-label flexrow flex-center">{{localize "ironclaw2e.sheets.actor.details.career"}}</h4>
+                <input class="bold-text" name="system.traits.career.name" type="text" value="{{system.traits.career.name}}" placeholder="{{localize "ironclaw2e.sheets.actor.details.careerName"}}" data-dtype="String" />
             </div>
-        </div>
-    </div>
-    <div class="careerstuff">
-        <div class="flexrow flex-tight">
-            <h4 class="header-label flexrow flex-center">{{localize "ironclaw2e.sheets.actor.details.career"}}</h4>
-            <input class="bold-text" name="system.traits.career.name" type="text" value="{{system.traits.career.name}}" placeholder="{{localize "ironclaw2e.sheets.actor.details.careerName"}}" data-dtype="String" />
-        </div>
-        <div class="flex-group-center flex-tight arrange-vertically">
-            <div class="trait flexrow flex-center">
-                <label for="system.traits.career.careerSkill1" class="normal-label">{{localize "ironclaw2e.sheets.actor.details.careerSkills"}}</label>
+            <label class="normal-label">{{localize "ironclaw2e.sheets.actor.details.careerSkills"}}</label>
+            <div class="flexrow flex-tight">
                 <input type="text" name="system.traits.career.careerSkill1" value="{{system.traits.career.careerSkill1}}" data-dtype="String" />
                 <input type="text" name="system.traits.career.careerSkill2" value="{{system.traits.career.careerSkill2}}" data-dtype="String" />
                 <input type="text" name="system.traits.career.careerSkill3" value="{{system.traits.career.careerSkill3}}" data-dtype="String" />

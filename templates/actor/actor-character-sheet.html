@@ -37,13 +37,14 @@
 
     {{!-- Sheet Tab Navigation --}}
     <nav class="sheet-tabs tabs" data-group="primary">
-        <a class="item" data-tab="description">{{localize "ironclaw2e.sheets.actor.biography"}}</a>
         <a class="item" data-tab="skills">{{localize "ironclaw2e.sheets.actor.details.title"}}</a>
         <a class="item" data-tab="battlestats">{{localize "ironclaw2e.sheets.actor.battleStatistics"}}</a>
-        <a class="item" data-tab="statuseffects">{{localize "ironclaw2e.sheets.actor.status.title"}}</a>
+        <a class="item" data-tab="magicgifts">{{localize "ironclaw2e.sheets.actor.gear.magic"}}</a>
         <a class="item" data-tab="gifts">{{localize "ironclaw2e.sheets.actor.gear.gifts"}}</a>
+        <a class="item" data-tab="statuseffects">{{localize "ironclaw2e.sheets.actor.status.title"}}</a>
         <a class="item" data-tab="weapons">{{localize "ironclaw2e.sheets.actor.combatGear"}}</a>
         <a class="item" data-tab="items">{{localize "ironclaw2e.sheets.actor.gear.items"}}</a>
+        <a class="item" data-tab="description">{{localize "ironclaw2e.sheets.actor.biography"}}</a>
     </nav>
 
     {{!-- Sheet Body --}}
@@ -71,7 +72,8 @@
                     <input class="center-text" type="text" name="system.goal3" value="{{system.goal3}}" data-dtype="String" />
                 </div>
             </div>
-            <div style="height:calc(100% - 120px)">{{editor richDescription target="system.description" button=true editable=editable engine=sheetEngine}}</div>
+            {{> 'systems/ironclaw2e/templates/parts/attributes.html'}}
+            <div style="height:calc(100% - 225px)">{{editor richDescription target="system.description" button=true editable=editable engine=sheetEngine}}</div>
         </div>
 
         {{!-- Battle Stats Tab --}}
@@ -92,6 +94,11 @@
         {{!-- Owned Gifts Tab --}}
         <div class="tab gifts" data-group="primary" data-tab="gifts">
             {{> 'systems/ironclaw2e/templates/parts/gifts.html'}}
+        </div>
+
+        {{!-- Magic Gifts Tab --}}
+        <div class="tab magicgifts" data-group="primary" data-tab="magicgifts">
+            {{> 'systems/ironclaw2e/templates/parts/magicgifts.html'}}
         </div>
 
         {{!-- Owned Items Tab --}}

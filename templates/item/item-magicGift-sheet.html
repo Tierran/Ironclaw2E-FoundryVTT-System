@@ -1,0 +1,107 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <header class="sheet-header">
+        <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
+        <div class="header-fields">
+            <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
+            <div class="flexrow flex-group-center flex-tight">
+                <label class="header-label">Exhausted:</label>
+                <input type="checkbox" name="system.exhausted" {{checked system.exhausted}} data-dtype="Boolean" />
+                <label class="header-label">Readied:</label>
+                <input type="checkbox" name="system.readied" {{checked system.readied}} data-dtype="Boolean" />
+            </div>
+        </div>
+    </header>
+
+    {{!-- Sheet Tab Navigation --}}
+    <nav class="sheet-tabs tabs" data-group="primary">
+        <a class="item" data-tab="description">Description</a>
+        <a class="item" data-tab="attributes">Gift Attributes</a>
+        <a class="item" data-tab="spell">Spell Attributes</a>
+        <a class="item" data-tab="special">Advanced Settings</a>
+    </nav>
+
+    {{!-- Sheet Body --}}
+    <section class="sheet-body">
+
+        {{!-- Description Tab --}}
+        <div class="tab description" data-group="primary" data-tab="description">
+            {{editor richDescription target="system.description" button=true editable=editable engine=sheetEngine}}
+        </div>
+
+        {{!-- Gift Attributes Tab --}}
+        <div class="tab attributes" data-group="primary" data-tab="attributes">
+            {{> 'systems/ironclaw2e/templates/parts/item-gift-attributes.html'}}
+        </div>
+
+        {{!-- Spell Attributes Tab --}}
+        <div class="tab spell" data-group="primary" data-tab="spell">
+            <div class="flexcol">
+                <div class="rollable add-spell-attack flex-group-center">
+                    <span class="normal-label">Add new Attack</span>
+                </div>
+                {{#each system.spellAttacks as |attack|}}
+                <div class="spell-attack flexcol" data-attack-index="{{@index}}">
+                    <h3 class="flexrow flex-center">
+                        <input style="width: 90%" class="spell-attack-field" type="text" data-field="name" value="{{attack.name}}" placeholder="Attack name" data-dtype="String" />
+                        <a style="width: 10%; flex: 0 0 2em" class="rollable delete-spell-attack" title="Delete Attack"><i class="fas fa-trash"></i></a>
+                    </h3>
+                    <div class="resource effect flexrow flex-group-center">
+                        <label class="resource-label" style="max-width:160px">Effect:</label>
+                        <input class="spell-attack-field" type="text" data-field="effect" value="{{attack.effect}}" data-dtype="String" />
+                    </div>
+                    <div class="resource defense flexrow flex-group-center">
+                        <label class="resource-label" style="max-width:160px">{{#if attack.hasResist}}Resist With:{{else}}Opposing Defense:{{/if}}</label>
+                        {{#unless attack.hasResist}}<span class="resource-label" style="max-width:120px">Attack vs.</span>{{/unless}}
+                        <input class="spell-attack-field" type="text" data-field="defendWith" value="{{attack.defendWith}}" data-dtype="String" />
+                        {{#if attack.hasResist}}<span class="resource-label" style="max-width:60px">vs. 3</span>{{/if}}
+                    </div>
+                    <div class="resource descriptors flexrow flex-group-center">
+                        <label class="resource-label" style="max-width:160px">Descriptors:</label>
+                        <input class="spell-attack-field" type="text" data-field="descriptors" value="{{attack.descriptors}}" data-dtype="String" />
+                    </div>
+                    <div class="resource select-settings flexrow flex-group-center">
+                        <label class="resource-label">Range:</label>
+                        <select class="spell-attack-field" data-field="range">
+                            {{selectOptions ../selectables.range selected=attack.range localize=false}}
+                        </select>
+                        <label class="resource-label">Defense is Resist:</label>
+                        <input class="spell-attack-boolean" type="checkbox" data-field="hasResist" {{checked attack.hasResist}} data-dtype="Boolean" />
+                    </div>
+                    <div class="resource dice-pools flexrow flex-group-center">
+                        <label class="resource-label" style="max-width:160px">Attack Pool:</label>
+                        <input class="spell-attack-field" type="text" data-field="attackDice" value="{{attack.attackDice}}" data-dtype="String" />
+                    </div>
+                    <div class="resource dice-pools flexrow flex-group-center">
+                        <label class="resource-label" style="max-width:160px">Counter Pool:</label>
+                        <input class="spell-attack-field" type="text" data-field="counterDice" value="{{attack.counterDice}}" data-dtype="String" />
+                    </div>
+                    <h4 class="flexrow flex-center">
+                        <span class="normal-label">Success Tiers</span>
+                        <a style="flex: 0 0 auto" class="rollable add-spell-tier" title="Add Success Tier"><i class="fas fa-plus"></i> Add Tier</a>
+                    </h4>
+                    {{#each attack.successTiers as |tier|}}
+                    <div class="spell-tier flexrow flex-group-center flex-tight" data-tier-index="{{@index}}">
+                        <label class="normal-label" style="flex: 0 0 auto">Successes:</label>
+                        <input style="flex: 0 0 3em" class="spell-tier-number" type="number" data-field="successes" value="{{tier.successes}}" data-dtype="Number" />
+                        <label class="normal-label" style="flex: 0 0 auto">Remove:</label>
+                        <input class="spell-tier-field" type="text" data-field="removeConditions" value="{{tier.removeConditions}}" placeholder="Status" data-dtype="String" />
+                        <label class="normal-label" style="flex: 0 0 auto">Add:</label>
+                        <input class="spell-tier-field" type="text" data-field="addConditions" value="{{tier.addConditions}}" placeholder="Status" data-dtype="String" />
+                        <a style="flex: 0 0 2em" class="rollable delete-spell-tier" title="Delete Tier"><i class="fas fa-trash"></i></a>
+                    </div>
+                    <div class="spell-tier flexrow flex-group-center flex-tight" data-tier-index="{{@index}}">
+                        <label class="normal-label" style="flex: 0 0 auto">Note:</label>
+                        <input class="spell-tier-field" type="text" data-field="note" value="{{tier.note}}" data-dtype="String" />
+                    </div>
+                    {{/each}}
+                </div>
+                {{/each}}
+            </div>
+        </div>
+
+        {{!-- Specials Tab --}}
+        <div class="tab special" data-group="primary" data-tab="special">
+            {{> 'systems/ironclaw2e/templates/parts/item-gift-special.html'}}
+        </div>
+    </section>
+</form>

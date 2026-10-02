@@ -6,7 +6,7 @@ import { convertCamelCase } from "../helpers.js";
 import { getMacroSpeaker } from "../helpers.js";
 import { findActorToken } from "../helpers.js";
 import { findTotalDice } from "../helpers.js";
-import { splitStatString } from "../helpers.js";
+import { splitDefenseStats, splitStatString } from "../helpers.js";
 import { nullCheckConcat } from "../helpers.js";
 import { parseSingleDiceString } from "../helpers.js";
 import { checkDiceIndex } from "../helpers.js";
@@ -139,7 +139,7 @@ export class Ironclaw2EActor extends Actor {
             if (actor) { // Make sure only the calling user executes the function and that the item actually had an actor assigned
 
                 // Call to remove any extra senses the Gift offered
-                if (item.type === "gift" && item.system.extraSense) {
+                if (item.isGiftLike && item.system.extraSense) {
                     let detectionUpdate = new Map();
                     let visionUpdate = null;
                     // Handle passives if they exist
@@ -237,19 +237,22 @@ export class Ironclaw2EActor extends Actor {
                 case "dodge":
                     return defenseActor.popupDefenseRoll({ "prechecked": CommonSystemInfo.dodgingBaseStats }, { directroll, otheritem }, null, addMessageId);
                     break;
-                case "special":
-                    return defenseActor.popupDefenseRoll({ "prechecked": splitStatString(defenseset.defense) }, { directroll, "isspecial": true, otheritem }, null, addMessageId);
-                    break;
-                case "resist":
-                    return defenseActor.popupResistRoll({ "prechecked": splitStatString(defenseset.defense) }, { directroll, otheritem }, null, addMessageId);
+                case "special": {
+                    const defense = splitDefenseStats(defenseset.defense);
+                    return defenseActor.popupDefenseRoll({ "prechecked": defense.stats, "extradice": defense.dice }, { directroll, "isspecial": true, otheritem }, null, addMessageId);
+                }
+                case "resist": {
+                    const defense = splitDefenseStats(defenseset.defense);
+                    return defenseActor.popupResistRoll({ "prechecked": defense.stats, "extradice": defense.dice }, { directroll, otheritem }, null, addMessageId);
+                }
                     break;
                 case "parry":
-                    const parries = defenseActor.items.filter(element => element.type === 'weapon' && element.system.canDefend);
+                    const parries = defenseActor.items.filter(element => element.isWeaponLike && element.system.canDefend);
                     defenseOptions = parries;
                     validDefenses.parryvalid = true;
                     break;
                 case "counter":
-                    const counters = defenseActor.items.filter(element => element.type === 'weapon' && element.system.canCounter);
+                    const counters = defenseActor.items.filter(element => element.isWeaponLike && element.system.canCounter);
                     defenseOptions = counters;
                     validDefenses.countervalid = true;
                     break;
@@ -287,12 +290,14 @@ export class Ironclaw2EActor extends Actor {
 
         let autoHits = false;
         let defenseStats = null;
+        let defenseDice = "";
         let otheritem = {};
         const messageId = message.id;
         const messageFlags = message?.flags?.ironclaw2e;
         if (messageFlags) {
             autoHits = messageFlags.attackDamageAutoHits;
             defenseStats = messageFlags.attackDamageDefense;
+            defenseDice = messageFlags.attackDamageDefenseDice ?? "";
             otheritem = Ironclaw2EActor.getOtherItemFlags(messageFlags, messageId);
         }
 
@@ -317,7 +322,7 @@ export class Ironclaw2EActor extends Actor {
             };
             if (dataset.soaktype !== "conditional") {
                 if (autoHits && defenseStats) { // For when resistance roll is added to the soak directly
-                    const resist = await soakActor.popupResistRoll({ "prechecked": defenseStats, "otherlabel": game.i18n.format("ironclaw2e.dialog.dicePool.explosionResist", { "name": otheritem.name }) },
+                    const resist = await soakActor.popupResistRoll({ "prechecked": defenseStats, "extradice": defenseDice, "otherlabel": game.i18n.format("ironclaw2e.dialog.dicePool.explosionResist", { "name": otheritem.name }) },
                         { directroll, otheritem });
                     resistSoak = resist?.tnData?.successes; // Only successes count
                 }
@@ -334,6 +339,32 @@ export class Ironclaw2EActor extends Actor {
         } else {
             ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
         }
+    }
+
+    /**
+     * Handle the chat button event for applying a spell attack's success tier to the speaker's actor
+     * Removes the tier's removed conditions first, then adds its added conditions
+     * @param {any} event
+     */
+    static async onChatApplyTierClick(event) {
+        event.preventDefault();
+        const holderset = $(event.currentTarget).closest('.tier-holder')[0]?.dataset;
+        if (!holderset) {
+            return console.warn("onChatApplyTierClick somehow failed to get proper data.");
+        }
+
+        const target = getSpeakerActor();
+        if (!target) {
+            ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
+            return;
+        }
+
+        // Only use names that match actual conditions, so placeholder text like "Nothing" is ignored
+        const toConditions = list => CommonConditionInfo.getMatchedConditions(splitStatString(list ?? "")).map(x => x.id);
+        const remove = toConditions(holderset.remove);
+        const add = toConditions(holderset.add);
+        if (remove.length > 0) await target.deleteEffect(remove);
+        if (add.length > 0) await target.addEffect(add);
     }
 
     /**
@@ -435,7 +466,13 @@ export class Ironclaw2EActor extends Actor {
             }
             if (countervalid) {
                 for (let foo of optionsource) {
-                    if (foo.system.canCounter)
+                    if (foo.type === "magicGift") {
+                        // List each spell attack that can counter separately
+                        foo.system.spellAttacks?.forEach((attack, index) => {
+                            if (attack.counterDice?.length > 0)
+                                options += `<option value="${foo.id}" data-type="counter" data-attack="${index}">${game.i18n.format("ironclaw2e.dialog.defense.counterRoll", { "name": `${foo.name}: ${attack.name}` })}</option >`;
+                        });
+                    } else if (foo.system.canCounter)
                         options += `<option value="${foo.id}" data-type="counter">${game.i18n.format("ironclaw2e.dialog.defense.counterRoll", { "name": foo.name })}</option >`;
                 }
             }
@@ -483,7 +520,7 @@ export class Ironclaw2EActor extends Actor {
                     const EXTRA = html.find('[name=extra]')[0]?.value;
 
                     if (defensetype === "counter" || defensetype === "parry") {
-                        const weapon = actor?.items.get(defensevalue);
+                        const weapon = actor?.items.get(defensevalue)?.asSpellAttack(parseInt(DEFENSE.selectedOptions[0].dataset.attack));
                         if (defensetype === "counter") weapon?.counterRoll(directroll, otheritem, EXTRA);
                         if (defensetype === "parry") weapon?.defenseRoll(directroll, otheritem, EXTRA);
                     } else if (defensetype === "extra") {
@@ -520,14 +557,14 @@ export class Ironclaw2EActor extends Actor {
         // Trigger the actual roll if the attacker is found and the weapon id is listed
         if (attackActor && usedItem.itemId) {
             if (rolltype === "attack")
-                attackActor.items.get(usedItem.itemId).attackRoll(directroll, skipresist, presettn, resists,
+                attackActor.items.get(usedItem.itemId)?.asSpellAttack(usedItem.spellAttack).attackRoll(directroll, skipresist, presettn, resists,
                     { "sourcemessage": message, "defendermessage": defenders, "addtactics": messageFlags?.attackUsingTactics ?? false });
             else if (rolltype === "spark")
                 attackActor.items.get(usedItem.itemId).sparkRoll(directroll);
         } else if (!attackActor) {
             if (skipActor && game.user.isGM) { // If the item has no flags for where it is, instead try and get it from the directory and launch a roll from there
                 if (rolltype === "attack")
-                    game.items.get(usedItem.itemId)?.attackRoll(directroll, skipresist, presettn, resists,
+                    game.items.get(usedItem.itemId)?.asSpellAttack(usedItem.spellAttack).attackRoll(directroll, skipresist, presettn, resists,
                         { "sourcemessage": message, "defendermessage": defenders, "addtactics": messageFlags?.attackUsingTactics ?? false });
                 else if (rolltype === "spark")
                     game.items.get(usedItem.itemId)?.sparkRoll(directroll);
@@ -577,10 +614,21 @@ export class Ironclaw2EActor extends Actor {
         otheritem.attackerPos = flags.itemUserPos;
         otheritem.templatePos = getTemplatePosition(flags);
         otheritem.attackerRangeReduction = flags.itemUserRangeReduction;
-        otheritem.attackerRangeAutocheck = !(flags.itemUserRangeAutocheck === false); // If and only if the the value is false, will the value be false; if it is true, undefined or something else, value will be true
+        otheritem.attackerRangeAutocheck = !(flags.itemUserRangeAutocheck === false);
+        otheritem.actorFlags = Ironclaw2EActor.getItemActorFlags(flags); // Who used the item, for dice pools that use the other side's stats // If and only if the the value is false, will the value be false; if it is true, undefined or something else, value will be true
         if (flags.attackUsingTactics) otheritem.stats.push("tactics"); // Add Tactics to the used stat pool for the attack
 
         return otheritem;
+    }
+
+    /**
+     * Get the actor who used the opposing item, from the opposing item data
+     * @param {object} otheritem
+     * @returns {Ironclaw2EActor | null}
+     */
+    static getOtherItemActor(otheritem) {
+        if (!otheritem?.actorFlags) return null;
+        return Ironclaw2EActor.getItemActor(otheritem.actorFlags) ?? null;
     }
 
     /**
@@ -595,6 +643,7 @@ export class Ironclaw2EActor extends Actor {
         if (flags) {
             // Grab the message flags
             usedItem.itemId = flags.itemId;
+            usedItem.spellAttack = flags.spellAttack ?? null;
             usedItem.actorId = flags.itemActorId;
             usedItem.tokenId = flags.itemTokenId;
             usedItem.sceneId = flags.itemSceneId;
@@ -824,7 +873,7 @@ export class Ironclaw2EActor extends Actor {
         const system = actor.system;
 
         // Gift Skill marks
-        const markGifts = this.items.filter(element => element.type === 'gift' && element.system.grantsMark);
+        const markGifts = this.items.filter(element => element.isGiftLike && element.system.grantsMark);
         let markMap = new Map();
         for (let gift of markGifts) {
             const giftSys = gift.system;
@@ -833,7 +882,7 @@ export class Ironclaw2EActor extends Actor {
         system.tempMarks = markMap;
 
         // Special settings
-        const specialGifts = this.items.filter(element => element.type === 'gift' && element.system.usedSpecialSettings?.length > 0);
+        const specialGifts = this.items.filter(element => element.isGiftLike && element.system.usedSpecialSettings?.length > 0);
         if (specialGifts.length > 0) {
             system.processingLists = {}; // If any of the actor's gifts have special settings, add the holding object for the lists
             system.replacementLists = new Map(); // To store any gifts that get replaced by others, stored with the actor as derived data to avoid contaminating the actual gifts
@@ -1468,7 +1517,7 @@ export class Ironclaw2EActor extends Actor {
 
         const system = actor.system;
 
-        const senseGifts = this.items.filter(element => element.type === 'gift' && element.system.extraSense && CommonSystemInfo.extraSenses[element.system.extraSenseName]?.detectionPassives?.length > 0);
+        const senseGifts = this.items.filter(element => element.isGiftLike && element.system.extraSense && CommonSystemInfo.extraSenses[element.system.extraSenseName]?.detectionPassives?.length > 0);
         if (senseGifts.length > 0) {
             let updateData = new Map();
             for (let sense of senseGifts) {
@@ -1693,7 +1742,7 @@ export class Ironclaw2EActor extends Actor {
                 // Check whether the item is a gift that should be exhausted
                 if (info.itemId && info.exhaustOnUse) {
                     const item = this.items.get(info.itemId);
-                    if (item?.type === 'gift') {
+                    if (item?.isGiftLike) {
                         giftsToExhaust.push(item);
                     }
                 }
@@ -2157,9 +2206,9 @@ export class Ironclaw2EActor extends Actor {
 
         // Grab the data
         const nextSenseData = CommonSystemInfo.extraSenses[visionsource.system.extraSenseName];
-        const previousVisionSource = this.items.find(element => element.type === "gift" && element.system.extraSense && element.system.extraSenseEnabled === 2);
+        const previousVisionSource = this.items.find(element => element.isGiftLike && element.system.extraSense && element.system.extraSenseEnabled === 2);
         const previousSenseData = previousVisionSource ? CommonSystemInfo.extraSenses[previousVisionSource.system.extraSenseName] : null;
-        const visionSources = this.items.filter(element => element.type === "gift" && element.system.extraSense);
+        const visionSources = this.items.filter(element => element.isGiftLike && element.system.extraSense);
         const recordDefault = visionSources.some(element => element.system.extraSenseEnabled === 2) === false;
 
         // Set up the modifying variables
@@ -2642,7 +2691,7 @@ export class Ironclaw2EActor extends Actor {
         let otherinputs = "";
         // Go through each gift name given
         for (let name of giftnames) {
-            const gift = findInItems(this.items, name, "gift");
+            const gift = findInItems(this.items, name, ["gift", "magicGift"]);
             // If a gift with the name was found, it is usable and it has a dice array
             if (gift && gift.system.giftUsable && gift.system.giftArray) {
                 // Add a dialog dice pool construction of the gift
@@ -2800,11 +2849,68 @@ export class Ironclaw2EActor extends Actor {
             return null;
         }
 
+        // Stats marked with @ come from the other side of the roll, defaulting to the user's current target
+        const opposing = holder.opposing ?? game.user.targets?.first()?.actor ?? null;
+        holder = this._getOpposingStatsConstruction(holder, opposing);
+
         if (directroll) {
             return this.silentSelectRolled(holder, successfunc, autocondition);
         } else {
             return this.popupSelectRolled(holder, successfunc, autocondition);
         }
+    }
+
+    /**
+     * Turn any stats marked with @ in the prechecked stats into dice fields with the other side's dice for those stats
+     * @param {object} holder The roll data holder given to basicRollSelector
+     * @param {Ironclaw2EActor | null} opposing The other side of the roll
+     * @returns {object} The holder with the @ stats removed from the prechecked stats and added as dice fields
+     * @private
+     */
+    _getOpposingStatsConstruction(holder, opposing) {
+        const isOpposing = x => typeof x === "string" && x.startsWith("@");
+        const prechecked = Array.isArray(holder.prechecked) ? holder.prechecked : [];
+        const opposingStats = prechecked.filter(isOpposing);
+        if (opposingStats.length === 0) return holder;
+
+        let fields = {
+            "otherkeys": new Map(holder.otherkeys ?? []), "otherdice": new Map(holder.otherdice ?? []), "othernames": new Map(holder.othernames ?? []),
+            "otherbools": new Map(holder.otherbools ?? []), "otherinputs": holder.otherinputs ?? ""
+        };
+        if (!opposing) {
+            ui.notifications.warn(game.i18n.format("ironclaw2e.ui.opposingStatsNoActor", { "stats": opposingStats.join(", ") }));
+        } else {
+            for (let stat of opposingStats) {
+                const found = opposing.getStatDice(stat.slice(1));
+                if (!found) {
+                    ui.notifications.warn(game.i18n.format("ironclaw2e.ui.opposingStatNotFound", { "stat": stat, "name": opposing.name }));
+                    continue;
+                }
+                const name = game.i18n.format("ironclaw2e.dialog.dicePool.opposingStat", { "name": opposing.name, "stat": found.label });
+                fields = formDicePoolField(found.dice, name, `${name}: ${reformDiceString(found.dice, true)}`, true, {}, fields);
+            }
+        }
+
+        return { ...holder, "prechecked": prechecked.filter(x => !isOpposing(x)), ...fields };
+    }
+
+    /**
+     * Get the dice of one of the actor's traits or skills by name
+     * @param {string} name The trait, skill, species or career name
+     * @returns {{dice: number[], label: string} | null}
+     */
+    getStatDice(name) {
+        const key = makeCompareReady(name);
+        const system = this.system;
+        for (let [traitkey, trait] of Object.entries(system.traits ?? {})) {
+            if (makeCompareReady(traitkey) === key || (trait.name && makeCompareReady(trait.name) === key))
+                return trait.diceArray ? { "dice": trait.diceArray, "label": convertCamelCase(traitkey) } : null;
+        }
+        for (let [skillkey, skill] of Object.entries(system.skills ?? {})) {
+            if (makeCompareReady(skillkey) === key)
+                return skill.diceArray ? { "dice": skill.diceArray, "label": convertCamelCase(skillkey) } : null;
+        }
+        return null;
     }
 
     async popupRallyRoll({ prechecked = [], tnyes = true, tnnum = 3, extradice = "", otherkeys = new Map(), otherdice = new Map(), othernames = new Map(), otherbools = new Map(), otherinputs = "", otherlabel = "", limitvalue = "" } = {}, { directroll = false, targetpos = null } = {},
@@ -2931,7 +3037,7 @@ export class Ironclaw2EActor extends Actor {
 
         return this.basicRollSelector({
             "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
-            otherlabel, limitvalue
+            otherlabel, limitvalue, "opposing": Ironclaw2EActor.getOtherItemActor(otheritem)
         }, { directroll }, successfunc);
     }
 
@@ -2976,7 +3082,7 @@ export class Ironclaw2EActor extends Actor {
 
         return this.basicRollSelector({
             "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
-            otherlabel, limitvalue
+            otherlabel, limitvalue, "opposing": target?.actor ?? null
         }, { directroll }, successfunc, autoremove);
     }
 
@@ -3008,7 +3114,7 @@ export class Ironclaw2EActor extends Actor {
 
         return this.basicRollSelector({
             "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
-            otherlabel, limitvalue
+            otherlabel, limitvalue, "opposing": Ironclaw2EActor.getOtherItemActor(otheritem)
         }, { directroll }, successfunc);
     }
 
@@ -3068,7 +3174,7 @@ export class Ironclaw2EActor extends Actor {
 
         return this.basicRollSelector({
             "prechecked": checkedstats, tnyes, tnnum, extradice, "otherkeys": constructionkeys, "otherdice": constructionarray, "othernames": constructionnames, "otherbools": constructionbools, "otherinputs": formconstruction,
-            otherlabel, limitvalue
+            otherlabel, limitvalue, "opposing": Ironclaw2EActor.getOtherItemActor(otheritem)
         }, { directroll }, successfunc);
     }
 
