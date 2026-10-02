@@ -35,6 +35,7 @@
             {{#if item.system.showInBattleStats}}
             <li class="item flexrow" data-item-id="{{item._id}}">
                 <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+                <a class="item-control item-send-chat" style="flex: 0 0 20px" title="{{localize "ironclaw2e.sheets.actor.sendToChat"}}"><i class="fas fa-comment"></i></a>
                 <h4 title="{{localize "ironclaw2e.chatInfo.itemInfo.effect"}}: {{item.system.effect}}&#013;{{localize "ironclaw2e.chatInfo.itemInfo.descriptors"}}: {{item.system.descriptors}}&#013;{{#if item.system.hasResist}}{{localize "ironclaw2e.chatInfo.itemInfo.resistWith"}}{{else}}{{localize "ironclaw2e.chatInfo.itemInfo.opposingDefense"}}{{/if}}: {{item.system.defendWith}}" class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                 <div class="item-controls flexrow">
                     <a class="rollable roll-item-change" title="{{#if item.system.readied}}{{localize "ironclaw2e.sheets.actor.putAwayTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.readyTooltip" name=item.name}}{{/if}}" data-stat="readied" data-item="{{item._id}}"><span>{{#if item.system.readied}}{{localize "ironclaw2e.sheets.actor.readied"}}{{else}}{{localize "ironclaw2e.sheets.actor.stowed"}}{{/if}}</span></a>
@@ -57,6 +58,7 @@
             {{#if item.system.showInBattleStats}}
             <li class="item flexrow" data-item-id="{{item._id}}">
                 <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+                <a class="item-control item-send-chat" style="flex: 0 0 20px" title="{{localize "ironclaw2e.sheets.actor.sendToChat"}}"><i class="fas fa-comment"></i></a>
                 <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                 <div class="item-controls">
                     <a class="rollable roll-item-change" title="{{#if item.system.worn}}{{localize "ironclaw2e.sheets.actor.takeOff"}}{{else}}{{localize "ironclaw2e.sheets.actor.wear"}}{{/if}}" data-stat="worn" data-item="{{item._id}}"><span>{{#if item.system.worn}}{{localize "ironclaw2e.sheets.actor.worn"}}{{else}}{{localize "ironclaw2e.sheets.actor.off"}}{{/if}}</span></a>
@@ -70,6 +72,7 @@
             {{#if item.system.showInBattleStats}}
             <li class="item flexrow" data-item-id="{{item._id}}">
                 <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+                <a class="item-control item-send-chat" style="flex: 0 0 20px" title="{{localize "ironclaw2e.sheets.actor.sendToChat"}}"><i class="fas fa-comment"></i></a>
                 <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                 <div class="item-controls">
                     <a class="rollable roll-item-change" title="{{#if item.system.held}}{{localize "ironclaw2e.sheets.actor.unequip"}}{{else}}{{localize "ironclaw2e.sheets.actor.equip"}}{{/if}}" data-stat="held" data-item="{{item._id}}"><span>{{#if item.system.held}}{{localize "ironclaw2e.sheets.actor.held"}}{{else}}{{localize "ironclaw2e.sheets.actor.off"}}{{/if}}</span></a>
@@ -83,9 +86,10 @@
             {{#if item.system.showInBattleStats}}
             <li class="item flexrow" data-item-id="{{item._id}}">
                 <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+                <a class="item-control item-send-chat" style="flex: 0 0 20px" title="{{localize "ironclaw2e.sheets.actor.sendToChat"}}"><i class="fas fa-comment"></i></a>
                 <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                 <div class="item-controls">
-                    {{#if item.system.exhaustWhenUsed}}<a class="rollable roll-item-change" title="{{#if item.system.exhausted}}{{localize "ironclaw2e.sheets.actor.refresh"}}{{else}}{{localize "ironclaw2e.sheets.actor.exhaust"}}{{/if}}" data-stat="exhausted" data-item="{{item._id}}"><span>{{#if item.system.exhausted}}{{localize "ironclaw2e.sheets.actor.exhausted"}}{{else}}{{localize "ironclaw2e.sheets.actor.refreshed"}}{{/if}}</span></a>{{/if}}
+                    {{#if (exhaustableGift item)}}<a class="rollable roll-item-change" title="{{#if item.system.exhausted}}{{localize "ironclaw2e.sheets.actor.refresh"}}{{else}}{{localize "ironclaw2e.sheets.actor.exhaust"}}{{/if}}" data-stat="exhausted" data-item="{{item._id}}"><span>{{#if item.system.exhausted}}{{localize "ironclaw2e.sheets.actor.exhausted"}}{{else}}{{localize "ironclaw2e.sheets.actor.refreshed"}}{{/if}}</span></a>{{/if}}
                 </div>
                 <div style="max-width: 10%"></div>
                 <div class="item-controls">
@@ -99,6 +103,7 @@
             {{#if item.system.showInBattleStats}}
             <li class="item flexrow" data-item-id="{{item._id}}">
                 <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+                <a class="item-control item-send-chat" style="flex: 0 0 20px" title="{{localize "ironclaw2e.sheets.actor.sendToChat"}}"><i class="fas fa-comment"></i></a>
                 <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
                 <div class="item-controls flexrow">
                     <a class="rollable roll-item" title="{{#if item.system.lighted}}{{localize "ironclaw2e.sheets.actor.douse"}}{{else}}{{localize "ironclaw2e.sheets.actor.light"}}{{/if}} {{item.name}}" data-roll="light" data-item="{{item._id}}"><img src="{{#if item.system.lighted}}systems/ironclaw2e/icons/illumination-light.svg{{else}}systems/ironclaw2e/icons/illumination-douse.svg{{/if}}" width="24" height="24" /></a>
@@ -110,6 +115,7 @@
             {{#if item.system.showInBattleStats}}
             <li class="item flexrow" data-item-id="{{item._id}}">
                 <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+                <a class="item-control item-send-chat" style="flex: 0 0 20px" title="{{localize "ironclaw2e.sheets.actor.sendToChat"}}"><i class="fas fa-comment"></i></a>
                 <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
             </li>
             {{/if}}
