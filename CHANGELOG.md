@@ -1,4 +1,5 @@
 ### Unreleased
+ - Rewrote the README and moved the documentation into task-based pages in `docs/`, updated for the current system
  - Added a new Magic Gift item type for spells: a gift that can have any number of named spell attacks, each with its own effect, defense, descriptors, range, and attack and counter pools
  - Magic Gifts have their own Magic tab on character, mook and beast sheets, listing each spell attack under its spell in a collapsible list
  - Spell attacks can have success tiers: conditions to remove and add, and a note, picked by the attack's net successes and applied to the target from the damage card
