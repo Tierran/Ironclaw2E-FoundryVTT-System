@@ -889,20 +889,22 @@ Hooks.on("updateChatMessage", autoResolveCounterAttack);
 
 /**
  * Adds the Ironclaw context menu options to the item folder directory
- * @param {any} html
+ * @param {foundry.applications.sidebar.DocumentDirectory} application
  * @param {any} entryOptions The menu
  */
-function addIronclawItemDirectoryFolderContext(html, entryOptions) {
+function addIronclawItemDirectoryFolderContext(application, entryOptions) {
+    // The folder hook fires for every directory, only the Items directory has template folders
+    if (application.documentName !== "Item") return;
     entryOptions.push(
         {
             name: "ironclaw2e.context.items.setAsSpeciesSource",
             icon: '<i class="fas fa-bullseye"></i>',
             condition: header => {
-                const folder = game.folders.get(header.parent().data("folderId"));
-                return game.user.isGM && folder.contents.some(x => x.type === "speciesTemplate");
+                const folder = game.folders.get(header.closest(".directory-item")?.dataset.folderId);
+                return game.user.isGM && !!folder?.contents.some(x => x.type === "speciesTemplate");
             },
             callback: header => {
-                const id = header.parent().data("folderId");
+                const id = header.closest(".directory-item").dataset.folderId;
                 game.settings.set("ironclaw2e", "templateSpeciesFolder", id);
             }
         },
@@ -910,33 +912,33 @@ function addIronclawItemDirectoryFolderContext(html, entryOptions) {
             name: "ironclaw2e.context.items.setAsCareerSource",
             icon: '<i class="fas fa-bullseye"></i>',
             condition: header => {
-                const folder = game.folders.get(header.parent().data("folderId"));
-                return game.user.isGM && folder.contents.some(x => x.type === "careerTemplate");
+                const folder = game.folders.get(header.closest(".directory-item")?.dataset.folderId);
+                return game.user.isGM && !!folder?.contents.some(x => x.type === "careerTemplate");
             },
             callback: header => {
-                const id = header.parent().data("folderId");
+                const id = header.closest(".directory-item").dataset.folderId;
                 game.settings.set("ironclaw2e", "templateCareerFolder", id);
             }
         });
 }
-Hooks.on("getItemDirectoryFolderContext", addIronclawItemDirectoryFolderContext);
+Hooks.on("getFolderContextOptions", addIronclawItemDirectoryFolderContext);
 
 /**
  * Adds the Ironclaw context menu options to the item directory
- * @param {any} html
+ * @param {foundry.applications.sidebar.tabs.ItemDirectory} application
  * @param {any} entryOptions The menu
  */
-function addIronclawItemDirectoryEntryContext(html, entryOptions) {
+function addIronclawItemDirectoryEntryContext(application, entryOptions) {
     entryOptions.push(
         {
             name: "ironclaw2e.context.items.sendToChat",
             icon: '<i class="fas fa-comment-dots"></i>',
             condition: li => {
-                const id = li.data("documentId");
+                const id = li.dataset.entryId;
                 return game.user.isGM && game.items.has(id);
             },
             callback: li => {
-                const id = li.data("documentId");
+                const id = li.dataset.entryId;
                 const item = game.items.get(id);
                 if (item)
                     item.sendInfoToChat();
@@ -945,4 +947,4 @@ function addIronclawItemDirectoryEntryContext(html, entryOptions) {
             }
         });
 }
-Hooks.on("getItemDirectoryEntryContext", addIronclawItemDirectoryEntryContext);
+Hooks.on("getItemContextOptions", addIronclawItemDirectoryEntryContext);
