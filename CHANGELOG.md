@@ -1,3 +1,6 @@
+### Unreleased
+ - Vehicles, vehicle stations and vehicle modifications can no longer be created; existing ones still work
+
 ### 0.8.2 Cold Fix Release
  - Fixed vision modes in V12
  - Context menu fixed

@@ -44,6 +44,17 @@ export class Ironclaw2EActor extends Actor {
     /* -------------------------------------------- */
     /* eslint-disable */
 
+    /**
+     * Actor types that can no longer be created, kept only so existing actors still work
+     */
+    static hiddenTypes = ["vehicle"];
+
+    /** @override */
+    static async createDialog(data = {}, createOptions = {}, { types, ...options } = {}) {
+        types = (types ?? this.TYPES).filter(type => !this.hiddenTypes.includes(type));
+        return super.createDialog(data, createOptions, { types, ...options });
+    }
+
     /* -------------------------------------------- */
     /* Static Hook Functions                        */
     /* -------------------------------------------- */

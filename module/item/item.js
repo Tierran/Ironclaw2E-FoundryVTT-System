@@ -31,6 +31,17 @@ export class Ironclaw2EItem extends Item {
     /* -------------------------------------------- */
 
     /**
+     * Item types that can no longer be created, kept only so existing items still work
+     */
+    static hiddenTypes = ["vehicleStation", "vehicleModification"];
+
+    /** @override */
+    static async createDialog(data = {}, createOptions = {}, { types, ...options } = {}) {
+        types = (types ?? this.TYPES).filter(type => !this.hiddenTypes.includes(type));
+        return super.createDialog(data, createOptions, { types, ...options });
+    }
+
+    /**
      * Transfer template flags from one object to another
      * @param {object} source
      * @param {object} target
