@@ -1,3 +1,6 @@
+### Unreleased
+ - Fixed the Items sidebar right-click options on Foundry v13: "Set as Species/Career Template Source" on folders and "Send Info to Chat" on items were missing
+
 ### 0.8.2 Cold Fix Release
  - Fixed vision modes in V12
  - Context menu fixed
