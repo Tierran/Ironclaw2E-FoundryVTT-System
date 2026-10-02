@@ -21,7 +21,7 @@ Spells are **Magic Gifts**: gifts that hold any number of **spell attacks**. Eac
 | **Opposing Defense** / **Resist With** | What the target defends or resists with. Check **Defense is Resist** for resisted spells. |
 | **Descriptors** | Comma-separated descriptors. |
 | **Range** | The spell's range band. |
-| **Attack Pool** | The pool to cast the attack with, e.g. `Will, Spellcraft`. |
+| **Attack Pool** | The pool to cast the attack with, e.g. `Will, Inquiry`. |
 | **Counter Pool** | The pool to counter with, if the spell can counter. |
 | **Success Tiers** | Conditions to apply based on how well the attack succeeds. See below. |
 
