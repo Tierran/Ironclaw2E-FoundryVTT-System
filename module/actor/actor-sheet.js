@@ -98,6 +98,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         // Initialize containers.
         const gear = [];
         const gifts = [];
+        const magicGifts = [];
         const extraCareers = [];
         const weapons = [];
         const armors = [];
@@ -116,6 +117,11 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                     break;
                 case 'gift':
                     gifts.push(i);
+                    break;
+                case 'magicGift':
+                    i.spellAttackRows = this._getSpellAttackRows(i._id);
+                    i.spellExpanded = this._getExpandedSpells().has(i._id);
+                    magicGifts.push(i);
                     break;
                 case 'extraCareer':
                     extraCareers.push(i);
@@ -142,11 +148,55 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         // Assign and return
         actorData.gear = gear;
         actorData.gifts = gifts;
+        actorData.magicGifts = magicGifts;
         actorData.extraCareers = extraCareers;
         actorData.weapons = weapons;
         actorData.armors = armors;
         actorData.shields = shields;
         actorData.lightItems = lightItems;
+    }
+
+    /**
+     * Get which magic gifts have their spell attacks expanded on this sheet, stored per user in the browser
+     * @returns {Set<string>} The ids of the expanded magic gifts
+     */
+    _getExpandedSpells() {
+        try {
+            const stored = JSON.parse(localStorage.getItem(`ironclaw2e.expandedSpells.${this.actor.uuid}`) ?? "[]");
+            return new Set(Array.isArray(stored) ? stored : []);
+        } catch (err) {
+            return new Set();
+        }
+    }
+
+    /**
+     * Store which magic gifts have their spell attacks expanded on this sheet
+     * @param {Set<string>} expanded
+     */
+    _setExpandedSpells(expanded) {
+        try {
+            localStorage.setItem(`ironclaw2e.expandedSpells.${this.actor.uuid}`, JSON.stringify([...expanded]));
+        } catch (err) {
+            // Storage being unavailable only means the expanded state isn't remembered
+        }
+    }
+
+    /**
+     * Get the display data for each of a magic gift's spell attacks on the sheet
+     * @param {string} itemid
+     * @returns {object[]}
+     */
+    _getSpellAttackRows(itemid) {
+        const item = this.actor.items.get(itemid);
+        const rows = [];
+        item?.system.spellAttacks?.forEach((attack, index) => {
+            const prepared = item.getSpellAttack(index);
+            rows.push({
+                "index": index, "name": attack.name, "fullName": prepared.name, "effect": attack.effect, "attackDice": attack.attackDice, "counterDice": attack.counterDice,
+                "attackHasTemplate": prepared.system.attackHasTemplate, "multiAttackRangeShown": prepared.system.multiAttackRangeShown
+            });
+        });
+        return rows;
     }
 
     _prepareBeastItems(sheetData) {
@@ -155,6 +205,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         // Initialize containers.
         const gear = [];
         const gifts = [];
+        const magicGifts = [];
         const extraCareers = [];
         const weapons = [];
         const lightItems = [];
@@ -171,6 +222,11 @@ export class Ironclaw2EActorSheet extends ActorSheet {
                     break;
                 case 'gift':
                     gifts.push(i);
+                    break;
+                case 'magicGift':
+                    i.spellAttackRows = this._getSpellAttackRows(i._id);
+                    i.spellExpanded = this._getExpandedSpells().has(i._id);
+                    magicGifts.push(i);
                     break;
                 case 'extraCareer':
                     extraCareers.push(i);
@@ -190,6 +246,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         // Assign and return
         actorData.gear = gear;
         actorData.gifts = gifts;
+        actorData.magicGifts = magicGifts;
         actorData.extraCareers = extraCareers;
         actorData.weapons = weapons;
         actorData.lightItems = lightItems;
@@ -284,6 +341,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         html.find('.roll-init').click(this._onInitRoll.bind(this));
         html.find('.roll-sprint').click(this._onSprintRoll.bind(this));
         html.find('.roll-item').click(this._onItemRoll.bind(this));
+        html.find('.spell-attacks-toggle').click(this._onToggleSpellAttacks.bind(this));
         html.find('.roll-item-change').click(this._onItemChangeStat.bind(this));
         html.find('.roll-soak').click(this._onSoakRoll.bind(this));
         html.find('.roll-defense').click(this._onDefenseRoll.bind(this));
@@ -298,6 +356,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         html.find('.roll-effects-delete').click(this._onEffectsDelete.bind(this));
 
         html.find('.roll-double-info-item').dblclick(this._onItemInfo.bind(this));
+        html.find('.item-send-chat').click(this._onItemInfo.bind(this));
         html.find('.roll-double-info-cond').dblclick(this._onConditionInfo.bind(this));
 
         html.find('.roll-career-dice-change').change(this._onChangeExtraCareerDice.bind(this));
@@ -838,6 +897,26 @@ export class Ironclaw2EActorSheet extends ActorSheet {
     }
 
     /**
+     * Expand or collapse a magic gift's spell attack rows
+     * @param {Event} event   The originating click event
+     * @private
+     */
+    _onToggleSpellAttacks(event) {
+        event.preventDefault();
+        const element = event.currentTarget;
+        const itemid = element.dataset.item;
+        const expanded = this._getExpandedSpells();
+        const nowExpanded = !expanded.has(itemid);
+        if (nowExpanded) expanded.add(itemid);
+        else expanded.delete(itemid);
+        this._setExpandedSpells(expanded);
+
+        // Toggle the rows directly rather than re-rendering the whole sheet
+        $(element).closest(".items-list").find(`.spell-attack-row[data-item-id="${itemid}"]`).toggle(nowExpanded);
+        $(element).find("i").toggleClass("fa-caret-right", !nowExpanded).toggleClass("fa-caret-down", nowExpanded);
+    }
+
+    /**
      * Handle the item roll clicks
      * @param {Event} event   The originating click event
      * @private
@@ -849,7 +928,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const data = this.actor.system;
 
         if (dataset.roll && dataset.item) {
-            const item = this.actor.items.get(dataset.item);
+            const item = this.actor.items.get(dataset.item)?.asSpellAttack(dataset.attack !== undefined ? parseInt(dataset.attack) : null);
             const directroll = checkQuickModifierKey();
 
             switch (dataset.roll) {
@@ -903,7 +982,7 @@ export class Ironclaw2EActorSheet extends ActorSheet {
 
             if (dataset.stat === "readied") {
                 // Readied special case
-                if (item.system.hasOwnProperty("readied"))
+                if (item.isWeaponLike)
                     item.weaponToggleReady();
             } else {
                 if (item.system.hasOwnProperty(dataset.stat)) {
@@ -931,7 +1010,8 @@ export class Ironclaw2EActorSheet extends ActorSheet {
         const data = this.actor.system;
 
         const li = $(event.currentTarget).parents(".item");
-        const item = this.actor.items.get(li.data("itemId"));
+        const spellAttack = li.data("spellAttack");
+        const item = this.actor.items.get(li.data("itemId"))?.asSpellAttack(Number.isInteger(spellAttack) ? spellAttack : null);
         item?.sendInfoToChat();
     }
 

@@ -1,0 +1,45 @@
+<div class="flexcol">
+    <div class="resource tags flex-group-center">
+        <label class="resource-label">Tags:</label>
+        <input type="text" name="system.giftTags" value="{{system.giftTags}}" data-dtype="String" />
+    </div>
+    <div class="resource misc flexrow flex-group-center">
+        <label class="normal-label">Refresh:</label>
+        <input type="text" name="system.refresh" value="{{system.refresh}}" data-dtype="String" />
+        <label class="normal-label">Exhausts when used:</label>
+        <input type="checkbox" name="system.exhaustWhenUsed" {{checked system.exhaustWhenUsed}} data-dtype="Boolean" />
+        <label class="normal-label">Grants a Skill Mark:</label>
+        <input type="checkbox" name="system.grantsMark" {{checked system.grantsMark}} data-dtype="Boolean" />
+    </div>
+    <div class="resource dice-pool flexrow flex-group-center">
+        <label class="normal-label">Gift dice:</label>
+        <input type="text" name="system.useDice" value="{{system.useDice}}" data-dtype="String" />
+        <label class="normal-label">Default TN:</label>
+        <input type="number" name="system.defaultTN" value="{{system.defaultTN}}" data-dtype="Number" />
+    </div>
+    {{#if showGiftSkill}}
+    <div class="resource flexrow flex-group-center">
+        <label class="normal-label">Gift Skill Name:</label>
+        <input type="text" name="system.giftSkill" value="{{system.giftSkill}}" data-dtype="String" />
+    </div>
+    {{/if}}
+    <div class="resource extra-sense flexrow flex-group-center">
+        <label class="normal-label">Extra Sense:</label>
+        <input type="checkbox" name="system.extraSense" {{checked system.extraSense}} data-dtype="Boolean" />
+        {{#if system.extraSense}}
+        <label class="normal-label">Type:</label>
+        <select name="system.extraSenseName" data-dtype="String">
+            {{selectOptions selectables.extraSenses selected=system.extraSenseName labelAttr="label" localize=true blank="ironclaw2e.none"}}
+        </select>
+        {{#if (extraSenseHasPassives system.extraSenseName)}}
+        <i class="fas fa-volume-off" title="Sense has a passive component" style="max-width:32px;"></i>
+        {{/if}}
+        {{#if (extraSenseHasVision system.extraSenseName)}}
+        <label class="normal-label">Range:</label>
+        <select name="system.extraSenseRangeBand" data-dtype="String">
+            {{selectOptions selectables.range selected=system.extraSenseRangeBand localize=false blank="None"}}
+        </select>
+        {{/if}}
+        {{/if}}
+    </div>
+</div>

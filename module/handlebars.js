@@ -44,6 +44,11 @@ export function registerHandlebarsHelpers() {
         return gift.system.exhaustWhenUsed || gift.system.useDice?.length > 0;
     });
 
+    // Gifts that exhaust when used, or have a refresh condition and so can be exhausted some other way, get the exhaust toggle
+    Handlebars.registerHelper('exhaustableGift', function (gift) {
+        return gift.system.exhaustWhenUsed || gift.system.refresh?.trim().length > 0;
+    });
+
     Handlebars.registerHelper('propertyExists', function (thing, str) {
         return (str in thing);
     });
@@ -82,8 +87,12 @@ async function loadHandleBarTemplates() {
     const templatePaths = [
         "systems/ironclaw2e/templates/parts/battlestats.html",
         "systems/ironclaw2e/templates/parts/details.html",
+        "systems/ironclaw2e/templates/parts/attributes.html",
         "systems/ironclaw2e/templates/parts/statuseffects.html",
         "systems/ironclaw2e/templates/parts/gifts.html",
+        "systems/ironclaw2e/templates/parts/magicgifts.html",
+        "systems/ironclaw2e/templates/parts/item-gift-attributes.html",
+        "systems/ironclaw2e/templates/parts/item-gift-special.html",
         "systems/ironclaw2e/templates/parts/combatgear.html",
         "systems/ironclaw2e/templates/parts/items.html",
         "systems/ironclaw2e/templates/parts/vehicledetails.html",

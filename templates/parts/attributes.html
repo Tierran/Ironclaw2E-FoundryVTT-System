@@ -1,0 +1,8 @@
+<div class="attributes grid grid-4col grid-minimal">
+    {{#each system.attributes as |attribute key|}}
+    <div class="trait flexrow flex-center flex-tight arrange-vertically">
+        <label for="system.attributes.{{key}}" class="normal-label">{{key}}</label>
+        <input type="text" name="system.attributes.{{key}}" value="{{attribute}}" data-dtype="String" />
+    </div>
+    {{/each}}
+</div>

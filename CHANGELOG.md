@@ -1,3 +1,20 @@
+### Unreleased
+ - Rewrote the README and moved the documentation into task-based pages in `docs/`, updated for the current system
+ - Added a new Magic Gift item type for spells: a gift that can have any number of named spell attacks, each with its own effect, defense, descriptors, range, and attack and counter pools
+ - Magic Gifts have their own Magic tab on character, mook and beast sheets, listing each spell attack under its spell in a collapsible list
+ - Spell attacks can have success tiers: conditions to remove and add, and a note, picked by the attack's net successes and applied to the target from the damage card
+ - Gifts can be converted into Magic Gifts in place from their Advanced Settings tab, keeping all their gift settings
+ - Sending a Magic Gift to chat or attacking with it asks which spell attack to use; counters list each spell attack separately
+ - Magic Gifts can be readied, which exhausts them (offering a refresh first if already exhausted); casting a readied spell does not exhaust it again but unreadies it, casting an unreadied spell exhausts it, and only readied spells can counter
+ - The Effect label on weapon sheets now sits next to the effect field instead of above the defense row
+ - "Flat" now makes an attack's damage flat wherever it appears in the effects (e.g. "Damage 2, Flat"), and "Flat 2" works without writing "Damage"
+ - Gifts with a Refresh entry show the Exhausted/Refreshed toggle on the sheet even if they don't exhaust when used
+ - Opposing Defense / Resist With fields can include dice (e.g. "Will, Inquiry, d6" or "Will, Inquiry; d6"), which are added to the defender's roll
+ - Any dice pool or defense field can use the other side's stats with @, e.g. "Mind, Inquiry, @Body" adds the attacker's Body to a resist; attack pools use the target's stats, defenses and counters the attacker's, and other rolls the user's current target
+ - Items, weapons and gifts on actor sheets have a Send to Chat button next to their name, alongside the existing double-click
+ - The Details tab is renamed Skills; Species and Career sit side by side with their skills listed under them, and the descriptive fields (height, weight, age, habitat...) moved to the Biography/Description tab
+ - Fixed toggling a gift's exhaustion flipping the wrong field
+
 ### 0.8.2 Cold Fix Release
  - Fixed vision modes in V12
  - Context menu fixed

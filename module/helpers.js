@@ -480,6 +480,28 @@ export function splitStatsAndBonus(fullset, ignorecheck = false) {
 }
 
 /**
+ * Split a weapon's opposing defense or resist field into the stats to pre-check and any dice to add
+ * Dice can either follow a semicolon like in dice pools ("Will, Inquiry; d6") or be listed among the stats ("Will, Inquiry, d6")
+ * @param {string} defense The defense field
+ * @returns {{stats: string[], dice: string}} The comparison-ready stat names and the dice as a comma-separated string
+ */
+export function splitDefenseStats(defense) {
+    if (typeof (defense) !== "string" || defense.length === 0) {
+        return { "stats": [], "dice": "" };
+    }
+
+    const [statpart, ...diceparts] = defense.split(";");
+    let stats = [];
+    let dice = diceparts.map(x => x.trim()).filter(x => x.length > 0);
+    for (let stat of splitStatString(statpart)) {
+        if (stat.length === 0) continue;
+        if (parseSingleDiceString(stat)) dice.push(stat);
+        else stats.push(stat);
+    }
+    return { stats, "dice": dice.join(",") };
+}
+
+/**
  * Small helper to check whether a given skill is subject to the burdened limit
  * @param {string} name Name of the skill
  * @returns {boolean} Returns true if the limit applies
@@ -1141,7 +1163,7 @@ export function getCombatAdvantageConstruction(otherkeys, otherdice, othernames,
  * Used over .items.getName() to allow slightly inexact name lookup, rather than requiring exactly the correct name
  * @param {Collection} itemlist The actor's item list to be checked
  * @param {string} itemname The item in question to search for
- * @param {string} itemtype Optionally, also limit the search based on item type, in cases where that might matter
+ * @param {string | string[]} itemtype Optionally, also limit the search based on item type or types, in cases where that might matter
  * @returns {Ironclaw2EItem} Returns the item in question
  */
 export function findInItems(itemlist, itemname, itemtype = null) {
@@ -1150,11 +1172,11 @@ export function findInItems(itemlist, itemname, itemtype = null) {
         return null;
     }
 
-    const useitemtype = itemtype ? true : false;
+    const itemtypes = itemtype ? [itemtype].flat() : null;
     // First remove all whitespace from the itemname, then make a case-insensitive regexp from it
     const regex = new RegExp(`^${itemname.replace(/\s/g, '')}\$`, "gi");
     // Go through all the items until the itemname regexp (and optionally the itemtype) match with something
-    return itemlist.find(element => (useitemtype ? element.type === itemtype : true) && regex.test(element.name.replace(/\s/g, '')));
+    return itemlist.find(element => (itemtypes ? itemtypes.includes(element.type) : true) && regex.test(element.name.replace(/\s/g, '')));
 }
 
 /**

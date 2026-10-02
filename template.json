@@ -224,7 +224,7 @@
     }
   },
   "Item": {
-    "types": [ "gift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "vehicleStation", "vehicleModification", "item" ],
+    "types": [ "gift", "magicGift", "weapon", "armor", "shield", "illumination", "extraCareer", "speciesTemplate", "careerTemplate", "vehicleStation", "vehicleModification", "item" ],
     "templates": {
       "base": {
         "description": "",
@@ -271,6 +271,24 @@
       "extraSenseName": "",
       "extraSenseRangeBand": "",
       "specialSettings": []
+    },
+    "magicGift": {
+      "templates": [ "base" ],
+      "giftTags": "",
+      "refresh": "",
+      "exhausted": false,
+      "exhaustWhenUsed": true,
+      "grantsMark": false,
+      "giftSkill": "",
+      "useDice": "",
+      "defaultTN": 3,
+      "extraSense": false,
+      "extraSenseEnabled": 0,
+      "extraSenseName": "",
+      "extraSenseRangeBand": "",
+      "specialSettings": [],
+      "readied": false,
+      "spellAttacks": []
     },
     "extraCareer": {
       "templates": [],

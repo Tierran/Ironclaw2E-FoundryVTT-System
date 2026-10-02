@@ -30,7 +30,16 @@
 
             <p class="small-text">{{localize "ironclaw2e.chatInfo.damageCalcInfo.allEffects"}}: {{itemSys.effect}}</p>
         </div>
-        {{#if successfulAttack}}
+        {{#if tier}}
+        <div class="chat-item button-holder tier-holder" data-add="{{tier.addConditions}}" data-remove="{{tier.removeConditions}}">
+            <span class="normal-label">{{localize "ironclaw2e.chatInfo.damageCalcInfo.tierHeader" successes=tierSuccesses}}</span>
+            {{#if tier.removeConditions}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.tierRemove"}}: <strong>{{tier.removeConditions}}</strong></p>{{/if}}
+            {{#if tier.addConditions}}<p>{{localize "ironclaw2e.chatInfo.damageCalcInfo.tierAdd"}}: <strong>{{tier.addConditions}}</strong></p>{{/if}}
+            {{#if tier.note}}<p class="small-text">{{tier.note}}</p>{{/if}}
+            {{#if (or tier.addConditions tier.removeConditions)}}<button class="apply-tier-button">{{localize "ironclaw2e.chatInfo.damageCalcInfo.tierApply"}}</button>{{/if}}
+        </div>
+        {{/if}}
+        {{#if successfulAttack}}{{#if hasSoak}}
         <div class="chat-item button-holder" data-conditions="{{itemSys.effectConditionsLabel}}" data-penetrating="{{isPenetrating}}" data-weak="{{isWeak}}">
             <span class="normal-label">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakHeader"}}</span>
             {{#if hasMultipleMultipliers}}{{#unless isFlat}}
@@ -49,6 +58,6 @@
                 {{#if isConditional}}<button class="soak-button" data-soaktype="conditional" data-damage="-4">{{localize "ironclaw2e.chatInfo.damageCalcInfo.soakConditional"}}</button>{{/if}}
             </div>
         </div>
-        {{/if}}
+        {{/if}}{{/if}}
     </div>
 </div>

@@ -1,0 +1,46 @@
+<div class="flexcol">
+    <ol class="items-list magic-gifts-list">
+        <li class="item flexrow item-header">
+            <div class="item-image"></div>
+            <div class="item-name">{{localize "ironclaw2e.sheets.actor.gear.magicGifts"}}</div>
+            <div class="item-controls-small">
+                <a class="item-control item-create" title="{{localize "ironclaw2e.sheets.actor.gear.createItem"}}" data-type="magicGift"><i class="fas fa-plus"></i> {{localize "ironclaw2e.sheets.actor.gear.addMagicGift"}}</a>
+            </div>
+        </li>
+        {{#each actor.magicGifts as |item id|}}
+        <li class="item flexrow" data-item-id="{{item._id}}">
+            <div class="item-image"><img src="{{item.img}}" title="{{item.name}}" width="24" height="24" /></div>
+            <div style="flex: 0 0 16px">{{#if item.spellAttackRows.length}}<a class="spell-attacks-toggle" data-item="{{item._id}}" title="{{localize "ironclaw2e.sheets.actor.toggleSpellAttacks"}}"><i class="fas {{#if item.spellExpanded}}fa-caret-down{{else}}fa-caret-right{{/if}}"></i></a>{{/if}}</div>
+            <a class="item-control item-send-chat" style="flex: 0 0 20px" title="{{localize "ironclaw2e.sheets.actor.sendToChat"}}"><i class="fas fa-comment"></i></a>
+            <h4 class="item-name double-clickable roll-double-info-item">{{item.name}}</h4>
+            <div class="item-controls flexrow">
+                {{#if item.system.useDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.giftTooltip" name=item.name}}" data-roll="gift" data-item="{{item._id}}"><img src="systems/ironclaw2e/icons/gift-use.svg" width="24" height="24" /></a>{{/if}}
+                {{#if (extraSenseHasVision item.system.extraSenseName)}}<a class="rollable roll-vision" title="{{#if (equalTo item.system.extraSenseEnabled 2)}}{{localize "ironclaw2e.sheets.actor.disableVision" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.enableVision" name=item.name}}{{/if}}" data-item="{{item._id}}"><img src="{{#if (equalTo item.system.extraSenseEnabled 2)}}systems/ironclaw2e/icons/vision-enabled.svg{{else}}systems/ironclaw2e/icons/vision-disabled.svg{{/if}}" width="24" height="24" /></a>{{/if}}
+            </div>
+            <div class="item-controls">
+                <a class="rollable roll-item-change" title="{{#if item.system.readied}}{{localize "ironclaw2e.sheets.actor.unreadySpellTooltip" name=item.name}}{{else}}{{localize "ironclaw2e.sheets.actor.readySpellTooltip" name=item.name}}{{/if}}" data-stat="readied" data-item="{{item._id}}"><span>{{#if item.system.readied}}{{localize "ironclaw2e.sheets.actor.readied"}}{{else}}{{localize "ironclaw2e.sheets.actor.unreadied"}}{{/if}}</span></a>
+                {{#if (exhaustableGift item)}}<a class="rollable roll-item-change" title="{{#if item.system.exhausted}}{{localize "ironclaw2e.sheets.actor.refresh"}}{{else}}{{localize "ironclaw2e.sheets.actor.exhaust"}}{{/if}}" data-stat="exhausted" data-item="{{item._id}}"><span>{{#if item.system.exhausted}}{{localize "ironclaw2e.sheets.actor.exhausted"}}{{else}}{{localize "ironclaw2e.sheets.actor.refreshed"}}{{/if}}</span></a>{{/if}}
+            </div>
+            <div class="item-controls-small">
+                <a class="item-control item-edit" title="{{localize "ironclaw2e.sheets.actor.gear.editItem"}}"><i class="fas fa-edit"></i></a>
+                <a class="item-control item-delete" title="{{localize "ironclaw2e.sheets.actor.gear.deleteItem"}}"><i class="fas fa-trash"></i></a>
+            </div>
+        </li>
+        {{#each item.spellAttackRows as |attack|}}
+        <li class="item flexrow spell-attack-row" data-item-id="{{item._id}}" data-spell-attack="{{attack.index}}" {{#unless item.spellExpanded}}style="display: none"{{/unless}}>
+            <div class="item-image"></div>
+            <div style="flex: 0 0 16px"></div>
+            <a class="item-control item-send-chat" style="flex: 0 0 20px" title="{{localize "ironclaw2e.sheets.actor.sendToChat"}}"><i class="fas fa-comment"></i></a>
+            <h4 class="item-name double-clickable roll-double-info-item" title="{{localize "ironclaw2e.chatInfo.itemInfo.effect"}}: {{attack.effect}}">&#8627; {{attack.name}}</h4>
+            <div class="item-controls flexrow">
+                {{#if attack.attackDice}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.attackTooltip" name=attack.fullName}}" data-roll="attack" data-item="{{item._id}}" data-attack="{{attack.index}}"><img src="systems/ironclaw2e/icons/weapon-attack.svg" width="24" height="24" /></a>{{/if}}
+                {{#if attack.attackHasTemplate}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.templateTooltip" name=attack.fullName radius=attack.multiAttackRangeShown}}" data-roll="template" data-item="{{item._id}}" data-attack="{{attack.index}}"><img src="systems/ironclaw2e/icons/weapon-template.svg" width="24" height="24" /></a>{{/if}}
+                {{#if attack.counterDice}}{{#if item.system.readied}}<a class="rollable roll-item" title="{{localize "ironclaw2e.sheets.actor.counterTooltip" name=attack.fullName}}" data-roll="counter" data-item="{{item._id}}" data-attack="{{attack.index}}"><img src="systems/ironclaw2e/icons/weapon-counter.svg" width="24" height="24" /></a>{{/if}}{{/if}}
+            </div>
+            <div class="item-controls" title="{{attack.effect}}"><span class="small-text">{{attack.effect}}</span></div>
+            <div class="item-controls-small"></div>
+        </li>
+        {{/each}}
+        {{/each}}
+    </ol>
+</div>
