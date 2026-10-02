@@ -1,5 +1,5 @@
 ### Unreleased
- - Vehicles, vehicle stations and vehicle modifications can no longer be created; existing ones still work
+ - Vehicles, vehicle stations and vehicle modifications can no longer be created, and the vehicle captain setting is no longer shown; existing vehicles still work
 
 ### 0.8.2 Cold Fix Release
  - Fixed vision modes in V12
