@@ -45,6 +45,12 @@ See the [CHANGELOG](CHANGELOG.md) for what's new.
 
 The included compendiums **do not** contain characters, gifts, gear or other content from the Ironclaw books. They hold paraphrased rules references, status effect descriptions and the bundled macros.
 
+## Credits
+
+Special thanks to [Hertzila](https://github.com/Hertzila) for building this system and maintaining it through 0.8.2. The original repository is at https://github.com/Hertzila/Ironclaw2E-FoundryVTT-System.
+
+Maintained since 0.8.3 by [Tierran](https://github.com/Tierran).
+
 ## License
 
 Ironclaw © SanguineGames.com. This is a fan project, not associated with Sanguine Productions.
