@@ -2,7 +2,7 @@
   "id": "ironclaw2e",
   "title": "Ironclaw Second Edition",
   "description": "Ironclaw Second Edition system for FoundryVTT.",
-  "version": "0.8.7",
+  "version": "0.8.8",
   "compatibility": {
     "minimum": "13",
     "verified": "13.351"
@@ -67,8 +67,8 @@
     },
   "primaryTokenAttribute": "null",
   "secondaryTokenAttribute": "null",
-  "url": "https://github.com/Hertzila/Ironclaw2E-FoundryVTT-System",
-  "changelog": "https://github.com/Hertzila/Ironclaw2E-FoundryVTT-System/blob/master/CHANGELOG.md",
+  "url": "https://github.com/Tierran/Ironclaw2E-FoundryVTT-System",
+  "changelog": "https://github.com/Tierran/Ironclaw2E-FoundryVTT-System/blob/master/CHANGELOG.md",
   "manifest": "#{MANIFEST}#",
   "download": "#{DOWNLOAD}#",
   "license": "LICENSE",

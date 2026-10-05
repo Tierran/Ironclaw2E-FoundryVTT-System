@@ -1,4 +1,8 @@
-### Unreleased
+### 0.8.8
+ - Moved the project to a new repository: https://github.com/Tierran/Ironclaw2E-FoundryVTT-System
+ - Added the missing release notes for 0.8.3 through 0.8.7
+
+### 0.8.7
  - Vehicles, vehicle stations and vehicle modifications can no longer be created, and the vehicle captain setting is no longer shown; existing vehicles still work
  - Fixed the Items sidebar right-click options on Foundry v13: "Set as Species/Career Template Source" on folders and "Send Info to Chat" on items were missing
  - Rewrote the README and moved the documentation into task-based pages in `docs/`, updated for the current system
@@ -16,6 +20,35 @@
  - Items, weapons and gifts on actor sheets have a Send to Chat button next to their name, alongside the existing double-click
  - The Details tab is renamed Skills; Species and Career sit side by side with their skills listed under them, and the descriptive fields (height, weight, age, habitat...) moved to the Biography/Description tab
  - Fixed toggling a gift's exhaustion flipping the wrong field
+ - Restored the missing Item Related Settings header in World Settings
+
+### 0.8.6
+ - When an attack is rolled against a counter-attack that was rolled against a TN, the counter's damage is posted automatically on a tie or a counter win, without needing Resolve Counter-Attack
+ - Defense rolls that answer an attack have an Attack This Defense button: the original attacker rolls the original weapon, anyone else picks one of their own weapons
+ - Request a Roll uses trait and skill checkboxes instead of a typed dice pool, the whisper target is a dropdown of online users, and the default TN is 3
+ - On a counter tie against a resisted attack, half the tied successes are now rounded down instead of up; a tie still always hits
+
+### 0.8.5
+ - Foundry v13 only; v12 is no longer supported
+ - Added a Token HUD Conditions settings menu to choose which conditions appear in the Token HUD; hidden conditions still work and still show on tokens that have them
+ - Restored automatic Combat Advantage, which had been disabled for everyone, and added an Auto-apply Combat Advantage world setting to turn it off
+ - Fixed the Ironclaw combat tracker settings (side-based initiative, initiative type, manual TN) being lost on Foundry v13, and the settings dialog not opening
+ - Fixed the automatic initiative TN, range penalties, threat checks and templates measuring in grid spaces instead of paces
+ - Fixed the PC vs NPC side-based initiative modes
+ - Fixed the extra Token HUD buttons and status effects on Foundry v13
+ - Fixed the chat message delete button on Foundry v13
+ - Dodge, Parry and Counter rolls against a resisted attack check their TN automatically
+ - Counters rolled against a TN are resolved by opposing successes instead of asking for a TN; on a tie against a resisted attack, both sides hit
+
+### 0.8.4
+ - First Foundry v13 support
+ - Fixed the reroll options missing from the chat message context menu on Foundry v13
+ - Fixed the Ironclaw README and Release Notes buttons in the Settings sidebar on Foundry v13
+ - Replaced deprecated Foundry calls in combat and area templates
+
+### 0.8.3
+ - Fixed rerolls, including Reroll One
+ - Updated dice rolling for Foundry API changes and removed leftover debug logging
 
 ### 0.8.2 Cold Fix Release
  - Fixed vision modes in V12

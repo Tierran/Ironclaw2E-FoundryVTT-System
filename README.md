@@ -11,7 +11,7 @@ A Foundry VTT game system for **Ironclaw Second Edition** (*Ironclaw Omnibus: Sq
 In Foundry's **Game Systems** tab, choose **Install System** and paste this manifest URL:
 
 ```
-https://github.com/Hertzila/Ironclaw2E-FoundryVTT-System/releases/latest/download/system.json
+https://github.com/Tierran/Ironclaw2E-FoundryVTT-System/releases/latest/download/system.json
 ```
 
 ## What it does

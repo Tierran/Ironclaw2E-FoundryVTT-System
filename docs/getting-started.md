@@ -9,7 +9,7 @@ The system needs **Foundry VTT v13**.
 1. In Foundry's setup screen, open **Game Systems** and choose **Install System**.
 2. Paste this manifest URL and choose **Install**:
    ```
-   https://github.com/Hertzila/Ironclaw2E-FoundryVTT-System/releases/latest/download/system.json
+   https://github.com/Tierran/Ironclaw2E-FoundryVTT-System/releases/latest/download/system.json
    ```
 3. Create a world using **Ironclaw Second Edition**.
 
