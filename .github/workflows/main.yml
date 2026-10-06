@@ -27,8 +27,12 @@
 #     (by default) create a repository tag, a repository tag will not create
 #     or publish a GitHub release.
 #
-#   - Has the module's entry on FoundryVTT's module administration site
-#     (https://foundryvtt.com/admin) been updated?
+#   - Did the release reach the system's listing on foundryvtt.com?
+#     The "Publish Release To Foundry" step registers it through the Package
+#     Release API, using the `FOUNDRY_RELEASE_TOKEN` repository secret (the
+#     `fvttp_...` token from the package's edit page on foundryvtt.com). If the
+#     secret is missing the step only warns, and the listing must be updated by
+#     hand. Prereleases are not published to Foundry.
 #
 name: Create System Files For GitHub Release
 
@@ -163,3 +167,45 @@ jobs:
           artifacts: './system.json, ./system.zip'
           tag: ${{ github.event.release.tag_name }}
           body: ${{ github.event.release.body }}
+
+
+      # Register the release on the system's foundryvtt.com listing, so Foundry's
+      # package browser offers it.
+      # See https://foundryvtt.com/article/package-release-api/
+      # The manifest URL points at this release's own copy of "system.json", and
+      # the compatibility values are read from the committed manifest.
+      - name: Publish Release To Foundry
+        if: ${{ !github.event.release.prerelease }}
+        env:
+          FOUNDRY_RELEASE_TOKEN: ${{ secrets.FOUNDRY_RELEASE_TOKEN }}
+          VERSION: ${{ steps.get_version.outputs.version-without-v }}
+          RELEASE_MANIFEST: "https://github.com/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/system.json"
+          RELEASE_NOTES: ${{ github.event.release.html_url }}
+        run: |
+          if [ -z "$FOUNDRY_RELEASE_TOKEN" ]; then
+            echo "::warning::FOUNDRY_RELEASE_TOKEN is not set, so the release was not published to foundryvtt.com. Add the secret, or update the listing by hand."
+            exit 0
+          fi
+
+          BODY="$(jq -n \
+            --arg id "$(jq -r '.id' system.json)" \
+            --arg version "$VERSION" \
+            --arg manifest "$RELEASE_MANIFEST" \
+            --arg notes "$RELEASE_NOTES" \
+            --argjson compatibility "$(jq '.compatibility' system.json)" \
+            '{id: $id, release: {version: $version, manifest: $manifest, notes: $notes, compatibility: $compatibility}}')"
+          echo "$BODY"
+
+          STATUS="$(curl --silent --show-error --output response.json --write-out '%{http_code}' \
+            --request POST https://foundryvtt.com/_api/packages/release_version/ \
+            --header "Content-Type: application/json" \
+            --header "Authorization: $FOUNDRY_RELEASE_TOKEN" \
+            --data "$BODY")"
+          cat response.json
+          echo
+
+          if [ "$STATUS" != "200" ] || [ "$(jq -r '.status' response.json)" != "success" ]; then
+            echo "::error::foundryvtt.com rejected the release (HTTP $STATUS). The GitHub release is published; fix the problem and update the listing by hand."
+            exit 1
+          fi
+          echo "Published $VERSION to $(jq -r '.page' response.json)"
