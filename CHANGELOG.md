@@ -1,3 +1,10 @@
+### 14.0.0
+ - Supports Foundry v14 (checked on 14.369); Foundry v13 still works
+ - New version numbers: the first number is the newest Foundry major version the system is checked on, the second goes up for new features, and the third for bug fixes
+ - New releases are published to the system's foundryvtt.com listing automatically, so Foundry's package browser offers them
+ - Credited Hertzila, the system's original author, in the README
+ - Removed unused files left over from the Boilerplate system template
+
 ### 0.8.8
  - Moved the project to a new repository: https://github.com/Tierran/Ironclaw2E-FoundryVTT-System
  - Added the missing release notes for 0.8.3 through 0.8.7
