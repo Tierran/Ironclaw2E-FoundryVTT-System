@@ -4,7 +4,7 @@
 
 ## Install
 
-The system needs **Foundry VTT v13**.
+The system needs **Foundry VTT v13 or v14**.
 
 1. In Foundry's setup screen, open **Game Systems** and choose **Install System**.
 2. Paste this manifest URL and choose **Install**:
@@ -70,7 +70,7 @@ The **Extra Career** gift is its own item type. A character can have any number 
 
 ## Optional modules
 
-The system has built-in support for a few modules. These integrations were written for older Foundry versions, so check that the module itself supports v13 before relying on it.
+The system has built-in support for a few modules. These integrations were written for older Foundry versions, so check that the module itself supports your Foundry version before relying on it.
 
 | Module | What the system does with it |
 |---|---|

@@ -4,7 +4,9 @@ A Foundry VTT game system for **Ironclaw Second Edition** (*Ironclaw Omnibus: Sq
 
 ![A character sheet and an attack resolving in chat](docs/images/readme-hero.png)
 
-**Requires Foundry VTT v13.**
+**Requires Foundry VTT v13 or v14.**
+
+Version numbers are `<Foundry version>.<feature>.<fix>`: the first number is the newest Foundry major version the system is checked on, the second goes up for releases with new features, and the third for bug-fix releases.
 
 ## Install
 
