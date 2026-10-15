@@ -2,7 +2,7 @@
   "id": "ironclaw2e",
   "title": "Ironclaw Second Edition",
   "description": "Ironclaw Second Edition system for FoundryVTT.",
-  "version": "14.0.0",
+  "version": "14.0.1",
   "compatibility": {
     "minimum": "13",
     "verified": "14.369"

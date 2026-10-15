@@ -1,4 +1,4 @@
-### Unreleased
+### 14.0.1
  - Fixed the Extra dice field in roll dialogs being ignored when "One line pools ordered" was turned on
 
 ### 14.0.0
