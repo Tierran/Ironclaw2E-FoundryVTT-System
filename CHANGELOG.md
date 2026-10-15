@@ -1,3 +1,6 @@
+### Unreleased
+ - Fixed the Extra dice field in roll dialogs being ignored when "One line pools ordered" was turned on
+
 ### 14.0.0
  - Supports Foundry v14 (checked on 14.369); Foundry v13 still works
  - New version numbers: the first number is the newest Foundry major version the system is checked on, the second goes up for new features, and the third for bug fixes
