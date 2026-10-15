@@ -1767,7 +1767,8 @@ export class Ironclaw2EActor extends Actor {
                 if (labelgiven)
                     label += " + ";
                 label += game.i18n.localize("ironclaw2e.chat.extraDice");
-                totaldice.push(extra);
+                if (extraOrdered) totaldice.push(...extra); // Ordered extra dice are a set of dice arrays, add each one separately
+                else totaldice.push(extra);
             }
         }
 
