@@ -1,5 +1,6 @@
 ### Unreleased
  - Fixed weapon effect conditions (e.g. Grappled) showing as "undefined" on the damage card and not being added through the soak buttons
+ - The "Condition Effect" button on the damage card of an attack with no damage now adds its conditions directly, without opening the damage popup or adding Reeling
 
 ### 14.0.2
  - Fixed conditions added by the system (damage, condition popup and so on) not showing their icons on tokens in Foundry v14
