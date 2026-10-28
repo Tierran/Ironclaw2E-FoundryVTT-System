@@ -1,4 +1,4 @@
-### Unreleased
+### 14.0.3
  - Fixed weapon effect conditions (e.g. Grappled) showing as "undefined" on the damage card and not being added through the soak buttons
  - The "Condition Effect" button on the damage card of an attack with no damage now adds its conditions directly, without opening the damage popup or adding Reeling
 
