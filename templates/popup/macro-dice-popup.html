@@ -1,0 +1,25 @@
+<div class="ironclaw2e ironclaw2e-macro-dice">
+    {{#if showTN}}
+    <div class="form-group">
+        <label>{{localize tnLabel}}</label>
+        {{#if tnToggle}}<input type="checkbox" name="tnused" {{checked tnused}} />{{/if}}
+        <input type="number" class="macro-dice-count" name="tn" value="{{tn}}" min="0" onfocus="this.select();" />
+    </div>
+    {{/if}}
+    {{#if diceFields}}
+    <div class="macro-dice-grid">
+        {{#each diceFields}}
+        <label class="macro-dice-cell">
+            <span>{{die}}</span>
+            <input type="number" class="macro-dice-count" name="{{name}}" value="{{value}}" min="0" onfocus="this.select();" />
+        </label>
+        {{/each}}
+    </div>
+    {{/if}}
+    {{#if oneLine}}
+    <div class="form-group">
+        <label>{{localize "ironclaw2e.dialog.macroDefault.oneLineDice"}}</label>
+        <input type="text" name="dices" value="{{dices}}" onfocus="this.select();" />
+    </div>
+    {{/if}}
+</div>

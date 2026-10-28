@@ -359,11 +359,6 @@
   "ironclaw2e.dialog.macroDefault.titleVar": "Variable Type Roll for {name}",
   "ironclaw2e.dialog.macroDefault.targetNumber": "Target Number of Roll",
   "ironclaw2e.dialog.macroDefault.targetNumberCopy": "Target Number to use",
-  "ironclaw2e.dialog.macroDefault.d12Dice": "D12 dice to Roll",
-  "ironclaw2e.dialog.macroDefault.d10Dice": "D10 dice to Roll",
-  "ironclaw2e.dialog.macroDefault.d8Dice": "D8 dice to Roll",
-  "ironclaw2e.dialog.macroDefault.d6Dice": "D6 dice to Roll",
-  "ironclaw2e.dialog.macroDefault.d4Dice": "D4 dice to Roll",
   "ironclaw2e.dialog.macroDefault.oneLineDice": "Dice to Roll",
 
   "ironclaw2e.dialog.dicePool.title": "Choose Pools",

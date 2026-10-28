@@ -879,77 +879,13 @@ export class CardinalDiceRoller {
  * @returns {Promise<DiceReturn> | Promise<null>} Promise of the roll data in an object, or null if cancelled
  */
 export async function rollTargetNumberDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0, label = "", rolltitle = "", rollingactor = null) {
-    let confirmed = false;
-    const usetranslation = !rolltitle || game.i18n.has(rolltitle); // Use translations if either rolltitle does not exist, or it exists and has a translation equivalent
-    let speaker = getMacroSpeaker(rollingactor);
-    let resolvedroll = new Promise((resolve) => {
-        let dlog = new Dialog({
-            title: usetranslation ? game.i18n.format(rolltitle || "ironclaw2e.dialog.macroDefault.titleTN", { "name": speaker.alias }) : speaker.alias + ": " + rolltitle,
-            content: `
-     <form class="ironclaw2e">
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.targetNumber")}:</label>
-	   <input type="text" id="tn" name="tn" value="${tn.toString()}" onfocus="this.select();"></input>
-      </div>
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d12Dice")}:</label>
-	   <input type="text" id="d12s" name="d12s" value="${d12s != 0 ? d12s.toString() : ""}" onfocus="this.select();"></input>
-      </div>
-	  <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d10Dice")}:</label>
-	   <input type="text" id="d10s" name="d10s" value="${d10s != 0 ? d10s.toString() : ""}" onfocus="this.select();"></input>
-      </div>
-	  <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d8Dice")}:</label>
-	   <input type="text" id="d8s" name="d8s" value="${d8s != 0 ? d8s.toString() : ""}" onfocus="this.select();"></input>
-      </div>
-	  <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d6Dice")}:</label>
-	   <input type="text" id="d6s" name="d6s" value="${d6s != 0 ? d6s.toString() : ""}" onfocus="this.select();"></input>
-      </div>
-	  <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d4Dice")}:</label>
-	   <input type="text" id="d4s" name="d4s" value="${d4s != 0 ? d4s.toString() : ""}" onfocus="this.select();"></input>
-      </div>
-     </form>
-     `,
-            buttons: {
-                one: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.roll"),
-                    callback: () => confirmed = true
-                },
-                two: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
-                    callback: () => confirmed = false
-                }
-            },
-            default: "one",
-            render: html => { document.getElementById("tn").focus(); },
-            close: html => {
-                if (confirmed) {
-                    let TNSS = html.find('[name=tn]')[0].value;
-                    let TN = 0; if (TNSS.length > 0) TN = parseInt(TNSS);
-                    let D12SS = html.find('[name=d12s]')[0].value;
-                    let D12S = 0; if (D12SS.length > 0) D12S = parseInt(D12SS);
-                    let D10SS = html.find('[name=d10s]')[0].value;
-                    let D10S = 0; if (D10SS.length > 0) D10S = parseInt(D10SS);
-                    let D8SS = html.find('[name=d8s]')[0].value;
-                    let D8S = 0; if (D8SS.length > 0) D8S = parseInt(D8SS);
-                    let D6SS = html.find('[name=d6s]')[0].value;
-                    let D6S = 0; if (D6SS.length > 0) D6S = parseInt(D6SS);
-                    let D4SS = html.find('[name=d4s]')[0].value;
-                    let D4S = 0; if (D4SS.length > 0) D4S = parseInt(D4SS);
-                    resolve(CardinalDiceRoller.rollTargetNumberArray(TN, [D12S, D10S, D8S, D6S, D4S], label, rollingactor));
-                } else {
-                    resolve(null);
-                }
-            }
-        }, { focus: false });
-        dlog.render(true);
+    const data = await waitForMacroDialog({
+        "title": getMacroDialogTitle(rolltitle, "ironclaw2e.dialog.macroDefault.titleTN", rollingactor),
+        "templateData": { "showTN": true, "tnLabel": "ironclaw2e.dialog.macroDefault.targetNumber", tn, "diceFields": getSeparateDiceFields([d12s, d10s, d8s, d6s, d4s]) },
+        "focus": "tn"
     });
-    return await resolvedroll;
+    if (!data) return null;
+    return CardinalDiceRoller.rollTargetNumberArray(parseDialogInt(data.tn), getSeparateDiceArray(data), label, rollingactor);
 }
 
 /**
@@ -966,71 +902,13 @@ export async function rollTargetNumberDialog(tn = 3, d12s = 0, d10s = 0, d8s = 0
  * @returns {Promise<DiceReturn> | Promise<null>} Promise of the roll data in an object, or null if cancelled
  */
 export async function rollHighestDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4s = 0, label = "", rolltitle = "", rollingactor = null) {
-    let confirmed = false;
-    const usetranslation = !rolltitle || game.i18n.has(rolltitle); // Use translations if either rolltitle does not exist, or it exists and has a translation equivalent
-    let speaker = getMacroSpeaker(rollingactor);
-    let resolvedroll = new Promise((resolve) => {
-        let dlog = new Dialog({
-            title: usetranslation ? game.i18n.format(rolltitle || "ironclaw2e.dialog.macroDefault.titleHighest", { "name": speaker.alias }) : speaker.alias + ": " + rolltitle,
-            content: `
-     <form class="ironclaw2e">
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d12Dice")}:</label>
-	   <input type="text" id="d12s" name="d12s" value="${d12s != 0 ? d12s.toString() : ""}" onfocus="this.select();"></input>
-      </div>
-	  <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d10Dice")}:</label>
-	   <input type="text" id="d10s" name="d10s" value="${d10s != 0 ? d10s.toString() : ""}" onfocus="this.select();"></input>
-      </div>
-	  <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d8Dice")}:</label>
-	   <input type="text" id="d8s" name="d8s" value="${d8s != 0 ? d8s.toString() : ""}" onfocus="this.select();"></input>
-      </div>
-	  <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d6Dice")}:</label>
-	   <input type="text" id="d6s" name="d6s" value="${d6s != 0 ? d6s.toString() : ""}" onfocus="this.select();"></input>
-      </div>
-	  <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.d4Dice")}:</label>
-	   <input type="text" id="d4s" name="d4s" value="${d4s != 0 ? d4s.toString() : ""}" onfocus="this.select();"></input>
-      </div>
-     </form>
-     `,
-            buttons: {
-                one: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.roll"),
-                    callback: () => confirmed = true
-                },
-                two: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
-                    callback: () => confirmed = false
-                }
-            },
-            default: "one",
-            render: html => { document.getElementById("d12s").focus(); },
-            close: html => {
-                if (confirmed) {
-                    let D12SS = html.find('[name=d12s]')[0].value;
-                    let D12S = 0; if (D12SS.length > 0) D12S = parseInt(D12SS);
-                    let D10SS = html.find('[name=d10s]')[0].value;
-                    let D10S = 0; if (D10SS.length > 0) D10S = parseInt(D10SS);
-                    let D8SS = html.find('[name=d8s]')[0].value;
-                    let D8S = 0; if (D8SS.length > 0) D8S = parseInt(D8SS);
-                    let D6SS = html.find('[name=d6s]')[0].value;
-                    let D6S = 0; if (D6SS.length > 0) D6S = parseInt(D6SS);
-                    let D4SS = html.find('[name=d4s]')[0].value;
-                    let D4S = 0; if (D4SS.length > 0) D4S = parseInt(D4SS);
-                    resolve(CardinalDiceRoller.rollHighestArray([D12S, D10S, D8S, D6S, D4S], label, rollingactor));
-                } else {
-                    resolve(null);
-                }
-            }
-        }, { focus: false });
-        dlog.render(true);
+    const data = await waitForMacroDialog({
+        "title": getMacroDialogTitle(rolltitle, "ironclaw2e.dialog.macroDefault.titleHighest", rollingactor),
+        "templateData": { "diceFields": getSeparateDiceFields([d12s, d10s, d8s, d6s, d4s]) },
+        "focus": "d12s"
     });
-    return await resolvedroll;
+    if (!data) return null;
+    return CardinalDiceRoller.rollHighestArray(getSeparateDiceArray(data), label, rollingactor);
 }
 
 /**
@@ -1044,56 +922,15 @@ export async function rollHighestDialog(d12s = 0, d10s = 0, d8s = 0, d6s = 0, d4
  * @returns {Promise<DiceReturn> | Promise<null>} Promise of the roll data in an object, or null if cancelled
  */
 export async function rollTargetNumberOneLine(tnnum = 3, readydice = "", label = "", rolltitle = "", rollingactor = null) {
-    let confirmed = false;
-    const usetranslation = !rolltitle || game.i18n.has(rolltitle); // Use translations if either rolltitle does not exist, or it exists and has a translation equivalent
     const extraOrdered = game.settings.get("ironclaw2e", "oneLineDicesOrdered");
-    let speaker = getMacroSpeaker(rollingactor);
-    let resolvedroll = new Promise((resolve) => {
-        let dlog = new Dialog({
-            title: usetranslation ? game.i18n.format(rolltitle || "ironclaw2e.dialog.macroDefault.titleTN", { "name": speaker.alias }) : speaker.alias + ": " + rolltitle,
-            content: `
-     <form class="ironclaw2e">
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.targetNumber")}:</label>
-	   <input type="text" id="tn" name="tn" value="${tnnum}" onfocus="this.select();"></input>
-      </div>
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.oneLineDice")}:</label>
-      </div>
-	  <div class="form-group">
-	   <input type="text" id="dices" name="dices" value="${readydice}" onfocus="this.select();"></input>
-      </div>
-     </form>
-     `,
-            buttons: {
-                one: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.roll"),
-                    callback: () => confirmed = true
-                },
-                two: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
-                    callback: () => confirmed = false
-                }
-            },
-            default: "one",
-            render: html => { document.getElementById("tn").focus(); },
-            close: html => {
-                if (confirmed) {
-                    let TNSS = html.find('[name=tn]')[0].value;
-                    let TN = 0; if (TNSS.length > 0) TN = parseInt(TNSS);
-                    let DICES = html.find('[name=dices]')[0].value;
-                    let DICE = extraOrdered ? findTotalDiceArrays(DICES) : findTotalDice(DICES);
-                    resolve(CardinalDiceRoller.rollTargetNumberArray(TN, DICE, label, rollingactor));
-                } else {
-                    resolve(null);
-                }
-            }
-        }, { focus: false });
-        dlog.render(true);
+    const data = await waitForMacroDialog({
+        "title": getMacroDialogTitle(rolltitle, "ironclaw2e.dialog.macroDefault.titleTN", rollingactor),
+        "templateData": { "showTN": true, "tnLabel": "ironclaw2e.dialog.macroDefault.targetNumber", "tn": tnnum, "oneLine": true, "dices": readydice },
+        "focus": "tn"
     });
-    return await resolvedroll;
+    if (!data) return null;
+    const DICE = extraOrdered ? findTotalDiceArrays(data.dices) : findTotalDice(data.dices);
+    return CardinalDiceRoller.rollTargetNumberArray(parseDialogInt(data.tn), DICE, label, rollingactor);
 }
 
 /**
@@ -1106,50 +943,15 @@ export async function rollTargetNumberOneLine(tnnum = 3, readydice = "", label =
  * @returns {Promise<DiceReturn> | Promise<null>} Promise of the roll data in an object, or null if cancelled
  */
 export async function rollHighestOneLine(readydice = "", label = "", rolltitle = "", rollingactor = null) {
-    let confirmed = false;
-    const usetranslation = !rolltitle || game.i18n.has(rolltitle); // Use translations if either rolltitle does not exist, or it exists and has a translation equivalent
     const extraOrdered = game.settings.get("ironclaw2e", "oneLineDicesOrdered");
-    let speaker = getMacroSpeaker(rollingactor);
-    let resolvedroll = new Promise((resolve) => {
-        let dlog = new Dialog({
-            title: usetranslation ? game.i18n.format(rolltitle || "ironclaw2e.dialog.macroDefault.titleHighest", { "name": speaker.alias }) : speaker.alias + ": " + rolltitle,
-            content: `
-     <form class="ironclaw2e">
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.oneLineDice")}:</label>
-      </div>
-	  <div class="form-group">
-	   <input type="text" id="dices" name="dices" value="${readydice}" onfocus="this.select();"></input>
-      </div>
-     </form>
-     `,
-            buttons: {
-                one: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.roll"),
-                    callback: () => confirmed = true
-                },
-                two: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
-                    callback: () => confirmed = false
-                }
-            },
-            default: "one",
-            render: html => { document.getElementById("dices").focus(); },
-            close: html => {
-                if (confirmed) {
-                    let DICES = html.find('[name=dices]')[0].value;
-                    let DICE = extraOrdered ? findTotalDiceArrays(DICES) : findTotalDice(DICES);
-                    resolve(CardinalDiceRoller.rollHighestArray(DICE, label, rollingactor));
-                } else {
-                    resolve(null);
-                }
-            }
-        }, { focus: false });
-        dlog.render(true);
+    const data = await waitForMacroDialog({
+        "title": getMacroDialogTitle(rolltitle, "ironclaw2e.dialog.macroDefault.titleHighest", rollingactor),
+        "templateData": { "oneLine": true, "dices": readydice },
+        "focus": "dices"
     });
-    return await resolvedroll;
+    if (!data) return null;
+    const DICE = extraOrdered ? findTotalDiceArrays(data.dices) : findTotalDice(data.dices);
+    return CardinalDiceRoller.rollHighestArray(DICE, label, rollingactor);
 }
 
 /**
@@ -1164,58 +966,14 @@ export async function rollHighestOneLine(readydice = "", label = "", rolltitle =
  * @returns {Promise<DiceReturn> | Promise<null>} Promise of the roll data in an object, or null if cancelled
  */
 export async function rollVariableOneLine(tnyes = false, tnnum = 3, readydice = "", label = "", rolltitle = "", rollingactor = null) {
-    let confirmed = false;
-    const usetranslation = !rolltitle || game.i18n.has(rolltitle); // Use translations if either rolltitle does not exist, or it exists and has a translation equivalent
-    let speaker = getMacroSpeaker(rollingactor);
-    let resolvedroll = new Promise((resolve) => {
-        let dlog = new Dialog({
-            title: usetranslation ? game.i18n.format(rolltitle || "ironclaw2e.dialog.macroDefault.titleVar", { "name": speaker.alias }) : speaker.alias + ": " + rolltitle,
-            content: `
-     <form class="ironclaw2e">
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.targetNumber")}:</label>
-       <input type="checkbox" id="tnused" name="tnused" ${tnyes ? "checked" : ""}></input>
-	   <input type="text" style="max-width:40%" id="tn" name="tn" value="${tnnum}" onfocus="this.select();"></input>
-      </div>
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.oneLineDice")}:</label>
-      </div>
-	  <div class="form-group">
-	   <input type="text" id="dices" name="dices" value="${readydice}" onfocus="this.select();"></input>
-      </div>
-     </form>
-     `,
-            buttons: {
-                one: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.roll"),
-                    callback: () => confirmed = true
-                },
-                two: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
-                    callback: () => confirmed = false
-                }
-            },
-            default: "one",
-            render: html => { document.getElementById("tn").focus(); },
-            close: html => {
-                if (confirmed) {
-                    let TNSS = html.find('[name=tn]')[0]?.value;
-                    let TN = 0; if (TNSS?.length > 0) TN = parseInt(TNSS);
-                    let TNUSED = html.find('[name=tnused]')[0];
-                    let USED = TNUSED?.checked ?? false;
-                    let DICES = html.find('[name=dices]')[0]?.value;
-                    let DICE = findTotalDice(DICES);
-                    resolve(USED ? CardinalDiceRoller.rollTargetNumberArray(TN, DICE, label, rollingactor) : CardinalDiceRoller.rollHighestArray(DICE, label, rollingactor));
-                } else {
-                    resolve(null);
-                }
-            }
-        }, { focus: false });
-        dlog.render(true);
+    const data = await waitForMacroDialog({
+        "title": getMacroDialogTitle(rolltitle, "ironclaw2e.dialog.macroDefault.titleVar", rollingactor),
+        "templateData": { "showTN": true, "tnLabel": "ironclaw2e.dialog.macroDefault.targetNumber", "tnToggle": true, "tnused": tnyes, "tn": tnnum, "oneLine": true, "dices": readydice },
+        "focus": "tn"
     });
-    return await resolvedroll;
+    if (!data) return null;
+    const DICE = findTotalDice(data.dices);
+    return data.tnused ? CardinalDiceRoller.rollTargetNumberArray(parseDialogInt(data.tn), DICE, label, rollingactor) : CardinalDiceRoller.rollHighestArray(DICE, label, rollingactor);
 }
 
 /**
@@ -1225,48 +983,15 @@ export async function rollVariableOneLine(tnyes = false, tnnum = 3, readydice = 
  * @returns {Promise<DiceReturn> | Promise<null>} Promise of the roll data in an object, or null if cancelled
  */
 export async function copyToRollTNDialog(message, rolltitle = "") {
-    let confirmed = false;
     const usetranslation = !rolltitle || game.i18n.has(rolltitle); // Use translations if either rolltitle does not exist, or it exists and has a translation equivalent
-    let resolvedroll = new Promise((resolve) => {
-        let dlog = new Dialog({
-            title: usetranslation ? game.i18n.format(rolltitle || "ironclaw2e.dialog.macroDefault.titleCopyTN") : rolltitle,
-            content: `
-     <form class="ironclaw2e">
-      <div class="form-group">
-       <label>${game.i18n.localize("ironclaw2e.dialog.macroDefault.targetNumberCopy")}:</label>
-      </div>
-	  <div class="form-group">
-	   <input type="text" id="tn" name="tn" onfocus="this.select();"></input>
-      </div>
-     </form>
-     `,
-            buttons: {
-                one: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.copy"),
-                    callback: () => confirmed = true
-                },
-                two: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
-                    callback: () => confirmed = false
-                }
-            },
-            default: "one",
-            render: html => { document.getElementById("tn").focus(); },
-            close: html => {
-                if (confirmed) {
-                    let DICES = html.find('[name=tn]')[0].value;
-                    let TN = 0; if (DICES.length > 0) TN = parseInt(DICES);
-                    resolve(CardinalDiceRoller.copyToRollTN(TN, message));
-                } else {
-                    resolve(null);
-                }
-            }
-        }, { focus: false });
-        dlog.render(true);
+    const data = await waitForMacroDialog({
+        "title": usetranslation ? game.i18n.localize(rolltitle || "ironclaw2e.dialog.macroDefault.titleCopyTN") : rolltitle,
+        "templateData": { "showTN": true, "tnLabel": "ironclaw2e.dialog.macroDefault.targetNumberCopy", "tn": "" },
+        "label": "ironclaw2e.dialog.copy",
+        "focus": "tn"
     });
-    return await resolvedroll;
+    if (!data) return null;
+    return CardinalDiceRoller.copyToRollTN(parseDialogInt(data.tn), message);
 }
 
 /**
@@ -1276,7 +1001,6 @@ export async function copyToRollTNDialog(message, rolltitle = "") {
  * @returns {Promise<DiceReturn> | Promise<null>} Promise of the roll data in an object, or null if cancelled
  */
 export async function rerollDialog(message, actor) {
-    let confirmed = false;
     const GMPrivilege = !actor && game.user.isGM;
     if (!actor && !GMPrivilege) {
         console.error("A non-GM user tried to open a reroll dialog without a set actor: " + actor);
@@ -1303,7 +1027,7 @@ export async function rerollDialog(message, actor) {
     // Get the possible luck selections if luck reroll is one of the types
     let luckSelections = {};
     if (rerollIntersection.usableRerolls.hasOwnProperty("LUCK")) {
-        for (let i = 0; i < messageRoll.terms[0].terms.length && i < i < messageRoll.terms[0].results.length; i++) {
+        for (let i = 0; i < messageRoll.terms[0].terms.length && i < messageRoll.terms[0].results.length; i++) {
             luckSelections[i] = game.i18n.format("ironclaw2e.dialog.reroll.luckDiceSelect", { "ordinal": i, "die": messageRoll.terms[0].terms[i], "result": messageRoll.terms[0].results[i].result });
         }
     }
@@ -1321,57 +1045,113 @@ export async function rerollDialog(message, actor) {
     const rollType = message.getFlag("ironclaw2e", "rollType");
     const targetNumber = message.getFlag("ironclaw2e", "targetNumber");
 
-    let resolvedroll = new Promise((resolve) => {
-        let dlog = new Dialog({
-            title: game.i18n.localize("ironclaw2e.dialog.reroll.heading"),
-            content: contents,
-            buttons: {
-                one: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.rerollText"),
-                    callback: () => confirmed = true
-                },
-                two: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
-                    callback: () => confirmed = false
-                }
-            },
-            default: "one",
-            render: html => { document.getElementById("rerolltype").focus(); },
-            close: async html => {
-                if (confirmed) {
-                    let REROLL = html.find('[name=rerolltype]')[0]?.value;
-                    let FAVORRE = html.find('[name=favorreroll]')[0];
-                    let favorreroll = FAVORRE?.checked;
-                    let LUCKIN = html.find('[name=luckindex]')[0]?.value;
-                    let luckindex = -1; if (LUCKIN?.length > 0) luckindex = parseInt(LUCKIN);
-                    let LUCKHI = html.find('[name=luckhigh]')[0];
-                    let luckhigh = LUCKHI?.checked;
-
-                    let identifieroverride = "";
-
-                    if (rerollTypes.has(REROLL)) {
-                        if (rerollTypes.get(REROLL)?.identifierOverride)
-                            identifieroverride = rerollTypes.get(REROLL)?.identifierOverride;
-
-                        if (rerollTypes.get(REROLL)?.bonusExhaustsOnUse === true) {
-                            const gift = actor.items.get(rerollTypes.get(REROLL).giftId);
-                            const giftUseToChat = game.settings.get("ironclaw2e", "sendGiftUseExhaustMessage");
-                            if (gift) await gift.giftToggleExhaust("true", giftUseToChat);
-                        }
-                    }
-
-                    if (rollType === "HIGH")
-                        resolve(CardinalDiceRoller.copyToRollHighest(message, true, REROLL, { identifieroverride, favorreroll, luckindex, luckhigh }));
-                    else
-                        resolve(CardinalDiceRoller.copyToRollTN(targetNumber, message, true, REROLL, { identifieroverride, favorreroll, luckindex, luckhigh }));
-                } else {
-                    resolve(null);
-                }
-            }
-        }, { focus: false });
-        dlog.render(true);
+    const data = await waitForMacroDialog({
+        "title": "ironclaw2e.dialog.reroll.heading",
+        "content": contents,
+        "label": "ironclaw2e.dialog.rerollText",
+        "focus": "rerolltype"
     });
-    return await resolvedroll;
+    if (!data) return null;
+
+    const REROLL = data.rerolltype;
+    const favorreroll = data.favorreroll;
+    const luckindex = data.luckindex ?? -1;
+    const luckhigh = data.luckhigh;
+    let identifieroverride = "";
+
+    if (rerollTypes.has(REROLL)) {
+        if (rerollTypes.get(REROLL)?.identifierOverride)
+            identifieroverride = rerollTypes.get(REROLL)?.identifierOverride;
+
+        if (rerollTypes.get(REROLL)?.bonusExhaustsOnUse === true) {
+            const gift = actor.items.get(rerollTypes.get(REROLL).giftId);
+            const giftUseToChat = game.settings.get("ironclaw2e", "sendGiftUseExhaustMessage");
+            if (gift) await gift.giftToggleExhaust("true", giftUseToChat);
+        }
+    }
+
+    if (rollType === "HIGH")
+        return CardinalDiceRoller.copyToRollHighest(message, true, REROLL, { identifieroverride, favorreroll, luckindex, luckhigh });
+    else
+        return CardinalDiceRoller.copyToRollTN(targetNumber, message, true, REROLL, { identifieroverride, favorreroll, luckindex, luckhigh });
+}
+
+/* -------------------------------------------- */
+/*  Macro Dialog Helpers                        */
+/* -------------------------------------------- */
+
+/**
+ * Show a macro dialog with a confirm and a cancel button, and wait for its form data
+ * @param {object} options
+ * @param {string} options.title The window title, localized if it is a translation key
+ * @param {object} [options.templateData] Data for the macro dice template, used unless content is given
+ * @param {string} [options.content] Ready HTML content to use instead of the macro dice template
+ * @param {string} [options.label] Translation key for the confirm button
+ * @param {string} [options.focus] Name of the input to focus when the dialog opens
+ * @returns {Promise<object|null>} The form data as an object, or null if cancelled or closed
+ */
+async function waitForMacroDialog({ title, templateData = {}, content = null, label = "ironclaw2e.dialog.roll", focus = "" } = {}) {
+    content ??= await renderTemplate("systems/ironclaw2e/templates/popup/macro-dice-popup.html", templateData);
+    const data = await foundry.applications.api.DialogV2.wait({
+        window: { title },
+        content,
+        buttons: [{
+            action: "confirm",
+            icon: "fas fa-check",
+            label,
+            default: true,
+            callback: (event, button) => new foundry.applications.ux.FormDataExtended(button.form).object
+        }, {
+            action: "cancel",
+            icon: "fas fa-times",
+            label: "ironclaw2e.dialog.cancel"
+        }],
+        render: (event, dialog) => dialog.element.querySelector(`[name="${focus}"]`)?.focus(),
+        rejectClose: false
+    });
+    return (data && typeof data === "object") ? data : null; // Cancel returns its action name and closing returns null
+}
+
+/**
+ * Get the window title of a macro dialog
+ * @param {string} rolltitle The title given to the macro, translated if one is found
+ * @param {string} defaulttitle The translation key to use if no title is given
+ * @param {Actor} rollingactor The actor for which the roll is for
+ * @returns {string}
+ */
+function getMacroDialogTitle(rolltitle, defaulttitle, rollingactor) {
+    const usetranslation = !rolltitle || game.i18n.has(rolltitle); // Use translations if either rolltitle does not exist, or it exists and has a translation equivalent
+    const speaker = getMacroSpeaker(rollingactor);
+    return usetranslation ? game.i18n.format(rolltitle || defaulttitle, { "name": speaker.alias }) : speaker.alias + ": " + rolltitle;
+}
+
+/** The separate dice fields of the macro dialogs, in the [d12, d10, d8, d6, d4] order */
+const separateDiceFields = [["d12s", "d12"], ["d10s", "d10"], ["d8s", "d8"], ["d6s", "d6"], ["d4s", "d4"]];
+
+/**
+ * Get the template data for the separate dice fields, with zero counts left empty
+ * @param {number[]} counts The default dice counts
+ * @returns {Array<{name: string, die: string, value: string}>}
+ */
+function getSeparateDiceFields(counts) {
+    return separateDiceFields.map(([name, die], i) => ({ name, die, "value": counts[i] ? counts[i].toString() : "" }));
+}
+
+/**
+ * Get the dice array from the separate dice fields of the dialog's form data
+ * @param {object} data The form data
+ * @returns {number[]}
+ */
+function getSeparateDiceArray(data) {
+    return separateDiceFields.map(([name]) => parseDialogInt(data[name]));
+}
+
+/**
+ * Parse a dialog text field into an integer, with empty or invalid input counting as zero
+ * @param {string} value
+ * @returns {number}
+ */
+function parseDialogInt(value) {
+    const parsed = parseInt(value);
+    return isNaN(parsed) ? 0 : parsed;
 }

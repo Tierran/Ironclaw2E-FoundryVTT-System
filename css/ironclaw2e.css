@@ -622,3 +622,37 @@ input.center-text {
   gap: 0.25rem;
   margin-top: 0.75rem;
 }
+
+/* Macro dice dialogs */
+.ironclaw2e-macro-dice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ironclaw2e-macro-dice .form-group > label {
+  white-space: nowrap;
+}
+
+.ironclaw2e-macro-dice .form-group > .macro-dice-count {
+  flex: none;
+}
+
+.ironclaw2e-macro-dice .macro-dice-count {
+  width: 3.5rem;
+  text-align: center;
+}
+
+.ironclaw2e-macro-dice .macro-dice-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+
+.ironclaw2e-macro-dice .macro-dice-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: bold;
+}

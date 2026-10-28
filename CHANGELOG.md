@@ -2,6 +2,8 @@
  - The bundled calendar is now in Simple Calendar Reborn's format and imports as a calendar named "Ironclaw"
  - Chat card buttons no longer use the "renderChatMessage" hook, which Foundry v15 removes, and the deprecation warning for it is gone
  - Replaced Combat lookups that Foundry v15 removes (getCombatantByActor/getCombatantByToken), which showed deprecation warnings when opening character sheets
+ - The macro dice roll dialogs, "Change Roll to TN" and the reroll dialog now use Foundry's newer dialog style (DialogV2), with a more compact layout
+ - Fixed the reroll dialog showing a raw text key instead of who the roll shows up in chat as
 
 ### 14.0.3
  - Fixed weapon effect conditions (e.g. Grappled) showing as "undefined" on the damage card and not being added through the soak buttons
