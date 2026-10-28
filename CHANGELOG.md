@@ -1,3 +1,6 @@
+### Unreleased
+ - Fixed conditions added by the system (damage, condition popup and so on) not showing their icons on tokens in Foundry v14
+
 ### 14.0.1
  - Fixed the Extra dice field in roll dialogs being ignored when "One line pools ordered" was turned on
 

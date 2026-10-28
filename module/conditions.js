@@ -144,7 +144,7 @@ export async function addConditionsIronclaw(conditions, target, warn = false) {
             const existingeffects = getConditionsIronclaw(target, warn);
             usedconditions = usedconditions.filter(x => existingeffects.some(y => makeCompareReady(y.name) === x) === false);
         }
-        const effects = prepareEffects(CommonConditionInfo.getMatchedConditions(usedconditions));
+        const effects = await prepareEffects(CommonConditionInfo.getMatchedConditions(usedconditions));
         if (effects.length > 0) {
             return await actor.createEmbeddedDocuments("ActiveEffect", effects);
         }
@@ -370,19 +370,17 @@ function getTargetActor(target) {
 
 /**
  * Make sure the effect data is given to Foundry's systems in the correct form
+ * Built the same way as the Token HUD does it, so that v14 shows the condition icons on the token
  * @param {any} effects
- * @returns {Array}
+ * @returns {Promise<Array>}
  */
-function prepareEffects(effects) {
+async function prepareEffects(effects) {
     let effectDatas = [];
     effects = Array.isArray(effects) ? effects : [effects];
 
     for (let effect of effects) {
-        const createData = foundry.utils.duplicate(effect);
-        createData.name = game.i18n.localize(effect.name);
-        createData.statuses = [effect.id];
-        delete createData.id;
-        effectDatas.push(createData);
+        const created = await ActiveEffect.implementation.fromStatusEffect(effect.id);
+        effectDatas.push(created.toObject());
     }
 
     return effectDatas;
