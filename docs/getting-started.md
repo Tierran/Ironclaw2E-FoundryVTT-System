@@ -77,7 +77,7 @@ The system has built-in support for a few modules. These integrations were writt
 | [Chat Commands](https://github.com/League-of-Foundry-Developers/Chat-Commands-Lib) | Adds `/iroll`, `/popuproll` and other commands. See [Chat Commands and Macros](chat-commands-and-macros.md). |
 | [Drag Ruler](https://github.com/manuelVo/foundryvtt-drag-ruler) | Colors the ruler by movement: Stride (blue), Stride + Dash (green), Run (yellow), beyond Run (red). |
 | [Enhanced Terrain Layer](https://github.com/ironmonk88/enhanced-terrain-layer) | Uses its elevation for area-of-effect templates, which matters for fliers and terrain height. |
-| [Simple Calendar](https://github.com/vigoren/foundryvtt-simple-calendar) | An importable calendar is in `systems/ironclaw2e/calendars`, starting in the spring of the corebook's current year. Moon phases follow real historical data for the year 881, not in-setting lore. |
+| [Simple Calendar Reborn](https://github.com/Fireblight-Studios/foundryvtt-simple-calendar) | An importable "Ironclaw" calendar is in `systems/ironclaw2e/calendars`; import it through Simple Calendar's settings (General Settings → Import/Export), then click **Save Configuration**. If the world has more than one calendar, switch to Ironclaw with the blue **Calendars** button at the top right of the calendar window. It starts in the spring of the corebook's current year. Moon phases follow real historical data for the year 881, not in-setting lore. |
 
 ## Next steps
 
