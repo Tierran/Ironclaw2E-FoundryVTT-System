@@ -55,7 +55,7 @@ export function registerHandlebarsHelpers() {
 
     Handlebars.registerHelper('isCombatantNoInit', function (actorid) {
         // True if lacking an init, false if has an init or is not a combatant
-        const foo = game.combat?.getCombatantByActor(actorid);
+        const foo = game.combat?.getCombatantsByActor(actorid)[0];
         if (!foo) return false;
         return foo.initiative == null;
     });

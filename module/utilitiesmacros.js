@@ -13,18 +13,22 @@ const { renderTemplate } = foundry.applications.handlebars;
 /* -------------------------------------------- */
 
 // Chat Message Button Handler
-Hooks.on("renderChatMessage", function (message, html, data) {
+Hooks.on("renderChatMessageHTML", function (message, html) {
     // 'Who to show stuff to' system settings
     const noButtons = game.settings.get("ironclaw2e", "chatButtons") === false;
     const showOthersToAll = game.settings.get("ironclaw2e", "showDefenseButtons");
     const showDescription = game.settings.get("ironclaw2e", "npcItemHasDescription");
     const showTactics = game.settings.get("ironclaw2e", "showOthersTacticsUse");
-    const buttons = html.find('.button-holder');
+    // Helpers to find, bind and remove elements inside the message's button holders
+    const findInButtons = selector => html.querySelectorAll(`.button-holder ${selector}`);
+    const bindClick = (selector, handler) => findInButtons(selector).forEach(x => x.addEventListener("click", handler));
+    const removeInButtons = selector => findInButtons(selector).forEach(x => x.remove());
+    const removeButtons = () => html.querySelectorAll(".button-holder").forEach(x => x.remove());
 
     // Chat message button system
     if (noButtons) {
         // If buttons are disabled, remove the buttons from the visible messages
-        buttons.remove();
+        removeButtons();
     } else {
         const showAuthor = game.user.isGM || message.isAuthor; // Check to show buttons meant to the author
         const showOthers = game.user.isGM || !message.isAuthor || showOthersToAll; // Check to show buttons meant for others
@@ -35,57 +39,55 @@ Hooks.on("renderChatMessage", function (message, html, data) {
         const requestRoll = message.getFlag("ironclaw2e", "requestRoll");
 
         if (itemInfo) {
-            const tacticsButtons = buttons.find('.tactics-buttons');
-            const tacticsBox = tacticsButtons.find('.tactics-checkbox');
-            if (tacticsBox[0]) tacticsBox[0].checked = message.getFlag("ironclaw2e", "attackUsingTactics") ?? false; // Set the checkbox to its supposed state
+            const tacticsBox = findInButtons(".tactics-buttons .tactics-checkbox")[0];
+            if (tacticsBox) tacticsBox.checked = message.getFlag("ironclaw2e", "attackUsingTactics") ?? false; // Set the checkbox to its supposed state
 
             if (showAuthor) {
-                const attackButtons = buttons.find('.attack-buttons');
-                attackButtons.find('.default-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
-                attackButtons.find('.skip-attack').click(Ironclaw2EActor.onChatAttackClick.bind(this));
-                attackButtons.find('.spark-attack').click(Ironclaw2EActor.onChatSparkClick.bind(this));
+                bindClick(".attack-buttons .default-attack", Ironclaw2EActor.onChatAttackClick);
+                bindClick(".attack-buttons .skip-attack", Ironclaw2EActor.onChatAttackClick);
+                bindClick(".attack-buttons .spark-attack", Ironclaw2EActor.onChatSparkClick);
 
-                buttons.find('.gift-buttons').find('.default-gift-use').click(Ironclaw2EActor.onChatGiftUseClick.bind(this));
+                bindClick(".gift-buttons .default-gift-use", Ironclaw2EActor.onChatGiftUseClick);
 
-                const templateButtons = buttons.find('.template-buttons');
-                templateButtons.find('.place-template').click(Ironclaw2EActor.onPlaceExplosionTemplate.bind(this));
+                bindClick(".template-buttons .place-template", Ironclaw2EActor.onPlaceExplosionTemplate);
 
                 // Only bind the tactics change here to ensure only the author and GM can do it
-                tacticsBox.change(Ironclaw2EActor.onChangeTacticsUse.bind(this));
-                if (tacticsBox[0]) tacticsBox[0].disabled = false;
+                if (tacticsBox) {
+                    tacticsBox.addEventListener("change", Ironclaw2EActor.onChangeTacticsUse);
+                    tacticsBox.disabled = false;
+                }
             } else {
-                buttons.find('.attack-holder').remove();
-                buttons.find('.gift-holder').remove();
+                removeInButtons(".attack-holder");
+                removeInButtons(".gift-holder");
                 if (!showTactics) {
                     // Remove the tactics checkbox from being visible
-                    tacticsButtons.remove();
+                    removeInButtons(".tactics-buttons");
                 }
             }
 
             if (showOthers) {
-                const defenseButtons = buttons.find('.defense-buttons');
-                defenseButtons.find('.dodge-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
-                defenseButtons.find('.parry-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
-                defenseButtons.find('.special-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
-                defenseButtons.find('.resist-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
-                defenseButtons.find('.counter-defense').click(Ironclaw2EActor.onChatDefenseClick.bind(this));
+                bindClick(".defense-buttons .dodge-defense", Ironclaw2EActor.onChatDefenseClick);
+                bindClick(".defense-buttons .parry-defense", Ironclaw2EActor.onChatDefenseClick);
+                bindClick(".defense-buttons .special-defense", Ironclaw2EActor.onChatDefenseClick);
+                bindClick(".defense-buttons .resist-defense", Ironclaw2EActor.onChatDefenseClick);
+                bindClick(".defense-buttons .counter-defense", Ironclaw2EActor.onChatDefenseClick);
             } else {
-                buttons.find('.defense-buttons').remove();
+                removeInButtons(".defense-buttons");
             }
         }
         if (attackInfo) {
             if (showOthers) {
-                buttons.find('.soak-button').click(Ironclaw2EActor.onChatSoakClick.bind(this));
-                buttons.find('.apply-tier-button').click(Ironclaw2EActor.onChatApplyTierClick.bind(this));
+                bindClick(".soak-button", Ironclaw2EActor.onChatSoakClick);
+                bindClick(".apply-tier-button", Ironclaw2EActor.onChatApplyTierClick);
             } else {
-                buttons.remove();
+                removeButtons();
             }
         }
         if (requestRoll) {
             if (showOthers) {
-                buttons.find('.asked-roll-button').click(onRequestRollTrigger.bind(this));
+                bindClick(".asked-roll-button", onRequestRollTrigger);
             } else {
-                buttons.remove();
+                removeButtons();
             }
         }
     }
@@ -97,8 +99,7 @@ Hooks.on("renderChatMessage", function (message, html, data) {
         const hideDescription = (actor && actor?.hasPlayerOwner === false);
         if (hideDescription) {
             // If description should be hidden, remove it
-            html.find('.item-description').remove();
-            html.find('.item-statistics').remove();
+            html.querySelectorAll(".item-description, .item-statistics").forEach(x => x.remove());
         }
     }
 });
@@ -345,7 +346,7 @@ export function showScrollingDistanceText(origintoken, targettoken) {
         const duration = game.settings.get("ironclaw2e", "showRangeDuration") ?? 3000;
         let usecombatrules = combatRule === 2;
         if (combatRule === 1) {
-            if (game.combat?.getCombatantByToken(origintoken.id))
+            if (game.combat?.getCombatantsByToken(origintoken.id).length > 0)
                 usecombatrules = true;
         }
         // Double-check that everything that should exist does
