@@ -1,4 +1,4 @@
-### Unreleased
+### 14.0.2
  - Fixed conditions added by the system (damage, condition popup and so on) not showing their icons on tokens in Foundry v14
 
 ### 14.0.1
