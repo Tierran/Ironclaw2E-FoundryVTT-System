@@ -17,31 +17,35 @@
     </div>
     <div class="form-group">
         <label>{{localize "ironclaw2e.dialog.requestRoll.targetNumber"}}:</label>
-        <input type="number" name="tn" value="{{tnnum}}" step="1" onfocus="this.select();" />
+        <input type="number" class="request-roll-tn" name="tn" value="{{tnnum}}" step="1" onfocus="this.select();" />
     </div>
 
-    <h3 class="request-roll-header">{{localize "ironclaw2e.actor.traits"}}</h3>
-    <div class="request-roll-stats">
-        {{#each traits as |stat|}}
-        <label class="request-roll-stat">
-            <input type="checkbox" name="stat.{{stat.key}}" {{checked stat.checked}} />
-            <span>{{stat.label}}</span>
-        </label>
-        {{/each}}
-    </div>
+    <fieldset>
+        <legend>{{localize "ironclaw2e.actor.traits"}}</legend>
+        <div class="request-roll-stats">
+            {{#each traits as |stat|}}
+            <label class="request-roll-stat">
+                <input type="checkbox" name="stat.{{stat.key}}" {{checked stat.checked}} />
+                <span>{{stat.label}}</span>
+            </label>
+            {{/each}}
+        </div>
+    </fieldset>
 
-    <h3 class="request-roll-header">{{localize "ironclaw2e.actor.skills"}}</h3>
-    <div class="request-roll-stats">
-        {{#each skills as |stat|}}
-        <label class="request-roll-stat">
-            <input type="checkbox" name="stat.{{stat.key}}" {{checked stat.checked}} />
-            <span>{{stat.label}}</span>
-        </label>
-        {{/each}}
-    </div>
+    <fieldset>
+        <legend>{{localize "ironclaw2e.actor.skills"}}</legend>
+        <div class="request-roll-stats">
+            {{#each skills as |stat|}}
+            <label class="request-roll-stat">
+                <input type="checkbox" name="stat.{{stat.key}}" {{checked stat.checked}} />
+                <span>{{stat.label}}</span>
+            </label>
+            {{/each}}
+        </div>
+    </fieldset>
 
-    <div class="request-roll-extra">
+    <div class="form-group">
         <label>{{localize "ironclaw2e.dialog.requestRoll.giftsToRequest"}}:</label>
-        <input type="text" name="gifts" value="{{readygifts}}" />
+        <input type="text" name="gifts" value="{{readygifts}}" placeholder="{{localize "ironclaw2e.dialog.requestRoll.giftsPlaceholder"}}" />
     </div>
 </div>

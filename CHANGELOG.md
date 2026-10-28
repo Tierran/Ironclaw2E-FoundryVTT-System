@@ -3,6 +3,7 @@
  - Chat card buttons no longer use the "renderChatMessage" hook, which Foundry v15 removes, and the deprecation warning for it is gone
  - Replaced Combat lookups that Foundry v15 removes (getCombatantByActor/getCombatantByToken), which showed deprecation warnings when opening character sheets
  - The macro dice roll dialogs, "Change Roll to TN" and the reroll dialog now use Foundry's newer dialog style (DialogV2), with a more compact layout
+ - Tidied up the Request a Roll dialog: spacing between rows, a smaller Target Number box and boxed Traits and Skills sections
  - Fixed the reroll dialog showing a raw text key instead of who the roll shows up in chat as
 
 ### 14.0.3

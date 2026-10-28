@@ -485,7 +485,8 @@
   "ironclaw2e.dialog.spellAttack.spellOnly": "The spell itself, no attack",
   "ironclaw2e.dialog.attackDefense.pickWeapon": "Weapon for {name} to attack with",
   "ironclaw2e.dialog.attackDefense.attack": "Attack",
-  "ironclaw2e.dialog.requestRoll.giftsToRequest": "Optionally, Gifts to include in the request, names separated by commas",
+  "ironclaw2e.dialog.requestRoll.giftsToRequest": "Gifts to Include",
+  "ironclaw2e.dialog.requestRoll.giftsPlaceholder": "Optional, names separated by commas",
 
   "ironclaw2e.dialog.reroll.heading": "Rerolling Dialog",
   "ironclaw2e.dialog.reroll.type": "Choose reroll type",
