@@ -2,7 +2,7 @@
   "id": "ironclaw2e",
   "title": "Ironclaw Second Edition",
   "description": "Ironclaw Second Edition system for FoundryVTT.",
-  "version": "14.0.3",
+  "version": "14.0.4",
   "compatibility": {
     "minimum": "13",
     "verified": "14.369"
@@ -10,7 +10,7 @@
   "authors": [
     {
       "name": "Tierran", 
-      "url": "https://https://github.com/Tierran"
+      "url": "https://github.com/Tierran"
     }
   ],
   "esmodules": [ "module/ironclaw2e.js" ],
