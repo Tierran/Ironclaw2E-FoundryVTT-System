@@ -343,9 +343,8 @@ export class Ironclaw2EActor extends Actor {
                 },
                     { directroll, "checkweak": (holderset.weak == "true"), "checkarmor": (holderset.penetrating == "false") }, wait);
             } else {
-                if (!directroll)
-                    soakActor.popupDamage(-4, 0, holderset.conditions);
-                else soakActor.silentDamage(-4, 0, holderset.conditions);
+                // A conditional attack has no damage, so just apply its conditions directly
+                soakActor.applyConditionalEffect(holderset.conditions);
             }
         } else {
             ui.notifications.warn("ironclaw2e.ui.actorNotFoundForMacro", { localize: true });
@@ -2417,6 +2416,20 @@ export class Ironclaw2EActor extends Actor {
             return { actor: this, "conditionArray": adding, hideCondition, vehicleDamage };
         }
         return { actor: this, "conditionArray": [] };
+    }
+
+    /**
+     * Apply the conditions of a conditional attack, one with no damage, directly without the damage popup
+     * @param {string} conditions The conditions to add, as a comma-separated string
+     */
+    async applyConditionalEffect(conditions) {
+        const adding = CommonConditionInfo.getMatchedConditions(splitStatString(conditions ?? "")).map(x => x.id);
+        if (adding.length === 0) return;
+        await this.addEffect(adding);
+
+        if (game.settings.get("ironclaw2e", "defaultSendDamage")) {
+            Ironclaw2EActor.sendDamageToChat({ actor: this, "conditionArray": adding }, getMacroSpeaker(this));
+        }
     }
 
     /**
