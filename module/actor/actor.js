@@ -2754,7 +2754,7 @@ export class Ironclaw2EActor extends Actor {
         const burdened = hasConditionsIronclaw("burdened", this);
 
         if (returntype === 0) {// Special case to roll initiative in an encounter through the sheet
-            const activeCombatant = game.combat?.getCombatantByActor(this.id);
+            const activeCombatant = game.combat?.getCombatantsByActor(this.id)[0];
             if (activeCombatant?.isOwner && !activeCombatant?.initiative) { // If the actor is an active combatant in an encounter and has _not_ yet rolled initiative, roll initiative for it
                 return this.rollInitiative();
             }

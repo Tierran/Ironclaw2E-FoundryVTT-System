@@ -346,7 +346,7 @@ export function showScrollingDistanceText(origintoken, targettoken) {
         const duration = game.settings.get("ironclaw2e", "showRangeDuration") ?? 3000;
         let usecombatrules = combatRule === 2;
         if (combatRule === 1) {
-            if (game.combat?.getCombatantByToken(origintoken.id))
+            if (game.combat?.getCombatantsByToken(origintoken.id).length > 0)
                 usecombatrules = true;
         }
         // Double-check that everything that should exist does
