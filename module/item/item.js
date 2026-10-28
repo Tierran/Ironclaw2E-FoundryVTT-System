@@ -450,7 +450,7 @@ export class Ironclaw2EItem extends Item {
             if (conds.length > 0) {
                 conds.forEach(element => {
                     system.effectConditions += element.id + ",";
-                    system.effectConditionsLabel += game.i18n.localize(element.label) + ",";
+                    system.effectConditionsLabel += game.i18n.localize(element.name) + ",";
                 });
                 system.effectConditions = system.effectConditions.slice(0, -1);
                 system.effectConditionsLabel = system.effectConditionsLabel.slice(0, -1);
