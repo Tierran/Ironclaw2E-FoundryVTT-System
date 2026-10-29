@@ -966,13 +966,14 @@ export async function rollHighestOneLine(readydice = "", label = "", rolltitle =
  * @returns {Promise<DiceReturn> | Promise<null>} Promise of the roll data in an object, or null if cancelled
  */
 export async function rollVariableOneLine(tnyes = false, tnnum = 3, readydice = "", label = "", rolltitle = "", rollingactor = null) {
+    const extraOrdered = game.settings.get("ironclaw2e", "oneLineDicesOrdered");
     const data = await waitForMacroDialog({
         "title": getMacroDialogTitle(rolltitle, "ironclaw2e.dialog.macroDefault.titleVar", rollingactor),
         "templateData": { "showTN": true, "tnLabel": "ironclaw2e.dialog.macroDefault.targetNumber", "tnToggle": true, "tnused": tnyes, "tn": tnnum, "oneLine": true, "dices": readydice },
         "focus": "tn"
     });
     if (!data) return null;
-    const DICE = findTotalDice(data.dices);
+    const DICE = extraOrdered ? findTotalDiceArrays(data.dices) : findTotalDice(data.dices);
     return data.tnused ? CardinalDiceRoller.rollTargetNumberArray(parseDialogInt(data.tn), DICE, label, rollingactor) : CardinalDiceRoller.rollHighestArray(DICE, label, rollingactor);
 }
 

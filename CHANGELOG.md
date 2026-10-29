@@ -6,6 +6,7 @@
  - Tidied up the Request a Roll dialog: spacing between rows, a smaller Target Number box and boxed Traits and Skills sections
  - The damage, add condition and defense picker dialogs and the confirmation boxes now use the newer dialog style, with number boxes sized for their values
  - The damage dialog has separate Hurt and Injured checkboxes, each adding one damage, ticked when the character has that condition and usable by hand otherwise
+ - The one-line variable roll macro now follows the "One line pools ordered" setting like the other one-line macros
  - Fixed the reroll dialog showing a raw text key instead of who the roll shows up in chat as
 
 ### 14.0.3
