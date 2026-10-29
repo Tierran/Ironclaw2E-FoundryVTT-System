@@ -1297,50 +1297,58 @@ export function getCorrectElevationFlag() {
  * @param {boolean} localize
  * @returns {Promise<ConfirmationReturn>}
  */
-export function popupConfirmationBox(title, message, button, { localize = true, actorname = "", itemname = "", targetname = "", defaultbutton = "one", includesend = false, senddefault = true } = {}) {
-    let confirmed = false;
-    const usedTitle = (localize ? game.i18n.format(title, { "actor": actorname, "item": itemname, "target": targetname }) : title);
+export async function popupConfirmationBox(title, message, button, { localize = true, actorname = "", itemname = "", targetname = "", defaultbutton = "one", includesend = false, senddefault = true } = {}) {
+    const formatData = { "actor": actorname, "item": itemname, "target": targetname };
     const sendPart = `
      <div class="form-group">
-       <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.sendToChat")}</label>
-       <input type="checkbox" id="send" name="send" value="1" ${senddefault ? "checked" : ""}></input>
+       <label>${game.i18n.localize("ironclaw2e.dialog.sendToChat")}</label>
+       <input type="checkbox" name="send" ${senddefault ? "checked" : ""} />
      </div>`;
-    let contents = `
-     <form class="ironclaw2e">
-      <h1>${(localize ? game.i18n.format(message, { "actor": actorname, "item": itemname, "target": targetname }) : message)}</h1>
+    const content = `
+     <div class="ironclaw2e ironclaw2e-dialog">
+      <p class="dialog-message">${(localize ? game.i18n.format(message, formatData) : message)}</p>
       ${(includesend ? sendPart : "")}
-     </form>
-     `;
-    let resolvedroll = new Promise((resolve) => {
-        let dlog = new Dialog({
-            title: usedTitle,
-            content: contents,
-            buttons: {
-                one: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: (localize ? game.i18n.localize(button) : button),
-                    callback: () => confirmed = true
-                },
-                two: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
-                    callback: () => confirmed = false
-                }
-            },
-            default: defaultbutton,
-            render: html => { },
-            close: html => {
-                let sent = false;
-                if (confirmed) {
-                    if (includesend) {
-                        let SEND = html.find('[name=send]');
-                        sent = SEND.length > 0 ? SEND[0].checked : false;
-                    }
-                }
-                resolve({ "confirmed": confirmed, "chatSent": sent });
-            }
-        });
-        dlog.render(true);
+     </div>`;
+
+    const data = await popupDialogForm({
+        "title": (localize ? game.i18n.format(title, formatData) : title),
+        content,
+        "label": (localize ? game.i18n.localize(button) : button),
+        "defaultCancel": defaultbutton === "two"
     });
-    return resolvedroll;
+    return { "confirmed": !!data, "chatSent": includesend && !!data?.send };
+}
+
+/**
+ * Show a dialog with a confirm and a cancel button, and wait for the confirmed form data
+ * @param {object} options
+ * @param {string} options.title The window title, localized if it is a translation key
+ * @param {string} options.content The HTML content of the dialog
+ * @param {string} [options.label] The confirm button's label, localized if it is a translation key
+ * @param {string} [options.focus] Name of the input to focus when the dialog opens
+ * @param {boolean} [options.defaultCancel] Whether the cancel button is the default instead of the confirm button
+ * @param {function(HTMLFormElement): object} [options.read] Reads the result from the form, defaults to all of its fields as an object
+ * @returns {Promise<object|null>} The result of the read, or null if cancelled or closed
+ */
+export async function popupDialogForm({ title, content, label = "ironclaw2e.dialog.roll", focus = "", defaultCancel = false, read = null } = {}) {
+    read ??= form => new foundry.applications.ux.FormDataExtended(form).object;
+    const data = await foundry.applications.api.DialogV2.wait({
+        window: { title },
+        content,
+        buttons: [{
+            action: "confirm",
+            icon: "fas fa-check",
+            label,
+            default: !defaultCancel,
+            callback: (event, button) => read(button.form)
+        }, {
+            action: "cancel",
+            icon: "fas fa-times",
+            label: "ironclaw2e.dialog.cancel",
+            default: defaultCancel
+        }],
+        render: (event, dialog) => { if (focus) dialog.element.querySelector(`[name="${focus}"]`)?.focus(); },
+        rejectClose: false
+    });
+    return (data && typeof data === "object") ? data : null; // Cancel returns its action name and closing returns null
 }

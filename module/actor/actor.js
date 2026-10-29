@@ -1,4 +1,4 @@
-import { checkDiceArrayEmpty, diceFieldUpgrade, enforceLimitArray, findInItems, findTotalDiceArrays, flattenDicePoolArray, getCombatAdvantageConstruction, getTemplatePosition, parseFractionalNumber, popupConfirmationBox } from "../helpers.js";
+import { checkDiceArrayEmpty, diceFieldUpgrade, enforceLimitArray, findInItems, findTotalDiceArrays, flattenDicePoolArray, getCombatAdvantageConstruction, getTemplatePosition, parseFractionalNumber, popupConfirmationBox, popupDialogForm } from "../helpers.js";
 import { addArrays } from "../helpers.js";
 import { makeCompareReady } from "../helpers.js";
 import { reformDiceString } from "../helpers.js";
@@ -489,59 +489,40 @@ export class Ironclaw2EActor extends Actor {
         }
         options += `<option value="" data-type="extra">${game.i18n.localize("ironclaw2e.dialog.defense.extraOnly")}</option >`;
 
-        let confirmed = false;
-        let speaker = getMacroSpeaker(actor);
-        let dlog = new Dialog({
-            title: heading,
-            content: `
-        <form class="ironclaw2e">
-        <div class="flexcol">
-         <span class="small-text">${game.i18n.format("ironclaw2e.dialog.dicePool.showUp", { "alias": speaker.alias })}</span>
-         <select name="defensepick" id="defensepick">
+        const speaker = getMacroSpeaker(actor);
+        const content = `
+        <div class="ironclaw2e ironclaw2e-dialog">
+         <p class="dialog-note">${game.i18n.format("ironclaw2e.dialog.dicePool.showUp", { "alias": speaker.alias })}</p>
+         <select name="defensepick">
          ${options}
          </select>
-        </div>
-        <div class="form-group">
-         <label class="normal-label">${game.i18n.localize("ironclaw2e.dialog.defense.extraField")}:</label>
-	     <input id="extra" name="extra" value="" onfocus="this.select();"></input>
-        </div>
-        </form>`,
-            buttons: {
-                one: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.pick"),
-                    callback: () => confirmed = true
-                },
-                two: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
-                    callback: () => confirmed = false
-                }
-            },
-            default: "one",
-            render: html => { document.getElementById("defensepick").focus(); },
-            close: async html => {
-                if (confirmed) {
-                    const directroll = checkQuickModifierKey();
+         <div class="form-group">
+          <label>${game.i18n.localize("ironclaw2e.dialog.defense.extraField")}</label>
+          <input type="text" name="extra" value="" onfocus="this.select();" />
+         </div>
+        </div>`;
 
-                    const DEFENSE = html.find('[name=defensepick]')[0];
-                    const defensetype = DEFENSE.selectedOptions[0].dataset.type;
-                    const defensevalue = DEFENSE.selectedOptions[0].value;
-                    const EXTRA = html.find('[name=extra]')[0]?.value;
-
-                    if (defensetype === "counter" || defensetype === "parry") {
-                        const weapon = actor?.items.get(defensevalue)?.asSpellAttack(parseInt(DEFENSE.selectedOptions[0].dataset.attack));
-                        if (defensetype === "counter") weapon?.counterRoll(directroll, otheritem, EXTRA);
-                        if (defensetype === "parry") weapon?.defenseRoll(directroll, otheritem, EXTRA);
-                    } else if (defensetype === "extra") {
-                        const extra = findTotalDice(EXTRA);
-                        const rollresult = await CardinalDiceRoller.rollHighestArray(extra, rollLabel, actor);
-                        if (rollresult.message) Ironclaw2EActor.addCallbackToAttackMessage(rollresult.message, otheritem?.messageId);
-                    }
-                }
+        const data = await popupDialogForm({
+            "title": heading,
+            content,
+            "label": "ironclaw2e.dialog.pick",
+            "focus": "defensepick",
+            "read": form => {
+                const picked = form.elements.defensepick.selectedOptions[0];
+                return { "type": picked.dataset.type, "value": picked.value, "attack": picked.dataset.attack, "extra": form.elements.extra.value, "directroll": checkQuickModifierKey() };
             }
-        }, { focus: false });
-        dlog.render(true);
+        });
+        if (!data) return;
+
+        if (data.type === "counter" || data.type === "parry") {
+            const weapon = actor?.items.get(data.value)?.asSpellAttack(parseInt(data.attack));
+            if (data.type === "counter") weapon?.counterRoll(data.directroll, otheritem, data.extra);
+            if (data.type === "parry") weapon?.defenseRoll(data.directroll, otheritem, data.extra);
+        } else if (data.type === "extra") {
+            const extra = findTotalDice(data.extra);
+            const rollresult = await CardinalDiceRoller.rollHighestArray(extra, rollLabel, actor);
+            if (rollresult.message) Ironclaw2EActor.addCallbackToAttackMessage(rollresult.message, otheritem?.messageId);
+        }
     }
 
     /**
@@ -3214,26 +3195,16 @@ export class Ironclaw2EActor extends Actor {
      * @param {string} damageconditions
      */
     async popupDamage(readydamage = 0, readysoak = 0, damageconditions = "") {
-        let confirmed = false;
         let speaker = getMacroSpeaker(this);
-        let addeddamage = 0;
-        let addedconditions = "";
-
-        if (hasConditionsIronclaw("hurt", this)) {
-            addeddamage++;
-            addedconditions = game.i18n.localize(CommonConditionInfo.getConditionTransId("hurt"));
-        }
-        if (hasConditionsIronclaw("injured", this)) {
-            addeddamage++;
-            addedconditions += (addedconditions ? ", " : "") + game.i18n.localize(CommonConditionInfo.getConditionTransId("injured"));
-        }
         const confirmSend = game.settings.get("ironclaw2e", "defaultSendDamage");
         const ward = getTargetConditionQuota("temporaryward", this);
 
         const templateData = {
             "actor": this,
-            "addeddamage": addeddamage,
-            "addedconditions": addedconditions,
+            "isHurt": hasConditionsIronclaw("hurt", this),
+            "isInjured": hasConditionsIronclaw("injured", this),
+            "hurtLabel": game.i18n.localize(CommonConditionInfo.getConditionTransId("hurt")),
+            "injuredLabel": game.i18n.localize(CommonConditionInfo.getConditionTransId("injured")),
             "confirmSend": confirmSend,
             "readydamage": readydamage,
             "readysoak": readysoak,
@@ -3245,55 +3216,24 @@ export class Ironclaw2EActor extends Actor {
 
         const contents = await renderTemplate("systems/ironclaw2e/templates/popup/damage-popup.html", templateData);
 
-        let dlog = new Dialog({
-            title: game.i18n.format("ironclaw2e.dialog.damageCalc.title", { "name": speaker.alias }),
-            content: contents,
-            buttons: {
-                one: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.add"),
-                    callback: () => confirmed = true
-                },
-                two: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
-                    callback: () => confirmed = false
-                }
-            },
-            default: "one",
-            render: html => { document.getElementById("damage").focus(); },
-            close: async html => {
-                if (confirmed) {
-                    let DAMAGE = html.find('[name=damage]')[0].value;
-                    let damage = 0; if (DAMAGE.length > 0) damage = parseInt(DAMAGE);
-                    let SOAK = html.find('[name=soak]')[0].value;
-                    let soak = 0; if (SOAK.length > 0) soak = parseInt(SOAK);
-                    let HURT = html.find('[name=hurt]')[0];
-                    let hurt = HURT.checked;
-                    let ATTACK = html.find('[name=attack]')[0];
-                    let attack = ATTACK.checked;
-                    let KNOCKOUT = html.find('[name=knockout]')[0];
-                    let knockout = KNOCKOUT?.checked;
-                    let ALLOW = html.find('[name=nonlethal]')[0];
-                    let allow = ALLOW?.checked;
-                    let WARD = html.find('[name=reduceward]')[0];
-                    let ward = WARD?.checked ?? false;
-                    let COND = html.find('[name=cond]')[0].value;
-                    let conds = ""; if (COND.length > 0) conds = COND;
-                    let SEND = html.find('[name=send]')[0];
-                    let send = SEND.checked;
+        const data = await popupDialogForm({
+            "title": game.i18n.format("ironclaw2e.dialog.damageCalc.title", { "name": speaker.alias }),
+            "content": contents,
+            "label": "ironclaw2e.dialog.add",
+            "focus": "damage"
+        });
+        if (!data) return;
 
-                    let statuses = await this.applyDamage(damage + (hurt ? addeddamage : 0) - soak, { attack, knockout, "nonlethal": allow, "applyWard": ward });
-                    let conditions = splitStatString(conds);
-                    if (conditions.length > 0) await this.addEffect(conditions);
+        const damage = parseInt(data.damage) || 0;
+        const soak = parseInt(data.soak) || 0;
+        const conditiondamage = (data.hurt ? 1 : 0) + (data.injured ? 1 : 0); // Hurt and Injured each add one damage
+        const statuses = await this.applyDamage(damage + conditiondamage - soak, { "attack": data.attack, "knockout": data.knockout, "nonlethal": data.nonlethal, "applyWard": data.reduceward ?? false });
+        const conditions = splitStatString(data.cond ?? "");
+        if (conditions.length > 0) await this.addEffect(conditions);
 
-                    if (send) {
-                        Ironclaw2EActor.sendDamageToChat(statuses, speaker);
-                    }
-                }
-            }
-        }, { focus: false });
-        dlog.render(true);
+        if (data.send) {
+            Ironclaw2EActor.sendDamageToChat(statuses, speaker);
+        }
     }
 
     /**
@@ -3325,7 +3265,6 @@ export class Ironclaw2EActor extends Actor {
 
     /** Special condition adding popup */
     async popupAddCondition(readyname = "", readyquota = "") {
-        let confirmed = false;
         let speaker = getMacroSpeaker(this);
 
         const templateData = {
@@ -3337,36 +3276,17 @@ export class Ironclaw2EActor extends Actor {
         };
         const contents = await renderTemplate("systems/ironclaw2e/templates/popup/condition-popup.html", templateData);
 
-        let dlog = new Dialog({
-            title: game.i18n.format("ironclaw2e.dialog.addCondition.title", { "name": speaker.alias }),
-            content: contents,
-            buttons: {
-                one: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.add"),
-                    callback: () => confirmed = true
-                },
-                two: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("ironclaw2e.dialog.cancel"),
-                    callback: () => confirmed = false
-                }
-            },
-            default: "one",
-            render: html => { document.getElementById("condition").focus(); },
-            close: async html => {
-                if (confirmed) {
-                    let QUOTA = html.find('[name=quota]')[0].value;
-                    let quota = 0; if (QUOTA.length > 0) quota = parseInt(QUOTA);
-                    let COND = html.find('[name=condition]')[0]?.value;
-                    if (COND?.length > 0) {
-                        await this.addEffect(COND);
-                        if (quota > 0 && checkConditionQuota(COND)) await this.updateEffectQuota(COND, quota);
-                    }
-                }
-            }
-        }, { focus: false });
-        dlog.render(true);
+        const data = await popupDialogForm({
+            "title": game.i18n.format("ironclaw2e.dialog.addCondition.title", { "name": speaker.alias }),
+            "content": contents,
+            "label": "ironclaw2e.dialog.add",
+            "focus": "condition"
+        });
+        if (!data?.condition) return;
+
+        const quota = parseInt(data.quota) || 0;
+        await this.addEffect(data.condition);
+        if (quota > 0 && checkConditionQuota(data.condition)) await this.updateEffectQuota(data.condition, quota);
     }
 
     /* -------------------------------------------- */

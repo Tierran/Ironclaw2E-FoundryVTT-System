@@ -4,6 +4,8 @@
  - Replaced Combat lookups that Foundry v15 removes (getCombatantByActor/getCombatantByToken), which showed deprecation warnings when opening character sheets
  - The macro dice roll dialogs, "Change Roll to TN" and the reroll dialog now use Foundry's newer dialog style (DialogV2), with a more compact layout
  - Tidied up the Request a Roll dialog: spacing between rows, a smaller Target Number box and boxed Traits and Skills sections
+ - The damage, add condition and defense picker dialogs and the confirmation boxes now use the newer dialog style, with number boxes sized for their values
+ - The damage dialog has separate Hurt and Injured checkboxes, each adding one damage, ticked when the character has that condition and usable by hand otherwise
  - Fixed the reroll dialog showing a raw text key instead of who the roll shows up in chat as
 
 ### 14.0.3

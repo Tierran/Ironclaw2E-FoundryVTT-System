@@ -660,3 +660,26 @@ input.center-text {
   gap: 0.25rem;
   font-weight: bold;
 }
+
+/* Shared DialogV2 dialogs */
+.ironclaw2e-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ironclaw2e-dialog .form-group > .dialog-number {
+  flex: none;
+  width: 3.5rem;
+  text-align: center;
+}
+
+.ironclaw2e-dialog .dialog-message {
+  margin: 0;
+}
+
+.ironclaw2e-dialog .dialog-note {
+  margin: 0;
+  font-size: var(--font-size-12);
+  opacity: 0.8;
+}

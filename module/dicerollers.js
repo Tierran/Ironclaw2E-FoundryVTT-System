@@ -1,5 +1,5 @@
 import { addArrays, findTotalDice, findTotalDiceArrays, parseSingleDiceString } from "./helpers.js";
-import { getMacroSpeaker } from "./helpers.js";
+import { getMacroSpeaker, popupDialogForm } from "./helpers.js";
 
 import { CommonSystemInfo, specialSettingsRerollGMMap, specialSettingsRerollIntersection } from "./systeminfo.js";
 const { renderTemplate } = foundry.applications.handlebars;
@@ -1081,7 +1081,7 @@ export async function rerollDialog(message, actor) {
 /* -------------------------------------------- */
 
 /**
- * Show a macro dialog with a confirm and a cancel button, and wait for its form data
+ * Show a macro dialog with a confirm and a cancel button, and wait for its form data, using the macro dice template unless content is given
  * @param {object} options
  * @param {string} options.title The window title, localized if it is a translation key
  * @param {object} [options.templateData] Data for the macro dice template, used unless content is given
@@ -1092,24 +1092,7 @@ export async function rerollDialog(message, actor) {
  */
 async function waitForMacroDialog({ title, templateData = {}, content = null, label = "ironclaw2e.dialog.roll", focus = "" } = {}) {
     content ??= await renderTemplate("systems/ironclaw2e/templates/popup/macro-dice-popup.html", templateData);
-    const data = await foundry.applications.api.DialogV2.wait({
-        window: { title },
-        content,
-        buttons: [{
-            action: "confirm",
-            icon: "fas fa-check",
-            label,
-            default: true,
-            callback: (event, button) => new foundry.applications.ux.FormDataExtended(button.form).object
-        }, {
-            action: "cancel",
-            icon: "fas fa-times",
-            label: "ironclaw2e.dialog.cancel"
-        }],
-        render: (event, dialog) => dialog.element.querySelector(`[name="${focus}"]`)?.focus(),
-        rejectClose: false
-    });
-    return (data && typeof data === "object") ? data : null; // Cancel returns its action name and closing returns null
+    return popupDialogForm({ title, content, label, focus });
 }
 
 /**

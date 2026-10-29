@@ -1,45 +1,48 @@
-<form class="ironclaw2e">
-    <h1>{{localize "ironclaw2e.dialog.damageCalc.header" name=actor.name}}</h1>
+<div class="ironclaw2e ironclaw2e-dialog">
     <div class="form-group">
-        <label class="normal-label">{{localize "ironclaw2e.dialog.damageCalc.received"}}:</label>
-        <input type="text" id="damage" name="damage" value="{{readydamage}}" onfocus="this.select();" />
+        <label>{{localize "ironclaw2e.dialog.damageCalc.received"}}</label>
+        <input type="number" class="dialog-number" name="damage" value="{{readydamage}}" onfocus="this.select();" />
     </div>
     <div class="form-group">
-        <label class="normal-label">{{localize "ironclaw2e.dialog.damageCalc.soaked"}}:</label>
-        <input type="text" id="soak" name="soak" value="{{readysoak}}" onfocus="this.select();" />
+        <label>{{localize "ironclaw2e.dialog.damageCalc.soaked"}}</label>
+        <input type="number" class="dialog-number" name="soak" value="{{readysoak}}" onfocus="this.select();" />
+    </div>
+    {{#if (equalTo actorScaleType "personal")}}
+    <div class="form-group">
+        <label>{{localize "ironclaw2e.dialog.damageCalc.conditionDamage" condition=hurtLabel}}</label>
+        <input type="checkbox" name="hurt" {{checked isHurt}} />
     </div>
     <div class="form-group">
-        <span class="normal-label" title="{{#if addeddamage}}{{localize "ironclaw2e.dialog.damageCalc.conditionDamageAdded" conditions=addedconditions}}{{else}}{{localize "ironclaw2e.dialog.damageCalc.conditionDamageNothing"}}{{/if}}">
-            {{localize "ironclaw2e.dialog.damageCalc.conditionDamage"}}: {{addeddamage}}
-        </span>
-        <input type="checkbox" id="hurt" name="hurt" value="1" checked />
+        <label>{{localize "ironclaw2e.dialog.damageCalc.conditionDamage" condition=injuredLabel}}</label>
+        <input type="checkbox" name="injured" {{checked isInjured}} />
     </div>
+    {{/if}}
     <div class="form-group">
         <label>{{localize "ironclaw2e.dialog.damageCalc.attack"}}</label>
-        <input type="checkbox" id="attack" name="attack" value="1" checked />
+        <input type="checkbox" name="attack" checked />
     </div>
     {{#if (equalTo actorScaleType "personal")}}
     <div class="form-group">
         <label>{{localize "ironclaw2e.dialog.damageCalc.knockoutStrike"}}</label>
-        <input type="checkbox" id="knockout" name="knockout" value="1" />
+        <input type="checkbox" name="knockout" />
     </div>
     <div class="form-group">
         <label>{{localize "ironclaw2e.dialog.damageCalc.nonLethal"}}</label>
-        <input type="checkbox" id="nonlethal" name="nonlethal" value="1" />
+        <input type="checkbox" name="nonlethal" />
     </div>
     {{/if}}
     {{#if hasWard}}
     <div class="form-group">
         <label>{{localize "ironclaw2e.dialog.damageCalc.reduceWard" value=temporaryWard}}</label>
-        <input type="checkbox" id="reduceward" name="reduceward" value="1" checked />
+        <input type="checkbox" name="reduceward" checked />
     </div>
     {{/if}}
     <div class="form-group">
         <label>{{localize "ironclaw2e.dialog.damageCalc.damageConditions"}}</label>
-        <input type="text" id="cond" name="cond" value="{{damageconditions}}" />
+        <input type="text" name="cond" value="{{damageconditions}}" />
     </div>
     <div class="form-group">
         <label>{{localize "ironclaw2e.dialog.sendToChat"}}</label>
-        <input type="checkbox" id="send" name="send" value="1" {{checked confirmSend}} />
+        <input type="checkbox" name="send" {{checked confirmSend}} />
     </div>
-</form>
+</div>
